@@ -1,0 +1,1082 @@
+openapi: 3.0.0
+info:
+  title: micro_vent
+  version: '1.0'
+  description: 「3Dプリント可能な人工呼吸器実用開発研究」に係るスマートフォンアプリの構築、運用・管理
+  contact:
+    name: shota kawano
+    email: kawano@r102.co.jp
+servers:
+  - url: 'http://api.dev.micro-vent.jp'
+paths:
+  /login:
+    post:
+      summary: 組織内利用者によるログイン
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  result:
+                    type: object
+                    required:
+                      - api_token
+                    properties:
+                      api_token:
+                        type: string
+                        minLength: 1
+                required:
+                  - result
+              examples:
+                example-1:
+                  value:
+                    result:
+                      api_token: string
+      operationId: post-login
+      description: 組織内利用者によるログイン
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: X-Api-Token
+          required: true
+          description: 疎通用トークン
+        - schema:
+            type: string
+          in: header
+          name: Accept
+          description: application/json
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: Content-Type
+          description: application/json; charset=UTF-8
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                user:
+                  type: string
+                  minLength: 1
+                  description: ユーザー名もしくはメールアドレス
+                password:
+                  type: string
+                  minLength: 1
+              required:
+                - user
+                - password
+      tags:
+        - login
+  /ventilator:
+    get:
+      summary: 人工呼吸器情報取得
+      tags:
+        - ventilator
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  result:
+                    type: object
+                    required:
+                      - is_registered
+                    properties:
+                      is_registered:
+                        type: boolean
+                      ventilator_id:
+                        type: number
+                required:
+                  - result
+              examples:
+                example-1:
+                  value:
+                    result:
+                      is_registered: true
+                      ventilator_id: 1
+                example-2:
+                  value:
+                    result:
+                      is_registered: false
+      operationId: get-ventilator
+      description: 'GS1コードにより人工呼吸器に紐付いた患者の身長体重情報を取得する。存在しない場合はregistered:falseを返す'
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: Authorization
+          description: Bearer認証トークン
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: X-Api-Token
+          description: 疎通用トークン
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: Accept
+          description: application/json
+          required: true
+        - schema:
+            type: string
+          in: query
+          name: gs1_code
+          description: QR読み取りにより取得される識別コード
+          required: true
+    post:
+      summary: 人工呼吸器登録
+      tags:
+        - ventilator
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      ventilator_id:
+                        type: string
+                        minLength: 1
+                    required:
+                      - ventilator_id
+                required:
+                  - result
+              examples:
+                example-1:
+                  value:
+                    result:
+                      ventilator_id: '1'
+      operationId: post-ventilator
+      description: GS1コードをGETに投げてfalseが帰ってきた場合に諸情報と合わせて登録する。
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                gs1_code:
+                  type: string
+                  minLength: 1
+                latitude:
+                  type: string
+                  minLength: 1
+                longitude:
+                  type: string
+                  minLength: 1
+              required:
+                - gs1_code
+                - latitude
+                - longitude
+            examples:
+              example-1:
+                value:
+                  gs1_code: '49123456789012'
+                  latitude: '35.681507'
+                  longitude: '139.765581'
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: Authorization
+          description: Bearer認証トークン
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: X-Api-Token
+          description: 疎通用トークン
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: Accept
+          description: application/json
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: Content-Type
+          description: application/json; charset=UTF-8
+          required: true
+  /calculate/default_flow:
+    get:
+      summary: 設定初期推奨値取得
+      tags:
+        - calculate
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      flow_air:
+                        type: string
+                        minLength: 1
+                      flow_o2:
+                        type: string
+                        minLength: 1
+      operationId: get-calculate-default_flow
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: Authorization
+          description: Bearer認証トークン
+          required: true
+        - schema:
+            type: string
+          in: header
+          description: 疎通用トークン
+          name: X-Api-Token
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: Accept
+          description: application/json
+          required: true
+        - schema:
+            type: string
+          in: query
+          name: patient_id
+          required: true
+        - schema:
+            type: string
+          in: query
+          name: airway_pressure
+          required: true
+      description: 推奨空気流量・酸素流量を取得
+  /patient:
+    post:
+      summary: 患者情報を新しく登録する
+      tags:
+        - patient
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      patient_id:
+                        type: string
+                        minLength: 1
+                    required:
+                      - patient_id
+                required:
+                  - result
+              examples:
+                example-1:
+                  value:
+                    result:
+                      patient_id: '1'
+      operationId: post-patient
+      description: 患者情報の新規登録
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: Authorization
+          description: Bearer認証トークン
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: X-Api-Token
+          description: 疎通用トークン
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: Accept
+          description: application/json
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: Content-Type
+          description: application/json; charset=UTF-8
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                height:
+                  type: string
+                weight:
+                  type: string
+              required:
+                - height
+                - weight
+  /calculate/estimated_data:
+    get:
+      summary: 予測値取得
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  result:
+                    type: object
+                    required:
+                      - vt
+                      - mv
+                      - peep
+                      - fio2
+                    properties:
+                      vt:
+                        type: string
+                        minLength: 1
+                      mv:
+                        type: string
+                        minLength: 1
+                      peep:
+                        type: string
+                        minLength: 1
+                      fio2:
+                        type: string
+                        minLength: 1
+      operationId: get-calculate-estimated_data
+      description: 諸変数を投げて算出可能な予測値を取得する
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: patient_id
+        - schema:
+            type: string
+          in: query
+          name: airway_pressure
+        - schema:
+            type: string
+          in: query
+          name: flow_air
+        - schema:
+            type: string
+          in: query
+          name: flow_o2
+        - schema:
+            type: string
+          in: query
+          name: rp
+        - schema:
+            type: string
+          in: query
+          name: rr
+        - schema:
+            type: string
+          in: header
+          name: Authorization
+          description: Bearer認証トークン
+          required: true
+        - schema:
+            type: string
+          in: header
+          description: 疎通用トークン
+          name: X-Api-Token
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: Accept
+          description: application/json
+          required: true
+      tags:
+        - calculate
+  /calculate/rp:
+    post:
+      summary: RP推測値取得
+      operationId: post-calculate-rp
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: Authorization
+          description: Bearer認証トークン
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: X-Api-Token
+          description: 疎通用トークン
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: Accept
+          description: application/json
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: Content-Type
+          description: application/json; charset=UTF-8
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                data:
+                  type: array
+                  uniqueItems: true
+                  minItems: 3
+                  items:
+                    type: object
+                    properties:
+                      ie:
+                        type: string
+                        minLength: 1
+                      airway_pressure:
+                        type: string
+                        minLength: 1
+                      flow_air:
+                        type: string
+                        minLength: 1
+                      flow_o2:
+                        type: string
+                        minLength: 1
+                    required:
+                      - ie
+                      - airway_pressure
+                      - flow_air
+                      - flow_o2
+              required:
+                - data
+            examples:
+              example-1:
+                value:
+                  data:
+                    - ie: '***'
+                      airway_pressure: '***'
+                      flow_air: '***'
+                      flow_o2: '***'
+                    - ie: '****'
+                      airway_pressure: '****'
+                      flow_air: '****'
+                      flow_o2: '****'
+                    - ie: '*****'
+                      airway_pressure: '*****'
+                      flow_air: '*****'
+                      flow_o2: '*****'
+        description: ''
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  rp:
+                    type: string
+                    minLength: 1
+                required:
+                  - rp
+      tags:
+        - calculate
+      description: RP推測値取得
+  '/ventilator/{ventilator_id}':
+    parameters:
+      - schema:
+          type: string
+        name: ventilator_id
+        in: path
+        required: true
+    get:
+      summary: 呼吸器に紐付けられた関連値データを取得する
+      tags:
+        - ventilator
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      patient_id:
+                        type: number
+                      airway_pressure:
+                        type: string
+                        minLength: 1
+                      flow_air:
+                        type: string
+                        minLength: 1
+                      flow_o2:
+                        type: string
+                        minLength: 1
+                      rp:
+                        type: string
+                        minLength: 1
+                      rr:
+                        type: string
+                        minLength: 1
+                      spo2:
+                        type: string
+                        minLength: 1
+                      vt:
+                        type: string
+                        minLength: 1
+                      mv:
+                        type: string
+                        minLength: 1
+                      peep:
+                        type: string
+                        minLength: 1
+                      fio2:
+                        type: string
+                        minLength: 1
+                    required:
+                      - patient_id
+                      - airway_pressure
+                      - flow_air
+                      - flow_o2
+                      - rp
+                      - rr
+                      - spo2
+                      - vt
+                      - mv
+                      - peep
+                      - fio2
+                required:
+                  - result
+              examples:
+                example-1:
+                  value:
+                    result:
+                      patient_id: 1
+                      airway_pressure: '23.6'
+                      flow_air: '12.0'
+                      flow_o2: '6.0'
+                      rp: '50'
+                      rr: '15.9'
+                      spo2: '96.5'
+                      vt: '446'
+                      mv: '6.9'
+                      peep: '7.3'
+                      fio2: '47.3'
+      operationId: get-ventilator-ventilator_id
+      parameters:
+        - schema:
+            type: string
+          in: header
+          description: Bearer認証トークン
+          name: Authorization
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: X-Api-Token
+          description: 疎通用トークン
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: Accept
+          description: application/json
+          required: true
+      description: 関連値を取得する
+    post:
+      summary: 設定データを登録する
+      operationId: post-ventilator-ventilator_id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      vt:
+                        type: string
+                        minLength: 1
+                      mv:
+                        type: string
+                        minLength: 1
+                      peep:
+                        type: string
+                        minLength: 1
+                      fio2:
+                        type: string
+                        minLength: 1
+                    required:
+                      - vt
+                      - mv
+                      - peep
+                      - fio2
+                required:
+                  - result
+              examples:
+                example-1:
+                  value:
+                    result:
+                      vt: '446'
+                      mv: '6.9'
+                      peep: '7.3'
+                      fio2: '47.3'
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: Authorization
+          description: Bearer認証トークン
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: X-Api-Token
+          description: 疎通用トークン
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: Accept
+          description: application/json
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: Content-Type
+          description: application/json; charset=UTF-8
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                result:
+                  type: object
+                  properties:
+                    patient_id:
+                      type: number
+                    pressure_airway:
+                      type: string
+                      minLength: 1
+                    flow_air:
+                      type: string
+                      minLength: 1
+                    flow_o2:
+                      type: string
+                      minLength: 1
+                    rp:
+                      type: string
+                      minLength: 1
+                    rr:
+                      type: string
+                      minLength: 1
+                    spo2:
+                      type: string
+                      minLength: 1
+                  required:
+                    - patient_id
+                    - pressure_airway
+                    - flow_air
+                    - flow_o2
+                    - rp
+                    - rr
+                    - spo2
+              required:
+                - result
+        description: ''
+      description: 関連値を登録する
+      tags:
+        - ventilator
+    put:
+      summary: 最終設定フラグを設定する
+      operationId: put-ventilartor_values-id
+      description: 最終設定フラグを設定
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: Authorization
+          description: Bearer認証トークン
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: X-Api-Token
+          description: 疎通用トークン
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: Accept
+          description: application/json
+          required: true
+        - schema:
+            type: string
+          in: header
+          description: application/json; charset=UTF-8
+          name: Content-Type
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+      tags:
+        - ventilator
+      responses:
+        '200':
+          description: OK
+  '/patient/{id}':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+    get:
+      summary: 患者データを取得する
+      tags:
+        - patient
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  result:
+                    type: object
+                    required:
+                      - height
+                      - weight
+                    properties:
+                      nickname:
+                        type: string
+                      height:
+                        type: string
+                      weight:
+                        type: string
+                      other_attrs:
+                        type: object
+                required:
+                  - result
+              examples:
+                example-1:
+                  value:
+                    result:
+                      nickname: xxx
+                      height: '169.5'
+                      weight: '60.3'
+                      other_attrs: {}
+      operationId: get-patient-id
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: Authorization
+          description: Bearer認証トークン
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: X-Api-Token
+          description: 疎通用トークン
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: Accept
+          description: application/json
+          required: true
+      description: 患者データを取得する
+    put:
+      summary: 患者データを更新する
+      tags:
+        - patient
+      responses:
+        '200':
+          description: OK
+      operationId: put-patient-id
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: Authorization
+          description: Bearer認証トークン
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: X-Api-Token
+          description: 疎通用トークン
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: Accept
+          description: application/json
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: Content-Type
+          description: application/json; charset=UTF-8
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                result:
+                  type: object
+                  required:
+                    - nickname
+                    - height
+                    - weight
+                    - other_attrs
+                  properties:
+                    nickname:
+                      type: string
+                    height:
+                      type: string
+                    weight:
+                      type: string
+                    other_attrs:
+                      type: object
+              required:
+                - result
+      description: 患者データを更新する
+  /ie/manual:
+    parameters: []
+    post:
+      summary: ''
+      operationId: post-ie-manual
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  ie:
+                    type: string
+                required:
+                  - ie
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                data:
+                  type: array
+                  uniqueItems: true
+                  minItems: 2
+                  items:
+                    type: object
+                    properties:
+                      i:
+                        type: string
+                        minLength: 1
+                      e:
+                        type: string
+                        minLength: 1
+                    required:
+                      - i
+                      - e
+              required:
+                - data
+            examples:
+              example-1:
+                value:
+                  data:
+                    - i: '***'
+                      e: '***'
+                    - i: '****'
+                      e: '****'
+          application/xml:
+            schema:
+              type: object
+              properties: {}
+          multipart/form-data:
+            schema:
+              description: ''
+              type: object
+              properties:
+                data:
+                  type: array
+                  uniqueItems: true
+                  minItems: 1
+                  items:
+                    required:
+                      - i
+                      - e
+                    properties:
+                      i:
+                        type: string
+                        minLength: 1
+                      e:
+                        type: string
+                        minLength: 1
+              required:
+                - data
+        description: ''
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: Authorization
+          description: Bearer認証トークン
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: X-Api-Token
+          description: 疎通用トークン
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: Accept
+          description: application/json
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: Content-Type
+          description: application/json; charset=UTF-8
+          required: true
+      description: 手動測定による呼気、吸気時間をもとにI/Eを取得
+      tags:
+        - calculate
+  /ie/sound:
+    parameters: []
+    post:
+      summary: ''
+      operationId: post-ie-sound
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ie:
+                    type: string
+                required:
+                  - ie
+      description: 音声ファイルをもとにI/Eを取得
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: Authorization
+          description: Bearer認証トークン
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: X-Api-Token
+          description: 疎通用トークン
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: Accept
+          description: application/json
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: Content-Type
+          description: application/json; charset=UTF-8
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sound:
+                  type: object
+                  required:
+                    - content_type
+                    - filename
+                    - file_data
+                  properties:
+                    content_type:
+                      type: string
+                    filename:
+                      type: string
+                    file_data:
+                      type: string
+              required:
+                - sound
+        description: ''
+      tags:
+        - calculate
+components:
+  schemas: {}
+tags:
+  - name: login
+  - name: calculate
+  - name: patient
+  - name: ventilator
