@@ -16,7 +16,7 @@
  * 記述ruleは以下で統一 
  *   Route::get('auth', 'AuthController@index')->name('api.auth');
  */
-//Route::group(['middleware' => ['routetype:api']], function() {
+Route::group(['middleware' => ['routetype:api']], function() {
 
     Route::get('/test', 'TestController@index')->name('api.test');
 
@@ -25,4 +25,4 @@
         
 
     // });
-//});
+});
