@@ -9,7 +9,7 @@ info:
 servers:
   - url: 'http://api.dev.microvent.jp'
 paths:
-  /login:
+  /auth/login:
     post:
       summary: 組織内利用者によるログイン
       responses:
@@ -40,7 +40,7 @@ paths:
                     result:
                       user_id: 1
                       api_token: string
-      operationId: post-login
+      operationId: post-auth-login
       description: 組織内利用者によるログイン
       parameters:
         - schema:
@@ -79,7 +79,7 @@ paths:
                 - user
                 - password
       tags:
-        - login
+        - auth
   /ventilator:
     get:
       summary: 人工呼吸器情報取得
@@ -718,11 +718,11 @@ paths:
               required:
                 - result
       description: 患者データを更新する
-  /ie/manual:
+  calculate/ie/manual:
     parameters: []
     post:
       summary: ''
-      operationId: post-ie-manual
+      operationId: post-calculate-ie-manual
       responses:
         '200':
           description: OK
@@ -828,11 +828,11 @@ paths:
       description: 手動測定による呼気、吸気時間をもとにI/Eを取得
       tags:
         - calculate
-  /ie/sound:
+  calculate/ie/sound:
     parameters: []
     post:
       summary: ''
-      operationId: post-ie-sound
+      operationId: post-calculate-ie-sound
       responses:
         '200':
           description: OK
@@ -900,10 +900,10 @@ paths:
         description: ''
       tags:
         - calculate
-  /logout:
+  /auth/logout:
     post:
       summary: ''
-      operationId: delete-logout
+      operationId: post-auth-logout
       responses:
         '200':
           description: OK
@@ -929,12 +929,11 @@ paths:
           in: query
           name: user_id
       tags:
-        - logout
+        - auth
 components:
   schemas: {}
 tags:
-  - name: login
+  - name: auth
   - name: calculate
   - name: patient
   - name: ventilator
-  - name: logout
