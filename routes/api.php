@@ -28,7 +28,7 @@ Route::group(['middleware' => ['routetype:api']], function() {
     Route::get('/calculate/default_flow','CalcController@defaultFlow')->name('api.calc.default_flow');
     Route::get('/calculate/estimated_data','CalcController@estimatedData')->name('api.calc.estimated_data');
     Route::post('/calculate/ie/manual','CalcController@ieManual')->name('api.calc.default_flow');
-    Route::post('/calculate/ie/sound','CalcController@defaultFlow')->name('api.calc.default_flow');
+    Route::post('/calculate/ie/sound','CalcController@ieSound')->name('api.calc.default_flow');
 
     //患者情報登録
     Route::post('/patient', 'PatientController@create')->name('api.patient.create');
@@ -44,6 +44,6 @@ Route::group(['middleware' => ['routetype:api']], function() {
     //機器関連値取得
     Route::get('/ventilator/{id}','VentilatorController@readValues')->name('api.ventilator.read_values');
     //機器関連値更新
-    Route::put('/ventilator/{id}','VentilatorController@updateValues')->name('api.ventilator.update_values')
+    Route::put('/ventilator/{id}','VentilatorController@updateValues')->name('api.ventilator.update_values');
 
 });
