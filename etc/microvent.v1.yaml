@@ -137,9 +137,8 @@ paths:
           description: QR読み取りにより取得される識別コード
           required: true
     post:
-      summary: 人工呼吸器登録
-      tags:
-        - ventilator
+      summary: 設定データを登録する
+      operationId: post-ventilator
       responses:
         '200':
           description: OK
@@ -153,52 +152,37 @@ paths:
                     type: object
                     properties:
                       ventilator_id:
+                        type: number
+                      vt:
+                        type: string
+                        minLength: 1
+                      mv:
+                        type: string
+                        minLength: 1
+                      peep:
+                        type: string
+                        minLength: 1
+                      fio2:
                         type: string
                         minLength: 1
                     required:
                       - ventilator_id
+                      - vt
+                      - mv
+                      - peep
+                      - fio2
                 required:
                   - result
               examples:
                 example-1:
                   value:
                     result:
-                      ventilator_id: '1'
-      operationId: post-ventilator
-      description: GS1コードをGETに投げてfalseが帰ってきた場合に諸情報と合わせて登録する。
-      requestBody:
-        content:
-          application/json:
-            schema:
-              description: ''
-              type: object
-              properties:
-                gs1_code:
-                  type: string
-                  minLength: 1
-                latitude:
-                  type: string
-                  minLength: 1
-                longitude:
-                  type: string
-                  minLength: 1
-              required:
-                - gs1_code
-                - latitude
-                - longitude
-            examples:
-              example-1:
-                value:
-                  gs1_code: '49123456789012'
-                  latitude: '35.681507'
-                  longitude: '139.765581'
+                      ventilator_id: 1
+                      vt: '446'
+                      mv: '6.9'
+                      peep: '7.3'
+                      fio2: '47.3'
       parameters:
-        - schema:
-            type: string
-          in: header
-          name: Authorization
-          description: Bearer認証トークン
-          required: true
         - schema:
             type: string
           in: header
@@ -217,6 +201,108 @@ paths:
           name: Content-Type
           description: application/json; charset=UTF-8
           required: true
+        - schema:
+            type: string
+          in: header
+          name: X-User-Token
+          description: ユーザー識別用トークン
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                ventilator_id:
+                  type: number
+                ventilator_data:
+                  type: object
+                  properties:
+                    gs1_code:
+                      type: string
+                      minLength: 1
+                    latitude:
+                      type: string
+                      minLength: 1
+                    longitude:
+                      type: string
+                      minLength: 1
+                  required:
+                    - gs1_code
+                    - latitude
+                    - longitude
+                ventilator_values:
+                  type: object
+                  required:
+                    - patient_id
+                    - pressure_airway
+                    - flow_air
+                    - flow_o2
+                    - rr
+                    - spo2
+                    - i_avg
+                    - e_avg
+                  properties:
+                    patient_id:
+                      type: number
+                    pressure_airway:
+                      type: string
+                      minLength: 1
+                    flow_air:
+                      type: string
+                      minLength: 1
+                    flow_o2:
+                      type: string
+                      minLength: 1
+                    rr:
+                      type: string
+                      minLength: 1
+                    spo2:
+                      type: string
+                      minLength: 1
+                    i_avg:
+                      type: string
+                      minLength: 1
+                    e_avg:
+                      type: string
+                      minLength: 1
+              required:
+                - ventilator_values
+            examples:
+              ventilator登録済みの場合:
+                value:
+                  ventilator_id: 1
+                  ventilator_values:
+                    patient_id: 1
+                    pressure_airway: '***'
+                    flow_air: '***'
+                    flow_o2: '***'
+                    rr: '***'
+                    spo2: '***'
+                    i_avg: '***'
+                    e_avg: '***'
+              ventilator未登録の場合:
+                value:
+                  ventilator_data:
+                    gs1_code: '49123456789012'
+                    latitude: '35.681507'
+                    longitude: '139.765581'
+                  ventilator_values:
+                    patient_id: 1
+                    pressure_airway: '***'
+                    flow_air: '***'
+                    flow_o2: '***'
+                    rr: '***'
+                    spo2: '***'
+                    i_avg: '***'
+                    e_avg: '***'
+        description: ''
+      description: |-
+        関連値を登録する。人工呼吸器が未登録の場合はそのデータも一緒に登録する。
+        ventilator_idを持たない場合はventilator_dataを必須とし呼吸器登録を行う。
+        X-User-Tokenを持つ場合はユーザー特定してventilator_values.user_id,ventilator.organization_idも登録する。
+      tags:
+        - ventilator
   /calculate/default_flow:
     get:
       summary: 設定初期推奨値取得
@@ -477,144 +563,11 @@ paths:
           description: application/json
           required: true
       description: 関連値を取得する
-    post:
-      summary: 設定データを登録する
-      operationId: post-ventilator-ventilator_id
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                description: ''
-                type: object
-                properties:
-                  result:
-                    type: object
-                    properties:
-                      vt:
-                        type: string
-                        minLength: 1
-                      mv:
-                        type: string
-                        minLength: 1
-                      peep:
-                        type: string
-                        minLength: 1
-                      fio2:
-                        type: string
-                        minLength: 1
-                    required:
-                      - vt
-                      - mv
-                      - peep
-                      - fio2
-                required:
-                  - result
-              examples:
-                example-1:
-                  value:
-                    result:
-                      vt: '446'
-                      mv: '6.9'
-                      peep: '7.3'
-                      fio2: '47.3'
-      parameters:
-        - schema:
-            type: string
-          in: header
-          name: Authorization
-          description: Bearer認証トークン
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: X-Api-Token
-          description: 疎通用トークン
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Accept
-          description: application/json
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Content-Type
-          description: application/json; charset=UTF-8
-          required: true
-      requestBody:
-        content:
-          application/json:
-            schema:
-              description: ''
-              type: object
-              properties:
-                data:
-                  type: object
-                  properties:
-                    patient_id:
-                      type: number
-                    pressure_airway:
-                      type: string
-                      minLength: 1
-                    flow_air:
-                      type: string
-                      minLength: 1
-                    flow_o2:
-                      type: string
-                      minLength: 1
-                    rr:
-                      type: string
-                      minLength: 1
-                    spo2:
-                      type: string
-                      minLength: 1
-                    i_avg:
-                      type: string
-                      minLength: 1
-                    e_avg:
-                      type: string
-                      minLength: 1
-                  required:
-                    - patient_id
-                    - pressure_airway
-                    - flow_air
-                    - flow_o2
-                    - rr
-                    - spo2
-                    - i_avg
-                    - e_avg
-              required:
-                - data
-            examples:
-              example-1:
-                value:
-                  data:
-                    patient_id: 1
-                    pressure_airway: '***'
-                    flow_air: '***'
-                    flow_o2: '***'
-                    rr: '***'
-                    spo2: '***'
-                    i_avg: '***'
-                    e_avg: '***'
-        description: ''
-      description: 関連値を登録する
-      tags:
-        - ventilator
     put:
       summary: 最終設定フラグを設定する
       operationId: put-ventilartor_values-id
       description: 最終設定フラグを設定
       parameters:
-        - schema:
-            type: string
-          in: header
-          name: Authorization
-          description: Bearer認証トークン
-          required: true
         - schema:
             type: string
           in: header
@@ -721,12 +674,6 @@ paths:
           description: OK
       operationId: put-patient-id
       parameters:
-        - schema:
-            type: string
-          in: header
-          name: Authorization
-          description: Bearer認証トークン
-          required: true
         - schema:
             type: string
           in: header
@@ -983,145 +930,6 @@ paths:
           name: user_id
       tags:
         - logout
-  '/ventilator/{ventilator_id}/user/{user_id}':
-    parameters:
-      - schema:
-          type: string
-        name: ventilator_id
-        in: path
-        required: true
-      - schema:
-          type: string
-        name: user_id
-        in: path
-        required: true
-    post:
-      summary: 組織内ユーザーによる設定データを登録する。合わせてventilators.organization_idも更新
-      operationId: post-ventilator-ventilator_id-user-user_id
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                description: ''
-                type: object
-                properties:
-                  result:
-                    type: object
-                    properties:
-                      vt:
-                        type: string
-                        minLength: 1
-                      mv:
-                        type: string
-                        minLength: 1
-                      peep:
-                        type: string
-                        minLength: 1
-                      fio2:
-                        type: string
-                        minLength: 1
-                    required:
-                      - vt
-                      - mv
-                      - peep
-                      - fio2
-                required:
-                  - result
-              examples:
-                example-1:
-                  value:
-                    result:
-                      vt: '446'
-                      mv: '6.9'
-                      peep: '7.3'
-                      fio2: '47.3'
-      parameters:
-        - schema:
-            type: string
-          in: header
-          name: X-Api-Token
-          description: 疎通用トークン
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Accept
-          description: application/json
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Content-Type
-          description: application/json; charset=UTF-8
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Authorization
-          description: Bearerトークン
-          required: true
-      requestBody:
-        content:
-          application/json:
-            schema:
-              description: ''
-              type: object
-              properties:
-                data:
-                  type: object
-                  properties:
-                    patient_id:
-                      type: number
-                    pressure_airway:
-                      type: string
-                      minLength: 1
-                    flow_air:
-                      type: string
-                      minLength: 1
-                    flow_o2:
-                      type: string
-                      minLength: 1
-                    rr:
-                      type: string
-                      minLength: 1
-                    spo2:
-                      type: string
-                      minLength: 1
-                    i_avg:
-                      type: string
-                      minLength: 1
-                    e_avg:
-                      type: string
-                      minLength: 1
-                  required:
-                    - patient_id
-                    - pressure_airway
-                    - flow_air
-                    - flow_o2
-                    - rr
-                    - spo2
-                    - i_avg
-                    - e_avg
-              required:
-                - data
-            examples:
-              example-1:
-                value:
-                  data:
-                    patient_id: 1
-                    pressure_airway: '***'
-                    flow_air: '***'
-                    flow_o2: '***'
-                    rr: '***'
-                    spo2: '***'
-                    i_avg: '***'
-                    e_avg: '***'
-        description: ''
-      description: 関連値を登録する
-      tags:
-        - ventilator
 components:
   schemas: {}
 tags:
