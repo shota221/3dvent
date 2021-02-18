@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Response;
+namespace App\Http\Response\Api;
 
 use App\Http\Response\SuccessJsonResult;
 
-class VentilatorValueResult extends SuccessJsonResult
+class VentilatorValuesResult extends SuccessJsonResult
 {
     public $patient_id;
     
