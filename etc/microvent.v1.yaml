@@ -23,23 +23,23 @@ paths:
                 properties:
                   result:
                     type: object
-                    required:
-                      - user_id
-                      - api_token
                     properties:
                       user_id:
                         type: number
                       api_token:
                         type: string
                         minLength: 1
+                    required:
+                      - user_id
+                      - api_token
                 required:
                   - result
               examples:
                 example-1:
                   value:
                     result:
-                      user_id: 1
-                      api_token: string
+                      user_id: 3
+                      api_token: '###user_token###'
       operationId: post-auth-login
       description: 組織内利用者によるログイン
       parameters:
@@ -326,6 +326,17 @@ paths:
                       flow_o2:
                         type: string
                         minLength: 1
+                    required:
+                      - flow_air
+                      - flow_o2
+                required:
+                  - result
+              examples:
+                example-1:
+                  value:
+                    result:
+                      flow_air: '12.0'
+                      flow_o2: '6.0'
       operationId: get-calculate-default_flow
       parameters:
         - schema:
@@ -436,6 +447,17 @@ paths:
                       fio2:
                         type: string
                         minLength: 1
+                    required:
+                      - peep
+                      - fio2
+                required:
+                  - result
+              examples:
+                example-1:
+                  value:
+                    result:
+                      peep: '7.3'
+                      fio2: '47.3'
       operationId: get-calculate-estimated_data
       description: 諸変数を投げて算出可能な予測値を取得する
       parameters:
@@ -606,6 +628,26 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      fixed_flg:
+                        type: boolean
+                    required:
+                      - fixed_flg
+                required:
+                  - result
+              examples:
+                example-1:
+                  value:
+                    result:
+                      fixed_flg: true
   '/patient/{id}':
     parameters:
       - schema:
@@ -646,10 +688,13 @@ paths:
                 example-1:
                   value:
                     result:
-                      nickname: xxx
+                      nickname: テスト患者1
                       height: '169.5'
                       weight: '60.3'
-                      other_attrs: {}
+                      other_attrs:
+                        age: '28'
+                        gender: 男
+                        nationality: 日本
       operationId: get-patient-id
       parameters:
         - schema:
@@ -672,6 +717,42 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  result:
+                    type: object
+                    required:
+                      - height
+                      - weight
+                    properties:
+                      nickname:
+                        type: string
+                        minLength: 1
+                      height:
+                        type: string
+                        minLength: 1
+                      weight:
+                        type: string
+                        minLength: 1
+                      other_attrs:
+                        type: object
+                required:
+                  - result
+              examples:
+                example-1:
+                  value:
+                    result:
+                      nickname: テスト患者1
+                      height: '169.5'
+                      weight: '60.3'
+                      other_attrs:
+                        age: '28'
+                        gender: 男
+                        nationality: 日本
       operationId: put-patient-id
       parameters:
         - schema:
@@ -735,20 +816,26 @@ paths:
                 description: ''
                 type: object
                 properties:
-                  i_avg:
-                    type: string
-                    minLength: 1
-                  e_avg:
-                    type: string
-                    minLength: 1
+                  result:
+                    type: object
+                    properties:
+                      i_avg:
+                        type: string
+                        minLength: 1
+                      e_avg:
+                        type: string
+                        minLength: 1
+                    required:
+                      - i_avg
+                      - e_avg
                 required:
-                  - i_avg
-                  - e_avg
+                  - result
               examples:
                 example-1:
                   value:
-                    i_avg: '***'
-                    e_avg: '***'
+                    result:
+                      i_avg: '2.2'
+                      e_avg: '1.2'
       requestBody:
         content:
           application/json:
@@ -845,20 +932,26 @@ paths:
                 description: ''
                 type: object
                 properties:
-                  i_avg:
-                    type: string
-                    minLength: 1
-                  e_avg:
-                    type: string
-                    minLength: 1
+                  result:
+                    type: object
+                    properties:
+                      i_avg:
+                        type: string
+                        minLength: 1
+                      e_avg:
+                        type: string
+                        minLength: 1
+                    required:
+                      - i_avg
+                      - e_avg
                 required:
-                  - i_avg
-                  - e_avg
+                  - result
               examples:
                 example-1:
                   value:
-                    i_avg: '***'
-                    e_avg: '***'
+                    result:
+                      i_avg: '2.2'
+                      e_avg: '1.2'
       description: 音声ファイルをもとにI/Eを取得
       parameters:
         - schema:
@@ -910,6 +1003,26 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      user_id:
+                        type: number
+                    required:
+                      - user_id
+                required:
+                  - result
+              examples:
+                example-1:
+                  value:
+                    result:
+                      user_id: 3
       description: logout
       parameters:
         - schema:
