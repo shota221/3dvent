@@ -27,22 +27,22 @@ Route::group(['middleware' => ['routetype:api']], function() {
     //各種計算
     Route::get('/calculate/default_flow','CalcController@defaultFlow')->name('api.calc.default_flow');
     Route::get('/calculate/estimated_data','CalcController@estimatedData')->name('api.calc.estimated_data');
-    Route::post('/calculate/ie/manual','CalcController@ieManual')->name('api.calc.default_flow');
-    Route::post('/calculate/ie/sound','CalcController@ieSound')->name('api.calc.default_flow');
+    Route::post('/calculate/ie/manual','CalcController@ieManual')->name('api.calc.ie_manual');
+    Route::post('/calculate/ie/sound','CalcController@ieSound')->name('api.calc.ie_sound');
 
     //患者情報登録
     Route::post('/patient', 'PatientController@create')->name('api.patient.create');
     //患者情報取得
-    Route::get('/patient/{id}', 'PatientController@read')->name('api.patient.read');
+    Route::get('/patient/{id}', 'PatientController@show')->name('api.patient.show');
     //患者情報更新
-    Route::put('/patient/{id}', 'PatientController@update')->name('api.auth.login');
+    Route::put('/patient/{id}', 'PatientController@update')->name('api.patient.update');
 
     //呼吸器情報取得（GS1コード読み込み）
-    Route::get('/ventilator','VentilatorController@read')->name('api.ventilator.read');
+    Route::get('/ventilator','VentilatorController@show')->name('api.ventilator.show');
     //呼吸器関連情報登録（呼吸器情報+機器関連値）
     Route::post('/ventilator','VentilatorController@create')->name('api.ventilator.create');
     //機器関連値取得
-    Route::get('/ventilator/{id}','VentilatorController@readValues')->name('api.ventilator.read_values');
+    Route::get('/ventilator/{id}','VentilatorController@showValues')->name('api.ventilator.show_values');
     //機器関連値更新
     Route::put('/ventilator/{id}','VentilatorController@updateValues')->name('api.ventilator.update_values');
 

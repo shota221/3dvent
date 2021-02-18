@@ -27,4 +27,6 @@ class VentilatorValuesResult extends SuccessJsonResult
     public $peep;
     
     public $fio2;   
+
+    public $fixed_flg;
 }

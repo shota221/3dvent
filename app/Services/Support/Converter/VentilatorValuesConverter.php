@@ -28,7 +28,7 @@ class VentilatorValuesConverter
         return $res;
     }
 
-    public static function convertToVentilatorValueRegistrationResult()
+    public static function convertToVentilatorValuesRegistrationResult()
     {
         $res = new Response\Api\VentilatorValuesResult;
 
@@ -68,6 +68,15 @@ class VentilatorValuesConverter
         $res->peep = '7.3';
 
         $res->fio2 = '47.3';
+
+        return $res;
+    }
+
+    public static function convertToVentilatorValuesUpdateResult()
+    {
+        $res = new Response\Api\VentilatorValuesResult;
+
+        $res->fixed_flg = true;
 
         return $res;
     }

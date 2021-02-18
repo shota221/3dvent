@@ -4,25 +4,31 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 
+use App\Services\Api as Service;
+
 use Illuminate\Http\Request;
 
 class PatientController extends Controller
 {
-    public function create(Request $request)
+    private $service;
+    
+    function __construct() 
     {
-        var_dump($request->all());
-        return 'test';
+        $this->service = new Service\PatientService;
     }
 
-    public function read(Request $request,$id)
+    public function create(Request $request)
     {
-        var_dump($request->all());
-        return 'test';
+        return $this->service->create();
+    }
+
+    public function show(Request $request,$id)
+    {
+        return $this->service->getPatientResult();
     }
 
     public function update(Request $request,$id)
     {
-        var_dump($request->all());
-        return 'test';
+        return $this->service->update();
     }
 }

@@ -15,7 +15,7 @@ class PatientConverter
         return $res;
     }
 
-    public static function convertToPatientResult()
+    public static function convertToPatientResult($other_attrs)
     {
         $res = new Response\Api\PatientResult;
 
@@ -25,7 +25,7 @@ class PatientConverter
 
         $res->weight = '60.3';
 
-        $res->other_attrs = '{"age": "28","gender": "男","nationality": "日本"}';
+        $res->other_attrs = $other_attrs;
 
         return $res;
     }

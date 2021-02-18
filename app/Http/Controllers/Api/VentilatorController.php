@@ -4,31 +4,36 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 
+use App\Services\Api as Service;
+
 use Illuminate\Http\Request;
 
 class VentilatorController extends Controller
 {
-    public function read(Request $request)
+    private $service;
+    
+    function __construct() 
     {
-        var_dump($request->all());
-        return 'test';
+        $this->service = new Service\VentilatorService;
+    }
+
+    public function show(Request $request)
+    {
+        return $this->service->getVentilatorResult();
     }
 
     public function create(Request $request)
     {
-        var_dump($request->all());
-        return 'test';
+        return $this->service->create();
     }
 
-    public function readValues(Request $request,$id)
+    public function showValues(Request $request,$id)
     {
-        var_dump($request->all());
-        return 'test';
+        return $this->service->getVentilatorValues();
     }
 
     public function updateValues(Request $request,$id)
     {
-        var_dump($request->all());
-        return 'test';
+        return $this->service->updateVentilatorValues();
     }
 }

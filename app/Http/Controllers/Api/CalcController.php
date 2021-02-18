@@ -4,31 +4,36 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 
+use App\Services\Api as Service;
+
 use Illuminate\Http\Request;
 
 class CalcController extends Controller
 {
+    private $service;
+    
+    function __construct() 
+    {
+        $this->service = new Service\CalcService;
+    }
+
     public function defaultFlow(Request $request)
     {
-        var_dump($request->all());
-        return 'test';
+        return $this->service->getDefaultFlow();
     }
 
     public function estimatedData(Request $request)
     {
-        var_dump($request->all());
-        return 'test';
+        return $this->service->getEstimatedData();
     }
 
     public function ieManual(Request $request)
     {
-        var_dump($request->all());
-        return 'test';
+        return $this->service->getIeManual();
     }
 
     public function ieSound(Request $request)
     {
-        var_dump($request->all());
-        return 'test';
+        return $this->service->getIeSound();
     }
 }
