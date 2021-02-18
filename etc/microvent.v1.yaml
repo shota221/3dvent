@@ -699,26 +699,29 @@ paths:
               description: ''
               type: object
               properties:
-                result:
+                nickname:
+                  type: string
+                  minLength: 1
+                height:
+                  type: string
+                  minLength: 1
+                weight:
+                  type: string
+                  minLength: 1
+                other_attrs:
                   type: object
-                  required:
-                    - nickname
-                    - height
-                    - weight
-                    - other_attrs
-                  properties:
-                    nickname:
-                      type: string
-                    height:
-                      type: string
-                    weight:
-                      type: string
-                    other_attrs:
-                      type: object
-              required:
-                - result
+            examples:
+              example-1:
+                value:
+                  nickname: テスト患者1
+                  height: '169.5'
+                  weight: '60.3'
+                  other_attrs:
+                    age: '28'
+                    gender: 男
+                    nationality: 日本
       description: 患者データを更新する
-  calculate/ie/manual:
+  /calculate/ie/manual:
     parameters: []
     post:
       summary: ''
@@ -828,7 +831,7 @@ paths:
       description: 手動測定による呼気、吸気時間をもとにI/Eを取得
       tags:
         - calculate
-  calculate/ie/sound:
+  /calculate/ie/sound:
     parameters: []
     post:
       summary: ''
