@@ -9,7 +9,7 @@ info:
 servers:
   - url: 'http://api.dev.microvent.jp'
 paths:
-  /login:
+  /auth/login:
     post:
       summary: 組織内利用者によるログイン
       responses:
@@ -23,24 +23,24 @@ paths:
                 properties:
                   result:
                     type: object
-                    required:
-                      - user_id
-                      - api_token
                     properties:
                       user_id:
                         type: number
                       api_token:
                         type: string
                         minLength: 1
+                    required:
+                      - user_id
+                      - api_token
                 required:
                   - result
               examples:
                 example-1:
                   value:
                     result:
-                      user_id: 1
-                      api_token: string
-      operationId: post-login
+                      user_id: 3
+                      api_token: '###user_token###'
+      operationId: post-auth-login
       description: 組織内利用者によるログイン
       parameters:
         - schema:
@@ -79,7 +79,7 @@ paths:
                 - user
                 - password
       tags:
-        - login
+        - auth
   /ventilator:
     get:
       summary: 人工呼吸器情報取得
@@ -326,6 +326,17 @@ paths:
                       flow_o2:
                         type: string
                         minLength: 1
+                    required:
+                      - flow_air
+                      - flow_o2
+                required:
+                  - result
+              examples:
+                example-1:
+                  value:
+                    result:
+                      flow_air: '12.0'
+                      flow_o2: '6.0'
       operationId: get-calculate-default_flow
       parameters:
         - schema:
@@ -436,6 +447,17 @@ paths:
                       fio2:
                         type: string
                         minLength: 1
+                    required:
+                      - peep
+                      - fio2
+                required:
+                  - result
+              examples:
+                example-1:
+                  value:
+                    result:
+                      peep: '7.3'
+                      fio2: '47.3'
       operationId: get-calculate-estimated_data
       description: 諸変数を投げて算出可能な予測値を取得する
       parameters:
@@ -606,6 +628,26 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      fixed_flg:
+                        type: boolean
+                    required:
+                      - fixed_flg
+                required:
+                  - result
+              examples:
+                example-1:
+                  value:
+                    result:
+                      fixed_flg: true
   '/patient/{id}':
     parameters:
       - schema:
@@ -646,10 +688,13 @@ paths:
                 example-1:
                   value:
                     result:
-                      nickname: xxx
+                      nickname: テスト患者1
                       height: '169.5'
                       weight: '60.3'
-                      other_attrs: {}
+                      other_attrs:
+                        age: '28'
+                        gender: 男
+                        nationality: 日本
       operationId: get-patient-id
       parameters:
         - schema:
@@ -672,6 +717,42 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  result:
+                    type: object
+                    required:
+                      - height
+                      - weight
+                    properties:
+                      nickname:
+                        type: string
+                        minLength: 1
+                      height:
+                        type: string
+                        minLength: 1
+                      weight:
+                        type: string
+                        minLength: 1
+                      other_attrs:
+                        type: object
+                required:
+                  - result
+              examples:
+                example-1:
+                  value:
+                    result:
+                      nickname: テスト患者1
+                      height: '169.5'
+                      weight: '60.3'
+                      other_attrs:
+                        age: '28'
+                        gender: 男
+                        nationality: 日本
       operationId: put-patient-id
       parameters:
         - schema:
@@ -699,30 +780,33 @@ paths:
               description: ''
               type: object
               properties:
-                result:
+                nickname:
+                  type: string
+                  minLength: 1
+                height:
+                  type: string
+                  minLength: 1
+                weight:
+                  type: string
+                  minLength: 1
+                other_attrs:
                   type: object
-                  required:
-                    - nickname
-                    - height
-                    - weight
-                    - other_attrs
-                  properties:
-                    nickname:
-                      type: string
-                    height:
-                      type: string
-                    weight:
-                      type: string
-                    other_attrs:
-                      type: object
-              required:
-                - result
+            examples:
+              example-1:
+                value:
+                  nickname: テスト患者1
+                  height: '169.5'
+                  weight: '60.3'
+                  other_attrs:
+                    age: '28'
+                    gender: 男
+                    nationality: 日本
       description: 患者データを更新する
-  /ie/manual:
+  /calculate/ie/manual:
     parameters: []
     post:
       summary: ''
-      operationId: post-ie-manual
+      operationId: post-calculate-ie-manual
       responses:
         '200':
           description: OK
@@ -732,20 +816,26 @@ paths:
                 description: ''
                 type: object
                 properties:
-                  i_avg:
-                    type: string
-                    minLength: 1
-                  e_avg:
-                    type: string
-                    minLength: 1
+                  result:
+                    type: object
+                    properties:
+                      i_avg:
+                        type: string
+                        minLength: 1
+                      e_avg:
+                        type: string
+                        minLength: 1
+                    required:
+                      - i_avg
+                      - e_avg
                 required:
-                  - i_avg
-                  - e_avg
+                  - result
               examples:
                 example-1:
                   value:
-                    i_avg: '***'
-                    e_avg: '***'
+                    result:
+                      i_avg: '2.2'
+                      e_avg: '1.2'
       requestBody:
         content:
           application/json:
@@ -828,11 +918,11 @@ paths:
       description: 手動測定による呼気、吸気時間をもとにI/Eを取得
       tags:
         - calculate
-  /ie/sound:
+  /calculate/ie/sound:
     parameters: []
     post:
       summary: ''
-      operationId: post-ie-sound
+      operationId: post-calculate-ie-sound
       responses:
         '200':
           description: OK
@@ -842,20 +932,26 @@ paths:
                 description: ''
                 type: object
                 properties:
-                  i_avg:
-                    type: string
-                    minLength: 1
-                  e_avg:
-                    type: string
-                    minLength: 1
+                  result:
+                    type: object
+                    properties:
+                      i_avg:
+                        type: string
+                        minLength: 1
+                      e_avg:
+                        type: string
+                        minLength: 1
+                    required:
+                      - i_avg
+                      - e_avg
                 required:
-                  - i_avg
-                  - e_avg
+                  - result
               examples:
                 example-1:
                   value:
-                    i_avg: '***'
-                    e_avg: '***'
+                    result:
+                      i_avg: '2.2'
+                      e_avg: '1.2'
       description: 音声ファイルをもとにI/Eを取得
       parameters:
         - schema:
@@ -900,13 +996,33 @@ paths:
         description: ''
       tags:
         - calculate
-  /logout:
+  /auth/logout:
     post:
       summary: ''
-      operationId: delete-logout
+      operationId: post-auth-logout
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      user_id:
+                        type: number
+                    required:
+                      - user_id
+                required:
+                  - result
+              examples:
+                example-1:
+                  value:
+                    result:
+                      user_id: 3
       description: logout
       parameters:
         - schema:
@@ -929,12 +1045,11 @@ paths:
           in: query
           name: user_id
       tags:
-        - logout
+        - auth
 components:
   schemas: {}
 tags:
-  - name: login
+  - name: auth
   - name: calculate
   - name: patient
   - name: ventilator
-  - name: logout
