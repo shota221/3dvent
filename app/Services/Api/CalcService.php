@@ -17,12 +17,12 @@ class CalcService
 {
     public function getDefaultFlow()
     {
-        return Converter\VentilatorValuesConverter::convertToDefaultFlowResult();
+        return Converter\VentilatorConverter::convertToDefaultFlowResult();
     }
 
     public function getEstimatedData()
     {
-        return Converter\VentilatorValuesConverter::convertToEstimatedDataResult();
+        return Converter\VentilatorConverter::convertToEstimatedDataResult();
     }
 
     public function getIeManual()

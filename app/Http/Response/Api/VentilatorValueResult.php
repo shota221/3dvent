@@ -4,7 +4,7 @@ namespace App\Http\Response\Api;
 
 use App\Http\Response\SuccessJsonResult;
 
-class VentilatorValuesResult extends SuccessJsonResult
+class VentilatorValueResult extends SuccessJsonResult
 {
     public $patient_id;
     
