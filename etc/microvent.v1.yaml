@@ -26,11 +26,19 @@ paths:
                     properties:
                       user_id:
                         type: number
+                      user_name:
+                        type: string
+                        minLength: 1
+                      organization_name:
+                        type: string
+                        minLength: 1
                       api_token:
                         type: string
                         minLength: 1
                     required:
                       - user_id
+                      - user_name
+                      - organization_name
                       - api_token
                 required:
                   - result
@@ -39,6 +47,8 @@ paths:
                   value:
                     result:
                       user_id: 3
+                      user_name: テスト太郎
+                      organization_name: テスト組織
                       api_token: '###user_token###'
       operationId: post-auth-login
       description: 組織内利用者によるログイン
@@ -305,7 +315,7 @@ paths:
         - ventilator
   /calculate/default_flow:
     get:
-      summary: 設定初期推奨値取得
+      summary: FiO2取得
       tags:
         - calculate
       responses:
@@ -320,23 +330,23 @@ paths:
                   result:
                     type: object
                     properties:
-                      flow_air:
+                      air_flow:
                         type: string
                         minLength: 1
-                      flow_o2:
+                      o2_flow:
                         type: string
                         minLength: 1
                     required:
-                      - flow_air
-                      - flow_o2
+                      - air_flow
+                      - o2_flow
                 required:
                   - result
               examples:
                 example-1:
                   value:
                     result:
-                      flow_air: '12.0'
-                      flow_o2: '6.0'
+                      air_flow: '12.0'
+                      o2_flow: '6.0'
       operationId: get-calculate-default_flow
       parameters:
         - schema:
@@ -380,17 +390,21 @@ paths:
                     type: object
                     properties:
                       patient_id:
+                        type: number
+                      predicted_vt:
                         type: string
                         minLength: 1
                     required:
                       - patient_id
+                      - predicted_vt
                 required:
                   - result
               examples:
                 example-1:
                   value:
                     result:
-                      patient_id: '1'
+                      patient_id: 1
+                      predicted_vt: '330'
       operationId: post-patient
       description: 患者情報の新規登録
       parameters:
@@ -421,11 +435,17 @@ paths:
               properties:
                 height:
                   type: string
-                weight:
-                  type: string
+                  minLength: 1
+                gender:
+                  type: number
               required:
                 - height
-                - weight
+                - gender
+            examples:
+              example-1:
+                value:
+                  height: string
+                  gender: 1
   /calculate/estimated_data:
     get:
       summary: 予測値取得
@@ -472,11 +492,11 @@ paths:
         - schema:
             type: string
           in: query
-          name: flow_air
+          name: air_flow
         - schema:
             type: string
           in: query
-          name: flow_o2
+          name: o2_flow
         - schema:
             type: string
           in: header
@@ -513,27 +533,16 @@ paths:
                 properties:
                   result:
                     type: object
-                    required:
-                      - patient_id
-                      - airway_pressure
-                      - flow_air
-                      - flow_o2
-                      - rr
-                      - spo2
-                      - vt
-                      - mv
-                      - peep
-                      - fio2
                     properties:
                       patient_id:
                         type: number
                       airway_pressure:
                         type: string
                         minLength: 1
-                      flow_air:
+                      air_flow:
                         type: string
                         minLength: 1
-                      flow_o2:
+                      o2_flow:
                         type: string
                         minLength: 1
                       rr:
@@ -554,6 +563,17 @@ paths:
                       fio2:
                         type: string
                         minLength: 1
+                    required:
+                      - patient_id
+                      - airway_pressure
+                      - air_flow
+                      - o2_flow
+                      - rr
+                      - spo2
+                      - vt
+                      - mv
+                      - peep
+                      - fio2
                 required:
                   - result
               examples:
@@ -562,8 +582,8 @@ paths:
                     result:
                       patient_id: 1
                       airway_pressure: '23.6'
-                      flow_air: '12.0'
-                      flow_o2: '6.0'
+                      air_flow: '12.0'
+                      o2_flow: '6.0'
                       rr: '15.9'
                       spo2: '96.5'
                       vt: '446'
@@ -672,16 +692,26 @@ paths:
                     type: object
                     required:
                       - height
-                      - weight
+                      - gender
+                      - other_attrs
                     properties:
                       nickname:
                         type: string
+                        minLength: 1
                       height:
                         type: string
-                      weight:
-                        type: string
+                        minLength: 1
+                      gender:
+                        type: number
                       other_attrs:
                         type: object
+                        properties:
+                          weight:
+                            type: string
+                            minLength: 1
+                          nationality:
+                            type: string
+                            minLength: 1
                 required:
                   - result
               examples:
@@ -690,10 +720,9 @@ paths:
                     result:
                       nickname: テスト患者1
                       height: '169.5'
-                      weight: '60.3'
+                      gender: 1
                       other_attrs:
-                        age: '28'
-                        gender: 男
+                        weight: '60.3'
                         nationality: 日本
       operationId: get-patient-id
       parameters:
@@ -727,7 +756,7 @@ paths:
                     type: object
                     required:
                       - height
-                      - weight
+                      - gender
                     properties:
                       nickname:
                         type: string
@@ -735,9 +764,8 @@ paths:
                       height:
                         type: string
                         minLength: 1
-                      weight:
-                        type: string
-                        minLength: 1
+                      gender:
+                        type: number
                       other_attrs:
                         type: object
                 required:
@@ -748,10 +776,9 @@ paths:
                     result:
                       nickname: テスト患者1
                       height: '169.5'
-                      weight: '60.3'
+                      gender: 1
                       other_attrs:
                         age: '28'
-                        gender: 男
                         nationality: 日本
       operationId: put-patient-id
       parameters:
@@ -786,20 +813,21 @@ paths:
                 height:
                   type: string
                   minLength: 1
-                weight:
-                  type: string
-                  minLength: 1
+                gender:
+                  type: number
                 other_attrs:
                   type: object
+              required:
+                - height
+                - gender
             examples:
               example-1:
                 value:
                   nickname: テスト患者1
                   height: '169.5'
-                  weight: '60.3'
+                  gender: 1
                   other_attrs:
                     age: '28'
-                    gender: 男
                     nationality: 日本
       description: 患者データを更新する
   /calculate/ie/manual:

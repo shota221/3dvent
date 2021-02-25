@@ -124,6 +124,7 @@ return [
 
     'duplicated_email_registration' => 'すでに登録されているメールアドレスです。別のメールアドレスを利用してください。',
     'duplicated_registration' => 'すでに登録されています。',
+    'id_not_found'=>'存在しないIDです。',
 
     'unauthenticated' => '認証エラー',
 
