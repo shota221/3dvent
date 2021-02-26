@@ -10,9 +10,13 @@ class VentilatorConverter
     {
         $res = new Response\Api\VentilatorResult;
 
+        $res->is_registered = true;
+
         $res->ventilator_id = 1;
 
-        $res->is_registered = true;
+        $res->patient_id = 1;
+
+        $res->organization_name = 'テスト組織';
 
         return $res;
     }
@@ -21,9 +25,9 @@ class VentilatorConverter
     {
         $res = new Response\Api\VentilatorValueResult;
         
-        $res->flow_air =  '12.0';
+        $res->air_flow =  '12.0';
 
-        $res->flow_o2 =  '6.0';
+        $res->o2_flow =  '6.0';
 
         return $res;
     }
@@ -32,9 +36,20 @@ class VentilatorConverter
     {
         $res = new Response\Api\VentilatorValueResult;
 
-        $res->peep = '7.3';
+        $res->estimated_peep = '7.3';
 
         $res->fio2 = '47.3';
+
+        return $res;
+    }
+
+    public static function convertToVentilatorRegistrationResult()
+    {
+        $res = new Response\Api\VentilatorResult;
+
+        $res->ventilator_id = 1;
+
+        $res->organization_name = 'テスト組織';
 
         return $res;
     }
@@ -45,11 +60,11 @@ class VentilatorConverter
 
         $res->ventilator_id = 1;
 
-        $res->vt = '446';
+        $res->estimated_vt = '446';
 
-        $res->mv = '6.9';
+        $res->estimated_mv = '6.9';
 
-        $res->peep = '7.3';
+        $res->estimated_peep = '7.3';
 
         $res->fio2 = '47.3';
 
@@ -60,23 +75,19 @@ class VentilatorConverter
     {
         $res = new Response\Api\VentilatorValueResult;
 
-        $res->patient_id = 1;
-
         $res->airway_pressure = '23.6';
 
-        $res->flow_air = '12.0';
+        $res->air_flow = '12.0';
 
-        $res->flow_o2 = '6.0';
+        $res->o2_flow = '6.0';
 
         $res->rr = '15.9';
 
-        $res->spo2 = '96.5';
+        $res->estimated_vt = '446';
 
-        $res->vt = '446';
+        $res->estimated_mv = '6.9';
 
-        $res->mv = '6.9';
-
-        $res->peep = '7.3';
+        $res->estimated_peep = '7.3';
 
         $res->fio2 = '47.3';
 

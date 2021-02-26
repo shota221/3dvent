@@ -14,6 +14,8 @@ class IeConverter
 
         $res->e_avg = '1.2';
 
+        $res->rr = '16.7';
+
         return $res;
     }
 }

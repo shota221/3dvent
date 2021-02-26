@@ -113,6 +113,11 @@ paths:
                         type: boolean
                       ventilator_id:
                         type: number
+                      patient_id:
+                        type: number
+                      organization_name:
+                        type: string
+                        minLength: 1
                 required:
                   - result
               examples:
@@ -121,12 +126,16 @@ paths:
                     result:
                       is_registered: true
                       ventilator_id: 1
+                      patient_id: 1
+                      organization_name: テスト組織
                 example-2:
                   value:
                     result:
                       is_registered: false
       operationId: get-ventilator
-      description: 'GS1コードにより人工呼吸器に紐付いた患者の身長体重情報を取得する。存在しない場合はregistered:falseを返す'
+      description: |
+        GS1コードにより人工呼吸器に紐付いた患者の身長体重情報を取得する。存在しない場合はregistered:falseを返す。
+        紐付けがされている場合は、患者IDや組織名も返す。
       parameters:
         - schema:
             type: string
@@ -163,24 +172,12 @@ paths:
                     properties:
                       ventilator_id:
                         type: number
-                      vt:
-                        type: string
-                        minLength: 1
-                      mv:
-                        type: string
-                        minLength: 1
-                      peep:
-                        type: string
-                        minLength: 1
-                      fio2:
+                      organization_name:
                         type: string
                         minLength: 1
                     required:
                       - ventilator_id
-                      - vt
-                      - mv
-                      - peep
-                      - fio2
+                      - organization_name
                 required:
                   - result
               examples:
@@ -188,10 +185,7 @@ paths:
                   value:
                     result:
                       ventilator_id: 1
-                      vt: '446'
-                      mv: '6.9'
-                      peep: '7.3'
-                      fio2: '47.3'
+                      organization_name: テスト組織
       parameters:
         - schema:
             type: string
@@ -216,6 +210,7 @@ paths:
           in: header
           name: X-User-Token
           description: ユーザー識別用トークン
+          required: true
       requestBody:
         content:
           application/json:
@@ -223,94 +218,27 @@ paths:
               description: ''
               type: object
               properties:
-                ventilator_id:
-                  type: number
-                ventilator_data:
-                  type: object
-                  properties:
-                    gs1_code:
-                      type: string
-                      minLength: 1
-                    latitude:
-                      type: string
-                      minLength: 1
-                    longitude:
-                      type: string
-                      minLength: 1
-                  required:
-                    - gs1_code
-                    - latitude
-                    - longitude
-                ventilator_values:
-                  type: object
-                  required:
-                    - patient_id
-                    - pressure_airway
-                    - flow_air
-                    - flow_o2
-                    - rr
-                    - spo2
-                    - i_avg
-                    - e_avg
-                  properties:
-                    patient_id:
-                      type: number
-                    pressure_airway:
-                      type: string
-                      minLength: 1
-                    flow_air:
-                      type: string
-                      minLength: 1
-                    flow_o2:
-                      type: string
-                      minLength: 1
-                    rr:
-                      type: string
-                      minLength: 1
-                    spo2:
-                      type: string
-                      minLength: 1
-                    i_avg:
-                      type: string
-                      minLength: 1
-                    e_avg:
-                      type: string
-                      minLength: 1
+                gs1_code:
+                  type: string
+                  minLength: 1
+                latitude:
+                  type: string
+                  minLength: 1
+                longitude:
+                  type: string
+                  minLength: 1
               required:
-                - ventilator_values
+                - gs1_code
             examples:
-              ventilator登録済みの場合:
+              example-1:
                 value:
-                  ventilator_id: 1
-                  ventilator_values:
-                    patient_id: 1
-                    pressure_airway: '***'
-                    flow_air: '***'
-                    flow_o2: '***'
-                    rr: '***'
-                    spo2: '***'
-                    i_avg: '***'
-                    e_avg: '***'
-              ventilator未登録の場合:
-                value:
-                  ventilator_data:
-                    gs1_code: '49123456789012'
-                    latitude: '35.681507'
-                    longitude: '139.765581'
-                  ventilator_values:
-                    patient_id: 1
-                    pressure_airway: '***'
-                    flow_air: '***'
-                    flow_o2: '***'
-                    rr: '***'
-                    spo2: '***'
-                    i_avg: '***'
-                    e_avg: '***'
+                  gs1_code: '49123456789012'
+                  latitude: '35.681507'
+                  longitude: '139.765581'
         description: ''
       description: |-
-        関連値を登録する。人工呼吸器が未登録の場合はそのデータも一緒に登録する。
-        ventilator_idを持たない場合はventilator_dataを必須とし呼吸器登録を行う。
-        X-User-Tokenを持つ場合はユーザー特定してventilator_values.user_id,ventilator.organization_idも登録する。
+        人工呼吸器を登録する。
+        このときユーザー識別用トークンが付与されている場合はその組織名を返す。
       tags:
         - ventilator
   /calculate/default_flow:
@@ -460,23 +388,23 @@ paths:
                 properties:
                   result:
                     type: object
+                    required:
+                      - estimated_peep
+                      - fio2
                     properties:
-                      peep:
+                      estimated_peep:
                         type: string
                         minLength: 1
                       fio2:
                         type: string
                         minLength: 1
-                    required:
-                      - peep
-                      - fio2
                 required:
                   - result
               examples:
                 example-1:
                   value:
                     result:
-                      peep: '7.3'
+                      estimated_peep: '7.3'
                       fio2: '47.3'
       operationId: get-calculate-estimated_data
       description: 諸変数を投げて算出可能な予測値を取得する
@@ -533,9 +461,16 @@ paths:
                 properties:
                   result:
                     type: object
+                    required:
+                      - airway_pressure
+                      - air_flow
+                      - o2_flow
+                      - rr
+                      - estimated_vt
+                      - estimated_mv
+                      - estimated_peep
+                      - fio2
                     properties:
-                      patient_id:
-                        type: number
                       airway_pressure:
                         type: string
                         minLength: 1
@@ -548,32 +483,18 @@ paths:
                       rr:
                         type: string
                         minLength: 1
-                      spo2:
+                      estimated_vt:
                         type: string
                         minLength: 1
-                      vt:
+                      estimated_mv:
                         type: string
                         minLength: 1
-                      mv:
-                        type: string
-                        minLength: 1
-                      peep:
+                      estimated_peep:
                         type: string
                         minLength: 1
                       fio2:
                         type: string
                         minLength: 1
-                    required:
-                      - patient_id
-                      - airway_pressure
-                      - air_flow
-                      - o2_flow
-                      - rr
-                      - spo2
-                      - vt
-                      - mv
-                      - peep
-                      - fio2
                 required:
                   - result
               examples:
@@ -585,10 +506,9 @@ paths:
                       air_flow: '12.0'
                       o2_flow: '6.0'
                       rr: '15.9'
-                      spo2: '96.5'
-                      vt: '446'
-                      mv: '6.9'
-                      peep: '7.3'
+                      estimated_vt: '446'
+                      estimated_mv: '6.9'
+                      estimated_peep: '7.3'
                       fio2: '47.3'
       operationId: get-ventilator-ventilator_id
       parameters:
@@ -628,6 +548,11 @@ paths:
           description: application/json; charset=UTF-8
           name: Content-Type
           required: true
+        - schema:
+            type: string
+          in: header
+          name: X-App-Key
+          description: アプリキー
       requestBody:
         content:
           application/json:
@@ -668,11 +593,123 @@ paths:
                   value:
                     result:
                       fixed_flg: true
-  '/patient/{id}':
+    post:
+      summary: ''
+      operationId: post-ventilator-ventilator_id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      ventilator_id:
+                        type: number
+                      fio2:
+                        type: string
+                        minLength: 1
+                      estimated_vt:
+                        type: string
+                        minLength: 1
+                      estimated_mv:
+                        type: string
+                        minLength: 1
+                      estimated_peep:
+                        type: string
+                        minLength: 1
+                    required:
+                      - ventilator_id
+                      - fio2
+                      - estimated_vt
+                      - estimated_mv
+                      - estimated_peep
+                required:
+                  - result
+      parameters:
+        - schema:
+            type: string
+          in: header
+          description: 疎通用トークン
+          name: X-Api-Token
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: Accept
+          description: application/json
+          required: true
+        - schema:
+            type: string
+          in: header
+          description: application/json; charset=UTF-8
+          name: Content-Type
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: X-App-Key
+          description: アプリキー
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: X-User-Token
+          description: ユーザートークン
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                ventilator_id:
+                  type: number
+                airway_pressure:
+                  type: string
+                  minLength: 1
+                air_flow:
+                  type: string
+                  minLength: 1
+                o2_flow:
+                  type: string
+                  minLength: 1
+                rr:
+                  type: string
+                  minLength: 1
+                i_avg:
+                  type: string
+                  minLength: 1
+                e_avg:
+                  type: string
+                  minLength: 1
+                predicted_vt:
+                  type: string
+                  minLength: 1
+              required:
+                - ventilator_id
+                - airway_pressure
+                - air_flow
+                - o2_flow
+                - rr
+                - i_avg
+                - e_avg
+                - predicted_vt
+      description: |-
+        関連値を登録する。人工呼吸器が未登録の場合はそのデータも一緒に登録する。
+        ventilator_idを持たない場合はventilator_dataを必須とし呼吸器登録を行う。
+        X-User-Tokenを持つ場合はユーザー特定してventilator_values.user_idも登録する。
+      tags:
+        - ventilator
+  '/patient/{patient_id}':
     parameters:
       - schema:
           type: string
-        name: id
+        name: patient_id
         in: path
         required: true
     get:
@@ -691,39 +728,42 @@ paths:
                   result:
                     type: object
                     required:
-                      - height
                       - gender
-                      - other_attrs
+                      - predicted_vt
+                      - height
                     properties:
                       nickname:
                         type: string
                         minLength: 1
-                      height:
-                        type: string
-                        minLength: 1
                       gender:
+                        type: number
+                      predicted_vt:
                         type: number
                       other_attrs:
                         type: object
                         properties:
-                          weight:
+                          age:
                             type: string
                             minLength: 1
                           nationality:
                             type: string
                             minLength: 1
+                      height:
+                        type: string
+                        minLength: 1
                 required:
                   - result
               examples:
                 example-1:
                   value:
                     result:
-                      nickname: テスト患者1
-                      height: '169.5'
+                      nickname: テスト患者5
                       gender: 1
+                      predicted_vt: 393
                       other_attrs:
-                        weight: '60.3'
+                        age: '28'
                         nationality: 日本
+                      height: '169.5'
       operationId: get-patient-id
       parameters:
         - schema:
@@ -754,32 +794,39 @@ paths:
                 properties:
                   result:
                     type: object
-                    required:
-                      - height
-                      - gender
                     properties:
                       nickname:
                         type: string
                         minLength: 1
-                      height:
-                        type: string
-                        minLength: 1
                       gender:
+                        type: number
+                      predicted_vt:
                         type: number
                       other_attrs:
                         type: object
+                        properties:
+                          age:
+                            type: string
+                            minLength: 1
+                          nationality:
+                            type: string
+                            minLength: 1
+                      height:
+                        type: string
+                        minLength: 1
                 required:
                   - result
               examples:
                 example-1:
                   value:
                     result:
-                      nickname: テスト患者1
-                      height: '169.5'
+                      nickname: テスト患者5
                       gender: 1
+                      predicted_vt: 393
                       other_attrs:
                         age: '28'
                         nationality: 日本
+                      height: '169.5'
       operationId: put-patient-id
       parameters:
         - schema:
@@ -853,9 +900,13 @@ paths:
                       e_avg:
                         type: string
                         minLength: 1
+                      rr:
+                        type: string
+                        minLength: 1
                     required:
                       - i_avg
                       - e_avg
+                      - rr
                 required:
                   - result
               examples:
@@ -864,6 +915,7 @@ paths:
                     result:
                       i_avg: '2.2'
                       e_avg: '1.2'
+                      rr: '17.6'
       requestBody:
         content:
           application/json:
@@ -969,9 +1021,9 @@ paths:
                       e_avg:
                         type: string
                         minLength: 1
-                    required:
-                      - i_avg
-                      - e_avg
+                      rr:
+                        type: string
+                        minLength: 1
                 required:
                   - result
               examples:
@@ -980,6 +1032,7 @@ paths:
                     result:
                       i_avg: '2.2'
                       e_avg: '1.2'
+                      rr: '17.6'
       description: 音声ファイルをもとにI/Eを取得
       parameters:
         - schema:
@@ -1058,22 +1111,80 @@ paths:
           in: header
           description: Bearer認証トークン
           name: Authorization
+          required: true
         - schema:
             type: string
           in: header
           description: 疎通用トークン
           name: X-Api-Token
+          required: true
         - schema:
             type: string
           in: header
           description: application/json
           name: Accept
+          required: true
         - schema:
             type: string
-          in: query
-          name: user_id
+          in: header
+          name: X-User-Token
+          description: ユーザー識別用トークン
+          required: true
       tags:
         - auth
+  /idfv:
+    post:
+      summary: ''
+      operationId: post-idfv
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  appkey:
+                    type: string
+                    minLength: 1
+                required:
+                  - appkey
+      description: 初回利用時にidfvをもとにアプリキー発行
+      parameters:
+        - schema:
+            type: string
+          in: header
+          description: 疎通用トークン
+          name: X-Api-Token
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: Accept
+          description: application/json
+          required: true
+        - schema:
+            type: string
+          in: header
+          description: application/json; charset=UTF-8
+          name: Content-Type
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                idfv:
+                  type: string
+                  minLength: 1
+              required:
+                - idfv
+      tags:
+        - idfv
+    parameters: []
 components:
   schemas: {}
 tags:
@@ -1081,3 +1192,4 @@ tags:
   - name: calculate
   - name: patient
   - name: ventilator
+  - name: idfv
