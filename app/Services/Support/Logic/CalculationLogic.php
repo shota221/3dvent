@@ -56,7 +56,7 @@ trait CalculationLogic
         $a = 2.425;
         $b = 0.195;
 
-        return $a + $b * $airway_pressure;
+        return round($a + $b * $airway_pressure,1);
     }
 
     /**
@@ -69,7 +69,7 @@ trait CalculationLogic
     public function calcFio2(float $air_flow, float $o2_flow)
     {
         $total_flow = $air_flow + $o2_flow;
-        return (($air_flow * 0.21 + $o2_flow) / $total_flow) * 100;
+        return round((($air_flow * 0.21 + $o2_flow) / $total_flow) * 100,1);
     }
 
     /**

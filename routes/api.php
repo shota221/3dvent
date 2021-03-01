@@ -19,7 +19,7 @@
 Route::group(['middleware' => ['routetype:api']], function() {
 
     //idfv登録・アプリキー発行
-    Route::post('/idfv','AppkeyController@create')->name('api.appkey.create');
+    Route::post('/appkey','AppkeyController@create')->name('api.appkey.create');
 
     //組織ユーザートークン発行
     Route::post('/auth/login', 'AuthController@login')->name('api.auth.login');

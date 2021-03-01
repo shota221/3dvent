@@ -412,10 +412,6 @@ paths:
         - schema:
             type: string
           in: query
-          name: patient_id
-        - schema:
-            type: string
-          in: query
           name: airway_pressure
         - schema:
             type: string
@@ -1132,10 +1128,10 @@ paths:
           required: true
       tags:
         - auth
-  /idfv:
+  /appkey:
     post:
       summary: ''
-      operationId: post-idfv
+      operationId: post-appkey
       responses:
         '200':
           description: OK
@@ -1177,13 +1173,13 @@ paths:
               description: ''
               type: object
               properties:
-                idfv:
+                appkey:
                   type: string
                   minLength: 1
               required:
-                - idfv
+                - appkey
       tags:
-        - idfv
+        - appkey
     parameters: []
 components:
   schemas: {}
@@ -1192,4 +1188,3 @@ tags:
   - name: calculate
   - name: patient
   - name: ventilator
-  - name: idfv

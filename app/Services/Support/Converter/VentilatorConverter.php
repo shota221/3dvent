@@ -25,20 +25,20 @@ class VentilatorConverter
     {
         $res = new Response\Api\VentilatorValueResult;
         
-        $res->air_flow =  '12.0';
+        $res->air_flow =  '9.0';
 
-        $res->o2_flow =  '6.0';
+        $res->o2_flow =  '3.0';
 
         return $res;
     }
 
-    public static function convertToEstimatedDataResult() 
+    public static function convertToEstimatedDataResult($estimated_peep = null,$fio2 = null) 
     {
         $res = new Response\Api\VentilatorValueResult;
 
-        $res->estimated_peep = '7.3';
+        $res->estimated_peep = $estimated_peep ?? null;
 
-        $res->fio2 = '47.3';
+        $res->fio2 = $fio2 ?? null;
 
         return $res;
     }
