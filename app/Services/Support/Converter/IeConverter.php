@@ -6,15 +6,15 @@ use App\Http\Response as Response;
 
 class IeConverter
 {
-    public static function convertToIeResult() 
+    public static function convertToIeResult($i_avg,$e_avg,$rr) 
     {
         $res = new Response\Api\IeResult;
 
-        $res->i_avg = '2.2';
+        $res->i_avg = $i_avg;
 
-        $res->e_avg = '1.2';
+        $res->e_avg = $e_avg;
 
-        $res->rr = '16.7';
+        $res->rr = $rr;
 
         return $res;
     }

@@ -72,8 +72,27 @@ trait CalculationLogic
         return round((($air_flow * 0.21 + $o2_flow) / $total_flow) * 100,1);
     }
 
+
+    public function calcIeAvg(array $i_e_arr)
+    {
+        $i_sum = 0.0;
+        $e_sum = 0.0;
+        $count = 0.0;
+
+        foreach($i_e_arr as $i_e) {
+            $i_sum += floatval($i_e->i);
+            $e_sum += floatval($i_e->e);
+            $count++;
+        }
+
+        $i_e_avg['i'] = round($i_sum/$count,3);
+
+        $i_e_avg['e'] = round($e_sum/$count,3);
+
+        return $i_e_avg;
+    }
     /**
-     * RR(回/min)の算出、小数点第一位まで
+     * RR(回/min)の算出、小数点第二位まで
      *
      * @param float $i_avg
      * @param float $e_avg
@@ -81,7 +100,7 @@ trait CalculationLogic
      */
     public function calcRr(float $i_avg, float $e_avg)
     {
-        return 60 / ($e_avg + $i_avg);
+        return round(60 / ($e_avg + $i_avg),2);
     }
 
     /**

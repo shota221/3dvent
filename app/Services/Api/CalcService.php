@@ -40,11 +40,15 @@ class CalcService
 
     public function getIeManual($form)
     {
-        return Converter\IeConverter::convertToIeResult();
+        $i_e_avg = $this->calcIeAvg($form->data);
+
+        $rr = $this->calcRr($i_e_avg['i'],$i_e_avg['e']);       
+
+        return Converter\IeConverter::convertToIeResult($i_e_avg['i'],$i_e_avg['e'],$rr);
     }
 
     public function getIeSound($form)
     {
-        return Converter\IeConverter::convertToIeResult();
+        return Converter\IeConverter::convertToIeResult(1.280,0.971,26.65);
     }
 }

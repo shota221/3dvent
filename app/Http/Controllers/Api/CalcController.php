@@ -45,7 +45,13 @@ class CalcController extends Controller
 
     public function ieManual(Request $request)
     {
-        return $this->service->getIeManual();
+        $form = new Form\CalcIeManualForm($request->all());
+
+        if ($form->hasError() || !$response = $this->service->getIeManual($form)) {
+            throw new Exceptions\InvalidFormException($form);
+        }
+
+        return $response;
     }
 
     public function ieSound(Request $request)
