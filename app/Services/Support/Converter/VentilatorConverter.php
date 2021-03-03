@@ -1,30 +1,31 @@
-<?php 
+<?php
 
 namespace App\Services\Support\Converter;
 
+use App\Http\Forms\Api as Form;
 use App\Http\Response as Response;
+use App\Models\Ventilator;
 
 class VentilatorConverter
 {
-    public static function convertToVentilatorResult() 
+    public static function convertToVentilatorResult($entity = null)
     {
         $res = new Response\Api\VentilatorResult;
 
-        $res->is_registered = true;
+        if ($res->is_registered = !is_null($entity)) {
+            $res->ventilator_id = $entity->id;
 
-        $res->ventilator_id = 1;
+            $res->patient_id = $entity->patient_id ?? null;
 
-        $res->patient_id = 1;
-
-        $res->organization_name = 'テスト組織';
-
+            $res->organization_name = $entity->organization_name ?? null;
+        }
         return $res;
     }
 
-    public static function convertToDefaultFlowResult() 
+    public static function convertToDefaultFlowResult()
     {
         $res = new Response\Api\VentilatorValueResult;
-        
+
         $res->air_flow =  '9.0';
 
         $res->o2_flow =  '3.0';
@@ -32,7 +33,7 @@ class VentilatorConverter
         return $res;
     }
 
-    public static function convertToEstimatedDataResult($estimated_peep = null,$fio2 = null) 
+    public static function convertToEstimatedDataResult($estimated_peep = null, $fio2 = null)
     {
         $res = new Response\Api\VentilatorValueResult;
 
@@ -43,13 +44,13 @@ class VentilatorConverter
         return $res;
     }
 
-    public static function convertToVentilatorRegistrationResult()
+    public static function convertToVentilatorRegistrationResult($entity)
     {
         $res = new Response\Api\VentilatorResult;
 
-        $res->ventilator_id = 1;
+        $res->ventilator_id = $entity->id;
 
-        $res->organization_name = 'テスト組織';
+        $res->organization_name = $entity->organization_name ?? null;
 
         return $res;
     }
@@ -71,7 +72,7 @@ class VentilatorConverter
         return $res;
     }
 
-    public static function convertToVentilatorValueResult() 
+    public static function convertToVentilatorValueResult()
     {
         $res = new Response\Api\VentilatorValueResult;
 
@@ -101,5 +102,26 @@ class VentilatorConverter
         $res->fixed_flg = true;
 
         return $res;
+    }
+
+    public static function convertToVentilatorEntity(Form\VentilatorCreateForm $form)
+    {
+        $entity = new Ventilator;
+
+        $entity->gs1_code = $form->gs1_code;
+
+        if (!is_null($form->latitude) && !is_null($form->longitude)) {
+            $entity->location = ['latitude' => $form->latitude, 'longitude' => $form->longitude];
+        }
+
+        $entity->organization_id = $form->organization_id ?? null;
+
+        $entity->registered_user_id = $form->registered_user_id ?? null;
+
+        return $entity;
+    }
+
+    public static function convertToVentilatorValueEntity()
+    {
     }
 }

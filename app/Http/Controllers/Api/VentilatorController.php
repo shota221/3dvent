@@ -8,6 +8,10 @@ use App\Services\Api as Service;
 
 use Illuminate\Http\Request;
 
+use App\Http\Forms\Api as Form;
+
+use App\Exceptions;
+
 class VentilatorController extends Controller
 {
     private $service;
@@ -19,12 +23,26 @@ class VentilatorController extends Controller
 
     public function show(Request $request)
     {
-        return $this->service->getVentilatorResult();
+        $form = new Form\VentilatorShowForm($request->all());
+
+        if ($form->hasError() || !$response = $this->service->getVentilatorResult($form)) {
+            throw new Exceptions\InvalidFormException($form);
+        }
+
+        return $response;
     }
 
     public function create(Request $request)
     {
-        return $this->service->create();
+        $form = new Form\VentilatorCreateForm($request->all());
+
+        $user_token = $request->hasHeader('X-User-Token') ? $request->header('X-User-Token') : null;
+
+        if ($form->hasError() || !$response = $this->service->create($form,$user_token)) {
+            throw new Exceptions\InvalidFormException($form);
+        }
+
+        return $response;
     }
 
     public function showValue(Request $request,$id)

@@ -12,17 +12,41 @@ use App\Services\Support as Support;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Services\Support\Converter;
+use App\Services\Support\DBUtil;
 
 class VentilatorService
 {
-    public function getVentilatorResult()
+    public function getVentilatorResult($form)
     {
-        return Converter\VentilatorConverter::convertToVentilatorResult();
+        if (!Repos\VentilatorRepository::existsByGs1Code($form->gs1_code)) {
+            return Converter\VentilatorConverter::convertToVentilatorResult();
+        }
+        $ventilator = Repos\VentilatorRepository::findOneByGs1Code($form->gs1_code);
+
+        return Converter\VentilatorConverter::convertToVentilatorResult($ventilator);
     }
 
-    public function create()
+    public function create($form,$user_token)
     {
-        return Converter\VentilatorConverter::convertToVentilatorRegistrationResult();
+        if (!is_null($user_token)) {
+            //TODO Auth:user()からの取得
+            $form->registered_user_id = 3;
+            $form->organization_id = 1;
+        }
+
+        $entity = Converter\VentilatorConverter::convertToVentilatorEntity($form);
+
+        DBUtil::Transaction(
+            '患者情報登録',
+            function () use ($entity) {
+                $entity->save();
+            }
+        );
+
+        //組織名込の情報を際取得
+        $ventilator = Repos\VentilatorRepository::findOneByGs1Code($entity->gs1_code);
+
+        return Converter\VentilatorConverter::convertToVentilatorRegistrationResult($ventilator);
     }
 
     public function getVentilatorValue()
