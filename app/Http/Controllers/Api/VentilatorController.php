@@ -45,18 +45,50 @@ class VentilatorController extends Controller
         return $response;
     }
 
-    public function showValue(Request $request,$id)
+    public function showValue(Request $request,$ventilator_id)
     {
-        return $this->service->getVentilatorValue();
+        $request->merge(['ventilator_id'=>$ventilator_id]);
+
+        $form = new Form\VentilatorValueShowForm($request->all());
+
+        if ($form->hasError() || !$response = $this->service->getVentilatorValueResult($form)) {
+            throw new Exceptions\InvalidFormException($form);
+        }
+
+        return $response;
     }
 
-    public function createValue(Request $request,$id)
+    public function createValue(Request $request,$ventilator_id)
     {
-        return $this->service->createVentilatorValue();
+        $request->merge(['ventilator_id'=>$ventilator_id]);
+
+        $form = new Form\VentilatorValueCreateForm($request->all());
+
+        $user_token = $request->hasHeader('X-User-Token') ? $request->header('X-User-Token') : null;
+
+        if (!$request->hasHeader('X-App-Key')) {
+            $form->addError('X-App-Key','validation.appkey_required');
+        } else {
+            $appkey = $request->header('X-App-Key');
+        }
+
+        if ($form->hasError() || !$response = $this->service->createVentilatorValue($form,$user_token,$appkey)) {
+            throw new Exceptions\InvalidFormException($form);
+        }
+
+        return $response;
     }
 
-    public function updateValue(Request $request,$id)
+    public function updateValue(Request $request,$ventilator_id)
     {
-        return $this->service->updateVentilatorValue();
+        $request->merge(['ventilator_id'=>$ventilator_id]);
+
+        $form = new Form\VentilatorValueUpdateForm($request->all());
+
+        if ($form->hasError() || !$response = $this->service->updateVentilatorValue($form)) {
+            throw new Exceptions\InvalidFormException($form);
+        }
+
+        return $response;
     }
 }

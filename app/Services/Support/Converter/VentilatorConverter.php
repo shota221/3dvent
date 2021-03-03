@@ -5,6 +5,8 @@ namespace App\Services\Support\Converter;
 use App\Http\Forms\Api as Form;
 use App\Http\Response as Response;
 use App\Models\Ventilator;
+use App\Models\VentilatorValue;
+use App\Models\Patient;
 
 class VentilatorConverter
 {
@@ -13,12 +15,15 @@ class VentilatorConverter
         $res = new Response\Api\VentilatorResult;
 
         if ($res->is_registered = !is_null($entity)) {
+
             $res->ventilator_id = $entity->id;
 
             $res->patient_id = $entity->patient_id ?? null;
 
             $res->organization_name = $entity->organization_name ?? null;
+        
         }
+
         return $res;
     }
 
@@ -55,51 +60,53 @@ class VentilatorConverter
         return $res;
     }
 
-    public static function convertToVentilatorValueRegistrationResult()
+    public static function convertToVentilatorValueRegistrationResult($entity)
     {
         $res = new Response\Api\VentilatorValueResult;
 
-        $res->ventilator_id = 1;
+        $res->ventilator_id = $entity->ventilator_id;
 
-        $res->estimated_vt = '446';
+        $res->estimated_vt = $entity->estimated_vt;
 
-        $res->estimated_mv = '6.9';
+        $res->estimated_mv = $entity->estimated_mv;
 
-        $res->estimated_peep = '7.3';
+        $res->estimated_peep = $entity->estimated_peep;
 
-        $res->fio2 = '47.3';
+        $res->fio2 = $entity->fio2;
 
         return $res;
     }
 
-    public static function convertToVentilatorValueResult()
+    public static function convertToVentilatorValueResult($entity)
     {
         $res = new Response\Api\VentilatorValueResult;
 
-        $res->airway_pressure = '23.6';
+        $res->patient_id = $entity->patient_id; 
 
-        $res->air_flow = '12.0';
+        $res->airway_pressure = $entity->airway_pressure; 
 
-        $res->o2_flow = '6.0';
+        $res->air_flow = $entity->air_flow; 
 
-        $res->rr = '15.9';
+        $res->o2_flow = $entity->o2_flow; 
 
-        $res->estimated_vt = '446';
+        $res->rr = $entity->rr; 
 
-        $res->estimated_mv = '6.9';
+        $res->estimated_vt = $entity->estimated_vt; 
 
-        $res->estimated_peep = '7.3';
+        $res->estimated_mv = $entity->estimated_mv; 
 
-        $res->fio2 = '47.3';
+        $res->estimated_peep = $entity->estimated_peep; 
+
+        $res->fio2 = $entity->fio2; 
 
         return $res;
     }
 
-    public static function convertToVentilatorValueUpdateResult()
+    public static function convertToVentilatorValueUpdateResult($entity)
     {
         $res = new Response\Api\VentilatorValueResult;
 
-        $res->fixed_flg = true;
+        $res->fixed_flg = $entity->fixed_flg;
 
         return $res;
     }
@@ -121,7 +128,55 @@ class VentilatorConverter
         return $entity;
     }
 
-    public static function convertToVentilatorValueEntity()
+    public static function convertToVentilatorValueEntity(Form\VentilatorValueCreateForm $form, Patient $patient)
     {
+        $entity = new VentilatorValue;
+
+        $entity->ventilator_id = $form->ventilator_id;
+
+        $entity->height = $patient->height;
+
+        $entity->gender = $patient->gender;
+    
+        $entity->airway_pressure = $form->airway_pressure;
+    
+        $entity->air_flow = $form->air_flow;
+    
+        $entity->o2_flow = $form->o2_flow;
+    
+        $entity->rr = $form->rr;
+    
+        $entity->inspiratory_time = $form->i_avg;
+    
+        $entity->expiratory_time = $form->e_avg;
+
+        $entity->vt_per_kg = $form->vt_per_kg ?? 6;
+    
+        $entity->predicted_vt = $form->predicted_vt;
+
+        $entity->estimated_vt = $form->estimated_vt;
+    
+        $entity->estimated_mv = $form->estimated_mv;
+    
+        $entity->estimated_peep = $form->estimated_peep;
+    
+        $entity->fio2 = $form->fio2;
+    
+        $entity->total_flow = $form->total_flow;
+    
+        $entity->user_id = $form->user_id ?? null;
+    
+        $entity->appkey_id = $form->appkey_id;
+
+        return $entity;
+    }
+
+    public static function convertToVentilatorValueUpdateEntity(Form\VentilatorValueUpdateForm $form, VentilatorValue $entity)
+    {
+        $entity->fixed_flg = $form->fixed_flg;
+
+        $entity->fixed_at = $form->fixed_at;
+
+        return $entity;
     }
 }

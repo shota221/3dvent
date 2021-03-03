@@ -26,9 +26,9 @@ trait CalculationLogic
     {
         switch ($gender) {
             case 1: //男性の場合
-                return round(50.0 + 0.91 * ($height - 152.4),2);
+                return round(50.0 + 0.91 * ($height - 152.4), 2);
             case 2: //女性の場合
-                return round(45.5 + 0.91 * ($height - 152.4),2);
+                return round(45.5 + 0.91 * ($height - 152.4), 2);
         }
     }
 
@@ -56,7 +56,7 @@ trait CalculationLogic
         $a = 2.425;
         $b = 0.195;
 
-        return round($a + $b * $airway_pressure,1);
+        return round($a + $b * $airway_pressure, 1);
     }
 
     /**
@@ -69,7 +69,7 @@ trait CalculationLogic
     public function calcFio2(float $air_flow, float $o2_flow)
     {
         $total_flow = $air_flow + $o2_flow;
-        return round((($air_flow * 0.21 + $o2_flow) / $total_flow) * 100,1);
+        return round((($air_flow * 0.21 + $o2_flow) / $total_flow) * 100, 1);
     }
 
 
@@ -79,15 +79,15 @@ trait CalculationLogic
         $e_sum = 0.0;
         $count = 0.0;
 
-        foreach($i_e_arr as $i_e) {
+        foreach ($i_e_arr as $i_e) {
             $i_sum += floatval($i_e->i);
             $e_sum += floatval($i_e->e);
             $count++;
         }
 
-        $i_e_avg['i'] = round($i_sum/$count,3);
+        $i_e_avg['i'] = round($i_sum / $count, 3);
 
-        $i_e_avg['e'] = round($e_sum/$count,3);
+        $i_e_avg['e'] = round($e_sum / $count, 3);
 
         return $i_e_avg;
     }
@@ -100,7 +100,7 @@ trait CalculationLogic
      */
     public function calcRr(float $i_avg, float $e_avg)
     {
-        return round(60 / ($e_avg + $i_avg),2);
+        return round(60 / ($e_avg + $i_avg), 2);
     }
 
     /**
@@ -112,11 +112,11 @@ trait CalculationLogic
      */
     public function calcEstimatedVt(float $i_avg, float $total_flow)
     {
-        return ($total_flow / 60) * $i_avg * 1000;
+        return round(($total_flow / 60) * $i_avg * 1000,1);
     }
 
     /**
-     * EstimatedMV(L/min)の算出、小数点第一位まで
+     * EstimatedMV(L/min)の算出、小数点第二位まで
      *
      * @param float $vt
      * @param float $rr
@@ -124,6 +124,18 @@ trait CalculationLogic
      */
     public function calcEstimatedMv(float $vt, float $rr)
     {
-        return $vt * $rr / 1000;
+        return round($vt * $rr / 1000,2);
+    }
+
+    /**
+     * 供給気量の(L/min)の算出
+     *
+     * @param float $air_flow
+     * @param float $o2_flow
+     * @return float
+     */
+    public function calcTotalFlow(float $air_flow, float $o2_flow)
+    {
+        return $air_flow + $o2_flow;
     }
 }
