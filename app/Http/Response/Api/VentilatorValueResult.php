@@ -4,29 +4,28 @@ namespace App\Http\Response\Api;
 
 use App\Http\Response\SuccessJsonResult;
 
-class VentilatorValuesResult extends SuccessJsonResult
-{
-    public $patient_id;
-    
+class VentilatorValueResult extends SuccessJsonResult
+{   
     public $ventilator_id;
     
     public $airway_pressure;
     
-    public $flow_air;
+    public $air_flow;
     
-    public $flow_o2;
+    public $o2_flow;
     
     public $rr;
     
     public $spo2;
     
-    public $vt;
+    public $estimated_vt;
     
-    public $mv;
+    public $estimated_mv;
     
-    public $peep;
+    public $estimated_peep;
     
     public $fio2;   
 
     public $fixed_flg;
+
 }

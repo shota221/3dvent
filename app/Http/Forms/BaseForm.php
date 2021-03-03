@@ -109,15 +109,21 @@ abstract class BaseForm
         foreach ($this->errors as $error) {
             $errorKey = $error->key;
 
+            $isNested = $error->nested;
+
             $errorArray = $error->toArray();
 
             $messageArray = $errorArray[$errorKey];
 
             if (! array_key_exists($errorKey, $messages)) {
-                $messages[$errorKey] = [];
-            }
-
-            $messages[$errorKey][] = $messageArray;            
+                $messages[$errorKey] = $messageArray;
+            } else {
+                if ($isNested) {
+                    $messages[$errorKey] = $messages[$errorKey] + $messageArray; // indexをキープ
+                } else {
+                    $messages[$errorKey] = array_merge((array) $messages[$errorKey], (array) $messageArray);
+                }
+            }           
         }
 
         return $messages;

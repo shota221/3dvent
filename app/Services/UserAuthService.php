@@ -22,12 +22,12 @@ class UserAuthService
 {
     public function login()
     {
-        return Converter\UserConverter::convertToUserTokenResult();
+        return Converter\UserConverter::convertToUserResult();
     }
 
     public function logout()
     {
-        return Converter\UserConverter::convertToUserTokenResult(false);
+        return Converter\UserConverter::convertToUserResult(false);
     }
 }
 

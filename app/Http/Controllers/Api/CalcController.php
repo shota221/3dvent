@@ -8,6 +8,10 @@ use App\Services\Api as Service;
 
 use Illuminate\Http\Request;
 
+use App\Http\Forms\Api as Form;
+
+use App\Exceptions;
+
 class CalcController extends Controller
 {
     private $service;
@@ -19,12 +23,24 @@ class CalcController extends Controller
 
     public function defaultFlow(Request $request)
     {
-        return $this->service->getDefaultFlow();
+        $form = new Form\CalcDefaultFlowForm($request->all());
+
+        if ($form->hasError() || !$response = $this->service->getDefaultFlow($form)) {
+            throw new Exceptions\InvalidFormException($form);
+        }
+
+        return $response;
     }
 
     public function estimatedData(Request $request)
     {
-        return $this->service->getEstimatedData();
+        $form = new Form\CalcEstimatedDataForm($request->all());
+
+        if ($form->hasError() || !$response = $this->service->getEstimatedData($form)) {
+            throw new Exceptions\InvalidFormException($form);
+        }
+
+        return $response;
     }
 
     public function ieManual(Request $request)

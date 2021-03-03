@@ -9,4 +9,6 @@ class IeResult extends SuccessJsonResult
     public $i_avg;
 
     public $e_avg;
+
+    public $rr;
 }

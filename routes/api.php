@@ -18,6 +18,9 @@
  */
 Route::group(['middleware' => ['routetype:api']], function() {
 
+    //idfv登録・アプリキー発行
+    Route::post('/appkey','AppkeyController@create')->name('api.appkey.create');
+
     //組織ユーザートークン発行
     Route::post('/auth/login', 'AuthController@login')->name('api.auth.login');
 
@@ -39,11 +42,13 @@ Route::group(['middleware' => ['routetype:api']], function() {
 
     //呼吸器情報取得（GS1コード読み込み）
     Route::get('/ventilator','VentilatorController@show')->name('api.ventilator.show');
-    //呼吸器関連情報登録（呼吸器情報+機器関連値）
+    //呼吸器情報登録
     Route::post('/ventilator','VentilatorController@create')->name('api.ventilator.create');
     //機器関連値取得
-    Route::get('/ventilator/{id}','VentilatorController@showValues')->name('api.ventilator.show_values');
+    Route::get('/ventilator/{id}','VentilatorController@showValue')->name('api.ventilator.show_value');
+    //機器関連値登録
+    Route::post('/ventilator/{id}','VentilatorController@createValue')->name('api.ventilator.create_value');
     //機器関連値更新
-    Route::put('/ventilator/{id}','VentilatorController@updateValues')->name('api.ventilator.update_values');
+    Route::put('/ventilator/{id}','VentilatorController@updateValue')->name('api.ventilator.update_value');
 
 });

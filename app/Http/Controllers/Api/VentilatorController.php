@@ -27,13 +27,18 @@ class VentilatorController extends Controller
         return $this->service->create();
     }
 
-    public function showValues(Request $request,$id)
+    public function showValue(Request $request,$id)
     {
-        return $this->service->getVentilatorValues();
+        return $this->service->getVentilatorValue();
     }
 
-    public function updateValues(Request $request,$id)
+    public function createValue(Request $request,$id)
     {
-        return $this->service->updateVentilatorValues();
+        return $this->service->createVentilatorValue();
+    }
+
+    public function updateValue(Request $request,$id)
+    {
+        return $this->service->updateVentilatorValue();
     }
 }

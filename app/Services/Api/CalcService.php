@@ -15,22 +15,35 @@ use App\Services\Support\Converter;
 
 class CalcService
 {
-    public function getDefaultFlow()
+    use Support\Logic\CalculationLogic;
+
+    public function getDefaultFlow($form)
     {
-        return Converter\VentilatorValuesConverter::convertToDefaultFlowResult();
+        return Converter\VentilatorConverter::convertToDefaultFlowResult();
     }
 
-    public function getEstimatedData()
+    public function getEstimatedData($form)
     {
-        return Converter\VentilatorValuesConverter::convertToEstimatedDataResult();
+        $estimated_peep = !is_null($form->airway_pressure) ? $this->calcEstimatedPeep(floatval($form->airway_pressure)) : null;
+
+        if (!is_null($form->air_flow) && !is_null($form->o2_flow)) {
+            if (floatval($form->air_flow) + floatval($form->o2_flow) === 0.0) {
+                $fio2 = 0.0;
+            } else {
+                $fio2 = $this->calcFio2(floatval($form->air_flow), floatval($form->o2_flow));
+            }
+        } else {
+            $fio2 = null;
+        }
+        return Converter\VentilatorConverter::convertToEstimatedDataResult($estimated_peep, $fio2);
     }
 
-    public function getIeManual()
+    public function getIeManual($form)
     {
         return Converter\IeConverter::convertToIeResult();
     }
 
-    public function getIeSound()
+    public function getIeSound($form)
     {
         return Converter\IeConverter::convertToIeResult();
     }

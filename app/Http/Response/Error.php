@@ -57,14 +57,20 @@ class Error {
     {
         $array = [];
 
-        $array[$this->key] = $this->message->translated;
-
         if ($this->nested) {
-            foreach ($this->nested as $index => $error) {
-                $array[$this->key][$index] = $error->toArray();
-            }
-        }
+            $array[$this->key] = [];
 
+            foreach ($this->nested as $index => $nestErrors) {
+                $array[$this->key][$index] = [];
+
+                foreach ($nestErrors as $nestError) {
+                    $array[$this->key][$index][] = $nestError->toArray();
+                }
+            }
+        } else {
+            $array[$this->key] = $this->message->translated;
+        }
+        
         return $array;
     }
 }

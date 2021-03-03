@@ -22,16 +22,21 @@ class VentilatorService
 
     public function create()
     {
-        return Converter\VentilatorValuesConverter::convertToVentilatorValuesRegistrationResult();
+        return Converter\VentilatorConverter::convertToVentilatorRegistrationResult();
     }
 
-    public function getVentilatorValues()
+    public function getVentilatorValue()
     {
-        return Converter\VentilatorValuesConverter::convertToVentilatorValuesResult();
+        return Converter\VentilatorConverter::convertToVentilatorValueResult();
     }
 
-    public function updateVentilatorValues()
+    public function createVentilatorValue()
     {
-        return Converter\VentilatorValuesConverter::convertToVentilatorValuesUpdateResult();
+        return Converter\VentilatorConverter::convertToVentilatorValueRegistrationResult();
+    }
+
+    public function updateVentilatorValue()
+    {
+        return Converter\VentilatorConverter::convertToVentilatorValueUpdateResult();
     }
 }

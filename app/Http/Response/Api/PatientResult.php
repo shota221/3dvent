@@ -10,9 +10,11 @@ class PatientResult extends SuccessJsonResult
 
     public $nickname;
 
-    public $height;
+    public $gender;
 
-    public $weight;
+    public $ideal_weight;
+
+    public $predicted_vt;
 
     public $other_attrs;
 }
