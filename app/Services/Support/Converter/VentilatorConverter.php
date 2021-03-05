@@ -42,9 +42,9 @@ class VentilatorConverter
     {
         $res = new Response\Api\VentilatorValueResult;
 
-        $res->estimated_peep = $estimated_peep ?? null;
+        $res->estimated_peep = !is_null($estimated_peep) ? strval($estimated_peep) : null;
 
-        $res->fio2 = $fio2 ?? null;
+        $res->fio2 = !is_null($fio2) ? strval($fio2) : null;
 
         return $res;
     }
@@ -64,15 +64,15 @@ class VentilatorConverter
     {
         $res = new Response\Api\VentilatorValueResult;
 
-        $res->ventilator_id = $entity->ventilator_id;
+        $res->ventilator_id = strval($entity->ventilator_id);
 
-        $res->estimated_vt = $entity->estimated_vt;
+        $res->estimated_vt = strval($entity->estimated_vt);
 
-        $res->estimated_mv = $entity->estimated_mv;
+        $res->estimated_mv = strval($entity->estimated_mv);
 
-        $res->estimated_peep = $entity->estimated_peep;
+        $res->estimated_peep = strval($entity->estimated_peep);
 
-        $res->fio2 = $entity->fio2;
+        $res->fio2 = strval($entity->fio2);
 
         return $res;
     }
@@ -83,21 +83,21 @@ class VentilatorConverter
 
         $res->patient_id = $entity->patient_id; 
 
-        $res->airway_pressure = $entity->airway_pressure; 
+        $res->airway_pressure = strval($entity->airway_pressure); 
 
-        $res->air_flow = $entity->air_flow; 
+        $res->air_flow = strval($entity->air_flow); 
 
-        $res->o2_flow = $entity->o2_flow; 
+        $res->o2_flow = strval($entity->o2_flow); 
 
-        $res->rr = $entity->rr; 
+        $res->rr = strval($entity->rr); 
 
-        $res->estimated_vt = $entity->estimated_vt; 
+        $res->estimated_vt = strval($entity->estimated_vt); 
 
-        $res->estimated_mv = $entity->estimated_mv; 
+        $res->estimated_mv = strval($entity->estimated_mv); 
 
-        $res->estimated_peep = $entity->estimated_peep; 
+        $res->estimated_peep = strval($entity->estimated_peep); 
 
-        $res->fio2 = $entity->fio2; 
+        $res->fio2 = strval($entity->fio2); 
 
         return $res;
     }

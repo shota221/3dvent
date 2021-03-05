@@ -14,7 +14,7 @@ class PatientConverter
 
         $res->patient_id = $entity->id;
 
-        $res->predicted_vt = $predicted_vt;
+        $res->predicted_vt = strval($predicted_vt);
 
         return $res;
     }
@@ -25,13 +25,13 @@ class PatientConverter
 
         $res->nickname = $entity->nickname;
 
-        $res->height = $entity->height;
+        $res->height = strval($entity->height);
 
-        $res->gender = $entity->gender;
+        $res->gender = strval($entity->gender);
 
         $res->other_attrs =$entity->other_attrs;
 
-        $res->predicted_vt = $predicted_vt;
+        $res->predicted_vt = strval($predicted_vt);
 
         return $res;
     }
