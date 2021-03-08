@@ -67,7 +67,7 @@ class VentilatorValueCreateForm extends BaseForm
 
     protected function bind($input)
     {
-        $this->ventilator_id = $input['ventilator_id'];
+        $this->ventilator_id = intval($input['ventilator_id']);
         
         $this->patient_id = $input['patient_id'];
         

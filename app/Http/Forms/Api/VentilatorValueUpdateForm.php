@@ -25,7 +25,7 @@ class VentilatorValueUpdateForm extends BaseForm
 
     protected function bind($input)
     {
-        $this->ventilator_id = $input['ventilator_id'];
+        $this->ventilator_id = intval($input['ventilator_id']);
 
         $this->fixed_flg = intval($input['fixed_flg']);
 

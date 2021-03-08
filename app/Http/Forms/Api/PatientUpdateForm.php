@@ -35,7 +35,7 @@ class PatientUpdateForm extends BaseForm
 
     protected function bind($input)
     {
-        $this->id = $input['id'];
+        $this->id = intval($input['id']);
 
         $this->nickname = $input['nickname'] ?? '';
 

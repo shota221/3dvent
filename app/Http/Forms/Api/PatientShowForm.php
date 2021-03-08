@@ -19,6 +19,6 @@ class PatientShowForm extends BaseForm
 
     protected function bind($input)
     {
-        $this->id = $input['id'];
+        $this->id = intval($input['id']);
     }
 }
