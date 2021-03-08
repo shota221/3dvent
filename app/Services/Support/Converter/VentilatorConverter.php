@@ -64,7 +64,7 @@ class VentilatorConverter
     {
         $res = new Response\Api\VentilatorValueResult;
 
-        $res->ventilator_id = strval($entity->ventilator_id);
+        $res->ventilator_id = $entity->ventilator_id;
 
         $res->estimated_vt = strval($entity->estimated_vt);
 
@@ -118,7 +118,7 @@ class VentilatorConverter
         $entity->gs1_code = $form->gs1_code;
 
         if (!is_null($form->latitude) && !is_null($form->longitude)) {
-            $entity->location = ['latitude' => $form->latitude, 'longitude' => $form->longitude];
+            $entity->location = ['lat' => $form->latitude, 'lng' => $form->longitude];
         }
 
         $entity->organization_id = $form->organization_id ?? null;
@@ -176,6 +176,10 @@ class VentilatorConverter
         $entity->fixed_flg = $form->fixed_flg;
 
         $entity->fixed_at = $form->fixed_at;
+
+        //確認用インターフェースができるまで、最終設定フラグが立ったものは確認済みとみなす。
+        $entity->confirmed_flg = $form->fixed_flg;
+        $entity->confirmed_at = $form->fixed_at;
 
         return $entity;
     }

@@ -20,4 +20,9 @@ class AppkeyRepository
     {
         return static::query()->where('appkey', $appkey)->first();
     }
+
+    public static function countByIdfv($idfv)
+    {
+        return static::query()->where('idfv',$idfv)->count();
+    }
 }

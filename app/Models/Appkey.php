@@ -7,4 +7,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class Appkey extends BaseModel
 {
+    const UPDATED_AT = null;
 }

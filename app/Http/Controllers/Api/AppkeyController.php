@@ -8,6 +8,10 @@ use App\Services\Api as Service;
 
 use Illuminate\Http\Request;
 
+use App\Http\Forms\Api as Form;
+
+use App\Exceptions;
+
 class AppkeyController extends Controller
 {
     private $service;
@@ -19,6 +23,12 @@ class AppkeyController extends Controller
 
     public function create(Request $request)
     {
-        return $this->service->create();
+        $form = new Form\AppkeyCreateForm($request->all());
+
+        if ($form->hasError() || !$response = $this->service->create($form)) {
+            throw new Exceptions\InvalidFormException($form);
+        }
+
+        return $response;
     }
 }

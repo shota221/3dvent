@@ -68,7 +68,7 @@ class VentilatorService
 
     public function createVentilatorValue($form,$user_token,$appkey)
     {
-        if (!Repos\VentilatorValueRepository::existsByVentilatorId($form->ventilator_id)) {
+        if (!Repos\VentilatorRepository::existsById($form->ventilator_id)) {
             $form->addError('ventilator_id','validation.id_not_found');
             return false;
         }
