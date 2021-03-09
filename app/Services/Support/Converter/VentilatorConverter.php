@@ -102,11 +102,11 @@ class VentilatorConverter
         return $res;
     }
 
-    public static function convertToVentilatorValueUpdateResult($entity)
+    public static function convertToVentilatorValueUpdateResult($entity = null)
     {
         $res = new Response\Api\VentilatorValueResult;
 
-        $res->fixed_flg = $entity->fixed_flg;
+        $res->fixed_flg = !is_null($entity) ? $entity->fixed_flg : 0;
 
         return $res;
     }

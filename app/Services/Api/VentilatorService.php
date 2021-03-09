@@ -112,9 +112,9 @@ class VentilatorService
 
     public function updateVentilatorValue($form)
     {
+        //人工呼吸器登録後、測定をせずに次の人工呼吸器を読み込んだ場合の処理
         if (!Repos\VentilatorValueRepository::existsByVentilatorId($form->ventilator_id)) {
-            $form->addError('ventilator_id','validation.id_not_found');
-            return false;
+            return  Converter\VentilatorConverter::convertToVentilatorValueUpdateResult();
         }
 
         $ventilator_value = Repos\VentilatorValueRepository::findOneByVentilatorId($form->ventilator_id);
@@ -128,6 +128,6 @@ class VentilatorService
             }
         );
 
-        return Converter\VentilatorConverter::convertToVentilatorValueUpdateResult($entity);
+        return  Converter\VentilatorConverter::convertToVentilatorValueUpdateResult($entity);
     }
 }

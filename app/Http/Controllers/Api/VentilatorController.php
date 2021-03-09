@@ -85,10 +85,10 @@ class VentilatorController extends Controller
 
         $form = new Form\VentilatorValueUpdateForm($request->all());
 
-        if ($form->hasError() || !$response = $this->service->updateVentilatorValue($form)) {
+        if ($form->hasError()) {
             throw new Exceptions\InvalidFormException($form);
         }
 
-        return $response;
+        return $this->service->updateVentilatorValue($form);
     }
 }
