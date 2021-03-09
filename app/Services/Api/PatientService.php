@@ -27,10 +27,21 @@ class PatientService
         
         $entity = Converter\PatientConverter::convertToEntity($form);
 
+        $ventilator = Repos\VentilatorRepository::findOneById($form->ventilator_id);
+
         DBUtil::Transaction(
             '患者情報登録',
             function () use ($entity) {
                 $entity->save();
+            }
+        );
+
+        $ventilator->patient_id = $entity->id;
+
+        DBUtil::Transaction(
+            '呼吸器に患者ID登録',
+            function () use ($ventilator) {
+                $ventilator->save();
             }
         );
 

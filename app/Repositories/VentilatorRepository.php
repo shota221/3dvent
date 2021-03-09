@@ -10,7 +10,12 @@ class VentilatorRepository
 {
     private static function query()
     {
-        return Ventilator::query()->select([
+        return Ventilator::query();
+    }
+
+    private static function querySelectGeom()
+    {
+        return static::query()->select([
             '*', 
             \DB::raw('ST_X(location)       as lng'), 
             \DB::raw('ST_Y(location)       as lat'),
@@ -26,6 +31,12 @@ class VentilatorRepository
     public static function existsById($id)
     {
         return static::query()->where('id', $id)->exists();
+    }
+    
+    public static function findOneById($id)
+    {
+        $table = Ventilator::tableName();
+        return static::query()->where('id', $id)->first();
     }
 
     public static function findOneByGs1Code($gs1_code)

@@ -42,7 +42,7 @@ class VentilatorService
         $entity = Converter\VentilatorConverter::convertToVentilatorEntity($form);
 
         DBUtil::Transaction(
-            '患者情報登録',
+            '呼吸器情報登録',
             function () use ($entity) {
                 $entity->save();
             }

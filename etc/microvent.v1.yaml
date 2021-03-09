@@ -366,14 +366,18 @@ paths:
                   minLength: 1
                 gender:
                   type: number
+                ventilator_id:
+                  type: number
               required:
                 - height
                 - gender
+                - ventilator_id
             examples:
               example-1:
                 value:
                   height: string
                   gender: 1
+                  ventilator_id: 1
   /calculate/estimated_data:
     get:
       summary: 予測値取得
@@ -1182,3 +1186,4 @@ tags:
   - name: calculate
   - name: patient
   - name: ventilator
+  - name: appkey
