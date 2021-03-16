@@ -6,19 +6,19 @@ use App\Http\Forms\ValidationRule as Rule;
 
 use App\Http\Forms\BaseForm;
 
-class PatientShowForm extends BaseForm
+class VentilatorShowForm extends BaseForm
 {
-    public $id;
-    
+    public $gs1_code;
+
     protected function validationRule()
     {
         return [
-            'id' => 'required|'.Rule::VALUE_INTEGER,
-        ];  
+            'gs1_code' => 'required|' . Rule::VALUE_STRING,
+        ];
     }
 
     protected function bind($input)
     {
-        $this->id = intval($input['id']);
+        $this->gs1_code = $input['gs1_code'];
     }
 }

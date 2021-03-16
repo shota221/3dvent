@@ -366,14 +366,18 @@ paths:
                   minLength: 1
                 gender:
                   type: number
+                ventilator_id:
+                  type: number
               required:
                 - height
                 - gender
+                - ventilator_id
             examples:
               example-1:
                 value:
                   height: string
                   gender: 1
+                  ventilator_id: 1
   /calculate/estimated_data:
     get:
       summary: 予測値取得
@@ -663,7 +667,7 @@ paths:
               description: ''
               type: object
               properties:
-                ventilator_id:
+                patient_id:
                   type: number
                 airway_pressure:
                   type: string
@@ -687,7 +691,7 @@ paths:
                   type: string
                   minLength: 1
               required:
-                - ventilator_id
+                - patient_id
                 - airway_pressure
                 - air_flow
                 - o2_flow
@@ -1105,12 +1109,6 @@ paths:
         - schema:
             type: string
           in: header
-          description: Bearer認証トークン
-          name: Authorization
-          required: true
-        - schema:
-            type: string
-          in: header
           description: 疎通用トークン
           name: X-Api-Token
           required: true
@@ -1173,11 +1171,11 @@ paths:
               description: ''
               type: object
               properties:
-                appkey:
+                idfv:
                   type: string
                   minLength: 1
               required:
-                - appkey
+                - idfv
       tags:
         - appkey
     parameters: []
@@ -1188,3 +1186,4 @@ tags:
   - name: calculate
   - name: patient
   - name: ventilator
+  - name: appkey

@@ -6,19 +6,19 @@ use App\Http\Forms\ValidationRule as Rule;
 
 use App\Http\Forms\BaseForm;
 
-class PatientShowForm extends BaseForm
+class AppkeyCreateForm extends BaseForm
 {
-    public $id;
+    public $idfv;
     
     protected function validationRule()
     {
         return [
-            'id' => 'required|'.Rule::VALUE_INTEGER,
-        ];  
+            'idfv' => 'required|'.Rule::VALUE_NAME,
+        ]; 
     }
 
     protected function bind($input)
     {
-        $this->id = intval($input['id']);
+        $this->idfv = $input['idfv'];
     }
 }

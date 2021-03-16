@@ -23,14 +23,31 @@ class PatientService
     public function create($form)
     {
         //理想体重の算出
-        $form->ideal_weight = strval($this->calcIdealWeight(floatval($form->height), $form->gender));
+        $ideal_weight = strval($this->calcIdealWeight(floatval($form->height), $form->gender));
         
-        $entity = Converter\PatientConverter::convertToEntity($form);
+        $entity = Converter\PatientConverter::convertToEntity(
+            $form->nickname,
+            $form->height,
+            $form->gender,
+            $ideal_weight,
+            $form->other_attrs
+        );
+
+        $ventilator = Repos\VentilatorRepository::findOneById($form->ventilator_id);
 
         DBUtil::Transaction(
             '患者情報登録',
             function () use ($entity) {
                 $entity->save();
+            }
+        );
+
+        $ventilator->patient_id = $entity->id;
+
+        DBUtil::Transaction(
+            '呼吸器に患者ID登録',
+            function () use ($ventilator) {
+                $ventilator->save();
             }
         );
 
@@ -71,7 +88,13 @@ class PatientService
             return false;
         }
 
-        $entity = Converter\PatientConverter::convertToUpdateEntity($form,$patient);
+        $entity = Converter\PatientConverter::convertToUpdateEntity(
+            $patient,
+            $form->nickname,
+            $form->height,
+            $form->gender,
+            $form->other_attrs
+        );
 
         //理想体重更新
         $entity->ideal_weight = strval($this->calcIdealWeight(floatval($entity->height), $entity->gender));

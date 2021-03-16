@@ -16,8 +16,6 @@ class PatientUpdateForm extends BaseForm
 
     public $gender;
 
-    public $ideal_weight;
-
     public $other_attrs;
     
     protected function validationRule()
@@ -27,15 +25,15 @@ class PatientUpdateForm extends BaseForm
 
             'nickname' => 'nullable|'.Rule::VALUE_NAME,
         
-            'height' => 'required|'.Rule::VALUE_POSITIVE.'|max:999',
+            'height' => 'required|',Rule::VALUE_POSITIVE.'|max:999',
         
-            'gender' => 'integer|min:1|max:2'
+            'gender' => 'required|integer|min:1|max:2'
         ];  
     }
 
     protected function bind($input)
     {
-        $this->id = $input['id'];
+        $this->id = intval($input['id']);
 
         $this->nickname = $input['nickname'] ?? '';
 

@@ -24,7 +24,7 @@ class ValidationRule {
 
         VALUE_BOOLEAN   = 'boolean',
 
-        FLG_INTEGER = 'integer|min:0|max:1' 
-        
+        FLG_INTEGER = 'integer|min:0|max:1'
+
         ;
 }

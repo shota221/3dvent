@@ -14,9 +14,9 @@ class PatientCreateForm extends BaseForm
 
     public $gender;
 
-    public $ideal_weight;
-
     public $other_attrs;
+
+    public $ventilator_id;
     
     protected function validationRule()
     {
@@ -26,6 +26,8 @@ class PatientCreateForm extends BaseForm
             'height' => 'required|'.Rule::VALUE_POSITIVE.'|max:999',
         
             'gender' => 'required|integer|min:1|max:2',
+
+            'ventilator_id'=> 'required|'.Rule::VALUE_INTEGER
         ];  
     }
 
@@ -38,5 +40,7 @@ class PatientCreateForm extends BaseForm
         $this->gender = intval($input['gender']);
 
         $this->other_attrs = $input['other_attrs'] ?? null;
+
+        $this->ventilator_id = intval($input['ventilator_id']);
     }
 }

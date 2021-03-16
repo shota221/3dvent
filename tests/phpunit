@@ -1,0 +1,7 @@
+#!/bin/bash
+
+echo "===== phpunit $@ ====="
+
+#su -s /bin/sh nobody $(cd $(dirname $0)/../; pwd)/vendor/bin/phpunit $@
+
+$(cd $(dirname $0)/../; pwd)/vendor/bin/phpunit $@

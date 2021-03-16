@@ -23,7 +23,7 @@ class CalcDefaultFlowForm extends BaseForm
 
     protected function bind($input)
     {
-        $this->patient_id = $input['patient_id'];
+        $this->patient_id = intval($input['patient_id']);
 
         $this->airway_pressure = strval(round($input['airway_pressure'],1));
     }
