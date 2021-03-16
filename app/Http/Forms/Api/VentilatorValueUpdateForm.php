@@ -12,8 +12,6 @@ class VentilatorValueUpdateForm extends BaseForm
 
     public $fixed_flg;
 
-    public $fixed_at;
-
     protected function validationRule()
     {
         return [
@@ -28,7 +26,5 @@ class VentilatorValueUpdateForm extends BaseForm
         $this->ventilator_id = intval($input['ventilator_id']);
 
         $this->fixed_flg = intval($input['fixed_flg']);
-
-        $this->fixed_at = date("Y-m-d H:i:s");
     }
 }

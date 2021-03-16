@@ -16,8 +16,6 @@ class PatientUpdateForm extends BaseForm
 
     public $gender;
 
-    public $ideal_weight;
-
     public $other_attrs;
     
     protected function validationRule()

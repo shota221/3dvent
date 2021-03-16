@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Services\Support\Converter;
 use App\Services\Support\DBUtil;
+use App\Services\Support\DateUtil;
 
 class VentilatorService
 {
@@ -23,7 +24,6 @@ class VentilatorService
         if (!Repos\VentilatorRepository::existsByGs1Code($form->gs1_code)) {
 
             return Converter\VentilatorConverter::convertToVentilatorResult();
-
         }
 
         $ventilator = Repos\VentilatorRepository::findOneByGs1Code($form->gs1_code);
@@ -31,15 +31,15 @@ class VentilatorService
         return Converter\VentilatorConverter::convertToVentilatorResult($ventilator);
     }
 
-    public function create($form,$user_token)
+    public function create($form, $user_token)
     {
         if (!is_null($user_token)) {
             //TODO Auth:user()からの取得
-            $form->registered_user_id = 3;
-            $form->organization_id = 1;
+            $registered_user_id = 3;
+            $organization_id = 1;
         }
 
-        $entity = Converter\VentilatorConverter::convertToVentilatorEntity($form);
+        $entity = Converter\VentilatorConverter::convertToVentilatorEntity($form->gs1_code, $form->latitude, $form->longitude, $organization_id, $registered_user_id);
 
         DBUtil::Transaction(
             '呼吸器情報登録',
@@ -57,7 +57,7 @@ class VentilatorService
     public function getVentilatorValueResult($form)
     {
         if (!Repos\VentilatorValueRepository::existsByVentilatorId($form->ventilator_id)) {
-            $form->addError('ventilator_id','validation.id_not_found');
+            $form->addError('ventilator_id', 'validation.id_not_found');
             return false;
         }
 
@@ -66,39 +66,57 @@ class VentilatorService
         return Converter\VentilatorConverter::convertToVentilatorValueResult($ventilator_value);
     }
 
-    public function createVentilatorValue($form,$user_token,$appkey)
+    public function createVentilatorValue($form, $user_token, $appkey)
     {
         if (!Repos\VentilatorRepository::existsById($form->ventilator_id)) {
-            $form->addError('ventilator_id','validation.id_not_found');
+            $form->addError('ventilator_id', 'validation.id_not_found');
             return false;
         }
         if (!Repos\AppkeyRepository::existsByAppkey($appkey)) {
-            $form->addError('X-App-Key','validation.appkey_not_found');
+            $form->addError('X-App-Key', 'validation.appkey_not_found');
             return false;
         }
 
         if (!is_null($user_token)) {
             //TODO Auth:user()からの取得
-            $form->user_id = 3;
+            $user_id = 3;
             //TODO ユーザー所属組織の設定値を取得
-            $form->vt_per_kg = 6;
+            $vt_per_kg = 6;
         }
 
-        $form->appkey_id = Repos\AppkeyRepository::findOneByAppkey($appkey)->id;
-        
-        $form->total_flow = $this->calcTotalFlow($form->air_flow,$form->o2_flow);
-        
-        $form->estimated_vt = $this->calcEstimatedVt($form->i_avg, $form->total_flow);
+        $appkey_id = Repos\AppkeyRepository::findOneByAppkey($appkey)->id;
 
-        $form->estimated_mv = $this->calcEstimatedMv($form->estimated_vt, $form->rr);
+        $total_flow = $this->calcTotalFlow($form->air_flow, $form->o2_flow);
 
-        $form->estimated_peep = $this->calcEstimatedPeep($form->airway_pressure);
+        $estimated_vt = $this->calcEstimatedVt($form->i_avg, $total_flow);
 
-        $form->fio2 = $this->calcFio2($form->air_flow, $form->o2_flow);
+        $estimated_mv = $this->calcEstimatedMv($estimated_vt, $form->rr);
+
+        $estimated_peep = $this->calcEstimatedPeep($form->airway_pressure);
+
+        $fio2 = $this->calcFio2($form->air_flow, $form->o2_flow);
 
         $patient = Repos\PatientRepository::findOneById($form->patient_id);
 
-        $entity = Converter\VentilatorConverter::convertToVentilatorValueEntity($form,$patient);
+        $entity = Converter\VentilatorConverter::convertToVentilatorValueEntity(
+            $patient,
+            $form->ventilator_id,
+            $form->airway_pressure,
+            $form->air_flow,
+            $form->o2_flow,
+            $form->rr,
+            $form->i_avg,
+            $form->e_avg,
+            $vt_per_kg,
+            $form->predicted_vt,
+            $estimated_vt,
+            $estimated_mv,
+            $estimated_peep,
+            $fio2,
+            $total_flow,
+            $user_id,
+            $appkey_id
+        );
 
         DBUtil::Transaction(
             '機器関連情報登録',
@@ -119,7 +137,9 @@ class VentilatorService
 
         $ventilator_value = Repos\VentilatorValueRepository::findOneByVentilatorId($form->ventilator_id);
 
-        $entity = Converter\VentilatorConverter::convertToVentilatorValueUpdateEntity($form,$ventilator_value);
+        $fixed_at = DateUtil::toDatetimeStr(DateUtil::now());
+
+        $entity = Converter\VentilatorConverter::convertToVentilatorValueUpdateEntity($ventilator_value,$form->fixed_flg,$fixed_at);
 
         DBUtil::Transaction(
             '最終設定フラグ更新',

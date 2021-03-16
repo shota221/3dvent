@@ -19,9 +19,9 @@ class AppkeyService
     public function create($form)
     {
         //idfvは重複し得るため、カウント値と合わせてハッシュ化
-        $form->appkey = hash('sha256', $form->idfv . Repos\AppkeyRepository::countByIdfv($form->idfv));
+        $appkey = hash('sha256', $form->idfv . Repos\AppkeyRepository::countByIdfv($form->idfv));
 
-        $entity = Converter\AppkeyConverter::convertToEntity($form);
+        $entity = Converter\AppkeyConverter::convertToEntity($form->idfv,$appkey);
 
         DBUtil::Transaction(
             'アプリキー登録',

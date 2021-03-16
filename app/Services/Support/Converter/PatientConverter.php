@@ -29,39 +29,49 @@ class PatientConverter
 
         $res->gender = strval($entity->gender);
 
-        $res->other_attrs =$entity->other_attrs;
+        $res->other_attrs = $entity->other_attrs;
 
         $res->predicted_vt = strval($predicted_vt);
 
         return $res;
     }
 
-    public static function convertToEntity(Form\PatientCreateForm $form)
-    {
+    public static function convertToEntity(
+        $nickname,
+        $height,
+        $gender,
+        $ideal_weight,
+        $other_attrs
+    ) {
         $entity = new Patient;
 
-        $entity->nickname = $form->nickname;
+        $entity->nickname = $nickname;
 
-        $entity->height = $form->height;
+        $entity->height = $height;
 
-        $entity->gender = $form->gender;
+        $entity->gender = $gender;
 
-        $entity->ideal_weight = $form->ideal_weight;
+        $entity->ideal_weight = $ideal_weight;
 
-        $entity->other_attrs = $form->other_attrs;
+        $entity->other_attrs = $other_attrs;
 
         return $entity;
     }
 
-    public static function convertToUpdateEntity(Form\PatientUpdateForm $form, Patient $entity)
-    {
-        $entity->nickname = $form->nickname;
+    public static function convertToUpdateEntity(
+        Patient $entity,
+        $nickname,
+        $height,
+        $gender,
+        $other_attrs
+    ) {
+        $entity->nickname = $nickname;
 
-        $entity->height = $form->height;
+        $entity->height = $height;
 
-        $entity->gender = $form->gender;
+        $entity->gender = $gender;
 
-        $entity->other_attrs = $form->other_attrs;
+        $entity->other_attrs = $other_attrs;
 
         return $entity;
     }

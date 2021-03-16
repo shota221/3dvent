@@ -9,13 +9,13 @@ use App\Http\Forms\Api as Form;
 
 class AppkeyConverter
 {
-    public static function convertToEntity(Form\AppkeyCreateForm $form)
+    public static function convertToEntity($idfv,$appkey)
     {
         $entity = new Appkey;
         
-        $entity->idfv = $form->idfv;
+        $entity->idfv = $idfv;
 
-        $entity->appkey = $form->appkey;
+        $entity->appkey = $appkey;
 
         return $entity;
     }

@@ -28,12 +28,12 @@ class WaveUtil
 
         fseek($fh, 8, SEEK_CUR);
 
-        $wave_data->format = current(unpack('v', fread($fh, 2)));
-        $wave_data->channel_size = current(unpack('v', fread($fh, 2)));
-        $wave_data->sampling_rate = current(unpack('V', fread($fh, 4)));
+        $wave_data->format = current(unpack('v', fread($fh, 2)))?:16;
+        $wave_data->channel_size = current(unpack('v', fread($fh, 2)))?:2;
+        $wave_data->sampling_rate = current(unpack('V', fread($fh, 4)))?:44100;
         $wave_data->byte_per_second = current(unpack('V', fread($fh, 4)));
-        $wave_data->block_size = current(unpack('v', fread($fh, 2)));
-        $wave_data->bit_per_sample = current(unpack('v', fread($fh, 2)));
+        $wave_data->block_size = current(unpack('v', fread($fh, 2)))?:4;
+        $wave_data->bit_per_sample = current(unpack('v', fread($fh, 2)))?:16;
 
         $position = ftell($fh);
         while (true) {

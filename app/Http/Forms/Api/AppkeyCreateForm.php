@@ -9,8 +9,6 @@ use App\Http\Forms\BaseForm;
 class AppkeyCreateForm extends BaseForm
 {
     public $idfv;
-
-    public $appkey;
     
     protected function validationRule()
     {

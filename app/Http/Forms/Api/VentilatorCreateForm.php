@@ -14,10 +14,6 @@ class VentilatorCreateForm extends BaseForm
 
     public $longitude;
 
-    public $organization_id;
-
-    public $registered_user_id;
-    
     protected function validationRule()
     {
         return [

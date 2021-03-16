@@ -21,17 +21,17 @@ class VentilatorValueRepository
     public static function findOneByVentilatorId($ventilator_id)
     {
         $table = VentilatorValue::tableName();
-        return static::leftJoinVentilator()->where('ventilator_id', $ventilator_id)->orderBy($table.'.created_at', 'DESC')->first();
+        return static::joinVentilator()->where('ventilator_id', $ventilator_id)->orderBy($table.'.created_at', 'DESC')->first();
     }
 
-    private static function leftJoinVentilator($query = null)
+    private static function joinVentilator($query = null)
     {
         $table = VentilatorValue::tableName();
 
         $ventilator_table = Ventilator::tableName();
 
         return (!is_null($query) ? $query : static::query())
-            ->leftJoin(
+            ->join(
                 $ventilator_table,
                 function ($join) use ($table, $ventilator_table) {
                     $join

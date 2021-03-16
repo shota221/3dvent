@@ -21,7 +21,6 @@ class VentilatorConverter
             $res->patient_id = $entity->patient_id ?? null;
 
             $res->organization_name = $entity->organization_name ?? null;
-        
         }
 
         return $res;
@@ -81,23 +80,23 @@ class VentilatorConverter
     {
         $res = new Response\Api\VentilatorValueResult;
 
-        $res->patient_id = $entity->patient_id; 
+        $res->patient_id = $entity->patient_id;
 
-        $res->airway_pressure = strval($entity->airway_pressure); 
+        $res->airway_pressure = strval($entity->airway_pressure);
 
-        $res->air_flow = strval($entity->air_flow); 
+        $res->air_flow = strval($entity->air_flow);
 
-        $res->o2_flow = strval($entity->o2_flow); 
+        $res->o2_flow = strval($entity->o2_flow);
 
-        $res->rr = strval($entity->rr); 
+        $res->rr = strval($entity->rr);
 
-        $res->estimated_vt = strval($entity->estimated_vt); 
+        $res->estimated_vt = strval($entity->estimated_vt);
 
-        $res->estimated_mv = strval($entity->estimated_mv); 
+        $res->estimated_mv = strval($entity->estimated_mv);
 
-        $res->estimated_peep = strval($entity->estimated_peep); 
+        $res->estimated_peep = strval($entity->estimated_peep);
 
-        $res->fio2 = strval($entity->fio2); 
+        $res->fio2 = strval($entity->fio2);
 
         return $res;
     }
@@ -111,75 +110,92 @@ class VentilatorConverter
         return $res;
     }
 
-    public static function convertToVentilatorEntity(Form\VentilatorCreateForm $form)
+    public static function convertToVentilatorEntity($gs1_code, $latitude, $longitude, $organization_id, $registered_user_id)
     {
         $entity = new Ventilator;
 
-        $entity->gs1_code = $form->gs1_code;
+        $entity->gs1_code = $gs1_code;
 
-        if (!is_null($form->latitude) && !is_null($form->longitude)) {
-            $entity->location = ['lat' => $form->latitude, 'lng' => $form->longitude];
+        if (!is_null($latitude) && !is_null($longitude)) {
+            $entity->location = ['lat' => $latitude, 'lng' => $longitude];
         }
 
-        $entity->organization_id = $form->organization_id ?? null;
+        $entity->organization_id = $organization_id ?? null;
 
-        $entity->registered_user_id = $form->registered_user_id ?? null;
+        $entity->registered_user_id = $registered_user_id ?? null;
 
         return $entity;
     }
 
-    public static function convertToVentilatorValueEntity(Form\VentilatorValueCreateForm $form, Patient $patient)
-    {
+    public static function convertToVentilatorValueEntity(
+        Patient $patient,
+        $ventilator_id,
+        $airway_pressure,
+        $air_flow,
+        $o2_flow,
+        $rr,
+        $i_avg,
+        $e_avg,
+        $vt_per_kg,
+        $predicted_vt,
+        $estimated_vt,
+        $estimated_mv,
+        $estimated_peep,
+        $fio2,
+        $total_flow,
+        $user_id,
+        $appkey_id
+    ) {
         $entity = new VentilatorValue;
 
-        $entity->ventilator_id = $form->ventilator_id;
+        $entity->ventilator_id = $ventilator_id;
 
         $entity->height = $patient->height;
 
         $entity->gender = $patient->gender;
-    
-        $entity->airway_pressure = $form->airway_pressure;
-    
-        $entity->air_flow = $form->air_flow;
-    
-        $entity->o2_flow = $form->o2_flow;
-    
-        $entity->rr = $form->rr;
-    
-        $entity->inspiratory_time = $form->i_avg;
-    
-        $entity->expiratory_time = $form->e_avg;
 
-        $entity->vt_per_kg = $form->vt_per_kg ?? 6;
-    
-        $entity->predicted_vt = $form->predicted_vt;
+        $entity->airway_pressure = $airway_pressure;
 
-        $entity->estimated_vt = $form->estimated_vt;
-    
-        $entity->estimated_mv = $form->estimated_mv;
-    
-        $entity->estimated_peep = $form->estimated_peep;
-    
-        $entity->fio2 = $form->fio2;
-    
-        $entity->total_flow = $form->total_flow;
-    
-        $entity->user_id = $form->user_id ?? null;
-    
-        $entity->appkey_id = $form->appkey_id;
+        $entity->air_flow = $air_flow;
+
+        $entity->o2_flow = $o2_flow;
+
+        $entity->rr = $rr;
+
+        $entity->inspiratory_time = $i_avg;
+
+        $entity->expiratory_time = $e_avg;
+
+        $entity->vt_per_kg = $vt_per_kg ?? 6;
+
+        $entity->predicted_vt = $predicted_vt;
+
+        $entity->estimated_vt = $estimated_vt;
+
+        $entity->estimated_mv = $estimated_mv;
+
+        $entity->estimated_peep = $estimated_peep;
+
+        $entity->fio2 = $fio2;
+
+        $entity->total_flow = $total_flow;
+
+        $entity->user_id = $user_id ?? null;
+
+        $entity->appkey_id = $appkey_id;
 
         return $entity;
     }
 
-    public static function convertToVentilatorValueUpdateEntity(Form\VentilatorValueUpdateForm $form, VentilatorValue $entity)
+    public static function convertToVentilatorValueUpdateEntity(VentilatorValue $entity, $fixed_flg, $fixed_at)
     {
-        $entity->fixed_flg = $form->fixed_flg;
+        $entity->fixed_flg = $fixed_flg;
 
-        $entity->fixed_at = $form->fixed_at;
+        $entity->fixed_at = $fixed_at;
 
         //確認用インターフェースができるまで、最終設定フラグが立ったものは確認済みとみなす。
-        $entity->confirmed_flg = $form->fixed_flg;
-        $entity->confirmed_at = $form->fixed_at;
+        $entity->confirmed_flg = $fixed_flg;
+        $entity->confirmed_at = $fixed_at;
 
         return $entity;
     }

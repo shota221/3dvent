@@ -13,7 +13,7 @@ class ExampleTest extends TestCase
      */
     public function testBasicTest()
     {
-        $fn = 'public/sample.wav';
+        $fn = 'public/8uehn-yzyrh.wav';
         $wave_data = WaveUtil::extractWaveData($fn);
         $y_max = max($wave_data->func[0]);
         $func = array_map(function ($x) use ($y_max) {
@@ -75,6 +75,8 @@ class ExampleTest extends TestCase
             }
 
             $sum_log = log10($sum);
+
+            // echo $sum_log."\n";
 
             if($sum_log >= -1.5 && $hear_flg === 1) {
                 $pulse_times[] = round($i*$step*$dt,2);
