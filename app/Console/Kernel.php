@@ -13,18 +13,21 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+        Commands\VentilatorValueBatch::class
     ];
 
     /**
      * Define the application's command schedule.
-     *
+     * local
+     * crontab -e * * * * * cd /mnt/workspace/web/ &&php artisan schedule:run --env=local >> /dev/null 2>&1
+     * dev
+     * crontab -e * * * * * cd /var/www/3d_ventilator_web/ &&php artisan schedule:run --env=dev >> /dev/null 2>&1
      * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
      * @return void
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->command('set_fixed_flg')->cron('0 */'.config('system.fixed_flg_interval').' * * *');
     }
 
     /**

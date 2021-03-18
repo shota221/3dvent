@@ -98,6 +98,11 @@ class DateUtil {
         return $date->copy()->subDay($ago);
     }
 
+    public static function hourAgo(Carbon $date, int $ago = 1)
+    {
+        return $date->copy()->subHour($ago);
+    }
+
     public static function toMonthStr(Carbon $date)
     {
         return $date->format(self::MONTH_FORMAT);
