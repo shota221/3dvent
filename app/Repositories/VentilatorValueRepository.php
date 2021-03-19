@@ -44,17 +44,5 @@ class VentilatorValueRepository
             ]);
     }
 
-    /**
-     * ventilatorvalueからventilatorIdごとに最新データを取り、指定時間より過去のデータであれば取得する
-     */
-    public static function queryToUpdateFixedFlg($date_time)
-    {
-        $table = VentilatorValue::tableName();
-        return static::query()->wherein('id',self::groupByVentilatorId())->where('created_at','<=',$date_time)->where('fixed_flg',0);
-    }
 
-    private static function groupByVentilatorId($query = null)
-    {
-        return (!is_null($query) ? $query : static::query())->select(\DB::raw('MAX(id) As id'))->groupBy('ventilator_id');
-    }
 }

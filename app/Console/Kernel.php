@@ -27,7 +27,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('set_fixed_flg')->cron('0 */'.config('system.fixed_flg_interval').' * * *');
+        $schedule->command('set_fixed_flg')->cron('0 */1 * * *');
     }
 
     /**

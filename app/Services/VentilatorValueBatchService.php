@@ -25,16 +25,17 @@ class VentilatorValueBatchService
     {
         $ago = config('system.fixed_flg_interval');
 
-        $query = Repos\VentilatorValueRepository::queryToUpdateFixedFlg(DateUtil::hourAgo(DateUtil::now(), $ago));
-        //なぜか$query->update(['fixed_flg'=>1])がエラーとなるので一旦こっちで
+        $sql = 
+        'UPDATE ventilator_values 
+          SET fixed_flg = '.VentilatorValue::FIX.' 
+          WHERE id IN (SELECT max_id FROM (SELECT MAX(id) as max_id FROM ventilator_values GROUP BY ventilator_id) AS TEMP) AND created_at <= "'.DateUtil::hourAgo(DateUtil::now(), $ago) .'"';
+
         Support\DBUtil::Transaction(
             'fixed_flgを立てる',
-            function () use ($query) {
-                foreach ($query->get() as $entity) {
-                    $entity->fixed_flg = 1;
-                    $entity->save();
-                }
+            function () use ($sql) {
+                \DB::update($sql);
             }
         );
+
     }
 }
