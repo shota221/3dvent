@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Models\Ventilator;
 
 use App\Models\VentilatorValue;
+use App\Services\Support\DateUtil;
 
 class VentilatorValueRepository
 {
@@ -48,8 +49,8 @@ class VentilatorValueRepository
     {
         $sql = 
         'UPDATE ventilator_values 
-          SET fixed_flg = '.VentilatorValue::BOOLEAN_TRUE.' 
-          WHERE id IN (SELECT max_id FROM (SELECT MAX(id) as max_id FROM ventilator_values GROUP BY ventilator_id) AS TEMP) AND created_at <= "'.$created_at_least.'"';
+          SET fixed_flg = '.VentilatorValue::BOOLEAN_TRUE.',fixed_at = "'.DateUtil::toDatetimeStr(DateUtil::now()).'" 
+          WHERE id IN (SELECT max_id FROM (SELECT MAX(id) as max_id FROM ventilator_values GROUP BY ventilator_id) AS TEMP) AND fixed_flg = '.VentilatorValue::BOOLEAN_FALSE.' AND created_at <= "'.$created_at_least.'"';
 
         \DB::update($sql);
     }
