@@ -7,5 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class VentilatorValue extends BaseModel
 {
-    const UPDATED_AT = null;
+    const
+        UPDATED_AT = null,
+        FIX = 1;
 }

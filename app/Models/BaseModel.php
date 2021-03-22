@@ -8,7 +8,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 
-class BaseModel extends EloquentModel {
+class BaseModel extends EloquentModel
+{
 
     /**
      * テーブル名取得
@@ -23,6 +24,8 @@ class BaseModel extends EloquentModel {
         return Str::snake(Str::pluralStudly(class_basename(static::class)));
     }
 
-    
-
+    const
+        BOOLEAN_TRUE = 1,
+        BOOLEAN_FALSE = 0
+        ;
 }
