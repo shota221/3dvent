@@ -25,17 +25,18 @@ class VentilatorValueBatchService
     {
         $ago = config('system.fixed_flg_interval');
 
-        $sql = 
-        'UPDATE ventilator_values 
-          SET fixed_flg = '.VentilatorValue::FIX.' 
-          WHERE id IN (SELECT max_id FROM (SELECT MAX(id) as max_id FROM ventilator_values GROUP BY ventilator_id) AS TEMP) AND created_at <= "'.DateUtil::hourAgo(DateUtil::now(), $ago) .'"';
-
+        /**
+         * TODO バッチ処理一本型
+         * 前回バッチが処理した最後のIDを保持しておいて、
+         * そのID以降の全データをなめ、一時間インターバルが空いているレコードにFIXを立てるという実装
+         * 
+         * 現実装だと、7:10登録 8:00バッチ処理 8:20登録といったケースで7:10のレコードにfixがつかないため。
+         */
         Support\DBUtil::Transaction(
             'fixed_flgを立てる',
-            function () use ($sql) {
-                \DB::update($sql);
+            function () use ($ago) {
+                Repos\VentilatorValueRepository::updateFixedFlg(DateUtil::hourAgo(DateUtil::now(), $ago));
             }
         );
-
     }
 }

@@ -44,5 +44,13 @@ class VentilatorValueRepository
             ]);
     }
 
+    public static function updateFixedFlg($created_at_least)
+    {
+        $sql = 
+        'UPDATE ventilator_values 
+          SET fixed_flg = '.VentilatorValue::BOOLEAN_TRUE.' 
+          WHERE id IN (SELECT max_id FROM (SELECT MAX(id) as max_id FROM ventilator_values GROUP BY ventilator_id) AS TEMP) AND created_at <= "'.$created_at_least.'"';
 
+        \DB::update($sql);
+    }
 }
