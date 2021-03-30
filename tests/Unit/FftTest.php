@@ -13,7 +13,7 @@ class FftTest extends TestCase
      */
     public function testBasicTest()
     {
-        $fn = 'public/3-5_20210304_192218.wav';
+        $fn = 'public/2-20_新潟病院 #42.wav';
         $wave_data = WaveUtil::extractWaveData($fn);
         $y_max = max($wave_data->func[0]);
         $func = array_map(function ($x) use ($y_max) {
@@ -28,7 +28,7 @@ class FftTest extends TestCase
 
         $wave_length = $wave_data->length;
         $step = 128; //second/step=$step*$dt
-        $win_length = 256; //窓幅を大きくすると周波数分解能があがりダイナミックレンジがさがる
+        $win_length = 128; //窓幅を大きくすると周波数分解能があがりダイナミックレンジがさがる
 
 
         $df = $sr / $win_length; //周波数分解幅
@@ -56,14 +56,18 @@ class FftTest extends TestCase
         $pulse_count = 0;
         $pulse_times = [];
         $pulses = [];
-        $cool_time = 4410; //ピーク検出後に飛ばすインデックス時間換算0.1秒
+        $cool_time = 100; //ピーク検出後に飛ばすインデックス時間換算0.1秒
         $ma = []; //移動平均配列(5)
         $exhs = []; //呼気：小さめのピーク(シュー)
         $inhs = []; //吸気：大きめのピーク(カチッ)
         $hear_flg = 1; //1のときヒア状態。ピーク検出で0に
 
         $slice_starts = [
-            0                                                  
+            50410,
+            123250,
+            195650,
+            268715,
+            341330            
         ];
         foreach ($slice_starts as $slice_start) {
             $sliced_func = array_slice($func, $slice_start, $win_length);
@@ -72,17 +76,17 @@ class FftTest extends TestCase
             $fftfunc = $fft->fft($wined_func);
             $fftabs = $fft->getAbsFFT($fftfunc);
 
-            echo 'case' . $slice_start . "\n";
-            foreach ($this->findPeakIndex(array_slice($fftabs, 0, 128),true) as $num) {
-                echo $num . "\n";
-            }
-            //書き出し
-            // $stream = fopen('../analyze/2-5in-start' . $slice_start . '.csv', 'w');
-            // foreach ($fftabs as $key => $value) {
-            //     fputcsv($stream, [$key, $value]);
-            //     if ($key === 127) break;
+            // echo 'case' . $slice_start . "\n";
+            // foreach ($this->findPeakIndex(array_slice($fftabs, 0, 128),true) as $num) {
+            //     echo $num . "\n";
             // }
-            // fclose($stream);
+            //書き出し
+            $stream = fopen('../analyze/2-20-128click' . $slice_start . '.csv', 'w');
+            foreach ($fftabs as $key => $value) {
+                fputcsv($stream, [$key, $value]);
+                if ($key === 63) break;
+            }
+            fclose($stream);
         }
     }
 
@@ -91,7 +95,7 @@ class FftTest extends TestCase
         $peaks = [];
 
         for ($i = 1; $i < count($func) - 1; $i++) {
-            $check = $this->checkThreshold($i, $func[$i],$mode);
+            $check = $this->checkThreshold($i, $func[$i], $mode);
             if (
                 $check >= 0
                 && $func[$i - 1] <= $func[$i]
@@ -118,32 +122,32 @@ class FftTest extends TestCase
             //吸気はじめのカチッ
             'in' => [
                 [
-                    'index_min' => 9,
-                    'index_max' => 12,
+                    'index_min' => 4,
+                    'index_max' => 6,
                     'freq_min' => 1550,
                     'freq_max' => 2100,
-                    'amp' => 0.06
+                    'amp' => 0.04
                 ],
                 [
-                    'index_min' => 15,
-                    'index_max' => 17,
+                    'index_min' => 7,
+                    'index_max' => 8,
                     'freq_min' => 2550,
                     'freq_max' => 2950,
-                    'amp' => 0.04
+                    'amp' => 0.03
                 ],
                 [
-                    'index_min' => 27,
-                    'index_max' => 29,
+                    'index_min' => 13,
+                    'index_max' => 14,
                     'freq_min' => 4650,
                     'freq_max' => 5000,
-                    'amp' => 0.04
+                    'amp' => 0.03
                 ],
                 [
-                    'index_min' => 46,
-                    'index_max' => 51,
+                    'index_min' => 23,
+                    'index_max' => 25,
                     'freq_min' => 7900,
                     'freq_max' => 8800,
-                    'amp' => 0.05
+                    'amp' => 0.03
                 ]
             ],
             //吸気のシュー
@@ -153,14 +157,14 @@ class FftTest extends TestCase
                     'index_max' => 13,
                     'freq_min' => 1700,
                     'freq_max' => 2250,
-                    'amp' => 0.025
+                    'amp' => 0.020
                 ],
                 [
                     'index_min' => 36,
-                    'index_max' => 40,
+                    'index_max' => 42,
                     'freq_min' => 6200,
                     'freq_max' => 7250,
-                    'amp' => 0.006
+                    'amp' => 0.005
                 ]
             ]
         ];
