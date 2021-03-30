@@ -13,7 +13,7 @@ class ExampleTest extends TestCase
      */
     public function testBasicTest()
     {
-        $fn = 'public/8uehn-yzyrh.wav';
+        $fn = 'public/sample.wav';
         $wave_data = WaveUtil::extractWaveData($fn);
         $y_max = max($wave_data->func[0]);
         $func = array_map(function ($x) use ($y_max) {
