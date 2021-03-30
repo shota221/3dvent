@@ -62,7 +62,7 @@ class CalcService
 
         unlink($temp_file);
 
-        //以下解析処理
+        //以下解析処理詳細はTest/ExampleTest2参照
         //正規化
         $y_max = max($wave_data->func[0]);
         $func = array_map(function ($x) use ($y_max) {
@@ -79,12 +79,6 @@ class CalcService
         $step = 128; //second/step=$step*$dt
         $win_length = 256; //窓幅を大きくすると周波数分解能があがりダイナミックレンジがさがる
         $df = $sr / $win_length; //周波数分解幅
-        //$f_a~$f_bの周波数についての変化をとる
-        $f_a = 11000;
-        $f_b = $sr / 2;
-
-        $i_a = floor($f_a / $df);
-        $i_b = floor($f_b / $df);
 
         //窓関数準備
         $blackman = function ($index, $value) use ($win_length) {
@@ -101,82 +95,92 @@ class CalcService
 
         $pulse_count = 0;
         $pulse_times = [];
-        $pulses = [];
-        $hear_flg = 1; //1のときヒア状態。ピーク検出で0に。移動平均線がある数を下回ると再び1になる
-        $peak_th = -1.5; //周波数帯$f_a~$f_bの和の対数を評価してピーク検出
-        $hear_th = -1; //周波数帯$f_a~$f_bの移動平均線(*$m)の対数がこれを下回ったときに再びピーク検出可となる
         $cool_time = 100; //ピーク検出後に飛ばすインデックス
-        $ma = []; //移動平均配列(5)
-        $m = 5; //移動平均線の平均値取得幅
         $exhs = []; //呼気：小さめのピーク
         $inhs = []; //吸気：大きめのピーク
 
+        $mode = false; //falseのときカチ音検出モード、trueでシュー音検出モード
 
-        //短時間フーリエ変換
         for ($i = 0; $i * $step <= min($wave_length - $win_length, $sr * $max_sec); $i++) {
+            $peak_indice = [];
             $sliced_func = array_slice($func, $i * $step, $win_length);
             $wined_func = array_map($blackman, array_keys($sliced_func), $sliced_func);
 
             $fftfunc = $fft->fft($wined_func);
             $fftabs = $fft->getAbsFFT($fftfunc);
 
+            $peak_indice = $this->findPeakIndex(array_slice($fftabs, 0, 128), $mode);
 
-            $sum = 0;
-            for ($j = $i_a; $j <= $i_b; $j++) {
-                $sum += $fftabs[$j];
-            }
-
-            $sum_log = log10($sum);
-
-            if ($sum_log >= $peak_th && $hear_flg === 1) {
+            if (
+                count($peak_indice)>=($mode?2:3)
+            ) {
                 $pulse_times[] = round($i * $step * $dt, 2);
-                $pulses[] = $sum_log;
                 $pulse_count++;
                 $i += $cool_time; //クールタイム分とばす
+                $mode = !$mode;
             }
 
             //パルスが2*$n+1カウントされた時点で終了
             if ($pulse_count === 2 * $n + 1) break;
-
-            $ma[$i % $m] = $sum;
-            if ($i < $m) continue;
-            if ($hear_flg === 0 && log10(array_sum($ma)) <= $hear_th) $hear_flg = 1; //移動平均線が$hear_thを下回ったときにピーク受け入れ状態になる
-
         }
 
-        if (count($pulses) < 2 * $n + 1) {
+        if ($pulse_count < 2 * $n + 1) {
             //音が小さすぎるor測定時間が短すぎる
             $form->addError('sound', 'validation.not_enough_pulses');
             return false;
         }
 
-        if ($pulses[0] < $pulses[1]) {
-            //呼気スタート音のほうが小さい
-            for ($i = 0; $i < $n; $i++) {
-                if ($pulses[2 * $i + 1] < $pulses[2 * $i] || $pulses[2 * $i + 1] < $pulses[2 * $i + 2]) {
-                    //パルスの大小が不規則->クリック音が正しく取得されていない＝雑音が大きい
-                    $form->addError('sound', 'validation.invalid_sound');
-                    return false;
-                }
-                $exhs[] = $pulse_times[2 * $i + 1] - $pulse_times[2 * $i];
-                $inhs[] = $pulse_times[2 * $i + 2] - $pulse_times[2 * $i + 1];
-            }
-        } else {
-            for ($i = 0; $i < $n; $i++) {
-                if ($pulses[2 * $i + 1] > $pulses[2 * $i] || $pulses[2 * $i + 1] > $pulses[2 * $i + 2]) {
-                    //パルスの大小が不規則->クリック音が正しく取得されていない＝雑音が大きい
-                    $form->addError('sound', 'validation.invalid_sound');
-                    return false;
-                }
-                $inhs[] = $pulse_times[2 * $i + 1] - $pulse_times[2 * $i];
-                $exhs[] = $pulse_times[2 * $i + 2] - $pulse_times[2 * $i + 1];
-            }
+        for ($i = 0; $i < $n; $i++) {
+            $inhs[] = $pulse_times[2 * $i + 1] - $pulse_times[2 * $i];
+            $exhs[] = $pulse_times[2 * $i + 2] - $pulse_times[2 * $i + 1];
         }
 
-        $i_e_avg = ['i' => round(array_sum($inhs) / $n, 3), 'e' => round(array_sum($exhs) / $n, 3)];
+        $i_e_avg = ['i' => round(array_sum($inhs) / $n, 2), 'e' => round(array_sum($exhs) / $n, 2)];
 
         $rr = $this->calcRr($i_e_avg['i'], $i_e_avg['e']);
 
         return Converter\IeConverter::convertToIeResult($i_e_avg['i'], $i_e_avg['e'], $rr);
+    }
+    
+    private function findPeakIndex($func, bool $mode = false)
+    {
+        $peaks = [];
+
+        for ($i = 1; $i < count($func) - 1; $i++) {
+            $check = $this->checkThreshold($i, $func[$i], $mode);
+            if (
+                $check >= 0
+                && $func[$i - 1] <= $func[$i]
+                && $func[$i + 1] <= $func[$i]
+            ) {
+                $peaks[$check] = $i;
+            }
+        }
+
+        return $peaks;
+    }
+
+    /**
+     * modeがfalseならカチッ音、trueならシュー音検出
+     * 検知したしきい値のインデックスを返す。検知してなければ-1をかえす
+     * @param [type] $i
+     * @param [type] $val
+     * @param boolean $mode
+     * @return void
+     */
+    private function checkThreshold($i, $val, bool $mode = false)
+    {
+        $threshold = $mode ? config('analysis.threshold.ex') : config('analysis.threshold.in');
+
+        foreach ($threshold as $key => $thr) {
+            if (
+                $i >= $thr['index_min']
+                && $i <= $thr['index_max']
+                && $val >= $thr['amp']
+            ) {
+                return $key;
+            }
+        }
+        return -1;
     }
 }

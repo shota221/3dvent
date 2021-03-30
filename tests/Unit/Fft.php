@@ -6,6 +6,7 @@ use Tests\Unit\Complex;
 
 /**
  * Class that calculate the FFT and the inverse FFT of a 1D signal
+ * http://technotejp.blogspot.com/2014/06/php.html
  */
 class Fft
 {

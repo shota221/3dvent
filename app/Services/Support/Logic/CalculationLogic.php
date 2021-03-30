@@ -85,9 +85,9 @@ trait CalculationLogic
             $count++;
         }
 
-        $i_e_avg['i'] = round($i_sum / $count, 3);
+        $i_e_avg['i'] = round($i_sum / $count, 2);
 
-        $i_e_avg['e'] = round($e_sum / $count, 3);
+        $i_e_avg['e'] = round($e_sum / $count, 2);
 
         return $i_e_avg;
     }
