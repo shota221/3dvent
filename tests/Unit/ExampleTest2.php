@@ -14,7 +14,7 @@ class ExampleTest2 extends TestCase
      */
     public function testBasicTest()
     {
-        $fn = 'public/3-20_20210304_193842.wav';
+        $fn = 'public/2-20_新潟病院 #42.wav';
         $wave_data = WaveUtil::extractWaveData($fn);
         $y_max = max($wave_data->func[0]);
         $func = array_map(function ($x) use ($y_max) {
@@ -68,7 +68,7 @@ class ExampleTest2 extends TestCase
             $peak_indice = $this->findPeakIndex(array_slice($fftabs, 0, 128), $mode);
 
             if (
-                count($peak_indice)>=($mode?2:3)
+                count($peak_indice) >= ($mode ? 2 : 3)
                 && $hear_flg === 1
             ) {
                 $pulse_times[] = round($i * $step * $dt, 2);
@@ -120,7 +120,7 @@ class ExampleTest2 extends TestCase
      */
     private function checkThreshold($i, $val, bool $mode = false)
     {
-        $thresholds = [
+        $thresholds =  [
             //吸気はじめのカチッ
             'in' => [
                 [
@@ -135,21 +135,21 @@ class ExampleTest2 extends TestCase
                     'index_max' => 17,
                     'freq_min' => 2550,
                     'freq_max' => 2950,
-                    'amp' => 0.04
+                    'amp' => 0.03
                 ],
                 [
                     'index_min' => 27,
                     'index_max' => 29,
                     'freq_min' => 4650,
                     'freq_max' => 5000,
-                    'amp' => 0.04
+                    'amp' => 0.03
                 ],
                 [
                     'index_min' => 46,
                     'index_max' => 51,
                     'freq_min' => 7900,
                     'freq_max' => 8800,
-                    'amp' => 0.04
+                    'amp' => 0.03
                 ]
             ],
             //吸気のシュー
@@ -159,14 +159,14 @@ class ExampleTest2 extends TestCase
                     'index_max' => 13,
                     'freq_min' => 1700,
                     'freq_max' => 2250,
-                    'amp' => 0.025
+                    'amp' => 0.020
                 ],
                 [
                     'index_min' => 36,
-                    'index_max' => 40,
+                    'index_max' => 42,
                     'freq_min' => 6200,
                     'freq_max' => 7250,
-                    'amp' => 0.006
+                    'amp' => 0.005
                 ]
             ]
         ];
