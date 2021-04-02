@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Auth;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -26,5 +27,26 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
 
         //
+        // eloquent user provider extend
+        Auth::provider('eloquent_user', function($app, array $config) {
+            return new \App\Http\Auth\UserProvider($this->app['hash']);
+        });
+
+        // カスタムtoken認証方式追加
+        $this->app['auth']->extend('api_token', function($app, string $name, array $config) {
+            return new \App\Http\Auth\ApiTokenGuard(
+                $app['request'], 
+                $config
+            );
+        });
+
+        $this->app['auth']->extend('user_token', function($app, string $name, array $config) {
+            return new \App\Http\Auth\UserTokenGuard(
+                Auth::createUserProvider($config['provider']), 
+                $app['request'], 
+                $config
+            );
+        });
+
     }
 }

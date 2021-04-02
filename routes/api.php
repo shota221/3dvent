@@ -18,37 +18,44 @@
  */
 Route::group(['middleware' => ['routetype:api']], function() {
 
-    //idfv登録・アプリキー発行
-    Route::post('/appkey','AppkeyController@create')->name('api.appkey.create');
+    //トークン認証ルート
+    Route::group(['middleware' => ['auth:api_token,user_token']], function () {
+        // TODO delete me
+        Route::get('/auth_test', 'AuthTestController@index')->name('api.test.auth');
+        
+        //idfv登録・アプリキー発行
+        Route::post('/appkey','AppkeyController@create')->name('api.appkey.create');
 
-    //組織ユーザートークン発行
-    Route::post('/auth/login', 'AuthController@login')->name('api.auth.login');
+        //組織ユーザートークン発行
+        Route::post('/auth/login', 'AuthController@login')->name('api.auth.login');
 
-    //組織ユーザートークン失効
-    Route::post('/auth/logout', 'AuthController@logout')->name('api.auth.logout');
+        //組織ユーザートークン失効
+        Route::post('/auth/logout', 'AuthController@logout')->name('api.auth.logout');
 
-    //各種計算
-    Route::get('/calculate/default_flow','CalcController@defaultFlow')->name('api.calc.default_flow');
-    Route::get('/calculate/estimated_data','CalcController@estimatedData')->name('api.calc.estimated_data');
-    Route::post('/calculate/ie/manual','CalcController@ieManual')->name('api.calc.ie_manual');
-    Route::post('/calculate/ie/sound','CalcController@ieSound')->name('api.calc.ie_sound');
+        //各種計算
+        Route::get('/calculate/default_flow','CalcController@defaultFlow')->name('api.calc.default_flow');
+        Route::get('/calculate/estimated_data','CalcController@estimatedData')->name('api.calc.estimated_data');
+        Route::post('/calculate/ie/manual','CalcController@ieManual')->name('api.calc.ie_manual');
+        Route::post('/calculate/ie/sound','CalcController@ieSound')->name('api.calc.ie_sound');
 
-    //患者情報登録
-    Route::post('/patient', 'PatientController@create')->name('api.patient.create');
-    //患者情報取得
-    Route::get('/patient/{id}', 'PatientController@show')->name('api.patient.show');
-    //患者情報更新
-    Route::put('/patient/{id}', 'PatientController@update')->name('api.patient.update');
+        //患者情報登録
+        Route::post('/patient', 'PatientController@create')->name('api.patient.create');
+        //患者情報取得
+        Route::get('/patient/{id}', 'PatientController@show')->name('api.patient.show');
+        //患者情報更新
+        Route::put('/patient/{id}', 'PatientController@update')->name('api.patient.update');
 
-    //呼吸器情報取得（GS1コード読み込み）
-    Route::get('/ventilator','VentilatorController@show')->name('api.ventilator.show');
-    //呼吸器情報登録
-    Route::post('/ventilator','VentilatorController@create')->name('api.ventilator.create');
-    //機器関連値取得
-    Route::get('/ventilator/{id}','VentilatorController@showValue')->name('api.ventilator.show_value');
-    //機器関連値登録
-    Route::post('/ventilator/{id}','VentilatorController@createValue')->name('api.ventilator.create_value');
-    //機器関連値更新
-    Route::put('/ventilator/{id}','VentilatorController@updateValue')->name('api.ventilator.update_value');
+        //呼吸器情報取得（GS1コード読み込み）
+        Route::get('/ventilator','VentilatorController@show')->name('api.ventilator.show');
+        //呼吸器情報登録
+        Route::post('/ventilator','VentilatorController@create')->name('api.ventilator.create');
+        //機器関連値取得
+        Route::get('/ventilator/{id}','VentilatorController@showValue')->name('api.ventilator.show_value');
+        //機器関連値登録
+        Route::post('/ventilator/{id}','VentilatorController@createValue')->name('api.ventilator.create_value');
+        //機器関連値更新
+        Route::put('/ventilator/{id}','VentilatorController@updateValue')->name('api.ventilator.update_value');
+
+    });
 
 });
