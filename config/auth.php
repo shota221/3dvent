@@ -1,6 +1,10 @@
+
 <?php
 
 return [
+
+
+    
 
     /*
     |--------------------------------------------------------------------------
@@ -34,17 +38,21 @@ return [
     | Supported: "session", "token"
     |
     */
+   
+
 
     'guards' => [
-        'web' => [
-            'driver' => 'session',
-            'provider' => 'users',
+        'api_token' => [
+            'driver' => 'api_token',
+            'input_key' => env('API_TOKEN_INPUT_KEY', null), // ex.) _m_t  nullable
+            'secret_token' => env('API_TOKEN', null),
         ],
-
-        'api' => [
-            'driver' => 'token',
-            'provider' => 'users',
-            'hash' => false,
+        'user_token' => [
+            'driver' => 'user_token', // token or session
+            'provider' => 'user',
+            'input_key' => env('USER_TOKEN_INPUT_KEY', null), // ex.) _m_t  nullable
+            'storage_key' => \App\Models\User::TOKEN_COLUMN_NAME,
+            'hash' => env('USER_TOKEN_HASH', true),
         ],
     ],
 
@@ -66,15 +74,11 @@ return [
     */
 
     'providers' => [
-        'users' => [
-            'driver' => 'eloquent',
-            'model' => App\Models\User::class,
+        'user' => [
+            'driver'        => 'eloquent_user',
         ],
+        
 
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
     ],
 
     /*
