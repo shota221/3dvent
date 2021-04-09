@@ -118,6 +118,8 @@ paths:
                       organization_name:
                         type: string
                         minLength: 1
+                      serial_number:
+                        type: number
                 required:
                   - result
               examples:
@@ -128,6 +130,7 @@ paths:
                       ventilator_id: 1
                       patient_id: 1
                       organization_name: テスト組織
+                      serial_number: 1
                 example-2:
                   value:
                     result:
@@ -135,7 +138,7 @@ paths:
       operationId: get-ventilator
       description: |
         GS1コードにより人工呼吸器に紐付いた患者の身長体重情報を取得する。存在しない場合はregistered:falseを返す。
-        紐付けがされている場合は、患者IDや組織名も返す。
+        紐付けがされている場合は、患者IDや組織名も返す。X-User-Tokenが付与されていれば登録済み呼吸器の組織紐付けを行う
       parameters:
         - schema:
             type: string
@@ -155,6 +158,10 @@ paths:
           name: gs1_code
           description: QR読み取りにより取得される識別コード
           required: true
+        - schema:
+            type: string
+          in: header
+          name: X-User-Token
     post:
       summary: 設定データを登録する
       operationId: post-ventilator
@@ -169,15 +176,17 @@ paths:
                 properties:
                   result:
                     type: object
+                    required:
+                      - ventilator_id
+                      - serial_number
                     properties:
                       ventilator_id:
                         type: number
                       organization_name:
                         type: string
                         minLength: 1
-                    required:
-                      - ventilator_id
-                      - organization_name
+                      serial_number:
+                        type: number
                 required:
                   - result
               examples:
@@ -186,6 +195,7 @@ paths:
                     result:
                       ventilator_id: 1
                       organization_name: テスト組織
+                      serial_number: 1
       parameters:
         - schema:
             type: string
@@ -361,6 +371,9 @@ paths:
               description: ''
               type: object
               properties:
+                patient_code:
+                  type: string
+                  minLength: 1
                 height:
                   type: string
                   minLength: 1
@@ -375,6 +388,7 @@ paths:
             examples:
               example-1:
                 value:
+                  patient_code: '999'
                   height: string
                   gender: 1
                   ventilator_id: 1
@@ -732,22 +746,13 @@ paths:
                       - predicted_vt
                       - height
                     properties:
-                      nickname:
+                      patient_code:
                         type: string
                         minLength: 1
                       gender:
                         type: number
                       predicted_vt:
                         type: number
-                      other_attrs:
-                        type: object
-                        properties:
-                          age:
-                            type: string
-                            minLength: 1
-                          nationality:
-                            type: string
-                            minLength: 1
                       height:
                         type: string
                         minLength: 1
@@ -757,12 +762,9 @@ paths:
                 example-1:
                   value:
                     result:
-                      nickname: テスト患者5
+                      patient_code: '999'
                       gender: 1
                       predicted_vt: 393
-                      other_attrs:
-                        age: '28'
-                        nationality: 日本
                       height: '169.5'
       operationId: get-patient-id
       parameters:
@@ -794,23 +796,18 @@ paths:
                 properties:
                   result:
                     type: object
+                    required:
+                      - gender
+                      - predicted_vt
+                      - height
                     properties:
-                      nickname:
+                      patient_code:
                         type: string
                         minLength: 1
                       gender:
                         type: number
                       predicted_vt:
                         type: number
-                      other_attrs:
-                        type: object
-                        properties:
-                          age:
-                            type: string
-                            minLength: 1
-                          nationality:
-                            type: string
-                            minLength: 1
                       height:
                         type: string
                         minLength: 1
@@ -820,12 +817,9 @@ paths:
                 example-1:
                   value:
                     result:
-                      nickname: テスト患者5
+                      patient_code: '999'
                       gender: 1
                       predicted_vt: 393
-                      other_attrs:
-                        age: '28'
-                        nationality: 日本
                       height: '169.5'
       operationId: put-patient-id
       parameters:
@@ -854,7 +848,7 @@ paths:
               description: ''
               type: object
               properties:
-                nickname:
+                patient_code:
                   type: string
                   minLength: 1
                 height:
@@ -862,20 +856,15 @@ paths:
                   minLength: 1
                 gender:
                   type: number
-                other_attrs:
-                  type: object
               required:
                 - height
                 - gender
             examples:
               example-1:
                 value:
-                  nickname: テスト患者1
+                  patient_code: '999'
                   height: '169.5'
                   gender: 1
-                  other_attrs:
-                    age: '28'
-                    nationality: 日本
       description: 患者データを更新する
   /calculate/ie/manual:
     parameters: []
@@ -1078,9 +1067,9 @@ paths:
       tags:
         - calculate
   /auth/logout:
-    post:
+    get:
       summary: ''
-      operationId: post-auth-logout
+      operationId: get-auth-logout
       responses:
         '200':
           description: OK
@@ -1109,20 +1098,18 @@ paths:
         - schema:
             type: string
           in: header
-          description: 疎通用トークン
           name: X-Api-Token
           required: true
         - schema:
             type: string
           in: header
-          description: application/json
-          name: Accept
+          name: X-User-Token
           required: true
         - schema:
             type: string
           in: header
-          name: X-User-Token
-          description: ユーザー識別用トークン
+          name: Accept
+          description: application/json
           required: true
       tags:
         - auth
@@ -1179,11 +1166,813 @@ paths:
       tags:
         - appkey
     parameters: []
+  /user:
+    get:
+      summary: Your GET endpoint
+      tags:
+        - user
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  result:
+                    type: object
+                    required:
+                      - user_name
+                      - organization_name
+                    properties:
+                      user_name:
+                        type: string
+                        minLength: 1
+                      organization_name:
+                        type: string
+                        minLength: 1
+                      email:
+                        type: string
+                        minLength: 1
+                required:
+                  - result
+              examples:
+                example-1:
+                  value:
+                    result:
+                      user_name: テスト太郎
+                      organization_name: テスト組織
+                      email: test@email.com
+      operationId: get-user
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: X-Api-Token
+          description: 疎通用トークン
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: X-User_Token
+          description: ユーザー識別用トークン
+          required: true
+        - schema:
+            type: string
+          in: header
+          required: true
+          name: Accept
+          description: application/json
+      description: ユーザートークンからユーザー情報を取得する
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
+    put:
+      summary: ''
+      operationId: put-user
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      user_name:
+                        type: string
+                        minLength: 1
+                      email:
+                        type: string
+                        minLength: 1
+                required:
+                  - result
+              examples:
+                example-1:
+                  value:
+                    result:
+                      user_name: テスト太郎
+                      email: test@email.com
+      description: ユーザートークンからユーザー情報を更新する
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: X-Api-Token
+          description: 疎通用トークン
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: X-User-Token
+          description: ユーザー識別用トークン
+          required: true
+        - schema:
+            type: string
+          in: header
+          required: true
+          name: Accept
+          description: application/json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                user_name:
+                  type: string
+                  minLength: 1
+                email:
+                  type: string
+                  minLength: 1
+            examples:
+              example-1:
+                value:
+                  user_name: テスト太郎
+                  email: test@email.com
+        description: ''
+      tags:
+        - user
+  '/patient/{patient_id}/detail':
+    parameters:
+      - schema:
+          type: string
+        name: patient_id
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags:
+        - patient
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  result:
+                    type: object
+                    required:
+                      - has_observed
+                    properties:
+                      has_observed:
+                        type: boolean
+                      observed_at:
+                        type: string
+                        minLength: 1
+                      opt_out_flg:
+                        type: number
+                      patient_code:
+                        type: string
+                        minLength: 1
+                      age:
+                        type: string
+                        minLength: 1
+                      vent_disease_name:
+                        type: string
+                        minLength: 1
+                      other_disease_name_1:
+                        type: string
+                        minLength: 1
+                      other_disease_name_2:
+                        type: string
+                        minLength: 1
+                      userd_place:
+                        type: number
+                      hospital_name:
+                        type: string
+                        minLength: 1
+                      national_name:
+                        type: string
+                        minLength: 1
+                      discontinuation_at:
+                        type: string
+                        minLength: 1
+                      outcome:
+                        type: number
+                      treatment:
+                        type: number
+                      adverse_event_flg:
+                        type: number
+                      adverse_event_contents:
+                        type: string
+                        minLength: 1
+                required:
+                  - result
+              examples:
+                患者観察研究データ入力済みの場合:
+                  value:
+                    result:
+                      has_observed: true
+                      observed_at: '2021-02-08 12:34:06'
+                      opt_out_flg: 1
+                      patient_code: '999'
+                      age: '21'
+                      vent_disease_name: XXXXXX
+                      other_disease_name_1: xXXXXX
+                      other_disease_name_2: XXXXXX
+                      userd_place: 3
+                      hospital_name: XXXXXX
+                      national_name: XXXXXX
+                      discontinuation_at: '2021-04-08 17:04:01'
+                      outcome: 1
+                      treatment: 1
+                      adverse_event_flg: 1
+                      adverse_event_contents: XXXXXX
+                患者観察研究データ未入力の場合:
+                  value:
+                    result:
+                      has_observed: false
+      operationId: get-patient-patient_id-detail
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: X-Api-Token
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: X-User-Token
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: Accept
+          description: application/json
+          required: true
+      description: 患者観察研究データの存在確認及び最新データ取得
+    post:
+      summary: ''
+      operationId: post-patient-patient_id-detail
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      observed_at:
+                        type: string
+                        minLength: 1
+                      patient_code:
+                        type: string
+                        minLength: 1
+                    required:
+                      - observed_at
+                      - patient_code
+                required:
+                  - result
+              examples:
+                example-1:
+                  value:
+                    result:
+                      observed_at: '2021-02-08 12:34:06'
+                      patient_code: '999'
+      description: 患者観察研究データの登録
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: X-Api-Token
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: X-User-Token
+          required: true
+        - schema:
+            type: string
+          in: header
+          required: true
+          name: Accept
+          description: application/json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                opt_out_flg:
+                  type: number
+                age:
+                  type: string
+                  minLength: 1
+                vent_disease_name:
+                  type: string
+                  minLength: 1
+                other_disease_name_1:
+                  type: string
+                  minLength: 1
+                other_disease_name_2:
+                  type: string
+                  minLength: 1
+                userd_place:
+                  type: number
+                hospital_name:
+                  type: string
+                  minLength: 1
+                national_name:
+                  type: string
+                  minLength: 1
+                discontinuation_at:
+                  type: string
+                  minLength: 1
+                outcome:
+                  type: number
+                treatment:
+                  type: number
+                adverse_event_flg:
+                  type: number
+                adverse_event_contents:
+                  type: string
+                  minLength: 1
+            examples:
+              example-1:
+                value:
+                  opt_out_flg: 1
+                  age: '21'
+                  vent_disease_name: XXXXXX
+                  other_disease_name_1: xXXXXX
+                  other_disease_name_2: XXXXXX
+                  userd_place: 3
+                  hospital_name: XXXXXX
+                  national_name: XXXXXX
+                  discontinuation_at: '2021-04-08 17:04:01'
+                  outcome: 1
+                  treatment: 1
+                  adverse_event_flg: 1
+                  adverse_event_contents: XXXXXX
+      tags:
+        - patient
+    put:
+      summary: ''
+      operationId: put-patient-patient_id-detail
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      observed_at:
+                        type: string
+                        minLength: 1
+                      patient_code:
+                        type: string
+                        minLength: 1
+                    required:
+                      - observed_at
+                      - patient_code
+                required:
+                  - result
+              examples:
+                example-1:
+                  value:
+                    result:
+                      observed_at: '2021-02-08 12:34:06'
+                      patient_code: '999'
+      description: 患者観察研究データの更新
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: X-Api-Token
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: X-User-Token
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: Accept
+          description: application/json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                opt_out_flg:
+                  type: number
+                age:
+                  type: string
+                  minLength: 1
+                vent_disease_name:
+                  type: string
+                  minLength: 1
+                other_disease_name_1:
+                  type: string
+                  minLength: 1
+                other_disease_name_2:
+                  type: string
+                  minLength: 1
+                userd_place:
+                  type: number
+                hospital_name:
+                  type: string
+                  minLength: 1
+                national_name:
+                  type: string
+                  minLength: 1
+                discontinuation_at:
+                  type: string
+                  minLength: 1
+                outcome:
+                  type: number
+                treatment:
+                  type: number
+                adverse_event_flg:
+                  type: number
+                adverse_event_contents:
+                  type: string
+                  minLength: 1
+            examples:
+              example-1:
+                value:
+                  opt_out_flg: 1
+                  age: '21'
+                  vent_disease_name: XXXXXX
+                  other_disease_name_1: xXXXXX
+                  other_disease_name_2: XXXXXX
+                  userd_place: 3
+                  hospital_name: XXXXXX
+                  national_name: XXXXXX
+                  discontinuation_at: '2021-04-08 17:04:01'
+                  outcome: 1
+                  treatment: 1
+                  adverse_event_flg: 1
+                  adverse_event_contents: XXXXXX
+      tags:
+        - patient
+  /ventilator_value:
+    parameters: []
+    get:
+      summary: Your GET endpoint
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  result:
+                    type: object
+                    required:
+                      - has_observed
+                    properties:
+                      has_observed:
+                        type: boolean
+                      ventilator_value_id:
+                        type: number
+                      observed_at:
+                        type: string
+                      observed_user_name:
+                        type: string
+                      nearest_city:
+                        type: string
+                      gender:
+                        type: number
+                      height:
+                        type: string
+                      ideal_weight:
+                        type: string
+                      airway_pressure:
+                        type: string
+                      total_flow:
+                        type: string
+                      air_flow:
+                        type: string
+                      o2_flow:
+                        type: string
+                      rr:
+                        type: string
+                      expiratory_time:
+                        type: string
+                      inspiratory_time:
+                        type: string
+                      vt_per_kg:
+                        type: string
+                      predicted_vt:
+                        type: string
+                      estimated_vt:
+                        type: string
+                      estimated_mv:
+                        type: string
+                      estimated_peep:
+                        type: string
+                      fio2:
+                        type: string
+                      status_use:
+                        type: number
+                      status_use_other:
+                        type: string
+                      spo2:
+                        type: string
+                      etco2:
+                        type: string
+                      pao2:
+                        type: string
+                      paco2:
+                        type: string
+                      bug_flg:
+                        type: number
+                      bug_name:
+                        type: string
+                      bug_detail:
+                        type: string
+                required:
+                  - result
+              examples:
+                example-1:
+                  value:
+                    result:
+                      has_observed: true
+                      ventilator_value_id: 1
+                      observed_at: ''
+                      observed_user_name: ''
+                      nearest_city: ''
+                      gender: 1
+                      height: ''
+                      ideal_weight: ''
+                      airway_pressure: ''
+                      total_flow: ''
+                      air_flow: ''
+                      o2_flow: ''
+                      rr: ''
+                      expiratory_time: ''
+                      inspiratory_time: ''
+                      vt_per_kg: ''
+                      predicted_vt: ''
+                      estimated_vt: ''
+                      estimated_mv: ''
+                      estimated_peep: ''
+                      fio2: ''
+                      status_use: 1
+                      status_use_other: ''
+                      spo2: ''
+                      etco2: ''
+                      pao2: ''
+                      paco2: ''
+                      bug_flg: 1
+                      bug_name: ''
+                      bug_detail: ''
+                example-2:
+                  value:
+                    result:
+                      has_observed: false
+      operationId: get-ventilator_value
+      description: |-
+        ventilator_idのみ指定で該当呼吸器に対する機器観察研究データの存在確認及び最新データ取得
+        ventilator_value_idの指定があれば該当ventilator_value_idの機器観察研究データ取得
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: X-Api-Token
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: X-User-Token
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: Accept
+          description: application/json
+          required: true
+        - schema:
+            type: string
+          in: query
+          name: ventilator_id
+        - schema:
+            type: string
+          in: query
+          name: ventilator_value_id
+      tags:
+        - ventilator_value
+    put:
+      summary: ''
+      operationId: put-ventilator_value_id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      revised_at:
+                        type: string
+                    required:
+                      - revised_at
+                required:
+                  - result
+              examples:
+                example-1:
+                  value:
+                    result:
+                      revised_at: ''
+      description: 該当ventilator_value_idに対する機器観察研究データの更新
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: X-Api-Token
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: X-User-Token
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: Accept
+          description: application/json
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                ventilator_value_id:
+                  type: number
+                observed_at:
+                  type: string
+                gender:
+                  type: number
+                height:
+                  type: string
+                ideal_weight:
+                  type: string
+                airway_pressure:
+                  type: string
+                air_flow:
+                  type: string
+                o2_flow:
+                  type: string
+                status_use:
+                  type: number
+                status_use_other:
+                  type: string
+                spo2:
+                  type: string
+                etco2:
+                  type: string
+                pao2:
+                  type: string
+                paco2:
+                  type: string
+              required:
+                - ventilator_value_id
+            examples:
+              example-1:
+                value:
+                  ventilator_value_id: 1
+                  observed_at: ''
+                  nearest_city: ''
+                  gender: 1
+                  height: ''
+                  ideal_weight: ''
+                  airway_pressure: ''
+                  total_flow: ''
+                  air_flow: ''
+                  o2_flow: ''
+                  rr: ''
+                  expiratory_time: ''
+                  inspiratory_time: ''
+                  vt_per_kg: ''
+                  predicted_vt: ''
+                  estimated_vt: ''
+                  estimated_mv: ''
+                  estimated_peep: ''
+                  fio2: ''
+                  status_use: 1
+                  status_use_other: ''
+                  spo2: ''
+                  etco2: ''
+                  pao2: ''
+                  paco2: ''
+                  bug_flg: 1
+                  bug_name: ''
+                  bug_detail: ''
+      tags:
+        - ventilator_value
+  /ventilator_value/list:
+    get:
+      summary: Your GET endpoint
+      tags:
+        - ventilator_value
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  result:
+                    type: array
+                    uniqueItems: true
+                    minItems: 1
+                    items:
+                      required:
+                        - id
+                        - observed_at
+                        - observed_user_name
+                      properties:
+                        id:
+                          type: number
+                        observed_at:
+                          type: string
+                          minLength: 1
+                        observed_user_name:
+                          type: string
+                          minLength: 1
+                required:
+                  - result
+              examples:
+                example-1:
+                  value:
+                    result:
+                      - id: 10
+                        observed_at: '2021-02-04 12:34:06'
+                        observed_user_name: test_user
+                      - id: 22
+                        observed_at: '2021-02-06 12:34:06'
+                        observed_user_name: test_user
+                      - id: 33
+                        observed_at: '2021-02-07 12:34:06'
+                        observed_user_name: test_user
+      operationId: get-ventilator_value-list
+      description: '該当呼吸器に対するfixed_flgが立っているventilator_value_idおよびそれぞれのobserved_at,observed_user_nameの値を返す'
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: X-Api-Token
+        - schema:
+            type: string
+          in: header
+          name: Accept
+          description: application/json
+        - schema:
+            type: string
+          in: query
+          name: ventilator_id
+          required: true
+        - schema:
+            type: string
+          in: query
+          name: limit
+        - schema:
+            type: string
+          in: query
+          name: offset
+    parameters: []
 components:
   schemas: {}
 tags:
+  - name: appkey
   - name: auth
   - name: calculate
   - name: patient
+  - name: user
   - name: ventilator
-  - name: appkey
+  - name: ventilator_value
