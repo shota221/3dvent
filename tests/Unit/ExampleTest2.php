@@ -14,7 +14,7 @@ class ExampleTest2 extends TestCase
      */
     public function testBasicTest()
     {
-        $fn = 'public/2-20_新潟病院 #42.wav';
+        $fn = '../analyze/3-20_20210304_193842.wav';
         $wave_data = WaveUtil::extractWaveData($fn);
         $y_max = max($wave_data->func[0]);
         $func = array_map(function ($x) use ($y_max) {
