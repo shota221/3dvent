@@ -15,4 +15,9 @@ class OrganizationRepository
     {
         return static::query()->where('id',$organization_id)->first();
     }
+
+    public static function findOneByCode(string $organization_code)
+    {
+        return static::query()->where('code',$organization_code)->first();
+    }
 }

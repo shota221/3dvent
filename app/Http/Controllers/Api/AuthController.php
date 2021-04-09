@@ -8,6 +8,10 @@ use App\Services as Service;
 
 use Illuminate\Http\Request;
 
+use App\Http\Forms as Form;
+
+use App\Exceptions;
+
 class AuthController extends Controller
 {
     private $service;
@@ -19,11 +23,17 @@ class AuthController extends Controller
     
     public function login(Request $request)
     {
-        return $this->service->login();
+        $form = new Form\UserAuthForm($request->all());
+
+        if ($form->hasError() || !$response = $this->service->login($form)) {
+            throw new Exceptions\InvalidFormException($form);
+        }
+
+        return $response;
     }
 
     public function logout(Request $request)
     {
-        return $this->service->logout();
+        // return $this->service->logout();
     }
 }

@@ -20,4 +20,9 @@ class UserRepository
     {
         return static::query()->where(User::TOKEN_COLUMN_NAME, $token)->first();
     }
+
+    public static function findOneByOrganizationIdAndName(int $organization_id, string $name)
+    {
+        return static::query()->where('organization_id',$organization_id)->where('name',$name)->first();
+    }
 }
