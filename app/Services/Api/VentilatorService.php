@@ -32,12 +32,11 @@ class VentilatorService
         return Converter\VentilatorConverter::convertToVentilatorResult($ventilator);
     }
 
-    public function create($form, $user_token)
+    public function create($form, $user = null)
     {
-        if (!is_null($user_token)) {
-            //TODO Auth:user()からの取得
-            $registered_user_id = 3;
-            $organization_id = 1;
+        if (!is_null($user)) {
+            $registered_user_id = $user->id;
+            $organization_id = $user->organization_id;
         }
 
         $serial_number = substr($form->gs1_code, -5);
