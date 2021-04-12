@@ -9,6 +9,7 @@ use App\Http\Response as Response;
 use App\Repositories as Repos;
 use App\Models\Report;
 use App\Services\Support as Support;
+use App\Services\Support\Client\ReverseGeocodingClient;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Services\Support\Converter;
@@ -39,7 +40,13 @@ class VentilatorService
             $organization_id = 1;
         }
 
-        $entity = Converter\VentilatorConverter::convertToVentilatorEntity($form->gs1_code, $form->latitude, $form->longitude, $organization_id, $registered_user_id);
+        $serial_number = substr($form->gs1_code, -5);
+
+        if (!is_null($form->latitude) && !is_null($form->longitude)) {
+            $nearest_city = (new Support\Client\ReverseGeocodingApiClient)->getReverseGeocodingData($form->latitude, $form->longitude, 13)->display_name;
+        }
+
+        $entity = Converter\VentilatorConverter::convertToVentilatorEntity($form->gs1_code, $serial_number, $form->latitude, $form->longitude, $nearest_city, $organization_id, $registered_user_id);
 
         DBUtil::Transaction(
             '呼吸器情報登録',
@@ -139,7 +146,7 @@ class VentilatorService
 
         $fixed_at = DateUtil::toDatetimeStr(DateUtil::now());
 
-        $entity = Converter\VentilatorConverter::convertToVentilatorValueUpdateEntity($ventilator_value,$form->fixed_flg,$fixed_at);
+        $entity = Converter\VentilatorConverter::convertToVentilatorValueUpdateEntity($ventilator_value, $form->fixed_flg, $fixed_at);
 
         DBUtil::Transaction(
             '最終設定フラグ更新',

@@ -7,7 +7,7 @@ use App\Services\Support\Converter;
 use App\Services\Support\Client\Response;
 use Validator;
 
-class ReverseGeocodingClient extends HttpClient
+class ReverseGeocodingApiClient extends HttpClient
 {
 
     private $config;
@@ -77,17 +77,25 @@ class ReverseGeocodingClient extends HttpClient
         return $this->config['request_interval'];
     }
 
-    public function getReverseGeocodingData(string $lat, string $lon)
+    /**
+     * 緯度経度から都市情報を逆引きするためのapi
+     * https://wiki.openstreetmap.org/wiki/JA:Nominatim
+     *
+     * @param string $lat
+     * @param string $lon
+     * @param string $zoom
+     */
+    public function getReverseGeocodingData(string $lat, string $lon, int $zoom)
     {
-        $list = [];
         $content = [];
 
+        $content['format'] = 'json';
         $content['lat'] = $lat;
         $content['lon'] = $lon;
+        $content['zoom'] = $zoom;
 
         try {
             $response = $this->request(self::METHOD_GET, $this->baseUri(), $content);
-
 
             $reverse_geocoding_data = json_decode($response, true);
 
@@ -96,7 +104,7 @@ class ReverseGeocodingClient extends HttpClient
             }
 
             $validator = Validator::make($reverse_geocoding_data, [
-                'address' => 'required'
+                'display_name' => 'required'
             ]);
 
             if ($validator->fails()) {
@@ -104,8 +112,6 @@ class ReverseGeocodingClient extends HttpClient
             }
 
             $data = new Response\ReverseGeocodingResponse($reverse_geocoding_data);
-
-
 
             return $data;
         } catch (HttpClientResponseException $e) {
