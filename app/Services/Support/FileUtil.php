@@ -186,9 +186,9 @@ class FileUtil
         return 'private' . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR;
     }
 
-    public static function adminFormatDir()
+    public static function soundSamplingPath($filename, $os)
     {
-        return '/private/admin/format/';
+        return 'app/private/sound_sampling/' . $os . '/' . $filename;
     }
 
     /**
@@ -367,9 +367,19 @@ class FileUtil
         return self::putContent($path, $stream, 's3', 'public');
     }
 
-    public static function putAdminFormatFile($format_id,$stream,$file_name)
+    public static function putSoundSamplingFile(string $filename, $contents, $os)
     {
-        Storage::disk('local')->putFileAs(self::adminFormatDir().$format_id.'/',$stream,$file_name);
+        try {
+            $result = Storage::disk('local')->put(self::soundSamplingPath($filename, $os), $contents);
+
+            if (!$result) {
+                throw new Exceptions\UtilFileException('ファイル保存に失敗しました。');
+            }
+
+            return $result;
+        } catch (\Exception $e) {
+            throw new Exceptions\UtilFileException('ファイル保存に失敗しました。', $e);
+        }
     }
 
     /**********************************************

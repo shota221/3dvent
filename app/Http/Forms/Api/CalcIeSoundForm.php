@@ -16,11 +16,13 @@ class CalcIeSoundForm extends BaseForm
     {
         return [
             'sound' => 'required|array',
+            'os' => 'required|in:ios,android'
         ];
     }
 
     protected function bind($input)
     {
         $this->sound = new Form\WaveForm($input['sound']);
+        $this->os = $input['os'];
     }
 }
