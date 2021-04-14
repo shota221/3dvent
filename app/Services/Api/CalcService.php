@@ -191,6 +191,6 @@ class CalcService
     {
         $result =  Support\FileUtil::putSoundSamplingFile($form->sound->filename,base64_decode($form->sound->file_data),$form->os);
 
-        return $result;
+        return $result ? ['result'=>'success'] : ['result'=>'failure'] ;
     }
 }

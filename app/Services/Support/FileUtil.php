@@ -188,7 +188,7 @@ class FileUtil
 
     public static function soundSamplingPath($filename, $os)
     {
-        return 'app/private/sound_sampling/' . $os . '/' . $filename;
+        return 'private/sound_sampling/' . $os . '/' . $filename;
     }
 
     /**
