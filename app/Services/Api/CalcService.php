@@ -187,6 +187,7 @@ class CalcService
     }
 
 
+    //音声サンプリングテスト用
     public function putIeSound($form)
     {
         $result =  Support\FileUtil::putSoundSamplingFile($form->sound->filename,base64_decode($form->sound->file_data),$form->os);
