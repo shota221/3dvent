@@ -2,6 +2,7 @@
 
 namespace App\Services\Support;
 
+use App\Services\Support\FileUtil;
 /**
  * wavファイル操作UTILクラス
  */

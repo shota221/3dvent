@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Services\Support\Converter;
 use App\Services\Support\Math;
+use App\Services\Support\FileUtil;
+use Illuminate\Support\Facades\Storage;
 
 class CalcService
 {
@@ -55,7 +57,7 @@ class CalcService
 
         $handle = fopen($temp_file, 'w');
         fwrite($handle, base64_decode($form->sound->file_data));
-        
+
         fclose($handle);
 
         $wave_data = Support\WaveUtil::extractWaveData($temp_file);
@@ -112,7 +114,7 @@ class CalcService
             $peak_indice = $this->findPeakIndex(array_slice($fftabs, 0, 128), $mode);
 
             if (
-                count($peak_indice)>=($mode?2:3)
+                count($peak_indice) >= ($mode ? 2 : 3)
             ) {
                 $pulse_times[] = round($i * $step * $dt, 2);
                 $pulse_count++;
@@ -141,7 +143,7 @@ class CalcService
 
         return Converter\IeConverter::convertToIeResult($i_e_avg['i'], $i_e_avg['e'], $rr);
     }
-    
+
     private function findPeakIndex($func, bool $mode = false)
     {
         $peaks = [];
@@ -182,5 +184,14 @@ class CalcService
             }
         }
         return -1;
+    }
+
+
+    //音声サンプリングテスト用
+    public function putIeSound($form)
+    {
+        $result =  Support\FileUtil::putSoundSamplingFile($form->sound->filename,base64_decode($form->sound->file_data),$form->os);
+
+        return $result ? ['result'=>'success'] : ['result'=>'failure'] ;
     }
 }

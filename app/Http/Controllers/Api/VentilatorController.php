@@ -12,7 +12,7 @@ use App\Http\Forms\Api as Form;
 
 use App\Exceptions;
 
-class VentilatorController extends Controller
+class VentilatorController extends ApiController
 {
     private $service;
     
@@ -36,9 +36,9 @@ class VentilatorController extends Controller
     {
         $form = new Form\VentilatorCreateForm($request->all());
 
-        $user_token = $request->hasHeader('X-User-Token') ? $request->header('X-User-Token') : null;
+        $user = $request->hasHeader('X-User-Token') ? $this->getUser() : null;
 
-        if ($form->hasError() || !$response = $this->service->create($form,$user_token)) {
+        if ($form->hasError() || !$response = $this->service->create($form,$user)) {
             throw new Exceptions\InvalidFormException($form);
         }
 

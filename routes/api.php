@@ -56,6 +56,8 @@ Route::group(['middleware' => ['routetype:api']], function() {
         //機器関連値更新
         Route::put('/ventilator/{id}','VentilatorController@updateValue')->name('api.ventilator.update_value');
 
+        //音声解析テスト端末用音声データ保存API
+        Route::post('/calculate/ie/sound_sampling','CalcController@ieSoundSampling')->name('api.calc.ie_sound_sampling');
     });
 
 });

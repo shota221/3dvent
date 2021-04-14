@@ -64,4 +64,15 @@ class CalcController extends Controller
 
         return $response;
     }
+
+    public function ieSoundSampling(Request $request)
+    {
+        $form = new Form\CalcIeSoundForm($request->all());
+
+        if ($form->hasError() || !$response = $this->service->putIeSound($form)) {
+            throw new Exceptions\InvalidFormException($form);
+        }
+
+        return $response;
+    }
 }
