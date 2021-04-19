@@ -34,6 +34,10 @@ class VentilatorService
 
     public function create($form, $user = null)
     {
+        $registered_user_id = null;
+        $organization_id = null;
+        $city = null;
+
         if (!is_null($user)) {
             $registered_user_id = $user->id;
             $organization_id = $user->organization_id;
@@ -42,11 +46,11 @@ class VentilatorService
         $serial_number = substr($form->gs1_code, -5);
 
         if (!is_null($form->latitude) && !is_null($form->longitude)) {
-            $nearest_city = (new Support\Client\ReverseGeocodingApiClient)->getReverseGeocodingData($form->latitude, $form->longitude, 13)->display_name;
+            $city = (new Support\Client\ReverseGeocodingApiClient)->getReverseGeocodingData($form->latitude, $form->longitude, 13)->display_name;
         }
 
-        $entity = Converter\VentilatorConverter::convertToVentilatorEntity($form->gs1_code, $serial_number, $form->latitude, $form->longitude, $nearest_city, $organization_id, $registered_user_id);
-
+        $entity = Converter\VentilatorConverter::convertToVentilatorEntity($form->gs1_code, $serial_number, $form->latitude, $form->longitude, $city, $organization_id, $registered_user_id);
+        
         DBUtil::Transaction(
             '呼吸器情報登録',
             function () use ($entity) {

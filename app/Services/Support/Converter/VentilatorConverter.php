@@ -7,6 +7,7 @@ use App\Http\Response as Response;
 use App\Models\Ventilator;
 use App\Models\VentilatorValue;
 use App\Models\Patient;
+use App\Services\Support\DateUtil;
 
 class VentilatorConverter
 {
@@ -110,7 +111,7 @@ class VentilatorConverter
         return $res;
     }
 
-    public static function convertToVentilatorEntity($gs1_code, $serial_number, $latitude = null, $longitude = null, $nearest_city = null, $organization_id = null, $registered_user_id = null)
+    public static function convertToVentilatorEntity($gs1_code, $serial_number, $latitude = null, $longitude = null, $city = null, $organization_id = null, $registered_user_id = null)
     {
         $entity = new Ventilator;
 
@@ -122,11 +123,13 @@ class VentilatorConverter
             $entity->location = ['lat' => $latitude, 'lng' => $longitude];
         }
 
-        $entity->nearest_city = $nearest_city ?? null;
+        $entity->city = $city ?? null;
 
         $entity->organization_id = $organization_id ?? null;
 
         $entity->registered_user_id = $registered_user_id ?? null;
+
+        $entity->start_using_at = DateUtil::now();
 
         return $entity;
     }
