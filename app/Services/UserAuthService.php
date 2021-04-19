@@ -33,17 +33,6 @@ class UserAuthService
                 return false;
             }
 
-            // $user = Repos\UserRepository::findOneByOrganizationIdAndName($organization->id, $form->name);
-
-            // if (is_null($user)) {
-            //     $form->addError('name', 'validation.id_not_found');
-            //     return false;
-            // }
-
-            // if (!Hash::check($form->password, $user->password)) {
-            //     throw new Exceptions\InvalidException('auth.failed');
-            // }
-
             $credentials = [
                 'name' => $form->name,
                 'organization_id' => $organization->id,
