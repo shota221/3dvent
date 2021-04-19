@@ -33,34 +33,63 @@ class UserAuthService
                 return false;
             }
 
-            $user = Repos\UserRepository::findOneByOrganizationIdAndName($organization->id, $form->name);
+            // $user = Repos\UserRepository::findOneByOrganizationIdAndName($organization->id, $form->name);
 
-            if (is_null($user)) {
-                $form->addError('name', 'validation.id_not_found');
-                return false;
-            }
+            // if (is_null($user)) {
+            //     $form->addError('name', 'validation.id_not_found');
+            //     return false;
+            // }
 
-            if (!Hash::check($form->password, $user->password)) {
+            // if (!Hash::check($form->password, $user->password)) {
+            //     throw new Exceptions\InvalidException('auth.failed');
+            // }
+
+            $credentials = [
+                'name' => $form->name,
+                'organization_id' => $organization->id,
+                'password' => $form->password
+            ];
+
+            $userTokenGuard = Auth::guard('user');
+
+            if (!$token = $userTokenGuard->attempt($credentials)) {
                 throw new Exceptions\InvalidException('auth.failed');
             }
 
+            $user = $userTokenGuard->user();
+
             //X-User-Token発行
             $token = $this->createUniqueToken($user->id);
-            $user->api_token = hash('sha256',$token);
+            $user->api_token = hash('sha256', $token);
 
             DBUtil::Transaction(
                 'api_token生成',
-                function()use($user){
-                $user->save();
-            });
+                function () use ($user) {
+                    $user->save();
+                }
+            );
 
-            return Converter\UserConverter::convertToUserResult($user->id,$user->api_token,$user->name,$organization->name);
+            return Converter\UserConverter::convertToLoginUserResult($user->id, $token, $user->name, $organization->name);
         }
     }
 
-    public function logout()
+    public function logout($user = null)
     {
-        return Converter\UserConverter::convertToUserResult(-1);
+        $user_id = null;
+
+        if(!is_null($user)){
+            $user_id = $user->id;
+            $user->api_token = '';
+
+            DBUtil::Transaction(
+                'api_token削除',
+                function () use ($user) {
+                    $user->save();
+                }
+            );
+        }
+        
+        return Converter\UserConverter::convertToLogoutUserResult($user_id);
     }
 
     public static function createUniqueToken(string $prefix)

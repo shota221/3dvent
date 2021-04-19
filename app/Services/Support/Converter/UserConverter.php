@@ -6,7 +6,7 @@ use App\Http\Response as Response;
 
 class UserConverter
 {
-    public static function convertToUserResult(int $id,string $api_token = null,string $user_name = null,string $organization_name = null)
+    public static function convertToLoginUserResult(int $id,string $api_token = null,string $user_name = null,string $organization_name = null)
     {
         $res = new Response\Api\UserResult;
 
@@ -17,6 +17,15 @@ class UserConverter
         $res->user_name = $user_name;
 
         $res->organization_name = $organization_name;
+
+        return $res;
+    }
+
+    public static function convertToLogoutUserResult(int $id = null)
+    {
+        $res = new Response\Api\UserResult;
+
+        $res->user_id = $id;
 
         return $res;
     }

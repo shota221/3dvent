@@ -17,16 +17,16 @@ class UserAuthForm extends BaseForm
     protected function validationRule()
     {
         return [
-            'name' => 'required|'.Rule::VALUE_NAME,
-            'organization_code' => 'required|'.Rule::VALUE_STRING,
+            'name' => 'required|regex:/^.+@.+$/',
             'password'  => 'required|'.'required|' . Rule::PASSWORD,
         ];  
     }
 
     protected function bind($input)
     {
-        $this->name = $input['name'];
-        $this->organization_code = $input['organization_code'];
+        $login_name = explode('@',$input['name']);
+        $this->name = $login_name[0];
+        $this->organization_code = $login_name[1];
         $this->password = $input['password'];
     }
 }

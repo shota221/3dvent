@@ -19,10 +19,7 @@
 Route::group(['middleware' => ['routetype:api']], function() {
 
     //トークン認証ルート
-    Route::group(['middleware' => ['auth:api_token,user_token']], function () {
-        // TODO delete me
-        Route::get('/auth_test', 'AuthTestController@index')->name('api.test.auth');
-        
+    Route::group(['middleware' => ['auth:api_token,user_token']], function () {        
         //idfv登録・アプリキー発行
         Route::post('/appkey','AppkeyController@create')->name('api.appkey.create');
 

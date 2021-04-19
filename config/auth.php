@@ -1,6 +1,8 @@
 
 <?php
 
+use function PHPSTORM_META\map;
+
 return [
 
 
@@ -54,6 +56,10 @@ return [
             'storage_key' => \App\Models\User::TOKEN_COLUMN_NAME,
             'hash' => env('USER_TOKEN_HASH', true),
         ],
+        'user' => [
+            'driver'=>'session',
+            'provider' => 'user'
+        ]
     ],
 
     /*

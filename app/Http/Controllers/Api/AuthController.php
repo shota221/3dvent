@@ -12,7 +12,7 @@ use App\Http\Forms as Form;
 
 use App\Exceptions;
 
-class AuthController extends Controller
+class AuthController extends ApiController
 {
     private $service;
     
@@ -34,6 +34,8 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        // return $this->service->logout();
+        $user = $request->hasHeader('X-User-Token') ? $this->getUser() : null;
+
+        return $this->service->logout($user);
     }
 }
