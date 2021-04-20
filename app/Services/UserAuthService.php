@@ -14,21 +14,77 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use App\Services\Support\Converter;
+use App\Services\Support\DBUtil;
+
 
 /**
  * ユーザー認証サービス
  */
 class UserAuthService
 {
-    public function login()
+    public function login($form)
     {
-        return Converter\UserConverter::convertToUserResult();
+        if (app()->isHttpRouteTypeApi()) {
+            //単にトークンを発行するのみ
+            $organization = Repos\OrganizationRepository::findOneByCode($form->organization_code);
+
+            if (is_null($organization)) {
+                $form->addError('organization_code', 'validation.id_not_found');
+                return false;
+            }
+
+            $credentials = [
+                'name' => $form->name,
+                'organization_id' => $organization->id,
+                'password' => $form->password
+            ];
+
+            $userTokenGuard = Auth::guard('user');
+
+            if (!$token = $userTokenGuard->attempt($credentials)) {
+                throw new Exceptions\InvalidException('auth.failed');
+            }
+
+            $user = $userTokenGuard->user();
+
+            //X-User-Token発行
+            $token = $this->createUniqueToken($user->id);
+            $user->api_token = hash('sha256', $token);
+
+            DBUtil::Transaction(
+                'api_token生成',
+                function () use ($user) {
+                    $user->save();
+                }
+            );
+
+            return Converter\UserConverter::convertToLoginUserResult($user->id, $token, $user->name, $organization->name);
+        }
     }
 
-    public function logout()
+    public function logout($user = null)
     {
-        return Converter\UserConverter::convertToUserResult(false);
+        $user_id = null;
+
+        if(!is_null($user)){
+            $user_id = $user->id;
+            $user->api_token = '';
+
+            DBUtil::Transaction(
+                'api_token削除',
+                function () use ($user) {
+                    $user->save();
+                }
+            );
+        }
+        
+        return Converter\UserConverter::convertToLogoutUserResult($user_id);
+    }
+
+    public static function createUniqueToken(string $prefix)
+    {
+        $prefix = $prefix . mt_rand();
+
+        return sha1(uniqid($prefix, true));
     }
 }
-
-

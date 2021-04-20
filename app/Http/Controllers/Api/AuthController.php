@@ -8,22 +8,34 @@ use App\Services as Service;
 
 use Illuminate\Http\Request;
 
-class AuthController extends Controller
+use App\Http\Forms as Form;
+
+use App\Exceptions;
+
+class AuthController extends ApiController
 {
     private $service;
-    
-    function __construct() 
+
+    function __construct()
     {
         $this->service = new Service\UserAuthService;
     }
-    
+
     public function login(Request $request)
     {
-        return $this->service->login();
+        $form = new Form\UserAuthForm($request->all());
+
+        if ($form->hasError() || !$response = $this->service->login($form)) {
+            throw new Exceptions\InvalidFormException($form);
+        }
+
+        return $response;
     }
 
     public function logout(Request $request)
     {
-        return $this->service->logout();
+        $user = $request->hasHeader('X-User-Token') ? $this->getUser() : null;
+
+        return $this->service->logout($user);
     }
 }

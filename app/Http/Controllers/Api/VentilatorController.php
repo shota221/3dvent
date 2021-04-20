@@ -15,8 +15,8 @@ use App\Exceptions;
 class VentilatorController extends ApiController
 {
     private $service;
-    
-    function __construct() 
+
+    function __construct()
     {
         $this->service = new Service\VentilatorService;
     }
@@ -38,16 +38,16 @@ class VentilatorController extends ApiController
 
         $user = $request->hasHeader('X-User-Token') ? $this->getUser() : null;
 
-        if ($form->hasError() || !$response = $this->service->create($form,$user)) {
+        if ($form->hasError() || !$response = $this->service->create($form, $user)) {
             throw new Exceptions\InvalidFormException($form);
         }
 
         return $response;
     }
 
-    public function showValue(Request $request,$ventilator_id)
+    public function showValue(Request $request, $ventilator_id)
     {
-        $request->merge(['ventilator_id'=>$ventilator_id]);
+        $request->merge(['ventilator_id' => $ventilator_id]);
 
         $form = new Form\VentilatorValueShowForm($request->all());
 
@@ -58,30 +58,30 @@ class VentilatorController extends ApiController
         return $response;
     }
 
-    public function createValue(Request $request,$ventilator_id)
+    public function createValue(Request $request, $ventilator_id)
     {
-        $request->merge(['ventilator_id'=>$ventilator_id]);
+        $request->merge(['ventilator_id' => $ventilator_id]);
 
         $form = new Form\VentilatorValueCreateForm($request->all());
 
         $user_token = $request->hasHeader('X-User-Token') ? $request->header('X-User-Token') : null;
 
         if (!$request->hasHeader('X-App-Key')) {
-            $form->addError('X-App-Key','validation.appkey_required');
+            $form->addError('X-App-Key', 'validation.appkey_required');
         } else {
             $appkey = $request->header('X-App-Key');
         }
 
-        if ($form->hasError() || !$response = $this->service->createVentilatorValue($form,$user_token,$appkey)) {
+        if ($form->hasError() || !$response = $this->service->createVentilatorValue($form, $user_token, $appkey)) {
             throw new Exceptions\InvalidFormException($form);
         }
 
         return $response;
     }
 
-    public function updateValue(Request $request,$ventilator_id)
+    public function updateValue(Request $request, $ventilator_id)
     {
-        $request->merge(['ventilator_id'=>$ventilator_id]);
+        $request->merge(['ventilator_id' => $ventilator_id]);
 
         $form = new Form\VentilatorValueUpdateForm($request->all());
 
