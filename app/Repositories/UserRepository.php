@@ -11,6 +11,11 @@ class UserRepository
         return User::query();
     }
 
+    public static function existsByNameAndOrganizationId(string $name, int $organization_id)
+    {
+        return static::query()->where('name', $name)->where('organization_id', $organization_id)->exists();
+    }
+
     public static function findOneById(int $id)
     {
         return static::query()->where('id', $id)->first();
@@ -23,6 +28,6 @@ class UserRepository
 
     public static function findOneByOrganizationIdAndName(int $organization_id, string $name)
     {
-        return static::query()->where('organization_id',$organization_id)->where('name',$name)->first();
+        return static::query()->where('organization_id', $organization_id)->where('name', $name)->first();
     }
 }

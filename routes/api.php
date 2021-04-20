@@ -61,6 +61,11 @@ Route::group(['middleware' => ['routetype:api']], function() {
 
         //音声解析テスト端末用音声データ保存API
         Route::post('/calculate/ie/sound_sampling','CalcController@ieSoundSampling')->name('api.calc.ie_sound_sampling');
+
+        //使用者情報取得
+        Route::get('/user','UserController@show')->name('api.user.show');
+        //使用者情報更新
+        Route::put('/user','UserController@update')->name('api.user.update');
     });
 
 });
