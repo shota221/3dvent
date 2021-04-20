@@ -15,12 +15,12 @@ use App\Exceptions;
 class AuthController extends ApiController
 {
     private $service;
-    
-    function __construct() 
+
+    function __construct()
     {
         $this->service = new Service\UserAuthService;
     }
-    
+
     public function login(Request $request)
     {
         $form = new Form\UserAuthForm($request->all());

@@ -16,8 +16,8 @@ class VentilatorRepository
     private static function querySelectGeom()
     {
         return static::query()->select([
-            '*', 
-            \DB::raw('ST_X(location)       as lng'), 
+            '*',
+            \DB::raw('ST_X(location)       as lng'),
             \DB::raw('ST_Y(location)       as lat'),
             \DB::raw('ST_ASTEXT(location)  as geomtxt')
         ]);
@@ -32,7 +32,7 @@ class VentilatorRepository
     {
         return static::query()->where('id', $id)->exists();
     }
-    
+
     public static function findOneById($id)
     {
         $table = Ventilator::tableName();
@@ -42,7 +42,7 @@ class VentilatorRepository
     public static function findOneByGs1Code($gs1_code)
     {
         $table = Ventilator::tableName();
-        return static::leftJoinOrganization()->where('gs1_code', $gs1_code)->orderBy($table.'.created_at', 'DESC')->first();
+        return static::leftJoinOrganization()->where('gs1_code', $gs1_code)->orderBy($table . '.created_at', 'DESC')->first();
     }
 
     private static function leftJoinOrganization($query = null)

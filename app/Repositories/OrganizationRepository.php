@@ -13,11 +13,11 @@ class OrganizationRepository
 
     public static function findOneById(int $organization_id)
     {
-        return static::query()->where('id',$organization_id)->first();
+        return static::query()->where('id', $organization_id)->first();
     }
 
     public static function findOneByCode(string $organization_code)
     {
-        return static::query()->where('code',$organization_code)->first();
+        return static::query()->where('code', $organization_code)->first();
     }
 }

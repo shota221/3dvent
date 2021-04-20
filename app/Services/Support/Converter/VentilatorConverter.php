@@ -123,11 +123,11 @@ class VentilatorConverter
             $entity->location = ['lat' => $latitude, 'lng' => $longitude];
         }
 
-        $entity->city = $city ?? null;
+        $entity->city = $city;
 
-        $entity->organization_id = $organization_id ?? null;
+        $entity->organization_id = $organization_id;
 
-        $entity->registered_user_id = $registered_user_id ?? null;
+        $entity->registered_user_id = $registered_user_id;
 
         $entity->start_using_at = DateUtil::now();
 
