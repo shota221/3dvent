@@ -99,11 +99,11 @@ Route::group(['middleware' => ['routetype:api']], function() {
          * ventilator_value *
          ********************/
         //機器観察研究データのリストを取得
-        Route::get('/ventilator_value/list','VentiletorController@showValueList')->name('api.ventilator.show_value_list');
+        Route::get('/ventilator_value/list','VentilatorController@showValueList')->name('api.ventilator.show_value_list');
         //機器観察研究データの詳細取得
-        Route::get('/ventilator_value','VentiletorController@showDetailValue')->name('api.ventilator.show_detail_value');
+        Route::get('/ventilator_value','VentilatorController@showDetailValue')->name('api.ventilator.show_detail_value');
         //機器観察研究データの更新
-        Route::put('/ventilator_value','VentiletorController@updateDetailValue')->name('api.ventilator.update_detail_value');
+        Route::put('/ventilator_value','VentilatorController@updateDetailValue')->name('api.ventilator.update_detail_value');
 
     });
 

@@ -75,4 +75,55 @@ class PatientConverter
 
         return $entity;
     }
+
+    //TODO 以下補完作業
+    public static function convertToPatientValueResult()
+    {
+        return <<<EOF
+        {
+            "result": {
+              "has_observed": true,
+              "observed_at": "2021-02-08 12:34:06",
+              "opt_out_flg": 1,
+              "patient_code": "999",
+              "age": "21",
+              "vent_disease_name": "XXXXXX",
+              "other_disease_name_1": "xXXXXX",
+              "other_disease_name_2": "XXXXXX",
+              "userd_place": 3,
+              "hospital_name": "XXXXXX",
+              "national_name": "XXXXXX",
+              "discontinuation_at": "2021-04-08 17:04:01",
+              "outcome": 1,
+              "treatment": 1,
+              "adverse_event_flg": 1,
+              "adverse_event_contents": "XXXXXX"
+            }
+          }
+        EOF;
+    }
+
+    public static function convertToPatientValueRegistrationResult()
+    {
+        return <<<EOF
+        {
+            "result": {
+              "observed_at": "2021-02-08 12:34:06",
+              "patient_code": "999"
+            }
+          }
+        EOF;
+    }
+
+    public static function convertToPatientValueUpdateResult()
+    {
+        return <<<EOF
+        {
+            "result": {
+              "observed_at": "2021-02-08 12:34:06",
+              "patient_code": "999"
+            }
+          }
+        EOF;
+    }
 }

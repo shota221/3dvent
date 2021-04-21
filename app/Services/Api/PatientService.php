@@ -24,7 +24,7 @@ class PatientService
     {
         //理想体重の算出
         $ideal_weight = strval($this->calcIdealWeight(floatval($form->height), $form->gender));
-        
+
         $entity = Converter\PatientConverter::convertToEntity(
             $form->nickname,
             $form->height,
@@ -54,7 +54,7 @@ class PatientService
         //TODO ユーザー設定からの取得
         $vt_per_kg = 6;
 
-        $predicted_vt = $this->calcPredictedVt(floatval($entity->ideal_weight),$vt_per_kg);
+        $predicted_vt = $this->calcPredictedVt(floatval($entity->ideal_weight), $vt_per_kg);
 
         return Converter\PatientConverter::convertToPatientRegistrationResult($entity, $predicted_vt);
     }
@@ -63,16 +63,16 @@ class PatientService
     {
         $patient = Repos\PatientRepository::findOneById($form->id);
 
-        if(is_null($patient)) {
-            $form->addError('id','validation.id_not_found');
+        if (is_null($patient)) {
+            $form->addError('id', 'validation.id_not_found');
             return false;
         }
         //TODO ユーザー設定からの取得
         $vt_per_kg = 6;
 
-        $predicted_vt = $this->calcPredictedVt(floatval($patient->ideal_weight),$vt_per_kg);
+        $predicted_vt = $this->calcPredictedVt(floatval($patient->ideal_weight), $vt_per_kg);
 
-        if(isJson($patient->other_attrs)) {
+        if (isJson($patient->other_attrs)) {
             $patient->other_attrs =  json_decode($patient->other_attrs);
         }
 
@@ -83,8 +83,8 @@ class PatientService
     {
         $patient = Repos\PatientRepository::findOneById($form->id);
 
-        if(is_null($patient)) {
-            $form->addError('id','validation.id_not_found');
+        if (is_null($patient)) {
+            $form->addError('id', 'validation.id_not_found');
             return false;
         }
 
@@ -109,8 +109,24 @@ class PatientService
         //TODO ユーザー設定からの取得
         $vt_per_kg = 6;
 
-        $predicted_vt = $this->calcPredictedVt(floatval($entity->ideal_weight),$vt_per_kg);
+        $predicted_vt = $this->calcPredictedVt(floatval($entity->ideal_weight), $vt_per_kg);
 
         return Converter\PatientConverter::convertToPatientResult($entity, $predicted_vt);
+    }
+
+    //TODO 以下補完作業
+    public function getPatientValueResult()
+    {
+        return json_decode(Converter\PatientConverter::convertToPatientValueResult(), true);
+    }
+
+    public function createPatientValue()
+    {
+        return json_decode(Converter\PatientConverter::convertToPatientValueRegistrationResult(), true);
+    }
+
+    public function updatePatientValue()
+    {
+        return json_decode(Converter\PatientConverter::convertToPatientValueUpdateResult(), true);
     }
 }

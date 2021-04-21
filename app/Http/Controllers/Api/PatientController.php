@@ -15,8 +15,8 @@ use App\Exceptions;
 class PatientController extends Controller
 {
     private $service;
-    
-    function __construct() 
+
+    function __construct()
     {
         $this->service = new Service\PatientService;
     }
@@ -32,9 +32,9 @@ class PatientController extends Controller
         return $response;
     }
 
-    public function show(Request $request,$id)
+    public function show(Request $request, $id)
     {
-        $request->merge(['id'=>$id]);
+        $request->merge(['id' => $id]);
 
         $form = new Form\PatientShowForm($request->all());
 
@@ -45,9 +45,9 @@ class PatientController extends Controller
         return $response;
     }
 
-    public function update(Request $request,$id)
+    public function update(Request $request, $id)
     {
-        $request->merge(['id'=>$id]);
+        $request->merge(['id' => $id]);
 
         $form = new Form\PatientUpdateForm($request->all());
 
@@ -56,5 +56,21 @@ class PatientController extends Controller
         }
 
         return $response;
+    }
+
+    //TODO　以下補完作業
+    public function showDetail(Request $request)
+    {
+        return $this->service->getPatientValueResult();
+    }
+
+    public function createDetail(Request $request)
+    {
+        return $this->service->createPatientValue();
+    }
+
+    public function updateDetail(Request $request)
+    {
+        return $this->service->updatePatientValue();
     }
 }

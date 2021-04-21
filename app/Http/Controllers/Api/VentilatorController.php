@@ -91,4 +91,20 @@ class VentilatorController extends ApiController
 
         return $this->service->updateVentilatorValue($form);
     }
+
+    //TODO　以下補完作業
+    public function showValueList(Request $request)
+    {
+        return $this->service->getVentilatorValueListResult();
+    }
+
+    public function showDetailValue(Request $request)
+    {
+        return $this->service->getDetailVentilatorValueResult();
+    }
+    
+    public function updateDetailValue(Request $request)
+    {
+        return $this->service->updateDetailVentilatorValue();
+    }
 }

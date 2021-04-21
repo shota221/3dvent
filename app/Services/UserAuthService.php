@@ -51,17 +51,8 @@ class UserAuthService
 
     public function removeToken($user = null)
     {
-        $user_id = null;
-
         $userTokenGuard = Auth::guard('user_token');
         
         return Converter\UserConverter::convertToLogoutUserResult($userTokenGuard->removeUserToken($user));
-    }
-
-    public static function createUniqueToken(string $prefix)
-    {
-        $prefix = $prefix . mt_rand();
-
-        return sha1(uniqid($prefix, true));
     }
 }

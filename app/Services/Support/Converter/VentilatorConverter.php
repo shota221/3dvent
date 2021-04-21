@@ -206,4 +206,81 @@ class VentilatorConverter
 
         return $entity;
     }
+
+    //TODO 以下補完作業
+    public static function convertToVentilatorValueListResult()
+    {
+        return <<<EOF
+        {
+            "result": [
+              {
+                "id": 10,
+                "observed_at": "2021-02-04 12:34:06",
+                "observed_user_name": "test_user"
+              },
+              {
+                "id": 22,
+                "observed_at": "2021-02-06 12:34:06",
+                "observed_user_name": "test_user"
+              },
+              {
+                "id": 33,
+                "observed_at": "2021-02-07 12:34:06",
+                "observed_user_name": "test_user"
+              }
+            ]
+          }
+        EOF;
+    }
+
+    public static function convertToDetailVentilatorValueResult()
+    {
+        return <<<EOF
+        {
+            "result": {
+              "has_observed": true,
+              "ventilator_value_id": 1,
+              "observed_at": "2021-02-04 12:34:06",
+              "observed_user_name": "test_user",
+              "city": "千代田区, 東京都, 日本",
+              "gender": 1,
+              "height": "***",
+              "weight": "***",
+              "airway_pressure": "***",
+              "total_flow": "***",
+              "air_flow": "***",
+              "o2_flow": "***",
+              "rr": "***",
+              "expiratory_time": "***",
+              "inspiratory_time": "***",
+              "vt_per_kg": "***",
+              "predicted_vt": "***",
+              "estimated_vt": "***",
+              "estimated_mv": "***",
+              "estimated_peep": "***",
+              "fio2": "***",
+              "status_use": 1,
+              "status_use_other": "***",
+              "spo2": "***",
+              "etco2": "***",
+              "pao2": "***",
+              "paco2": "***",
+              "bug_flg": 0,
+              "bug_name": "***",
+              "bug_detail": "***"
+            }
+          }
+        EOF;
+    }
+
+    public static function convertToDetailVentilatorValueUpdateResult()
+    {
+        return <<<EOF
+        {
+            "result": {
+              "revised_at": "2021-04-04 12:34:06"
+            }
+          }       
+        EOF;
+    }
 }

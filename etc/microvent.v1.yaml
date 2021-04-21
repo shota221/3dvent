@@ -1653,13 +1653,13 @@ paths:
                         type: string
                       observed_user_name:
                         type: string
-                      nearest_city:
+                      city:
                         type: string
                       gender:
                         type: number
                       height:
                         type: string
-                      ideal_weight:
+                      weight:
                         type: string
                       airway_pressure:
                         type: string
@@ -1715,10 +1715,10 @@ paths:
                       ventilator_value_id: 1
                       observed_at: ''
                       observed_user_name: ''
-                      nearest_city: ''
+                      city: ''
                       gender: 1
                       height: ''
-                      ideal_weight: ''
+                      weight: ''
                       airway_pressure: ''
                       total_flow: ''
                       air_flow: ''
@@ -1835,7 +1835,7 @@ paths:
                   type: number
                 height:
                   type: string
-                ideal_weight:
+                weight:
                   type: string
                 airway_pressure:
                   type: string
@@ -1861,33 +1861,19 @@ paths:
               example-1:
                 value:
                   ventilator_value_id: 1
-                  observed_at: ''
-                  nearest_city: ''
+                  observed_at: '2021-02-04 12:34:06'
                   gender: 1
-                  height: ''
-                  ideal_weight: ''
-                  airway_pressure: ''
-                  total_flow: ''
-                  air_flow: ''
-                  o2_flow: ''
-                  rr: ''
-                  expiratory_time: ''
-                  inspiratory_time: ''
-                  vt_per_kg: ''
-                  predicted_vt: ''
-                  estimated_vt: ''
-                  estimated_mv: ''
-                  estimated_peep: ''
-                  fio2: ''
-                  status_use: 1
-                  status_use_other: ''
-                  spo2: ''
-                  etco2: ''
-                  pao2: ''
-                  paco2: ''
-                  bug_flg: 1
-                  bug_name: ''
-                  bug_detail: ''
+                  height: '***'
+                  weight: '***'
+                  airway_pressure: '***'
+                  air_flow: '***'
+                  o2_flow: '***'
+                  status_use: 2
+                  status_use_other: '***'
+                  spo2: '***'
+                  etco2: '***'
+                  pao2: '***'
+                  paco2: '***'
       tags:
         - ventilator_value
   /ventilator_value/list:

@@ -20,6 +20,12 @@ class VentilatorService
 {
     use Support\Logic\CalculationLogic;
 
+    /**
+     * gs1コードから呼吸器情報を取得する
+     *
+     * @param [type] $form
+     * @return void
+     */
     public function getVentilatorResult($form)
     {
         if (!Repos\VentilatorRepository::existsByGs1Code($form->gs1_code)) {
@@ -32,6 +38,13 @@ class VentilatorService
         return Converter\VentilatorConverter::convertToVentilatorResult($ventilator);
     }
 
+    /**
+     * gs1コード等から呼吸器情報を登録する
+     *
+     * @param [type] $form
+     * @param [type] $user
+     * @return void
+     */
     public function create($form, $user = null)
     {
         $registered_user_id = null;
@@ -64,6 +77,12 @@ class VentilatorService
         return Converter\VentilatorConverter::convertToVentilatorRegistrationResult($ventilator);
     }
 
+    /**
+     * 呼吸器IDから最新の機器関連値を取得する
+     *
+     * @param [type] $form
+     * @return void
+     */
     public function getVentilatorValueResult($form)
     {
         if (!Repos\VentilatorValueRepository::existsByVentilatorId($form->ventilator_id)) {
@@ -76,6 +95,14 @@ class VentilatorService
         return Converter\VentilatorConverter::convertToVentilatorValueResult($ventilator_value);
     }
 
+    /**
+     * 機器関連データ必須項目登録
+     * 呼吸器使用時にリアルタイムでインサートされる
+     * @param [type] $form
+     * @param [type] $user_token
+     * @param [type] $appkey
+     * @return void
+     */
     public function createVentilatorValue($form, $user_token, $appkey)
     {
         if (!Repos\VentilatorRepository::existsById($form->ventilator_id)) {
@@ -138,6 +165,12 @@ class VentilatorService
         return Converter\VentilatorConverter::convertToVentilatorValueRegistrationResult($entity);
     }
 
+    /**
+     * 最終設定フラグを更新する
+     *
+     * @param [type] $form
+     * @return void
+     */
     public function updateVentilatorValue($form)
     {
         //人工呼吸器登録後、測定をせずに次の人工呼吸器を読み込んだ場合の処理
@@ -160,4 +193,22 @@ class VentilatorService
 
         return  Converter\VentilatorConverter::convertToVentilatorValueUpdateResult($entity);
     }
+
+    //TODO 以下補完作業
+    public function getVentilatorValueListResult()
+    {
+        return json_decode(Converter\VentilatorConverter::convertToVentilatorValueListResult(),true);
+    }
+
+    public function getDetailVentilatorValueResult()
+    {
+        return json_decode(Converter\VentilatorConverter::convertToDetailVentilatorValueResult(),true);
+    }
+
+    public function updateDetailVentilatorValue()
+    {
+        return json_decode(Converter\VentilatorConverter::convertToDetailVentilatorValueUpdateResult(),true);
+    }
+
+
 }
