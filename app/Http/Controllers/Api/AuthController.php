@@ -21,21 +21,21 @@ class AuthController extends ApiController
         $this->service = new Service\UserAuthService;
     }
 
-    public function login(Request $request)
+    public function generateToken(Request $request)
     {
         $form = new Form\UserAuthForm($request->all());
 
-        if ($form->hasError() || !$response = $this->service->login($form)) {
+        if ($form->hasError() || !$response = $this->service->generateToken($form)) {
             throw new Exceptions\InvalidFormException($form);
         }
 
         return $response;
     }
 
-    public function logout(Request $request)
+    public function removeToken(Request $request)
     {
         $user = $request->hasHeader('X-User-Token') ? $this->getUser() : null;
 
-        return $this->service->logout($user);
+        return $this->service->removeToken($user);
     }
 }

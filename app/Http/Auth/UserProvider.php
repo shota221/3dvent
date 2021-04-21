@@ -40,11 +40,24 @@ class UserProvider extends EloquentUserProvider
 
         $token = CryptUtil::createUniqueToken($userId);
 
-        $user->token = $this->createTokenForStrage($token, $hash);
+        $user->api_token = $this->createTokenForStorage($token, $hash);
 
         $user->save();
         
         return $token;
+    }
+
+    public function removeToken(Authenticatable $user)
+    {
+        // $userId = $user->getAuthIdentifier();
+
+        // $user = Repos\UserRepository::findOneById($userId);
+
+        $user->api_token = '';
+
+        $user->save();
+
+        return $user->id;
     }
 
     /**

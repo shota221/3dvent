@@ -7,10 +7,10 @@ info:
     name: shota kawano
     email: kawano@r102.co.jp
 servers:
-  - url: 'http://api.dev.microvent.jp'
+  - url: 'http://api.microvent.r102.jp'
 paths:
-  /auth/login:
-    post:
+  /auth/token/generate:
+    put:
       summary: 組織内利用者によるログイン
       responses:
         '200':
@@ -50,8 +50,8 @@ paths:
                       user_name: テスト太郎
                       organization_name: テスト組織
                       api_token: '###user_token###'
-      operationId: post-auth-login
-      description: 組織内利用者によるログイン
+      operationId: put-auth-token-generate
+      description: 組織内利用者によるログイン、ユーザートークン発行
       parameters:
         - schema:
             type: string
@@ -1061,15 +1061,18 @@ paths:
                       type: string
                     file_data:
                       type: string
+                os:
+                  type: string
               required:
                 - sound
+                - os
         description: ''
       tags:
         - calculate
-  /auth/logout:
-    get:
+  /auth/token/remove:
+    put:
       summary: ''
-      operationId: get-auth-logout
+      operationId: put-auth-token-remove
       responses:
         '200':
           description: OK
@@ -1225,12 +1228,6 @@ paths:
           name: Accept
           description: application/json
       description: ユーザートークンからユーザー情報を取得する
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties: {}
     put:
       summary: ''
       operationId: put-user

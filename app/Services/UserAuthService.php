@@ -22,51 +22,38 @@ use App\Services\Support\DBUtil;
  */
 class UserAuthService
 {
-    public function login($form)
+    public function generateToken($form)
     {
-        if (app()->isHttpRouteTypeApi()) {
-            //単にトークンを発行するのみ
-            $organization = Repos\OrganizationRepository::findOneByCode($form->organization_code);
+        //単にトークンを発行するのみ
+        $organization = Repos\OrganizationRepository::findOneByCode($form->organization_code);
 
-            if (is_null($organization)) {
-                $form->addError('organization_code', 'validation.id_not_found');
-                return false;
-            }
-
-            $credentials = [
-                'name' => $form->name,
-                'organization_id' => $organization->id,
-                'password' => $form->password
-            ];
-
-            $userTokenGuard = Auth::guard('user');
-
-            if (!$token = $userTokenGuard->attempt($credentials)) {
-                throw new Exceptions\InvalidException('auth.failed');
-            }
-
-            $user = $userTokenGuard->user();
-
-            //X-User-Token発行
-            $token = $this->createUniqueToken($user->id);
-            $user->api_token = hash('sha256', $token);
-
-            DBUtil::Transaction(
-                'api_token生成',
-                function () use ($user) {
-                    $user->save();
-                }
-            );
-
-            return Converter\UserConverter::convertToLoginUserResult($user->id, $token, $user->name, $organization->name);
+        if (is_null($organization)) {
+            $form->addError('organization_code', 'validation.id_not_found');
+            return false;
         }
+
+        $credentials = [
+            'name' => $form->name,
+            'organization_id' => $organization->id,
+            'password' => $form->password
+        ];
+
+        $userTokenGuard = Auth::guard('user_token');
+
+        if (!$token = $userTokenGuard->regenerateUserToken($credentials)) {
+            throw new Exceptions\InvalidException('auth.failed');
+        }
+
+        $user = $userTokenGuard->user();
+
+        return Converter\UserConverter::convertToLoginUserResult($user->id, $token, $user->name, $organization->name);
     }
 
-    public function logout($user = null)
+    public function removeToken($user = null)
     {
         $user_id = null;
 
-        if(!is_null($user)){
+        if (!is_null($user)) {
             $user_id = $user->id;
             $user->api_token = '';
 
@@ -77,7 +64,7 @@ class UserAuthService
                 }
             );
         }
-        
+
         return Converter\UserConverter::convertToLogoutUserResult($user_id);
     }
 

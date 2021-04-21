@@ -30,10 +30,10 @@ Route::group(['middleware' => ['routetype:api']], function() {
         Route::post('/appkey','AppkeyController@create')->name('api.appkey.create');
 
         //組織ユーザートークン発行
-        Route::post('/auth/login', 'AuthController@login')->name('api.auth.login');
+        Route::put('/auth/token/generate', 'AuthController@generateToken')->name('api.auth.generate_token');
 
         //組織ユーザートークン失効
-        Route::post('/auth/logout', 'AuthController@logout')->name('api.auth.logout');
+        Route::put('/auth/token/remove', 'AuthController@removeToken')->name('api.auth.remove_token');
 
         //各種計算
         Route::get('/calculate/default_flow','CalcController@defaultFlow')->name('api.calc.default_flow');
