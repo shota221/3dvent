@@ -63,7 +63,7 @@ class VentilatorService
         }
 
         $entity = Converter\VentilatorConverter::convertToVentilatorEntity($form->gs1_code, $serial_number, $form->latitude, $form->longitude, $city, $organization_id, $registered_user_id);
-        
+
         DBUtil::Transaction(
             '呼吸器情報登録',
             function () use ($entity) {
@@ -195,20 +195,59 @@ class VentilatorService
     }
 
     //TODO 以下補完作業
-    public function getVentilatorValueListResult()
+    public function getVentilatorValueListResult($form)
     {
-        return json_decode(Converter\VentilatorConverter::convertToVentilatorValueListResult(),true);
+        $search_values = $this->buildVentilatorValueSearchValues($form->ventilator_id, 1);
+
+        // echo $search_values['ventilator_id'];
+
+        $ventilator_values = Repos\VentilatorValueRepository::findBySeachValuesAndOffsetAndLimit($search_values, $form->limit, $form->offset);
+
+        $data = array_map(
+            function ($ventilator_value) {
+                $observed_user_name = 1;
+
+                if (!is_null($ventilator_value->user_id)) {
+                    $observed_user_name = Repos\UserRepository::findOneById($ventilator_value->user_id)->name;
+                }
+
+                return Converter\VentilatorConverter::convertToVentilatorValueListElm($ventilator_value->id, $ventilator_value->registered_at, $observed_user_name);
+            },
+            $ventilator_values->all()
+        );
+
+        return new Response\ListJsonResult($data);
     }
 
     public function getDetailVentilatorValueResult()
     {
-        return json_decode(Converter\VentilatorConverter::convertToDetailVentilatorValueResult(),true);
+        return json_decode(Converter\VentilatorConverter::convertToDetailVentilatorValueResult(), true);
     }
 
     public function updateDetailVentilatorValue()
     {
-        return json_decode(Converter\VentilatorConverter::convertToDetailVentilatorValueUpdateResult(),true);
+        return json_decode(Converter\VentilatorConverter::convertToDetailVentilatorValueUpdateResult(), true);
     }
 
+    private function buildVentilatorValueSearchValues(
+        $ventilator_id,
+        $fixed_flg = null,
+        $user_id = null,
+        $confirmed_flg = null,
+        $confirmed_user_id = null,
+    ) {
+        $search_values = [];
 
+        $search_values['ventilator_id'] = $ventilator_id;
+
+        $search_values['fixed_flg'] = $fixed_flg;
+
+        $search_values['user_id'] = $user_id;
+
+        $search_values['confirmed_flg'] = $confirmed_flg;
+
+        $search_values['confirmed_user_id'] = $confirmed_user_id;
+
+        return $search_values;
+    }
 }

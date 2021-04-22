@@ -208,29 +208,17 @@ class VentilatorConverter
     }
 
     //TODO 以下補完作業
-    public static function convertToVentilatorValueListResult()
+    public static function convertToVentilatorValueListElm($id,$observed_at,$observed_user_name = null)
     {
-        return <<<EOF
-        {
-            "result": [
-              {
-                "id": 10,
-                "observed_at": "2021-02-04 12:34:06",
-                "observed_user_name": "test_user"
-              },
-              {
-                "id": 22,
-                "observed_at": "2021-02-06 12:34:06",
-                "observed_user_name": "test_user"
-              },
-              {
-                "id": 33,
-                "observed_at": "2021-02-07 12:34:06",
-                "observed_user_name": "test_user"
-              }
-            ]
-          }
-        EOF;
+        $res = new Response\Api\VentilatorValueElm;
+
+        $res->id = $id;
+
+        $res->observed_at = $observed_at;
+
+        $res->observed_user_name = $observed_user_name;
+
+        return $res;
     }
 
     public static function convertToDetailVentilatorValueResult()
