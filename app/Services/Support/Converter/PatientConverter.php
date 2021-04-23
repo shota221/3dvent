@@ -23,13 +23,11 @@ class PatientConverter
     {
         $res = new Response\Api\PatientResult;
 
-        $res->nickname = $entity->nickname;
+        $res->patient_code = strval($entity->patient_code);
 
         $res->height = strval($entity->height);
 
         $res->gender = strval($entity->gender);
-
-        $res->other_attrs = $entity->other_attrs;
 
         $res->predicted_vt = strval($predicted_vt);
 
@@ -37,41 +35,41 @@ class PatientConverter
     }
 
     public static function convertToEntity(
-        $nickname,
         $height,
         $gender,
-        $ideal_weight,
-        $other_attrs
+        $patient_code = null,
+        $organization_id = null,
+        $weight = ''
     ) {
         $entity = new Patient;
 
-        $entity->nickname = $nickname;
+        $entity->patient_code = $patient_code;
 
         $entity->height = $height;
 
         $entity->gender = $gender;
 
-        $entity->ideal_weight = $ideal_weight;
+        $entity->weight = $weight;
 
-        $entity->other_attrs = $other_attrs;
+        $entity->organization_id = $organization_id;
 
         return $entity;
     }
 
     public static function convertToUpdateEntity(
         Patient $entity,
-        $nickname,
+        $patient_code,
         $height,
         $gender,
-        $other_attrs
+        $weight = ''
     ) {
-        $entity->nickname = $nickname;
+        $entity->patient_code = $patient_code;
 
         $entity->height = $height;
 
         $entity->gender = $gender;
 
-        $entity->other_attrs = $other_attrs;
+        $entity->weight = $weight;
 
         return $entity;
     }
@@ -83,7 +81,6 @@ class PatientConverter
         {
             "result": {
               "has_observed": true,
-              "observed_at": "2021-02-08 12:34:06",
               "opt_out_flg": 1,
               "patient_code": "999",
               "age": "21",
@@ -108,7 +105,6 @@ class PatientConverter
         return <<<EOF
         {
             "result": {
-              "observed_at": "2021-02-08 12:34:06",
               "patient_code": "999"
             }
           }
@@ -120,7 +116,6 @@ class PatientConverter
         return <<<EOF
         {
             "result": {
-              "observed_at": "2021-02-08 12:34:06",
               "patient_code": "999"
             }
           }

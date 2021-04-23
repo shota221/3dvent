@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use App\Http\Forms\Api as Form;
 
 use App\Exceptions;
+use App\Exceptions\InvalidFormException;
 
 class UserController extends ApiController
 {
@@ -21,22 +22,26 @@ class UserController extends ApiController
         $this->service = new Service\UserService;
     }
 
-    public function show()
+    public function show(Request $request)
     {
-        if (!$user = $this->getUser()) {
-            throw new Exceptions\InvalidException('auth.invalid_user_token');
+        if(! $request->hasHeader('X-User-Token')){
+            throw new Exceptions\InvalidException('validation.user_token_required');
         }
 
-        return $this->service->getUserResult($user);
+        $user = $this->getUser();
+
+        return  $this->service->getUserResult($user);
     }
 
     public function update(Request $request)
     {
+        if(! $request->hasHeader('X-User-Token')){
+            throw new Exceptions\InvalidException('validation.user_token_required');
+        }
+        
         $form = new Form\UserUpdateForm($request->all());
 
-        if (!$user = $this->getUser()) {
-            throw new Exceptions\InvalidException('auth.invalid_user_token');
-        }
+        $user = $this->getUser();
 
         if ($form->hasError() || !$response = $this->service->update($form, $user)) {
             throw new Exceptions\InvalidFormException($form);

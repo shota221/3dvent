@@ -20,17 +20,23 @@ class PatientService
 {
     use Support\Logic\CalculationLogic;
 
-    public function create($form)
+    public function create($form, $user = null)
     {
-        //理想体重の算出
-        $ideal_weight = strval($this->calcIdealWeight(floatval($form->height), $form->gender));
+        $organization_id = !is_null($user) ? $user->organization_id : null;
+
+        if (
+            !is_null($organization_id) && !is_null($form->patient_code)
+            && Repos\PatientRepository::existsByPatientCodeAndOrganizationId($form->patient_code, $organization_id)
+        ) {
+            $form->addError('patient_code', 'validation.duplicated_patient_code');
+            return false;
+        }
 
         $entity = Converter\PatientConverter::convertToEntity(
-            $form->nickname,
             $form->height,
             $form->gender,
-            $ideal_weight,
-            $form->other_attrs
+            $form->patient_code,
+            $organization_id
         );
 
         $ventilator = Repos\VentilatorRepository::findOneById($form->ventilator_id);
@@ -54,7 +60,10 @@ class PatientService
         //TODO ユーザー設定からの取得
         $vt_per_kg = 6;
 
-        $predicted_vt = $this->calcPredictedVt(floatval($entity->ideal_weight), $vt_per_kg);
+        //理想体重の算出
+        $ideal_weight = strval($this->calcIdealWeight(floatval($form->height), $form->gender));
+
+        $predicted_vt = $this->calcPredictedVt(floatval($ideal_weight), $vt_per_kg);
 
         return Converter\PatientConverter::convertToPatientRegistrationResult($entity, $predicted_vt);
     }
@@ -69,12 +78,10 @@ class PatientService
         }
         //TODO ユーザー設定からの取得
         $vt_per_kg = 6;
+        //理想体重の算出
+        $ideal_weight = strval($this->calcIdealWeight(floatval($patient->height), $patient->gender));
 
-        $predicted_vt = $this->calcPredictedVt(floatval($patient->ideal_weight), $vt_per_kg);
-
-        if (isJson($patient->other_attrs)) {
-            $patient->other_attrs =  json_decode($patient->other_attrs);
-        }
+        $predicted_vt = $this->calcPredictedVt(floatval($ideal_weight), $vt_per_kg);
 
         return Converter\PatientConverter::convertToPatientResult($patient, $predicted_vt);
     }
@@ -88,16 +95,22 @@ class PatientService
             return false;
         }
 
+        if (
+            !is_null($form->patient_code) && !is_null($patient->patient_code)
+            && $form->patient_code !== $patient->patient_code
+            && Repos\PatientRepository::existsByPatientCodeAndOrganizationId($form->patient_code, $patient->organization_id)
+        ) {
+            $form->addError('patient_code', 'validation.duplicated_patient_code');
+            return false;
+        }
+
         $entity = Converter\PatientConverter::convertToUpdateEntity(
             $patient,
-            $form->nickname,
+            $form->patient_code,
             $form->height,
             $form->gender,
-            $form->other_attrs
+            $form->weight
         );
-
-        //理想体重更新
-        $entity->ideal_weight = strval($this->calcIdealWeight(floatval($entity->height), $entity->gender));
 
         DBUtil::Transaction(
             '患者情報更新',
@@ -109,7 +122,10 @@ class PatientService
         //TODO ユーザー設定からの取得
         $vt_per_kg = 6;
 
-        $predicted_vt = $this->calcPredictedVt(floatval($entity->ideal_weight), $vt_per_kg);
+        //理想体重の算出
+        $ideal_weight = strval($this->calcIdealWeight(floatval($form->height), $form->gender));
+
+        $predicted_vt = $this->calcPredictedVt(floatval($ideal_weight), $vt_per_kg);
 
         return Converter\PatientConverter::convertToPatientResult($entity, $predicted_vt);
     }

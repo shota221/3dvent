@@ -12,7 +12,7 @@ use App\Http\Forms\Api as Form;
 
 use App\Exceptions;
 
-class PatientController extends Controller
+class PatientController extends ApiController
 {
     private $service;
 
@@ -25,7 +25,9 @@ class PatientController extends Controller
     {
         $form = new Form\PatientCreateForm($request->all());
 
-        if ($form->hasError() || !$response = $this->service->create($form)) {
+        $user = $this->getUser();
+
+        if ($form->hasError() || !$response = $this->service->create($form,$user)) {
             throw new Exceptions\InvalidFormException($form);
         }
 
@@ -50,7 +52,7 @@ class PatientController extends Controller
         $request->merge(['id' => $id]);
 
         $form = new Form\PatientUpdateForm($request->all());
-
+        
         if ($form->hasError() || !$response = $this->service->update($form)) {
             throw new Exceptions\InvalidFormException($form);
         }

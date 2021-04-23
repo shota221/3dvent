@@ -47,12 +47,18 @@ class UserAuthService
         $user = $userTokenGuard->user();
 
         return Converter\UserConverter::convertToLoginUserResult($user->id, $token, $user->name, $organization->name);
-    }
-
+    } 
+    
     public function removeToken($user = null)
     {
-        $userTokenGuard = Auth::guard('user_token');
-        
-        return Converter\UserConverter::convertToLogoutUserResult($userTokenGuard->removeUserToken($user));
+        $token_removed_user_id = null;
+
+        if (!is_null($user)) {
+            $userTokenGuard = Auth::guard('user_token');
+
+            $token_removed_user_id = $userTokenGuard->removeUserToken($user);
+        }
+
+        return Converter\UserConverter::convertToLogoutUserResult($token_removed_user_id);
     }
 }

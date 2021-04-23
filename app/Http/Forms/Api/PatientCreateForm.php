@@ -8,20 +8,18 @@ use App\Http\Forms\BaseForm;
 
 class PatientCreateForm extends BaseForm
 {
-    public $nickname;
+    public $patient_code;
 
     public $height;
 
     public $gender;
-
-    public $other_attrs;
 
     public $ventilator_id;
     
     protected function validationRule()
     {
         return [
-            'nickname' => 'nullable|'.Rule::VALUE_NAME,
+            'patient_code' => 'nullable|'.Rule::VALUE_STRING,
         
             'height' => 'required|'.Rule::VALUE_POSITIVE.'|max:999',
         
@@ -33,13 +31,11 @@ class PatientCreateForm extends BaseForm
 
     protected function bind($input)
     {
-        $this->nickname = $input['nickname'] ?? '';
+        $this->patient_code = isset($input['patient_code']) ? strval($input['patient_code']) : null;
 
         $this->height = strval(round($input['height'],1));
 
         $this->gender = intval($input['gender']);
-
-        $this->other_attrs = $input['other_attrs'] ?? null;
 
         $this->ventilator_id = intval($input['ventilator_id']);
     }

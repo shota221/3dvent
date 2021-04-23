@@ -16,6 +16,7 @@ use Illuminate\Support\HtmlString;
 class UserTokenGuard extends BaseTokenGuard
 {
     const USER_TOKEN_HEADER = 'X-User-Token';
+    const NO_TOKEN_USER = true;
 
     /**
      * [__construct description]
@@ -48,6 +49,9 @@ class UserTokenGuard extends BaseTokenGuard
         $user = null;
 
         $token = $this->getTokenForRequest();
+
+        //トークンの付与がない場合は無条件で通過
+        if(!$token) return self::NO_TOKEN_USER;
 
         if (! empty($token)) {
             $user = $this->provider->retrieveByUserToken($token, $this->hash);

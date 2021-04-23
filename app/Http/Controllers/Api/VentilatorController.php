@@ -36,7 +36,7 @@ class VentilatorController extends ApiController
     {
         $form = new Form\VentilatorCreateForm($request->all());
 
-        $user = $request->hasHeader('X-User-Token') ? $this->getUser() : null;
+        $user = $this->getUser();
 
         if ($form->hasError() || !$response = $this->service->create($form, $user)) {
             throw new Exceptions\InvalidFormException($form);

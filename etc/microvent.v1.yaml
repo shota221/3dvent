@@ -9,8 +9,8 @@ info:
 servers:
   - url: 'http://api.microvent.r102.jp'
 paths:
-  /auth/token/generate:
-    put:
+  /auth/token:
+    post:
       summary: 組織内利用者によるログイン
       responses:
         '200':
@@ -50,7 +50,7 @@ paths:
                       user_name: テスト太郎
                       organization_name: テスト組織
                       api_token: '###user_token###'
-      operationId: put-auth-token-generate
+      operationId: post-auth-token
       description: 組織内利用者によるログイン、ユーザートークン発行
       parameters:
         - schema:
@@ -69,8 +69,8 @@ paths:
             type: string
           in: header
           name: Content-Type
-          description: application/json; charset=UTF-8
           required: true
+          description: application/json; charset=UTF-8
       requestBody:
         content:
           application/json:
@@ -88,8 +88,53 @@ paths:
               required:
                 - user
                 - password
+        description: ''
       tags:
         - auth
+    parameters: []
+    delete:
+      summary: ''
+      operationId: delete-auth-token
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      user_id:
+                        type: number
+                    required:
+                      - user_id
+                required:
+                  - result
+              examples:
+                example-1:
+                  value:
+                    result:
+                      user_id: 3
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: X-Api-Token
+        - schema:
+            type: string
+          in: header
+          name: X-User-Token
+        - schema:
+            type: string
+          in: header
+          name: Accept
+          description: application/json
+      tags:
+        - auth
+      description: ユーザートークン失効
   /ventilator:
     get:
       summary: 人工呼吸器情報取得
@@ -1069,53 +1114,6 @@ paths:
         description: ''
       tags:
         - calculate
-  /auth/token/remove:
-    put:
-      summary: ''
-      operationId: put-auth-token-remove
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                description: ''
-                type: object
-                properties:
-                  result:
-                    type: object
-                    properties:
-                      user_id:
-                        type: number
-                    required:
-                      - user_id
-                required:
-                  - result
-              examples:
-                example-1:
-                  value:
-                    result:
-                      user_id: 3
-      description: logout
-      parameters:
-        - schema:
-            type: string
-          in: header
-          name: X-Api-Token
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: X-User-Token
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: Accept
-          description: application/json
-          required: true
-      tags:
-        - auth
   /appkey:
     post:
       summary: ''
@@ -1325,9 +1323,6 @@ paths:
                     properties:
                       has_observed:
                         type: boolean
-                      observed_at:
-                        type: string
-                        minLength: 1
                       opt_out_flg:
                         type: number
                       patient_code:
@@ -1372,7 +1367,6 @@ paths:
                   value:
                     result:
                       has_observed: true
-                      observed_at: '2021-02-08 12:34:06'
                       opt_out_flg: 1
                       patient_code: '999'
                       age: '21'
@@ -1425,14 +1419,10 @@ paths:
                   result:
                     type: object
                     properties:
-                      observed_at:
-                        type: string
-                        minLength: 1
                       patient_code:
                         type: string
                         minLength: 1
                     required:
-                      - observed_at
                       - patient_code
                 required:
                   - result
@@ -1440,7 +1430,6 @@ paths:
                 example-1:
                   value:
                     result:
-                      observed_at: '2021-02-08 12:34:06'
                       patient_code: '999'
       description: 患者観察研究データの登録
       parameters:
@@ -1534,14 +1523,10 @@ paths:
                   result:
                     type: object
                     properties:
-                      observed_at:
-                        type: string
-                        minLength: 1
                       patient_code:
                         type: string
                         minLength: 1
                     required:
-                      - observed_at
                       - patient_code
                 required:
                   - result
@@ -1549,7 +1534,6 @@ paths:
                 example-1:
                   value:
                     result:
-                      observed_at: '2021-02-08 12:34:06'
                       patient_code: '999'
       description: 患者観察研究データの更新
       parameters:
@@ -1649,9 +1633,9 @@ paths:
                         type: boolean
                       ventilator_value_id:
                         type: number
-                      observed_at:
+                      registered_at:
                         type: string
-                      observed_user_name:
+                      registered_user_name:
                         type: string
                       city:
                         type: string
@@ -1713,8 +1697,8 @@ paths:
                     result:
                       has_observed: true
                       ventilator_value_id: 1
-                      observed_at: ''
-                      observed_user_name: ''
+                      registered_at: ''
+                      registered_user_name: ''
                       city: ''
                       gender: 1
                       height: ''
@@ -1829,7 +1813,7 @@ paths:
               properties:
                 ventilator_value_id:
                   type: number
-                observed_at:
+                registered_at:
                   type: string
                 gender:
                   type: number
@@ -1861,7 +1845,7 @@ paths:
               example-1:
                 value:
                   ventilator_value_id: 1
-                  observed_at: '2021-02-04 12:34:06'
+                  registered_at: '2021-02-04 12:34:06'
                   gender: 1
                   height: '***'
                   weight: '***'
@@ -1897,15 +1881,15 @@ paths:
                     items:
                       required:
                         - id
-                        - observed_at
-                        - observed_user_name
+                        - registered_at
+                        - registered_user_name
                       properties:
                         id:
                           type: number
-                        observed_at:
+                        registered_at:
                           type: string
                           minLength: 1
-                        observed_user_name:
+                        registered_user_name:
                           type: string
                           minLength: 1
                 required:
@@ -1915,16 +1899,16 @@ paths:
                   value:
                     result:
                       - id: 10
-                        observed_at: '2021-02-04 12:34:06'
-                        observed_user_name: test_user
+                        registered_at: '2021-02-04 12:34:06'
+                        registered_user_name: test_user
                       - id: 22
-                        observed_at: '2021-02-06 12:34:06'
-                        observed_user_name: test_user
+                        registered_at: '2021-02-06 12:34:06'
+                        registered_user_name: test_user
                       - id: 33
-                        observed_at: '2021-02-07 12:34:06'
-                        observed_user_name: test_user
+                        registered_at: '2021-02-07 12:34:06'
+                        registered_user_name: test_user
       operationId: get-ventilator_value-list
-      description: '該当呼吸器に対するfixed_flgが立っているventilator_value_idおよびそれぞれのobserved_at,observed_user_nameの値を返す'
+      description: '該当呼吸器に対するfixed_flgが立っているventilator_value_idおよびそれぞれのregistered_at,registered_user_nameの値を返す'
       parameters:
         - schema:
             type: string
