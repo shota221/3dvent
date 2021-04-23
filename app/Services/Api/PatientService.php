@@ -57,8 +57,12 @@ class PatientService
             }
         );
 
-        //TODO ユーザー設定からの取得
-        $vt_per_kg = 6;
+        $vt_per_kg = config('calc.default.vt_per_kg');
+        
+        //組織の設定値が存在すればそっちの値を使用
+        if (!is_null($organization_id) && !is_null($organization_setting = Repos\OrganizationSettingRepository::findOneByOrganizationId($organization_id))) {
+            $vt_per_kg =$organization_setting->vt_per_kg;
+        }
 
         //理想体重の算出
         $ideal_weight = strval($this->calcIdealWeight(floatval($form->height), $form->gender));
@@ -76,8 +80,13 @@ class PatientService
             $form->addError('id', 'validation.id_not_found');
             return false;
         }
-        //TODO ユーザー設定からの取得
-        $vt_per_kg = 6;
+
+        $vt_per_kg = config('calc.default.vt_per_kg');
+        
+        //組織の設定値が存在すればそっちの値を使用
+        if (!is_null($patient->organization_id) && !is_null($organization_setting = Repos\OrganizationSettingRepository::findOneByOrganizationId($patient->organization_id))) {
+            $vt_per_kg =$organization_setting->vt_per_kg;
+        }
         //理想体重の算出
         $ideal_weight = strval($this->calcIdealWeight(floatval($patient->height), $patient->gender));
 
@@ -119,8 +128,12 @@ class PatientService
             }
         );
 
-        //TODO ユーザー設定からの取得
-        $vt_per_kg = 6;
+        $vt_per_kg = config('calc.default.vt_per_kg');
+        
+        //組織の設定値が存在すればそっちの値を使用
+        if (!is_null($patient->organization_id) && !is_null($organization_setting = Repos\OrganizationSettingRepository::findOneByOrganizationId($patient->organization_id))) {
+            $vt_per_kg =$organization_setting->vt_per_kg;
+        }
 
         //理想体重の算出
         $ideal_weight = strval($this->calcIdealWeight(floatval($form->height), $form->gender));
