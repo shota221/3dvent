@@ -10,7 +10,7 @@ class VentilatorValueDetailUpdateForm extends BaseForm
 {
     public $ventilator_value_id;
 
-    public $observed_at;
+    public $registered_at;
 
     public $gender;
 
@@ -41,7 +41,7 @@ class VentilatorValueDetailUpdateForm extends BaseForm
     {
         return [
             'ventilator_value_id' => 'required|'.Rule::VALUE_POSITIVE_INTEGER,
-            'observed_at' => 'nullable|'.Rule::VALUE_POSITIVE,
+            'registered_at' => 'nullable|'.Rule::VALUE_POSITIVE,
             'gender' => 'nullable|in:1,2',
             'height' => 'nullable|'.Rule::VALUE_POSITIVE,
             'weight' => 'nullable|'.Rule::VALUE_POSITIVE,
@@ -61,7 +61,7 @@ class VentilatorValueDetailUpdateForm extends BaseForm
     {
         $this->ventilator_value_id = $input['ventilator_value_id'];
 
-        $this->observed_at = $input['observed_at'] ?? null;
+        $this->registered_at = $input['registered_at'] ?? null;
 
         $this->gender = $input['gender'] ?? null;
 

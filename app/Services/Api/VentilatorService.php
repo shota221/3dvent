@@ -194,24 +194,21 @@ class VentilatorService
         return  Converter\VentilatorConverter::convertToVentilatorValueUpdateResult($entity);
     }
 
-    //TODO 以下補完作業
     public function getVentilatorValueListResult($form)
     {
         $search_values = $this->buildVentilatorValueSearchValues($form->ventilator_id, 1);
-
-        // echo $search_values['ventilator_id'];
 
         $ventilator_values = Repos\VentilatorValueRepository::findBySeachValuesAndOffsetAndLimit($search_values, $form->limit, $form->offset);
 
         $data = array_map(
             function ($ventilator_value) {
-                $observed_user_name = 1;
+                $registered_user_name = null;
 
                 if (!is_null($ventilator_value->user_id)) {
-                    $observed_user_name = Repos\UserRepository::findOneById($ventilator_value->user_id)->name;
+                    $registered_user_name = Repos\UserRepository::findOneById($ventilator_value->user_id)->name;
                 }
 
-                return Converter\VentilatorConverter::convertToVentilatorValueListElm($ventilator_value->id, $ventilator_value->registered_at, $observed_user_name);
+                return Converter\VentilatorConverter::convertToVentilatorValueListElm($ventilator_value->id, $ventilator_value->registered_at, $registered_user_name);
             },
             $ventilator_values->all()
         );
@@ -219,6 +216,7 @@ class VentilatorService
         return new Response\ListJsonResult($data);
     }
 
+    //TODO 以下補完作業
     public function getDetailVentilatorValueResult()
     {
         return json_decode(Converter\VentilatorConverter::convertToDetailVentilatorValueResult(), true);

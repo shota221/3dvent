@@ -8,7 +8,7 @@ class VentilatorValueElm extends JsonResult
 {   
     public $id;
 
-    public $observed_at;
+    public $registered_at;
 
-    public $observed_user_name;
+    public $registered_user_name;
 }

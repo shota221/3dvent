@@ -30,7 +30,7 @@ class VentilatorValueResult extends SuccessJsonResult
 
     public $fixed_flg;
 
-    public $observed_at;
+    public $registered_at;
 
-    public $observed_user_name;
+    public $registered_user_name;
 }

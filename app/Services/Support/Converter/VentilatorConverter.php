@@ -208,15 +208,15 @@ class VentilatorConverter
     }
 
     //TODO 以下補完作業
-    public static function convertToVentilatorValueListElm($id,$observed_at,$observed_user_name = null)
+    public static function convertToVentilatorValueListElm($id,$registered_at,$registered_user_name = null)
     {
         $res = new Response\Api\VentilatorValueElm;
 
         $res->id = $id;
 
-        $res->observed_at = $observed_at;
+        $res->registered_at = $registered_at;
 
-        $res->observed_user_name = $observed_user_name;
+        $res->registered_user_name = $registered_user_name;
 
         return $res;
     }
@@ -228,8 +228,8 @@ class VentilatorConverter
             "result": {
               "has_observed": true,
               "ventilator_value_id": 1,
-              "observed_at": "2021-02-04 12:34:06",
-              "observed_user_name": "test_user",
+              "registered_at": "2021-02-04 12:34:06",
+              "registered_user_name": "test_user",
               "city": "千代田区, 東京都, 日本",
               "gender": 1,
               "height": "***",
