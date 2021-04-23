@@ -232,7 +232,7 @@ class VentilatorService
         $fixed_flg = null,
         $user_id = null,
         $confirmed_flg = null,
-        $confirmed_user_id = null,
+        $confirmed_user_id = null
     ) {
         $search_values = [];
 

@@ -10,12 +10,6 @@ class VentilatorValueListShowForm extends BaseForm
 {
     public $ventilator_id;
 
-    public $user_id;
-
-    public $confirmed_user_id;
-
-    public $confirmed_flg;
-
     public $limit;
 
     public $offset;

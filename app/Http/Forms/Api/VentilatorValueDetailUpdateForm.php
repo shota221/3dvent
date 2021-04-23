@@ -40,7 +40,7 @@ class VentilatorValueDetailUpdateForm extends BaseForm
     protected function validationRule()
     {
         return [
-            'ventilator_value_id' => 'required|'.Rule::VALUE_POSITIVE_INTEGER,
+            'id' => 'required|'.Rule::VALUE_POSITIVE_INTEGER,
             'registered_at' => 'nullable|'.Rule::VALUE_POSITIVE,
             'gender' => 'nullable|in:1,2',
             'height' => 'nullable|'.Rule::VALUE_POSITIVE,
@@ -48,7 +48,7 @@ class VentilatorValueDetailUpdateForm extends BaseForm
             'airway_pressure' => 'nullable|'.Rule::VALUE_POSITIVE,
             'air_flow' => 'nullable|'.Rule::VALUE_POSITIVE,
             'o2_flow' => 'nullable|'.Rule::VALUE_POSITIVE,
-            'status_use' => 'nullable|in:0,1,2,3',
+            'status_use' => 'nullable|in:1,2,3,4',
             'status_use_other' => 'nullable|'.Rule::VALUE_POSITIVE,
             'spo2' => 'nullable|'.Rule::VALUE_POSITIVE,
             'etco2' => 'nullable|'.Rule::VALUE_POSITIVE,
@@ -59,7 +59,7 @@ class VentilatorValueDetailUpdateForm extends BaseForm
 
     protected function bind($input)
     {
-        $this->ventilator_value_id = $input['ventilator_value_id'];
+        $this->ventilator_value_id = $input['id'];
 
         $this->registered_at = $input['registered_at'] ?? null;
 

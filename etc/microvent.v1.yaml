@@ -1811,7 +1811,7 @@ paths:
               description: ''
               type: object
               properties:
-                ventilator_value_id:
+                id:
                   type: number
                 registered_at:
                   type: string
@@ -1840,11 +1840,11 @@ paths:
                 paco2:
                   type: string
               required:
-                - ventilator_value_id
+                - id
             examples:
               example-1:
                 value:
-                  ventilator_value_id: 1
+                  id: 1
                   registered_at: '2021-02-04 12:34:06'
                   gender: 1
                   height: '***'
