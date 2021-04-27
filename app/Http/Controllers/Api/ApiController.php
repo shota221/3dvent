@@ -14,8 +14,11 @@ abstract class ApiController extends BaseController
      */
     protected function getUser()
     {
-        $user_token_guard = Auth::guard('user_token');
-        //ユーザートークンが付与されていない場合は未ログインユーザーとしてnullを返す。
-        return $user_token_guard->user() === get_class($user_token_guard)::NO_TOKEN_USER ? null : $user_token_guard->user();
+        return Auth::guard('user_token')->user();
+    }
+
+    protected function getAppkey()
+    {
+        return Auth::guard('appkey')->user();
     }
 }

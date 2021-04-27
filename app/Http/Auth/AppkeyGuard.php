@@ -13,23 +13,23 @@ use Illuminate\Support\HtmlString;
  * USERトークン認証カスタムクラス
  * 
  */
-class UserTokenGuard extends BaseTokenGuard
+class AppkeyGuard extends BaseTokenGuard
 {
-    const USER_TOKEN_HEADER = 'X-User-Token';
+    const APPKEY_HEADER = 'X-App-Key';
 
     /**
      * [__construct description]
-     * @param UserProvider $provider  [description]
+     * @param AppkeyProvider $provider  [description]
      * @param Request                     $request   [description]
      * @param array                       $guardConf [description]
      */
-    public function __construct(UserProvider $provider, Request $request, array $guardConf)
+    public function __construct(AppkeyProvider $provider, Request $request, array $guardConf)
     {
         // inputKeyが、GET/POSTパラメータから取得するキー.
         
         // storageKeyが、DBのカラム名.
 
-        parent::__construct($provider, $request, $guardConf['input_key'], $guardConf['storage_key'], $guardConf['hash']);
+        parent::__construct($provider, $request, $guardConf['input_key'], $guardConf['storage_key']);
     }
 
     /**
@@ -45,15 +45,15 @@ class UserTokenGuard extends BaseTokenGuard
             return $this->user;
         }
 
-        $user = null;
+        $appkey = null;
 
         $token = $this->getTokenForRequest();
 
         if (! empty($token)) {
-            $user = $this->provider->retrieveByUserToken($token, $this->hash);
+            $appkey = $this->provider->retrieveByAppkey($token);
         }
 
-        return $this->user = $user;
+        return $this->appkey = $appkey;
     }
 
     /**
@@ -65,7 +65,7 @@ class UserTokenGuard extends BaseTokenGuard
      */
     public function getTokenForRequest()
     {
-        $token = $this->request->header(self::USER_TOKEN_HEADER, '');
+        $token = $this->request->header(self::APPKEY_HEADER, '');
 
         if (! is_null($this->inputKey)) {
             if (empty($token)) {
@@ -82,30 +82,13 @@ class UserTokenGuard extends BaseTokenGuard
     }
 
     /**
-     * トークン再生成
-     * 
-     * @param  array  $credentials [description]
-     * @return [type]              [description]
+     * アプリキー生成
+     *
+     * @param [type] $idfv
+     * @return void
      */
-    public function regenerateUserToken(array $credentials) 
+    public function generateAppkey($idfv) 
     {
-        $user = $this->provider->retrieveByCredentials($credentials);
-
-        if (! $user || ! $this->provider->validateCredentials($user, $credentials)) {
-            return null;
-        }
-
-        $this->user = $user;
-
-        return $this->provider->regenerateToken($user, $this->hash);
-    }
-
-    public function removeUserToken(Authenticatable $user)
-    {
-        $user->api_token = '';
-
-        $user->save();
-
-        return $user->id;
+        return $this->provider->generateAppkey($idfv);
     }
 }

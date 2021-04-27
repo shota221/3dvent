@@ -58,6 +58,11 @@ return [
             'storage_key' => \App\Models\User::TOKEN_COLUMN_NAME,
             'hash' => env('USER_TOKEN_HASH', true),
         ],
+        'appkey' => [
+            'driver' => 'appkey',
+            'input_key' => env('APPKEY_INPUT_KEY', null), // ex.) _m_t  nullable
+            'storage_key' => \App\Models\Appkey::KEY_COLUMN_NAME,
+        ],
         'user' => [
             'driver'=>'session',
             'provider' => 'user'

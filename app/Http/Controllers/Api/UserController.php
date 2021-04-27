@@ -24,10 +24,6 @@ class UserController extends ApiController
 
     public function show(Request $request)
     {
-        if(! $request->hasHeader('X-User-Token')){
-            throw new Exceptions\InvalidException('validation.user_token_required');
-        }
-
         $user = $this->getUser();
 
         return  $this->service->getUserResult($user);
@@ -35,10 +31,6 @@ class UserController extends ApiController
 
     public function update(Request $request)
     {
-        if(! $request->hasHeader('X-User-Token')){
-            throw new Exceptions\InvalidException('validation.user_token_required');
-        }
-        
         $form = new Form\UserUpdateForm($request->all());
 
         $user = $this->getUser();

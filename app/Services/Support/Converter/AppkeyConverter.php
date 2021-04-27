@@ -20,11 +20,11 @@ class AppkeyConverter
         return $entity;
     }
 
-    public static function convertToAppkeyResult($entity) 
+    public static function convertToAppkeyResult($appkey) 
     {
         $res = new Response\Api\AppkeyResult;
 
-        $res->appkey = $entity->appkey;
+        $res->appkey = $appkey;
 
         return $res;
     }

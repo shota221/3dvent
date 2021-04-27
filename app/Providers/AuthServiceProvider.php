@@ -45,7 +45,13 @@ class AuthServiceProvider extends ServiceProvider
             );
         });
 
-
-
+        //appkeyによる認証機構追加
+        $this->app['auth']->extend('appkey', function($app, string $name, array $config) {
+            return new \App\Http\Auth\AppkeyGuard(
+                new \App\Http\Auth\AppkeyProvider($this->app['hash']),
+                $app['request'], 
+                $config
+            );
+        });
     }
 }

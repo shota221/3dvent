@@ -38,15 +38,11 @@ class VentilatorValueController extends ApiController
     {
         $form = new Form\VentilatorValueCreateForm($request->all());
 
-        $user_token = $request->hasHeader('X-User-Token') ? $request->header('X-User-Token') : null;
+        $user = $this->getUser();
 
-        if (!$request->hasHeader('X-App-Key')) {
-            $form->addError('X-App-Key', 'validation.appkey_required');
-        } else {
-            $appkey = $request->header('X-App-Key');
-        }
+        $appkey = $this->getAppkey();
 
-        if ($form->hasError() || !$response = $this->service->create($form, $user_token, $appkey)) {
+        if ($form->hasError() || !$response = $this->service->create($form, $user, $appkey)) {
             throw new Exceptions\InvalidFormException($form);
         }
 

@@ -47,23 +47,16 @@ class VentilatorValueService
      * @param [type] $appkey
      * @return void
      */
-    public function create($form, $user_token, $appkey)
+    public function create($form, $user, $appkey)
     {
         if (!Repos\VentilatorRepository::existsById($form->ventilator_id)) {
             $form->addError('ventilator_id', 'validation.id_not_found');
             return false;
         }
-        if (!Repos\AppkeyRepository::existsByAppkey($appkey)) {
-            $form->addError('X-App-Key', 'validation.appkey_not_found');
-            return false;
-        }
 
-        //TODO Auth:user()からの取得
-        $user_id = 3;
+        $registered_user_id = !is_null($user) ? $user->id : null;
         //TODO ユーザー所属組織の設定値を取得
         $vt_per_kg = 6;
-
-        $appkey_id = Repos\AppkeyRepository::findOneByAppkey($appkey)->id;
 
         $total_flow = $this->calcTotalFlow($form->air_flow, $form->o2_flow);
 
@@ -93,8 +86,8 @@ class VentilatorValueService
             $estimated_peep,
             $fio2,
             $total_flow,
-            $user_id,
-            $appkey_id
+            $registered_user_id,
+            $appkey->id
         );
 
         DBUtil::Transaction(

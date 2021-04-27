@@ -18,18 +18,8 @@ class AppkeyService
 {
     public function create($form)
     {
-        //idfvは重複し得るため、カウント値と合わせてハッシュ化
-        $appkey = hash('sha256', $form->idfv . Repos\AppkeyRepository::countByIdfv($form->idfv));
+        $appkey = Auth::guard('appkey')->generateAppkey($form->idfv);
 
-        $entity = Converter\AppkeyConverter::convertToEntity($form->idfv,$appkey);
-
-        DBUtil::Transaction(
-            'アプリキー登録',
-            function () use ($entity) {
-                $entity->save();
-            }
-        );
-
-        return Converter\AppkeyConverter::convertToAppkeyResult($entity);
+        return Converter\AppkeyConverter::convertToAppkeyResult($appkey);
     }
 }

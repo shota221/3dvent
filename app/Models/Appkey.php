@@ -2,10 +2,18 @@
 
 namespace App\Models;
 
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 
-class Appkey extends BaseModel
+class Appkey extends Authenticatable
 {
-    const UPDATED_AT = null;
+    use HasFactory, Notifiable;
+
+    const
+        UPDATED_AT = null,
+        KEY_COLUMN_NAME = 'appkey'
+        ;
 }

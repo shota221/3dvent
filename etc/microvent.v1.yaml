@@ -187,7 +187,7 @@ paths:
       operationId: get-ventilator
       description: |
         GS1コードにより人工呼吸器に紐付いた患者の身長体重情報を取得する。存在しない場合はregistered:falseを返す。
-        紐付けがされている場合は、患者IDや組織名も返す。X-User-Tokenが付与されていれば登録済み呼吸器の組織紐付けを行う
+        紐付けがされている場合は、患者IDや組織名も返す。
       parameters:
         - schema:
             type: string
@@ -207,10 +207,6 @@ paths:
           name: gs1_code
           description: QR読み取りにより取得される識別コード
           required: true
-        - schema:
-            type: string
-          in: header
-          name: X-User-Token
     post:
       summary: 設定データを登録する
       operationId: post-ventilator
@@ -537,8 +533,8 @@ paths:
         - schema:
             type: string
           in: header
-          name: X-App-Key
-          description: アプリキー
+          name: X-User-Token
+          required: true
       requestBody:
         content:
           application/json:
@@ -702,6 +698,11 @@ paths:
           in: header
           name: Content-Type
           description: application/json; charset=UTF-8
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: X-User-Token
           required: true
       requestBody:
         content:
@@ -1593,6 +1594,7 @@ paths:
           in: header
           name: X-User-Token
           description: ユーザートークン
+          required: true
       requestBody:
         content:
           application/json:
@@ -1782,11 +1784,6 @@ paths:
             type: string
           in: header
           name: X-Api-Token
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: X-User-Token
           required: true
         - schema:
             type: string
@@ -2226,11 +2223,6 @@ paths:
           name: X-App-Key
           description: アプリキー
           required: true
-        - schema:
-            type: string
-          in: header
-          name: X-User-Token
-          description: ユーザートークン
       requestBody:
         content:
           application/json:
