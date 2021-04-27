@@ -34,7 +34,9 @@ class AuthController extends ApiController
 
     public function removeToken(Request $request)
     {
-        $user = $request->hasHeader('X-User-Token') ? $this->getUser() : null;
+        if(!$user = $request->hasHeader('X-User-Token') ? $this->getUser() : null){
+            throw new Exceptions\InvalidException('auth.invalid_user_token');
+        }
 
         return $this->service->removeToken($user);
     }

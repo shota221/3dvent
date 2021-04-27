@@ -47,19 +47,6 @@ class UserProvider extends EloquentUserProvider
         return $token;
     }
 
-    public function removeToken(Authenticatable $user)
-    {
-        // $userId = $user->getAuthIdentifier();
-
-        // $user = Repos\UserRepository::findOneById($userId);
-
-        $user->api_token = '';
-
-        $user->save();
-
-        return $user->id;
-    }
-
     /**
      * @override
      * 

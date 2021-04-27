@@ -4,6 +4,7 @@ namespace App\Http\Auth;
 
 use Illuminate\Http\Request;
 use Illuminate\Auth\TokenGuard as BaseTokenGuard;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\HtmlString;
@@ -97,5 +98,14 @@ class UserTokenGuard extends BaseTokenGuard
         $this->user = $user;
 
         return $this->provider->regenerateToken($user, $this->hash);
+    }
+
+    public function removeUserToken(Authenticatable $user)
+    {
+        $user->api_token = '';
+
+        $user->save();
+
+        return $user->id;
     }
 }

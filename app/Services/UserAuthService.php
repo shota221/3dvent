@@ -53,19 +53,9 @@ class UserAuthService
     {
         $user_id = null;
 
-        if (!is_null($user)) {
-            $user_id = $user->id;
-            $user->api_token = '';
-
-            DBUtil::Transaction(
-                'api_token削除',
-                function () use ($user) {
-                    $user->save();
-                }
-            );
-        }
-
-        return Converter\UserConverter::convertToLogoutUserResult($user_id);
+        $userTokenGuard = Auth::guard('user_token');
+        
+        return Converter\UserConverter::convertToLogoutUserResult($userTokenGuard->removeUserToken($user));
     }
 
     public static function createUniqueToken(string $prefix)
