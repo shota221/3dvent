@@ -40,9 +40,13 @@ class UserAuthService
 
         $userTokenGuard = Auth::guard('user_token');
 
-        if (!$token = $userTokenGuard->regenerateUserToken($credentials)) {
+        $userGuard = Auth::guard('user');
+
+        if (!$userGuard->attempt($credentials)) {
             throw new Exceptions\InvalidException('auth.failed');
         }
+
+        $token = $userTokenGuard->regenerateUserToken($credentials);
 
         $user = $userTokenGuard->user();
 

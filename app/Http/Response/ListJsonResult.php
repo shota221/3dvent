@@ -2,17 +2,12 @@
 
 namespace App\Http\Response;
 
-class ListJsonResult extends JsonResult
+class ListJsonResult extends SuccessJsonResult
 {
     public $list = [];
-    
-    function __construct(array $data)
+
+    function __construct($data)
     {
         $this->list = $data;
-    }
-    
-    public function jsonSerialize()
-    {
-        return ['result' => $this->list];
     }
 }

@@ -196,19 +196,13 @@ class VentilatorService
 
     public function getVentilatorValueListResult($form)
     {
-        $search_values = $this->buildVentilatorValueSearchValues($form->ventilator_id, 1);
+        $search_values = $this->buildVentilatorValueSearchValues($form->ventilator_id, $form->fixed_flg);
 
-        $ventilator_values = Repos\VentilatorValueRepository::findBySeachValuesAndOffsetAndLimit($search_values, $form->limit, $form->offset);
+        $ventilator_values = Repos\VentilatorValueRepository::findBySeachValuesAndLimitOffsetOrderByRegisteredAtDesc($search_values, $form->limit, $form->offset);
 
         $data = array_map(
             function ($ventilator_value) {
-                $registered_user_name = null;
-
-                if (!is_null($ventilator_value->user_id)) {
-                    $registered_user_name = Repos\UserRepository::findOneById($ventilator_value->user_id)->name;
-                }
-
-                return Converter\VentilatorConverter::convertToVentilatorValueListElm($ventilator_value->id, $ventilator_value->registered_at, $registered_user_name);
+                return Converter\VentilatorConverter::convertToVentilatorValueListElm($ventilator_value->id, $ventilator_value->registered_at, $ventilator_value->registered_user_name);
             },
             $ventilator_values->all()
         );
