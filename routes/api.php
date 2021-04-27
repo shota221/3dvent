@@ -18,8 +18,14 @@
  */
 Route::group(['middleware' => ['routetype:api']], function() {
 
+    // TODO keshitekudasai
+    Route::group(['middleware' => ['can:api_accessable']], function() {
+        Route::get('/test', 'TestController@index')->name('api.test');
+    });
+
     //トークン認証ルート
-    Route::group(['middleware' => ['auth:api_token,user_token']], function () {        
+    // 2021.04.26 api_token認可実装、以下 'auth:user_token'　をmiddlewareからはずしました。認証必須ルートを分けて記述してください。
+    Route::group(['middleware' => ['can:api_accessable']], function () {        
         //idfv登録・アプリキー発行
         Route::post('/appkey','AppkeyController@create')->name('api.appkey.create');
 

@@ -5,7 +5,18 @@ use function PHPSTORM_META\map;
 
 return [
 
+    /*
+    |--------------------------------------------------------------------------
+    | API TOKEN Definitions
+    |--------------------------------------------------------------------------
+    |
+    | 静的トークン定義
+    |
+    */
+   
+    'api_secret_token' => env('API_TOKEN', null),
 
+    'api_token_input_key' => env('API_TOKEN_INPUT_KEY', null),
     
 
     /*
@@ -20,7 +31,7 @@ return [
     */
 
     'defaults' => [
-        'guard' => 'web',
+        'guard' => 'user_token',
         'passwords' => 'users',
     ],
 
@@ -40,15 +51,8 @@ return [
     | Supported: "session", "token"
     |
     */
-   
-
 
     'guards' => [
-        'api_token' => [
-            'driver' => 'api_token',
-            'input_key' => env('API_TOKEN_INPUT_KEY', null), // ex.) _m_t  nullable
-            'secret_token' => env('API_TOKEN', null),
-        ],
         'user_token' => [
             'driver' => 'user_token', // token or session
             'provider' => 'user',
