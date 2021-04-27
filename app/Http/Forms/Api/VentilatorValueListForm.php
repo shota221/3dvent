@@ -6,7 +6,7 @@ use App\Http\Forms\ValidationRule as Rule;
 
 use App\Http\Forms\BaseForm;
 
-class VentilatorValueListShowForm extends BaseForm
+class VentilatorValueListForm extends BaseForm
 {
     public $ventilator_id;
 

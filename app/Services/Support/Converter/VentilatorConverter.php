@@ -22,6 +22,10 @@ class VentilatorConverter
             $res->patient_id = $entity->patient_id ?? null;
 
             $res->organization_name = $entity->organization_name ?? null;
+
+            $res->serial_number = $entity->serial_number;
+
+            $res->start_using_at = $entity->start_using_at;
         }
 
         return $res;
@@ -56,6 +60,8 @@ class VentilatorConverter
         $res->ventilator_id = $entity->id;
 
         $res->organization_name = $entity->organization_name ?? null;
+
+        $res->serial_number = $entity->serial_number;
 
         return $res;
     }
@@ -102,13 +108,20 @@ class VentilatorConverter
         return $res;
     }
 
-    public static function convertToVentilatorValueUpdateResult($entity = null)
+    public static function convertToVentilatorUpdateResult()
     {
-        $res = new Response\Api\VentilatorValueResult;
+        // $res = new Response\Api\VentilatorResult;
 
-        $res->fixed_flg = !is_null($entity) ? $entity->fixed_flg : 0;
+        // $res->start_using_at = $entity->atart_using_at;
 
-        return $res;
+        // return $res;
+        return <<<EOF
+        {
+            "result": {
+              "start_using_at": "2021-04-04 12:34:06"
+            }
+          }       
+        EOF;
     }
 
     public static function convertToVentilatorEntity($gs1_code, $serial_number, $latitude = null, $longitude = null, $city = null, $organization_id = null, $registered_user_id = null)
@@ -187,21 +200,21 @@ class VentilatorConverter
 
         $entity->total_flow = $total_flow;
 
-        $entity->user_id = $user_id ?? null;
+        $entity->registered_user_id = $user_id ?? null;
 
         $entity->appkey_id = $appkey_id;
 
         return $entity;
     }
 
-    public static function convertToVentilatorValueUpdateEntity(VentilatorValue $entity, $fixed_flg, $fixed_at)
+    public static function convertToVentilatorValueUpdateEntity(VentilatorValue $entity, $start_using_at, $fixed_at)
     {
-        $entity->fixed_flg = $fixed_flg;
+        $entity->start_using_at = $start_using_at;
 
         $entity->fixed_at = $fixed_at;
 
         //確認用インターフェースができるまで、最終設定フラグが立ったものは確認済みとみなす。
-        $entity->confirmed_flg = $fixed_flg;
+        $entity->confirmed_flg = $start_using_at;
         $entity->confirmed_at = $fixed_at;
 
         return $entity;
