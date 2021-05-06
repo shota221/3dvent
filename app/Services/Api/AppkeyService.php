@@ -3,6 +3,7 @@
 namespace App\Services\Api;
 
 use App\Exceptions;
+use App\Http\Auth\AppkeyGate;
 use App\Models;
 use App\Http\Forms\Api as Form;
 use App\Http\Response as Response;
@@ -18,7 +19,7 @@ class AppkeyService
 {
     public function create($form)
     {
-        $appkey = Auth::guard('appkey')->generateAppkey($form->idfv);
+        $appkey = AppkeyGate::generateAppkey($form->idfv);
 
         return Converter\AppkeyConverter::convertToAppkeyResult($appkey);
     }

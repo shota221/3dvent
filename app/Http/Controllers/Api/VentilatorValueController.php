@@ -40,7 +40,7 @@ class VentilatorValueController extends ApiController
 
         $user = $this->getUser();
 
-        $appkey = $this->getAppkey();
+        $appkey = app('appkey');
 
         if ($form->hasError() || !$response = $this->service->create($form, $user, $appkey)) {
             throw new Exceptions\InvalidFormException($form);
@@ -62,7 +62,6 @@ class VentilatorValueController extends ApiController
         return $this->service->update($form);
     }
 
-    //TODO　以下補完作業
     public function list(Request $request)
     {
         $form = new Form\VentilatorValueListForm($request->all());

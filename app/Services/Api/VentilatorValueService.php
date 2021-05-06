@@ -21,7 +21,7 @@ class VentilatorValueService
     use Support\Logic\CalculationLogic;
 
     /**
-     * 呼吸器IDから最新の機器関連値を取得する
+     * @TODO ventilator_valueを取得する
      *
      * @param [type] $form
      * @return void
@@ -36,7 +36,7 @@ class VentilatorValueService
         // $ventilator_value = Repos\VentilatorValueRepository::findOneByVentilatorId($form->ventilator_id);
 
         // return Converter\VentilatorConverter::convertToVentilatorValueResult($ventilator_value);
-        return json_decode(Converter\VentilatorConverter::convertToDetailVentilatorValueResult(), true);
+        return json_decode(Converter\VentilatorValueConverter::convertToVentilatorValueResult($form), true);
     }
 
     /**
@@ -70,7 +70,7 @@ class VentilatorValueService
 
         $patient = Repos\PatientRepository::findOneById($form->patient_id);
 
-        $entity = Converter\VentilatorConverter::convertToVentilatorValueEntity(
+        $entity = Converter\VentilatorValueConverter::convertToVentilatorValueEntity(
             $patient,
             $form->ventilator_id,
             $form->airway_pressure,
@@ -97,7 +97,7 @@ class VentilatorValueService
             }
         );
 
-        return Converter\VentilatorConverter::convertToVentilatorValueRegistrationResult($entity);
+        return Converter\VentilatorValueConverter::convertToVentilatorValueRegistrationResult($entity);
     }
 
     /**
@@ -108,7 +108,7 @@ class VentilatorValueService
      */
     public function update($form)
     {
-        return json_decode(Converter\VentilatorConverter::convertToDetailVentilatorValueUpdateResult(), true);
+        return json_decode(Converter\VentilatorValueConverter::convertToVentilatorValueUpdateResult(), true);
     }
 
     public function getVentilatorValueListResult($form)
@@ -119,7 +119,7 @@ class VentilatorValueService
 
         $data = array_map(
             function ($ventilator_value) {
-                return Converter\VentilatorConverter::convertToVentilatorValueListElm($ventilator_value->id, $ventilator_value->registered_at, $ventilator_value->registered_user_name);
+                return Converter\VentilatorValueConverter::convertToVentilatorValueListElm($ventilator_value->id, $ventilator_value->registered_at, $ventilator_value->registered_user_name);
             },
             $ventilator_values->all()
         );

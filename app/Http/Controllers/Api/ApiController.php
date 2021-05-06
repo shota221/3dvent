@@ -16,9 +16,4 @@ abstract class ApiController extends BaseController
     {
         return Auth::guard('user_token')->user();
     }
-
-    protected function getAppkey()
-    {
-        return Auth::guard('appkey')->user();
-    }
 }

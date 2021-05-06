@@ -18,21 +18,22 @@
  */
 Route::group(['middleware' => ['routetype:api']], function() {
 
-    //トークン認証ルート
-    Route::group(['middleware' => ['can:api_accessable']], function () {        
+    Route::group(['middleware' => ['can:api_accessable']], function() {
+        /**********
+         * appkey *
+         **********/
+        //idfv登録・アプリキー発行
+        Route::post('/appkey', 'AppkeyController@create')->name('api.appkey.create');
+    });
+
+    //アプリキー認証ルート
+    Route::group(['middleware' => ['can:appkey_accessable']], function () {        
         /*************************
          * X-User-Token不要ルート *
          *************************/
 
         //組織ユーザートークン発行
         Route::post('/auth/token', 'AuthController@generateToken')->name('api.auth.generate_token');
-
-
-        /**********
-         * appkey *
-         **********/
-        //idfv登録・アプリキー発行
-        Route::post('/appkey', 'AppkeyController@create')->name('api.appkey.create');
 
 
         /*************
@@ -78,7 +79,7 @@ Route::group(['middleware' => ['routetype:api']], function() {
         Route::get('/ventilator_value/{id}', 'VentilatorValueController@show')->name('api.ventilator_value.show');
 
         //測定時機器関連値登録
-        Route::post('/ventilator_value/no_auth', 'VentilatorValueController@create')->name('api.ventilator_value.create.no_auth')->middleware('auth:appkey');
+        Route::post('/ventilator_value/no_auth', 'VentilatorValueController@create')->name('api.ventilator_value.create.no_auth');
 
 
         /*************************
@@ -128,7 +129,7 @@ Route::group(['middleware' => ['routetype:api']], function() {
              * ventilator_value *
              ********************/
             //測定時機器関連値登録
-            Route::post('/ventilator_value', 'VentilatorValueController@create')->name('api.ventilator_value.create')->middleware('auth:appkey');
+            Route::post('/ventilator_value', 'VentilatorValueController@create')->name('api.ventilator_value.create');
             //機器観察研究データの更新
             Route::put('/ventilator_value/{id}', 'VentilatorValueController@update')->name('api.ventilator_value.update');
         });

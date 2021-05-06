@@ -16,6 +16,6 @@ class TestController extends ApiController
 {
     public function index()
     {
-        return $this->getAppkey();
+        return app('appkey');
     }
 }

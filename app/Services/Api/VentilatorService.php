@@ -84,6 +84,17 @@ class VentilatorService
             return false;
         }
 
-        return json_decode(Converter\VentilatorConverter::convertToVentilatorUpdateResult(), true);
+        $ventilator = Repos\VentilatorRepository::findOneById($form->id);
+
+        $entity = Converter\VentilatorConverter::convertToVentilatorUpdateEntity($ventilator,$form->start_using_at);
+
+        DBUtil::Transaction(
+            'ユーザー情報更新',
+            function () use ($entity) {
+                $entity->save();
+            }
+        );
+
+        return Converter\VentilatorConverter::convertToVentilatorUpdateResult($entity);
     }
 }

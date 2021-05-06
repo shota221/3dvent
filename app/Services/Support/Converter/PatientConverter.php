@@ -38,8 +38,7 @@ class PatientConverter
         $height,
         $gender,
         $patient_code = null,
-        $organization_id = null,
-        $weight = ''
+        $organization_id = null
     ) {
         $entity = new Patient;
 
@@ -48,8 +47,6 @@ class PatientConverter
         $entity->height = $height;
 
         $entity->gender = $gender;
-
-        $entity->weight = $weight;
 
         $entity->organization_id = $organization_id;
 
@@ -60,16 +57,13 @@ class PatientConverter
         Patient $entity,
         $patient_code,
         $height,
-        $gender,
-        $weight = ''
+        $gender
     ) {
         $entity->patient_code = $patient_code;
 
         $entity->height = $height;
 
         $entity->gender = $gender;
-
-        $entity->weight = $weight;
 
         return $entity;
     }
@@ -87,9 +81,9 @@ class PatientConverter
               "vent_disease_name": "XXXXXX",
               "other_disease_name_1": "xXXXXX",
               "other_disease_name_2": "XXXXXX",
-              "userd_place": 3,
-              "hospital_name": "XXXXXX",
-              "national_name": "XXXXXX",
+              "used_place": 3,
+              "hospital": "XXXXXX",
+              "national": "XXXXXX",
               "discontinuation_at": "2021-04-08 17:04:01",
               "outcome": 1,
               "treatment": 1,
