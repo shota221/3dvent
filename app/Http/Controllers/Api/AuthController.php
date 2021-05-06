@@ -38,4 +38,21 @@ class AuthController extends ApiController
 
         return $this->service->removeToken($user);
     }
+
+    /**
+     * ユーザートークンを有しているか(ログイン中)どうかを判定
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function check(Request $request)
+    {
+        $form = new Form\HasTokenCheckForm($request->all());
+
+        if ($form->hasError() || !$response = $this->service->checkHasToken($form)) {
+            throw new Exceptions\InvalidFormException($form);
+        }
+
+        return $response;
+    }
 }

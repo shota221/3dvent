@@ -32,6 +32,9 @@ Route::group(['middleware' => ['routetype:api']], function() {
          * X-User-Token不要ルート *
          *************************/
 
+        //該当組織ユーザーがユーザートークンを有してしているかを判定
+        Route::get('/auth/token', 'AuthController@check')->name('api.auth.check');
+
         //組織ユーザートークン発行
         Route::post('/auth/token', 'AuthController@generateToken')->name('api.auth.generate_token');
 

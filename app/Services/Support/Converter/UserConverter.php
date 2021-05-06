@@ -65,4 +65,13 @@ class UserConverter
 
         return $entity;
     }
+
+    public static function convertToCheckHasTokenResult($has_token)
+    {
+        $res = new Response\Api\UserResult;
+
+        $res->has_token = $has_token;
+
+        return $res;
+    }
 }

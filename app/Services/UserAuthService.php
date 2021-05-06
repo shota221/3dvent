@@ -51,8 +51,8 @@ class UserAuthService
         $user = $userTokenGuard->user();
 
         return Converter\UserConverter::convertToLoginUserResult($user->id, $token, $user->name, $organization->name);
-    } 
-    
+    }
+
     public function removeToken($user = null)
     {
         $token_removed_user_id = null;
@@ -64,5 +64,19 @@ class UserAuthService
         }
 
         return Converter\UserConverter::convertToLogoutUserResult($token_removed_user_id);
+    }
+
+    public function checkHasToken($form)
+    {
+        $organization = Repos\OrganizationRepository::findOneByCode($form->organization_code);
+
+        if (is_null($organization)) {
+            $form->addError('organization_code', 'validation.id_not_found');
+            return false;
+        }
+
+        $user = Repos\UserRepository::findOneByOrganizationIdAndName($organization->id, $form->name);
+        
+        return Converter\UserConverter::convertToCheckHasTokenResult(!is_null($user) && !empty($user->api_token));
     }
 }

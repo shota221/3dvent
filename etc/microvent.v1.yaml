@@ -56,7 +56,7 @@ paths:
         - schema:
             type: string
           in: header
-          name: X-Api-Token
+          name: X-App-Key
           required: true
           description: 疎通用トークン
         - schema:
@@ -78,7 +78,7 @@ paths:
               description: ''
               type: object
               properties:
-                user:
+                name:
                   type: string
                   minLength: 1
                   description: ユーザー名もしくはメールアドレス
@@ -86,7 +86,7 @@ paths:
                   type: string
                   minLength: 1
               required:
-                - user
+                - name
                 - password
         description: ''
       tags:
@@ -122,7 +122,7 @@ paths:
         - schema:
             type: string
           in: header
-          name: X-Api-Token
+          name: X-App-Key
         - schema:
             type: string
           in: header
@@ -135,6 +135,59 @@ paths:
       tags:
         - auth
       description: ユーザートークン失効
+    get:
+      summary: ''
+      operationId: get-auth-token
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      has_token:
+                        type: boolean
+                    required:
+                      - has_token
+                required:
+                  - result
+                x-examples:
+                  example-1:
+                    result:
+                      has_token: true
+              examples:
+                ログイン中:
+                  value:
+                    result:
+                      has_token: true
+                未ログイン:
+                  value:
+                    result:
+                      has_token: false
+      description: |
+        ユーザーがトークンを有している(ログイン中)かどうかを判定する。
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: X-App-Key
+        - schema:
+            type: string
+          in: header
+          name: Accept
+          description: application/json
+        - schema:
+            type: string
+          in: query
+          name: name
+          description: '*****@***'
+      tags:
+        - auth
   /ventilator:
     get:
       summary: 人工呼吸器情報取得
@@ -192,7 +245,7 @@ paths:
         - schema:
             type: string
           in: header
-          name: X-Api-Token
+          name: X-App-Key
           description: 疎通用トークン
           required: true
         - schema:
@@ -245,7 +298,7 @@ paths:
         - schema:
             type: string
           in: header
-          name: X-Api-Token
+          name: X-App-Key
           description: 疎通用トークン
           required: true
         - schema:
@@ -337,7 +390,7 @@ paths:
             type: string
           in: header
           description: 疎通用トークン
-          name: X-Api-Token
+          name: X-App-Key
           required: true
         - schema:
             type: string
@@ -395,7 +448,7 @@ paths:
         - schema:
             type: string
           in: header
-          name: X-Api-Token
+          name: X-App-Key
           description: 疎通用トークン
           required: true
         - schema:
@@ -490,7 +543,7 @@ paths:
             type: string
           in: header
           description: 疎通用トークン
-          name: X-Api-Token
+          name: X-App-Key
           required: true
         - schema:
             type: string
@@ -515,7 +568,7 @@ paths:
         - schema:
             type: string
           in: header
-          name: X-Api-Token
+          name: X-App-Key
           description: 疎通用トークン
           required: true
         - schema:
@@ -629,7 +682,7 @@ paths:
         - schema:
             type: string
           in: header
-          name: X-Api-Token
+          name: X-App-Key
           description: 疎通用トークン
           required: true
         - schema:
@@ -684,7 +737,7 @@ paths:
         - schema:
             type: string
           in: header
-          name: X-Api-Token
+          name: X-App-Key
           description: 疎通用トークン
           required: true
         - schema:
@@ -832,7 +885,7 @@ paths:
         - schema:
             type: string
           in: header
-          name: X-Api-Token
+          name: X-App-Key
           description: 疎通用トークン
           required: true
         - schema:
@@ -890,7 +943,7 @@ paths:
         - schema:
             type: string
           in: header
-          name: X-Api-Token
+          name: X-App-Key
           description: 疎通用トークン
           required: true
         - schema:
@@ -1028,7 +1081,7 @@ paths:
         - schema:
             type: string
           in: header
-          name: X-Api-Token
+          name: X-App-Key
           description: 疎通用トークン
           required: true
         - schema:
@@ -1078,7 +1131,7 @@ paths:
         - schema:
             type: string
           in: header
-          name: X-Api-Token
+          name: X-App-Key
           description: 疎通用トークン
           required: true
         - schema:
@@ -1209,7 +1262,7 @@ paths:
         - schema:
             type: string
           in: header
-          name: X-Api-Token
+          name: X-App-Key
           required: true
         - schema:
             type: string
@@ -1255,7 +1308,7 @@ paths:
         - schema:
             type: string
           in: header
-          name: X-Api-Token
+          name: X-App-Key
           required: true
         - schema:
             type: string
@@ -1359,7 +1412,7 @@ paths:
         - schema:
             type: string
           in: header
-          name: X-Api-Token
+          name: X-App-Key
           required: true
         - schema:
             type: string
@@ -1495,7 +1548,7 @@ paths:
         - schema:
             type: string
           in: header
-          name: X-Api-Token
+          name: X-App-Key
         - schema:
             type: string
           in: header
@@ -1569,7 +1622,7 @@ paths:
             type: string
           in: header
           description: 疎通用トークン
-          name: X-Api-Token
+          name: X-App-Key
           required: true
         - schema:
             type: string
@@ -1582,12 +1635,6 @@ paths:
           in: header
           description: application/json; charset=UTF-8
           name: Content-Type
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: X-App-Key
-          description: アプリキー
           required: true
         - schema:
             type: string
@@ -1783,7 +1830,7 @@ paths:
         - schema:
             type: string
           in: header
-          name: X-Api-Token
+          name: X-App-Key
           required: true
         - schema:
             type: string
@@ -1824,7 +1871,7 @@ paths:
         - schema:
             type: string
           in: header
-          name: X-Api-Token
+          name: X-App-Key
           required: true
         - schema:
             type: string
@@ -1932,7 +1979,7 @@ paths:
         - schema:
             type: string
           in: header
-          name: X-Api-Token
+          name: X-App-Key
           description: 疎通用トークン
           required: true
         - schema:
@@ -2016,7 +2063,7 @@ paths:
         - schema:
             type: string
           in: header
-          name: X-Api-Token
+          name: X-App-Key
           description: 疎通用トークン
           required: true
         - schema:
@@ -2111,7 +2158,7 @@ paths:
         - schema:
             type: string
           in: header
-          name: X-Api-Token
+          name: X-App-Key
           description: 疎通用トークン
           required: true
         - schema:
@@ -2203,7 +2250,7 @@ paths:
             type: string
           in: header
           description: 疎通用トークン
-          name: X-Api-Token
+          name: X-App-Key
           required: true
         - schema:
             type: string
@@ -2216,12 +2263,6 @@ paths:
           in: header
           description: application/json; charset=UTF-8
           name: Content-Type
-          required: true
-        - schema:
-            type: string
-          in: header
-          name: X-App-Key
-          description: アプリキー
           required: true
       requestBody:
         content:
