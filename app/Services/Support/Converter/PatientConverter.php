@@ -27,7 +27,7 @@ class PatientConverter
 
         $res->height = strval($entity->height);
 
-        $res->gender = strval($entity->gender);
+        $res->gender = $entity->gender;
 
         $res->predicted_vt = strval($predicted_vt);
 
