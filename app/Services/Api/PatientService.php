@@ -24,13 +24,14 @@ class PatientService
     {
         $organization_id = !is_null($user) ? $user->organization_id : null;
 
-        if (
-            !is_null($organization_id) && !is_null($form->patient_code)
-            && Repos\PatientRepository::existsByPatientCodeAndOrganizationId($form->patient_code, $organization_id)
-        ) {
+        //同一組織内に同じ患者コードが存在するかどうか
+        $exists = !is_null($organization_id) && !is_null($form->patient_code) && Repos\PatientRepository::existsByPatientCodeAndOrganizationId($form->patient_code, $organization_id);
+
+        if ($exists) {
             $form->addError('patient_code', 'validation.duplicated_patient_code');
             return false;
         }
+
 
         $entity = Converter\PatientConverter::convertToEntity(
             $form->height,
@@ -40,6 +41,11 @@ class PatientService
         );
 
         $ventilator = Repos\VentilatorRepository::findOneById($form->ventilator_id);
+
+        if (is_null($ventilator)){
+            $form->addError('ventilator_id', 'validation.id_not_found');
+            return false;
+        }
 
         DBUtil::Transaction(
             '患者情報登録',
@@ -56,13 +62,11 @@ class PatientService
                 $ventilator->save();
             }
         );
-
-        $vt_per_kg = config('calc.default.vt_per_kg');
         
         //組織の設定値が存在すればそっちの値を使用
-        if (!is_null($organization_id) && !is_null($organization_setting = Repos\OrganizationSettingRepository::findOneByOrganizationId($organization_id))) {
-            $vt_per_kg =$organization_setting->vt_per_kg;
-        }
+        $organization_setting = !is_null($organization_id) ? Repos\OrganizationSettingRepository::findOneByOrganizationId($organization_id) : null;
+
+        $vt_per_kg = !is_null($organization_setting) ? $organization_setting->vt_per_kg : config('calc.default.vt_per_kg');
 
         //理想体重の算出
         $ideal_weight = strval($this->calcIdealWeight(floatval($form->height), $form->gender));
@@ -81,12 +85,11 @@ class PatientService
             return false;
         }
 
-        $vt_per_kg = config('calc.default.vt_per_kg');
-        
         //組織の設定値が存在すればそっちの値を使用
-        if (!is_null($patient->organization_id) && !is_null($organization_setting = Repos\OrganizationSettingRepository::findOneByOrganizationId($patient->organization_id))) {
-            $vt_per_kg =$organization_setting->vt_per_kg;
-        }
+        $organization_setting = !is_null($patient->organization_id) ? Repos\OrganizationSettingRepository::findOneByOrganizationId($patient->organization_id) : null;
+
+        $vt_per_kg = !is_null($organization_setting) ? $organization_setting->vt_per_kg : config('calc.default.vt_per_kg');
+        
         //理想体重の算出
         $ideal_weight = strval($this->calcIdealWeight(floatval($patient->height), $patient->gender));
 
@@ -104,11 +107,10 @@ class PatientService
             return false;
         }
 
-        if (
-            !is_null($form->patient_code) && !is_null($patient->patient_code)
-            && $form->patient_code !== $patient->patient_code
-            && Repos\PatientRepository::existsByPatientCodeAndOrganizationId($form->patient_code, $patient->organization_id)
-        ) {
+        //フォームとアップデート先両方に患者コードがあり、それらが同一でないかつ、同一組織内に同じ患者コードが存在するかどうか
+        $exists =  !is_null($form->patient_code) && !is_null($patient->patient_code) && $form->patient_code !== $patient->patient_code && Repos\PatientRepository::existsByPatientCodeAndOrganizationId($form->patient_code, $patient->organization_id);
+
+        if ($exists) {
             $form->addError('patient_code', 'validation.duplicated_patient_code');
             return false;
         }

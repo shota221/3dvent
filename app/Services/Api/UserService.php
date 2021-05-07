@@ -25,8 +25,9 @@ class UserService
 
     public function update($form, $user)
     {
+        $exists = Repos\UserRepository::existsByNameAndOrganizationId($form->name, $user->organization_id);
         //ユーザー名は組織内にて一意
-        if (Repos\UserRepository::existsByNameAndOrganizationId($form->name, $user->organization_id)) {
+        if ($exists) {
             $form->addError('user_name', 'validation.duplicated_user_name');
             return false;
         }

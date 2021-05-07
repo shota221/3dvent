@@ -12,13 +12,14 @@
 | 
 |
 */
+
 /** 
  * 記述ruleは以下で統一 
  *   Route::get('auth', 'AuthController@index')->name('api.auth');
  */
-Route::group(['middleware' => ['routetype:api']], function() {
+Route::group(['middleware' => ['routetype:api']], function () {
 
-    Route::group(['middleware' => ['can:api_accessable']], function() {
+    Route::group(['middleware' => ['can:api_accessable']], function () {
         /**********
          * appkey *
          **********/
@@ -27,7 +28,7 @@ Route::group(['middleware' => ['routetype:api']], function() {
     });
 
     //アプリキー認証ルート
-    Route::group(['middleware' => ['can:appkey_accessable']], function () {        
+    Route::group(['middleware' => ['can:appkey_accessable']], function () {
         /*************************
          * X-User-Token不要ルート *
          *************************/
@@ -135,8 +136,8 @@ Route::group(['middleware' => ['routetype:api']], function() {
             Route::post('/ventilator_value', 'VentilatorValueController@create')->name('api.ventilator_value.create');
             //機器観察研究データの更新
             Route::put('/ventilator_value/{id}', 'VentilatorValueController@update')->name('api.ventilator_value.update');
+
+            // Route::get('/test', 'TestController@index');
         });
-
     });
-
 });
