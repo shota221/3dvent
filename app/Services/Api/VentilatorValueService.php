@@ -54,6 +54,8 @@ class VentilatorValueService
             return false;
         }
 
+        $appkey_id = Repos\AppkeyRepository::findOneByAppkey($appkey)->id;
+
         $registered_user_id = !is_null($user) ? $user->id : null;
         //TODO ユーザー所属組織の設定値を取得
         $vt_per_kg = 6;
@@ -87,7 +89,7 @@ class VentilatorValueService
             $fio2,
             $total_flow,
             $registered_user_id,
-            $appkey->id
+            $appkey_id
         );
 
         DBUtil::Transaction(

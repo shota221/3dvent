@@ -58,9 +58,16 @@ class UserAuthService
         $token_removed_user_id = null;
 
         if (!is_null($user)) {
-            $userTokenGuard = Auth::guard('user_token');
+            $user->api_token = '';
 
-            $token_removed_user_id = $userTokenGuard->removeUserToken($user);
+            DBUtil::Transaction(
+                'ユーザートークン失効',
+                function () use ($user) {
+                    $user->save();
+                }
+            );
+
+            $token_removed_user_id = $user->id;
         }
 
         return Converter\UserConverter::convertToLogoutUserResult($token_removed_user_id);
@@ -76,7 +83,7 @@ class UserAuthService
         }
 
         $user = Repos\UserRepository::findOneByOrganizationIdAndName($organization->id, $form->name);
-        
+
         return Converter\UserConverter::convertToCheckHasTokenResult(!is_null($user) && !empty($user->api_token));
     }
 }

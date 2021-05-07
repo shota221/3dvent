@@ -99,13 +99,4 @@ class UserTokenGuard extends BaseTokenGuard
 
         return $this->provider->regenerateToken($user, $this->hash);
     }
-
-    public function removeUserToken(Authenticatable $user)
-    {
-        $user->api_token = '';
-
-        $user->save();
-
-        return $user->id;
-    }
 }

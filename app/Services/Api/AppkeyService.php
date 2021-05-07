@@ -13,14 +13,24 @@ use App\Services\Support as Support;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Services\Support\Converter;
+use App\Services\Support\CryptUtil;
 use App\Services\Support\DBUtil;
 
 class AppkeyService
 {
     public function create($form)
     {
-        $appkey = AppkeyGate::generateAppkey($form->idfv);
+        $appkey = CryptUtil::createUniqueToken($form->idfv);
 
-        return Converter\AppkeyConverter::convertToAppkeyResult($appkey);
+        $entity = Converter\AppkeyConverter::convertToEntity($form->idfv,$appkey);
+
+        DBUtil::Transaction(
+            'アプリキー登録',
+            function () use ($entity) {
+                $entity->save();
+            }
+        );
+
+        return Converter\AppkeyConverter::convertToAppkeyResult($entity->appkey);
     }
 }

@@ -5,7 +5,7 @@ namespace App\Services\Support\Converter;
 use App\Http\Response as Response;
 use App\Models\Appkey;
 use App\Http\Forms\Api as Form;
-
+use App\Services\Support\CryptUtil;
 
 class AppkeyConverter
 {
@@ -13,9 +13,9 @@ class AppkeyConverter
     {
         $entity = new Appkey;
         
-        $entity->idfv = $idfv;
-
         $entity->appkey = $appkey;
+
+        $entity->idfv = $idfv;
 
         return $entity;
     }
