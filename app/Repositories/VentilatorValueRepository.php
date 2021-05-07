@@ -45,9 +45,25 @@ class VentilatorValueRepository
             ]);
     }
 
-    public static function updateFixedFlg($created_at_least)
+    public static function updateFixedFlg($registered_at_least)
     {
-        //TODO fixed_flgアップデート処理
+        $table = VentilatorValue::tableName();
+
+        $sql_to_fix =
+            'UPDATE ' . $table . ' AS a 
+            SET a.fixed_flg = ' . VentilatorValue::BOOLEAN_TRUE . ',a.fixed_at = "' . DateUtil::toDatetimeStr(DateUtil::now()) . '" 
+            WHERE a.ventilator_value_scanned_at IS NULL 
+            AND a.registered_at<="' . $registered_at_least . '"
+            AND NOT EXISTS(SELECT 1 FROM (SELECT id,ventilator_id, registered_at FROM ventilator_values) AS b WHERE b.id>a.id AND b.ventilator_id = a.ventilator_id AND b.registered_at BETWEEN a.registered_at AND DATE_ADD(a.registered_at,INTERVAL 1 HOUR))';
+
+        $sql_to_record_scanned_at =
+            'UPDATE ' . $table . '  
+         SET ventilator_value_scanned_at = "' . DateUtil::toDatetimeStr(DateUtil::now()) . '" 
+          WHERE ventilator_value_scanned_at IS NULL 
+          AND registered_at<=' . '"' . $registered_at_least . '"';
+
+        \DB::update($sql_to_fix);
+        \DB::update($sql_to_record_scanned_at);
     }
 
     public static function findBySeachValuesAndLimitOffsetOrderByRegisteredAtDesc(array $search_values, $limit = null, $offset = null)
@@ -71,7 +87,7 @@ class VentilatorValueRepository
 
         if (isset($search_values['confirmed_user_id'])) $query->where('confirmed_user_id', $search_values['confirmed_user_id']);
 
-        return $query->orderBy('registered_at','DESC');
+        return $query->orderBy('registered_at', 'DESC');
     }
 
     private static function createLimitOffsetClause($query, $limit = null, $offset = 0)
