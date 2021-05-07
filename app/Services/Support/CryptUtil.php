@@ -1,9 +1,10 @@
-<?php 
+<?php
 
 namespace App\Services\Support;
 
-class CryptUtil {
-    
+class CryptUtil
+{
+
     /**
      * 一意のトークンを作成 文字列長：40
      * 
@@ -19,5 +20,20 @@ class CryptUtil {
         return sha1(uniqid($prefix, true));
     }
 
-    
+    /**
+     * 保存用ハッシュ生成 文字列長：64
+     * 
+     * @param  [type] $token [description]
+     * @param  bool   $hash  [description]
+     * @return string        [description]
+     */
+    public static function createTokenForStorage($token, bool $hash)
+    {
+        if (!$hash) {
+            // ハッシュしない for debug env
+            return 'no-hashed@' . $token;
+        }
+
+        return hash('sha256', $token);
+    }
 }

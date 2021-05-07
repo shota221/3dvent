@@ -80,23 +80,4 @@ class UserTokenGuard extends BaseTokenGuard
 
         return $token;
     }
-
-    /**
-     * トークン再生成
-     * 
-     * @param  array  $credentials [description]
-     * @return [type]              [description]
-     */
-    public function regenerateUserToken(array $credentials) 
-    {
-        $user = $this->provider->retrieveByCredentials($credentials);
-
-        if (! $user || ! $this->provider->validateCredentials($user, $credentials)) {
-            return null;
-        }
-
-        $this->user = $user;
-
-        return $this->provider->regenerateToken($user, $this->hash);
-    }
 }
