@@ -6,6 +6,8 @@ use App\Http\Response\SuccessJsonResult;
 
 class VentilatorValueResult extends SuccessJsonResult
 {   
+    public $id;
+
     public $ventilator_id;
     
     public $airway_pressure;
@@ -28,4 +30,7 @@ class VentilatorValueResult extends SuccessJsonResult
 
     public $fixed_flg;
 
+    public $registered_at;
+
+    public $registered_user_name;
 }

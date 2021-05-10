@@ -13,4 +13,6 @@ class UserResult extends SuccessJsonResult
     public $user_name;
 
     public $organization_name;
+
+    public $has_token;
 }

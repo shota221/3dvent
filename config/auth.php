@@ -1,8 +1,6 @@
 
 <?php
 
-use function PHPSTORM_META\map;
-
 return [
 
     /*
@@ -17,6 +15,17 @@ return [
     'api_secret_token' => env('API_TOKEN', null),
 
     'api_token_input_key' => env('API_TOKEN_INPUT_KEY', null),
+
+    /*
+    |--------------------------------------------------------------------------
+    | APPKEY TOKEN Definitions
+    |--------------------------------------------------------------------------
+    |
+    | アプリキー定義
+    |
+    */
+
+    'appkey_input_key' => env('APPKEY_INPUT_KEY', null),
     
 
     /*
