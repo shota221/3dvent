@@ -45,22 +45,24 @@ class VentilatorValueRepository
             ]);
     }
 
-    public static function updateFixedFlg($registered_at_least)
+    public static function updateFixedFlg($now, $interval)
     {
         $table = VentilatorValue::tableName();
 
+        //指定時間以前のレコードのうちscanned_atがnullのものをはいて、そこから指定時間以内に同呼吸器に対してのレコードがなければfixed_flgとfixed_atを記録する。
         $sql_to_fix =
             'UPDATE ' . $table . ' AS a 
-            SET a.fixed_flg = ' . VentilatorValue::BOOLEAN_TRUE . ',a.fixed_at = "' . DateUtil::toDatetimeStr(DateUtil::now()) . '" 
+            SET a.fixed_flg = ' . VentilatorValue::BOOLEAN_TRUE . ',a.fixed_at = "'.$now.'" 
             WHERE a.ventilator_value_scanned_at IS NULL 
-            AND a.registered_at<="' . $registered_at_least . '"
-            AND NOT EXISTS(SELECT 1 FROM (SELECT id,ventilator_id, registered_at FROM ventilator_values) AS b WHERE b.id>a.id AND b.ventilator_id = a.ventilator_id AND b.registered_at BETWEEN a.registered_at AND DATE_ADD(a.registered_at,INTERVAL 1 HOUR))';
+            AND a.registered_at<=DATE_SUB("'.$now.'",INTERVAL ' . $interval . ' HOUR) 
+            AND NOT EXISTS(SELECT 1 FROM (SELECT id,ventilator_id, registered_at FROM ventilator_values) AS b WHERE b.id>a.id AND b.ventilator_id = a.ventilator_id AND b.registered_at BETWEEN a.registered_at AND DATE_ADD(a.registered_at,INTERVAL ' . $interval . ' HOUR))';
 
+        //↑ではいたもの全てにscanned_atを記録する
         $sql_to_record_scanned_at =
             'UPDATE ' . $table . '  
-         SET ventilator_value_scanned_at = "' . DateUtil::toDatetimeStr(DateUtil::now()) . '" 
-          WHERE ventilator_value_scanned_at IS NULL 
-          AND registered_at<=' . '"' . $registered_at_least . '"';
+            SET ventilator_value_scanned_at = "'.$now.'" 
+            WHERE ventilator_value_scanned_at IS NULL 
+            AND registered_at<=DATE_SUB("'.$now.'",INTERVAL ' . $interval . ' HOUR)';
 
         \DB::update($sql_to_fix);
         \DB::update($sql_to_record_scanned_at);

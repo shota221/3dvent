@@ -23,7 +23,7 @@ class VentilatorValueBatchService
 
     public function updateFixedFlg()
     {
-        $ago = config('system.fixed_flg_interval');
+        $interval = config('system.fixed_flg_interval');
 
         /**
          * TODO バッチ処理一本型
@@ -34,8 +34,8 @@ class VentilatorValueBatchService
          */
         Support\DBUtil::Transaction(
             'fixed_flgを立てる',
-            function () use ($ago) {
-                Repos\VentilatorValueRepository::updateFixedFlg(DateUtil::hourAgo(DateUtil::now(), $ago));
+            function () use ($interval) {
+                Repos\VentilatorValueRepository::updateFixedFlg(DateUtil::toDatetimeStr(DateUtil::now()) ,$interval);
             }
         );
     }
