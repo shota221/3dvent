@@ -1212,12 +1212,12 @@ paths:
                       other_disease_name_2:
                         type: string
                         minLength: 1
-                      userd_place:
+                      used_place:
                         type: number
-                      hospital_name:
+                      hospital:
                         type: string
                         minLength: 1
-                      national_name:
+                      national:
                         type: string
                         minLength: 1
                       discontinuation_at:
@@ -1245,9 +1245,9 @@ paths:
                       vent_disease_name: XXXXXX
                       other_disease_name_1: xXXXXX
                       other_disease_name_2: XXXXXX
-                      userd_place: 3
-                      hospital_name: XXXXXX
-                      national_name: XXXXXX
+                      used_place: 3
+                      hospital: XXXXXX
+                      national: XXXXXX
                       discontinuation_at: '2021-04-08 17:04:01'
                       outcome: 1
                       treatment: 1
@@ -1342,12 +1342,12 @@ paths:
                 other_disease_name_2:
                   type: string
                   minLength: 1
-                userd_place:
+                used_place:
                   type: number
-                hospital_name:
+                hospital:
                   type: string
                   minLength: 1
-                national_name:
+                national:
                   type: string
                   minLength: 1
                 discontinuation_at:
@@ -1370,9 +1370,9 @@ paths:
                   vent_disease_name: XXXXXX
                   other_disease_name_1: xXXXXX
                   other_disease_name_2: XXXXXX
-                  userd_place: 3
-                  hospital_name: XXXXXX
-                  national_name: XXXXXX
+                  used_place: 3
+                  hospital: XXXXXX
+                  national: XXXXXX
                   discontinuation_at: '2021-04-08 17:04:01'
                   outcome: 1
                   treatment: 1
@@ -1445,12 +1445,12 @@ paths:
                 other_disease_name_2:
                   type: string
                   minLength: 1
-                userd_place:
+                used_place:
                   type: number
-                hospital_name:
+                hospital:
                   type: string
                   minLength: 1
-                national_name:
+                national:
                   type: string
                   minLength: 1
                 discontinuation_at:
@@ -1473,9 +1473,9 @@ paths:
                   vent_disease_name: XXXXXX
                   other_disease_name_1: xXXXXX
                   other_disease_name_2: XXXXXX
-                  userd_place: 3
-                  hospital_name: XXXXXX
-                  national_name: XXXXXX
+                  used_place: 3
+                  hospital: XXXXXX
+                  national: XXXXXX
                   discontinuation_at: '2021-04-08 17:04:01'
                   outcome: 1
                   treatment: 1

@@ -42,7 +42,7 @@ class PatientService
 
         $ventilator = Repos\VentilatorRepository::findOneById($form->ventilator_id);
 
-        if (is_null($ventilator)){
+        if (is_null($ventilator)) {
             $form->addError('ventilator_id', 'validation.id_not_found');
             return false;
         }
@@ -62,7 +62,7 @@ class PatientService
                 $ventilator->save();
             }
         );
-        
+
         //組織の設定値が存在すればそっちの値を使用
         $organization_setting = !is_null($organization_id) ? Repos\OrganizationSettingRepository::findOneByOrganizationId($organization_id) : null;
 
@@ -89,7 +89,7 @@ class PatientService
         $organization_setting = !is_null($patient->organization_id) ? Repos\OrganizationSettingRepository::findOneByOrganizationId($patient->organization_id) : null;
 
         $vt_per_kg = !is_null($organization_setting) ? $organization_setting->vt_per_kg : config('calc.default.vt_per_kg');
-        
+
         //理想体重の算出
         $ideal_weight = strval($this->calcIdealWeight(floatval($patient->height), $patient->gender));
 
@@ -131,10 +131,10 @@ class PatientService
         );
 
         $vt_per_kg = config('calc.default.vt_per_kg');
-        
+
         //組織の設定値が存在すればそっちの値を使用
         if (!is_null($patient->organization_id) && !is_null($organization_setting = Repos\OrganizationSettingRepository::findOneByOrganizationId($patient->organization_id))) {
-            $vt_per_kg =$organization_setting->vt_per_kg;
+            $vt_per_kg = $organization_setting->vt_per_kg;
         }
 
         //理想体重の算出
@@ -145,19 +145,105 @@ class PatientService
         return Converter\PatientConverter::convertToPatientResult($entity, $predicted_vt);
     }
 
-    //TODO 以下補完作業
-    public function getPatientValueResult()
+    public function getPatientValueResult($form)
     {
-        return json_decode(Converter\PatientConverter::convertToPatientValueResult(), true);
+        $patient = Repos\PatientRepository::findOneById($form->id);
+
+        if (is_null($patient)) {
+            $form->addError('id', 'validation.id_not_found');
+            return false;
+        }
+
+        $patient_value = Repos\PatientValueRepository::findOneByPatientId($form->id);
+
+        return Converter\PatientConverter::convertToPatientValueResult($patient->patient_code, $patient_value);
     }
 
-    public function createPatientValue()
+    public function createPatientValue($form, $user)
     {
-        return json_decode(Converter\PatientConverter::convertToPatientValueRegistrationResult(), true);
+        $patient = Repos\PatientRepository::findOneById($form->id);
+
+        if (is_null($patient)) {
+            $form->addError('id', 'validation.id_not_found');
+            return false;
+        }
+
+        $patient_value = Repos\PatientValueRepository::findOneByPatientId($form->id);
+
+        if(!is_null($patient_value)) {
+            $form->addError('id', 'validation.duplicated_patient_id');
+            return false;
+        }
+
+        $entity = Converter\PatientConverter::convertToPatientValueEntity(
+            $form->id,
+            $user->id,
+            $form->opt_out_flg,
+            $form->age,
+            $form->vent_disease_name,
+            $form->other_disease_name_1,
+            $form->other_disease_name_2,
+            $form->used_place,
+            $form->hospital,
+            $form->national,
+            $form->discontinuation_at,
+            $form->outcome,
+            $form->treatment,
+            $form->adverse_event_flg,
+            $form->adverse_event_contents,
+        );
+
+        DBUtil::Transaction(
+            '患者観察研究データ登録',
+            function()use($entity){
+                $entity->save();
+            }
+        );
+
+        return Converter\PatientConverter::convertToPatientValueUpdateResult($patient->patient_code);
     }
 
-    public function updatePatientValue()
+    public function updatePatientValue($form, $user)
     {
-        return json_decode(Converter\PatientConverter::convertToPatientValueUpdateResult(), true);
+        $patient = Repos\PatientRepository::findOneById($form->id);
+
+        if (is_null($patient)) {
+            $form->addError('id', 'validation.id_not_found');
+            return false;
+        }
+
+        $patient_value = Repos\PatientValueRepository::findOneByPatientId($form->id);
+
+        if (is_null($patient_value)) {
+            $form->addError('id', 'validation.has_not_been_observed');
+            return false;
+        }
+
+        $entity = Converter\PatientConverter::convertToPatientValueUpdateEntity(
+            $patient_value,
+            $user->id,
+            $form->opt_out_flg,
+            $form->age,
+            $form->vent_disease_name,
+            $form->other_disease_name_1,
+            $form->other_disease_name_2,
+            $form->used_place,
+            $form->hospital,
+            $form->national,
+            $form->discontinuation_at,
+            $form->outcome,
+            $form->treatment,
+            $form->adverse_event_flg,
+            $form->adverse_event_contents,
+        );
+
+        DBUtil::Transaction(
+            '患者観察研究データ更新',
+            function()use($entity){
+                $entity->save();
+            }
+        );
+
+        return Converter\PatientConverter::convertToPatientValueUpdateResult($patient->patient_code);
     }
 }
