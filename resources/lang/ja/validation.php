@@ -129,10 +129,14 @@ return [
     'appkey_required'=>'アプリキーは必須です。',
     'not_enough_pulses'=>'十分なパルスが検出できませんでした。スマートフォンを呼吸器に近づけてください。',
     'invalid_sound'=>'雑音が大きいため測定できませんでした。手動測定に切り替えてください。',
+    'duplicated_user_name' => '同一組織内ですでに使われているユーザー名です。',
+    'duplicated_patient_code' => '同一組織内ですでに使われている患者コードです。',
+    'duplicated_patient_id' =>'すでに登録済みです。',
+    'has_not_been_observed' =>'観察研究データが未登録です。',
 
     'unauthenticated' => '認証エラー',
-
     'auth_token_expired' => 'トークン有効期限切れ',
+    'user_token_required' => 'ユーザートークンは必須です。',
 
     /*
     |--------------------------------------------------------------------------
