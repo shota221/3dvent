@@ -3,6 +3,7 @@
 namespace App\Services\Api;
 
 use App\Exceptions;
+use App\Http\Auth\AppkeyGate;
 use App\Models;
 use App\Http\Forms\Api as Form;
 use App\Http\Response as Response;
@@ -12,14 +13,14 @@ use App\Services\Support as Support;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Services\Support\Converter;
+use App\Services\Support\CryptUtil;
 use App\Services\Support\DBUtil;
 
 class AppkeyService
 {
     public function create($form)
     {
-        //idfvは重複し得るため、カウント値と合わせてハッシュ化
-        $appkey = hash('sha256', $form->idfv . Repos\AppkeyRepository::countByIdfv($form->idfv));
+        $appkey = CryptUtil::createUniqueToken($form->idfv);
 
         $entity = Converter\AppkeyConverter::convertToEntity($form->idfv,$appkey);
 
@@ -30,6 +31,6 @@ class AppkeyService
             }
         );
 
-        return Converter\AppkeyConverter::convertToAppkeyResult($entity);
+        return Converter\AppkeyConverter::convertToAppkeyResult($entity->appkey);
     }
 }

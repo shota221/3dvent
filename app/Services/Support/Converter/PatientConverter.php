@@ -23,13 +23,11 @@ class PatientConverter
     {
         $res = new Response\Api\PatientResult;
 
-        $res->nickname = $entity->nickname;
+        $res->patient_code = strval($entity->patient_code);
 
         $res->height = strval($entity->height);
 
-        $res->gender = strval($entity->gender);
-
-        $res->other_attrs = $entity->other_attrs;
+        $res->gender = $entity->gender;
 
         $res->predicted_vt = strval($predicted_vt);
 
@@ -37,42 +35,84 @@ class PatientConverter
     }
 
     public static function convertToEntity(
-        $nickname,
         $height,
         $gender,
-        $ideal_weight,
-        $other_attrs
+        $patient_code = null,
+        $organization_id = null
     ) {
         $entity = new Patient;
 
-        $entity->nickname = $nickname;
+        $entity->patient_code = $patient_code;
 
         $entity->height = $height;
 
         $entity->gender = $gender;
 
-        $entity->ideal_weight = $ideal_weight;
-
-        $entity->other_attrs = $other_attrs;
+        $entity->organization_id = $organization_id;
 
         return $entity;
     }
 
     public static function convertToUpdateEntity(
         Patient $entity,
-        $nickname,
+        $patient_code,
         $height,
-        $gender,
-        $other_attrs
+        $gender
     ) {
-        $entity->nickname = $nickname;
+        $entity->patient_code = $patient_code;
 
         $entity->height = $height;
 
         $entity->gender = $gender;
 
-        $entity->other_attrs = $other_attrs;
-
         return $entity;
+    }
+
+    //TODO 以下補完作業
+    public static function convertToPatientValueResult()
+    {
+        return <<<EOF
+        {
+            "result": {
+              "has_observed": true,
+              "opt_out_flg": 1,
+              "patient_code": "999",
+              "age": "21",
+              "vent_disease_name": "XXXXXX",
+              "other_disease_name_1": "xXXXXX",
+              "other_disease_name_2": "XXXXXX",
+              "used_place": 3,
+              "hospital": "XXXXXX",
+              "national": "XXXXXX",
+              "discontinuation_at": "2021-04-08 17:04:01",
+              "outcome": 1,
+              "treatment": 1,
+              "adverse_event_flg": 1,
+              "adverse_event_contents": "XXXXXX"
+            }
+          }
+        EOF;
+    }
+
+    public static function convertToPatientValueRegistrationResult()
+    {
+        return <<<EOF
+        {
+            "result": {
+              "patient_code": "999"
+            }
+          }
+        EOF;
+    }
+
+    public static function convertToPatientValueUpdateResult()
+    {
+        return <<<EOF
+        {
+            "result": {
+              "patient_code": "999"
+            }
+          }
+        EOF;
     }
 }

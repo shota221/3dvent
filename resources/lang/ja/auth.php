@@ -18,7 +18,7 @@ return [
 
     'throttle'                      => 'ログイン試行回数が制限に達しました。 :seconds 秒以上開けて再度お試しください',
     'failed'                        => 'アカウント名かパスワードが間違っています。',
-    'not_exists_registered_email'   => 'メールアドレスの登録がありません。',
+    'invalid_user_token'   => '無効なユーザートークンです。',
     'invalid_reset_password_token'  => 'パスワード再設定有効期限切れの可能性があります。再度申請を行ってください。',
-    
+
 ];

@@ -36,7 +36,7 @@ class VentilatorController extends ApiController
     {
         $form = new Form\VentilatorCreateForm($request->all());
 
-        $user = $request->hasHeader('X-User-Token') ? $this->getUser() : null;
+        $user = $this->getUser();
 
         if ($form->hasError() || !$response = $this->service->create($form, $user)) {
             throw new Exceptions\InvalidFormException($form);
@@ -45,50 +45,16 @@ class VentilatorController extends ApiController
         return $response;
     }
 
-    public function showValue(Request $request, $ventilator_id)
+    public function update(Request $request, $id)
     {
-        $request->merge(['ventilator_id' => $ventilator_id]);
+        $request->merge(['id' => $id]);
 
-        $form = new Form\VentilatorValueShowForm($request->all());
+        $form = new Form\VentilatorUpdateForm($request->all());
 
-        if ($form->hasError() || !$response = $this->service->getVentilatorValueResult($form)) {
+        if ($form->hasError() || !$response = $this->service->update($form)) {
             throw new Exceptions\InvalidFormException($form);
         }
 
         return $response;
-    }
-
-    public function createValue(Request $request, $ventilator_id)
-    {
-        $request->merge(['ventilator_id' => $ventilator_id]);
-
-        $form = new Form\VentilatorValueCreateForm($request->all());
-
-        $user_token = $request->hasHeader('X-User-Token') ? $request->header('X-User-Token') : null;
-
-        if (!$request->hasHeader('X-App-Key')) {
-            $form->addError('X-App-Key', 'validation.appkey_required');
-        } else {
-            $appkey = $request->header('X-App-Key');
-        }
-
-        if ($form->hasError() || !$response = $this->service->createVentilatorValue($form, $user_token, $appkey)) {
-            throw new Exceptions\InvalidFormException($form);
-        }
-
-        return $response;
-    }
-
-    public function updateValue(Request $request, $ventilator_id)
-    {
-        $request->merge(['ventilator_id' => $ventilator_id]);
-
-        $form = new Form\VentilatorValueUpdateForm($request->all());
-
-        if ($form->hasError()) {
-            throw new Exceptions\InvalidFormException($form);
-        }
-
-        return $this->service->updateVentilatorValue($form);
     }
 }

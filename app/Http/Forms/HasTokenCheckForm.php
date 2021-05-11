@@ -6,7 +6,7 @@ use App\Http\Forms\ValidationRule as Rule;
 
 use App\Http\Forms\BaseForm;
 
-class UserAuthForm extends BaseForm
+class HasTokenCheckForm extends BaseForm
 {
     public $name;
 
@@ -19,7 +19,6 @@ class UserAuthForm extends BaseForm
         return [
             //アカウント名は「{ユーザー名}@{組織コード}」の形式で入力される
             'name' => 'required|regex:/^.+@.+$/',
-            'password'  => 'required|' . Rule::PASSWORD,
         ];
     }
 
@@ -28,6 +27,5 @@ class UserAuthForm extends BaseForm
         $account_name = explode('@', $input['name']);
         $this->name = $account_name[0];
         $this->organization_code = $account_name[1];
-        $this->password = $input['password'];
     }
 }
