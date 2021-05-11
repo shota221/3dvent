@@ -1698,10 +1698,10 @@ paths:
                   predicted_vt: string
       description: |-
         関連値を登録する。
-        X-User-Tokenを持つ場合はユーザー特定してventilator_values.user_idも登録する。
+        X-User-Tokenを持つ場合はユーザー特定してventilator_value.user_idも登録する。
       tags:
-        - ventilator
-  '/ventilator_values/{ventilator_value_id}':
+        - ventilator_value
+  '/ventilator_value/{ventilator_value_id}':
     parameters:
       - schema:
           type: string
@@ -1778,12 +1778,6 @@ paths:
                         type: string
                       paco2:
                         type: string
-                      bug_flg:
-                        type: number
-                      bug_name:
-                        type: string
-                      bug_detail:
-                        type: string
                 required:
                   - result
               examples:
@@ -1817,9 +1811,6 @@ paths:
                       etco2: ''
                       pao2: ''
                       paco2: ''
-                      bug_flg: 1
-                      bug_name: ''
-                      bug_detail: ''
                 example-2:
                   value:
                     result:
@@ -2320,7 +2311,7 @@ paths:
                   predicted_vt: string
       description: 関連値を登録する。
       tags:
-        - ventilator
+        - ventilator_value
 components:
   schemas: {}
 tags:

@@ -7,7 +7,7 @@ use App\Models;
 use App\Http\Forms\Api as Form;
 use App\Http\Response as Response;
 use App\Repositories as Repos;
-use App\Models\Report;
+use App\Models\VentilatorValueRevision;
 use App\Services\Support as Support;
 use App\Services\Support\Client\ReverseGeocodingClient;
 use Illuminate\Support\Facades\Auth;
@@ -15,28 +15,32 @@ use Carbon\Carbon;
 use App\Services\Support\Converter;
 use App\Services\Support\DBUtil;
 use App\Services\Support\DateUtil;
+use Illuminate\Support\Facades\Date;
 
 class VentilatorValueService
 {
     use Support\Logic\CalculationLogic;
 
     /**
-     * @TODO ventilator_valueを取得する
+     * ventilator_valueを取得する
      *
      * @param [type] $form
      * @return void
      */
     public function getVentilatorValueResult($form)
     {
-        // if (!Repos\VentilatorValueRepository::existsByVentilatorId($form->ventilator_id)) {
-        //     $form->addError('ventilator_id', 'validation.id_not_found');
-        //     return false;
-        // }
+        $ventilator_value = Repos\VentilatorValueRepository::findOneById($form->id);
 
-        // $ventilator_value = Repos\VentilatorValueRepository::findOneByVentilatorId($form->ventilator_id);
+        if (is_null($ventilator_value)) {
+            $form->addError('ventilator_value_id', 'validation.id_not_found');
+            return false;
+        }
 
-        // return Converter\VentilatorConverter::convertToVentilatorValueResult($ventilator_value);
-        return json_decode(Converter\VentilatorValueConverter::convertToVentilatorValueResult($form), true);
+        $registered_user_id = $ventilator_value->registered_user_id;
+
+        $registered_user_name = !is_null($registered_user_id) ? Repos\UserRepository::findOneById($registered_user_id )->name : null;
+
+        return Converter\VentilatorValueConverter::convertToVentilatorValueResult($ventilator_value, $registered_user_name);
     }
 
     /**
@@ -54,11 +58,21 @@ class VentilatorValueService
             return false;
         }
 
+        $patient = Repos\PatientRepository::findOneById($form->patient_id);
+
+        if (is_null($patient)) {
+            $form->addError('patient_id', 'validation.id_not_found');
+            return false;
+        }
+
         $appkey_id = Repos\AppkeyRepository::findOneByAppkey($appkey)->id;
 
         $registered_user_id = !is_null($user) ? $user->id : null;
-        //TODO ユーザー所属組織の設定値を取得
-        $vt_per_kg = 6;
+
+        //組織の設定値が存在すればそっちの値を使用
+        $organization_setting = !is_null($user) ? Repos\OrganizationSettingRepository::findOneByOrganizationId($user->organization_id) : null;
+
+        $vt_per_kg = !is_null($organization_setting) ? $organization_setting->vt_per_kg : config('calc.default.vt_per_kg');
 
         $total_flow = $this->calcTotalFlow($form->air_flow, $form->o2_flow);
 
@@ -70,11 +84,19 @@ class VentilatorValueService
 
         $fio2 = $this->calcFio2($form->air_flow, $form->o2_flow);
 
-        $patient = Repos\PatientRepository::findOneById($form->patient_id);
+        $registered_at = DateUtil::toDatetimeStr(DateUtil::now());
+
+        $height = $patient->height;
+
+        $gender = $patient->gender;
+
+        $ideal_weight = $this->calcIdealWeight($height, $gender);
 
         $entity = Converter\VentilatorValueConverter::convertToVentilatorValueEntity(
-            $patient,
             $form->ventilator_id,
+            $height,
+            $gender,
+            $ideal_weight,
             $form->airway_pressure,
             $form->air_flow,
             $form->o2_flow,
@@ -88,8 +110,9 @@ class VentilatorValueService
             $estimated_peep,
             $fio2,
             $total_flow,
+            $registered_at,
+            $appkey_id,
             $registered_user_id,
-            $appkey_id
         );
 
         DBUtil::Transaction(
@@ -104,13 +127,94 @@ class VentilatorValueService
 
     /**
      * 機器観察研究データを更新する
-     *
+     * ここでは編集後のデータをインサートし、編集元のデータにdeleted_atを記録することをもって「更新」とする。
      * @param [type] $form
      * @return void
      */
-    public function update($form)
+    public function update($form, $user)
     {
-        return json_decode(Converter\VentilatorValueConverter::convertToVentilatorValueUpdateResult(), true);
+        $ventilator_value = Repos\VentilatorValueRepository::findOneById($form->id);
+
+        if (is_null($ventilator_value)) {
+            $form->addError('ventilator_value_id', 'validation.id_not_found');
+            return false;
+        }
+
+        //編集前データの複製
+        $ventilator_value_copy = $ventilator_value->replicate();
+
+
+        //編集後データの再計算
+        $organization_setting = Repos\OrganizationSettingRepository::findOneByOrganizationId($user->organization_id);
+
+        $vt_per_kg = !is_null($organization_setting) ? $organization_setting->vt_per_kg : config('calc.default.vt_per_kg');
+
+        $total_flow = $this->calcTotalFlow($form->air_flow, $form->o2_flow);
+
+        $ideal_weight = $this->calcIdealWeight($form->height, $form->gender);
+
+        $predicted_vt = $this->calcPredictedVt($ideal_weight, $vt_per_kg);
+
+        $estimated_vt = $this->calcEstimatedVt($ventilator_value_copy->inspiratory_time, $total_flow);
+
+        $estimated_mv = $this->calcEstimatedMv($estimated_vt, $ventilator_value_copy->rr);
+
+        $estimated_peep = $this->calcEstimatedPeep($form->airway_pressure);
+
+        $fio2 = $this->calcFio2($form->air_flow, $form->o2_flow);
+
+        //編集後データの挿入
+        $entity = Converter\VentilatorValueConverter::convertToVentilatorValueUpdateEntity(
+            $ventilator_value_copy,
+            $form->height,
+            $form->gender,
+            $ideal_weight,
+            $form->airway_pressure,
+            $form->air_flow,
+            $form->o2_flow,
+            $vt_per_kg,
+            $predicted_vt,
+            $estimated_vt,
+            $estimated_mv,
+            $estimated_peep,
+            $fio2,
+            $total_flow,
+            $form->registered_at,
+            $form->weight,
+            $form->status_use,
+            $form->status_use_other,
+            $form->spo2,
+            $form->etco2,
+            $form->pao2,
+            $form->paco2
+        );
+        
+        //編集元にdeleted_atを記録
+        $ventilator_value->deleted_at = DateUtil::toDatetimeStr(DateUtil::now());
+
+        DBUtil::Transaction(
+            '編集後データの挿入',
+            function() use($entity,$ventilator_value){
+                $entity->save();
+                $ventilator_value->save();
+            }
+        );
+
+        //create記録挿入
+        $revision_create = Converter\VentilatorValueConverter::convertToVentilatorValueRevisionEntity($entity->id, $user->id, VentilatorValueRevision::CREATE);
+
+        //delete記録挿入
+        $revision_delete = Converter\VentilatorValueConverter::convertToVentilatorValueRevisionEntity($ventilator_value->id, $user->id, VentilatorValueRevision::DELETE);
+
+        DBUtil::Transaction(
+            '修正情報の挿入',
+            function() use($revision_create,$revision_delete){
+                $revision_create->save();
+                $revision_delete->save();
+            }
+        );
+
+        return Converter\VentilatorValueConverter::convertToVentilatorValueUpdateResult(DateUtil::toDatetimeStr($revision_create->created_at));
     }
 
     public function getVentilatorValueListResult($form)

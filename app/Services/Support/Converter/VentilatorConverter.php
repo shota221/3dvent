@@ -60,7 +60,7 @@ class VentilatorConverter
         return $res;
     }
 
-    public static function convertToVentilatorEntity($gs1_code, $serial_number, $latitude = null, $longitude = null, $city = null, $organization_id = null, $registered_user_id = null)
+    public static function convertToVentilatorEntity($gs1_code, $serial_number, $qr_read_at, $latitude = null, $longitude = null, $city = null, $organization_id = null, $registered_user_id = null)
     {
         $entity = new Ventilator;
 
@@ -78,7 +78,9 @@ class VentilatorConverter
 
         $entity->registered_user_id = $registered_user_id;
 
-        $entity->start_using_at = DateUtil::now();
+        $entity->start_using_at = $qr_read_at;
+
+        $entity->qr_read_at = $qr_read_at;
 
         return $entity;
     }

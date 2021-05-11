@@ -55,11 +55,13 @@ class VentilatorValueController extends ApiController
 
         $form = new Form\VentilatorValueUpdateForm($request->all());
 
-        if ($form->hasError()) {
+        $user = $this->getUser();
+
+        if ($form->hasError() || !$response = $this->service->update($form, $user)) {
             throw new Exceptions\InvalidFormException($form);
         }
 
-        return $this->service->update($form);
+        return $response;
     }
 
     public function list(Request $request)

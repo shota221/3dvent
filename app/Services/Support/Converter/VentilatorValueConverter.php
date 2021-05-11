@@ -7,6 +7,7 @@ use App\Http\Response as Response;
 use App\Models\Ventilator;
 use App\Models\VentilatorValue;
 use App\Models\Patient;
+use App\Models\VentilatorValueRevision;
 use App\Services\Support\DateUtil;
 
 class VentilatorValueConverter
@@ -50,72 +51,77 @@ class VentilatorValueConverter
         return $res;
     }
 
-    //TODO　要素追加
-    public static function convertToVentilatorValueResult($entity)
+    public static function convertToVentilatorValueResult($entity, $registered_user_name = null)
     {
-        // $res = new Response\Api\VentilatorValueResult;
+        $res = new Response\Api\VentilatorValueResult;
 
-        // $res->patient_id = $entity->patient_id;
+        if (is_null($entity)) {
+            $res->has_observed = false;
+            return $res;
+        }
 
-        // $res->airway_pressure = strval($entity->airway_pressure);
+        $res->has_observed = true;
 
-        // $res->air_flow = strval($entity->air_flow);
+        $res->ventilator_value_id = $entity->ventilator_value_id;
 
-        // $res->o2_flow = strval($entity->o2_flow);
+        $res->registered_at = $entity->registered_at;
 
-        // $res->rr = strval($entity->rr);
+        $res->registered_user_name = $registered_user_name;
 
-        // $res->estimated_vt = strval($entity->estimated_vt);
+        $res->city = strval($entity->city);
 
-        // $res->estimated_mv = strval($entity->estimated_mv);
+        $res->gender = $entity->gender;
 
-        // $res->estimated_peep = strval($entity->estimated_peep);
+        $res->height = strval($entity->height);
 
-        // $res->fio2 = strval($entity->fio2);
+        $res->weight = strval($entity->weight);
 
-        // return $res;
+        $res->airway_pressure = strval($entity->airway_pressure);
 
-        return <<<EOF
-        {
-            "result": {
-              "has_observed": true,
-              "ventilator_value_id": 1,
-              "registered_at": "2021-02-04 12:34:06",
-              "registered_user_name": "test_user",
-              "city": "千代田区, 東京都, 日本",
-              "gender": 1,
-              "height": "***",
-              "weight": "***",
-              "airway_pressure": "***",
-              "total_flow": "***",
-              "air_flow": "***",
-              "o2_flow": "***",
-              "rr": "***",
-              "expiratory_time": "***",
-              "inspiratory_time": "***",
-              "vt_per_kg": "***",
-              "predicted_vt": "***",
-              "estimated_vt": "***",
-              "estimated_mv": "***",
-              "estimated_peep": "***",
-              "fio2": "***",
-              "status_use": 1,
-              "status_use_other": "***",
-              "spo2": "***",
-              "etco2": "***",
-              "pao2": "***",
-              "paco2": "***",
-              "bug_flg": 0,
-              "bug_name": "***",
-              "bug_detail": "***"
-            }
-          }
-        EOF;
+        $res->total_flow = strval($entity->total_flow);
+
+        $res->air_flow = strval($entity->air_flow);
+
+        $res->o2_flow = strval($entity->o2_flow);
+
+        $res->rr = strval($entity->rr);
+
+        $res->expiratory_time = strval($entity->expiratory_time);
+
+        $res->inspiratory_time = strval($entity->inspiratory_time);
+
+        $res->vt_per_kg = strval($entity->vt_per_kg);
+
+        $res->predicted_vt = strval($entity->predicted_vt);
+
+        $res->estimated_vt = strval($entity->estimated_vt);
+
+        $res->estimated_mv = strval($entity->estimated_mv);
+
+        $res->estimated_peep = strval($entity->estimated_peep);
+
+        $res->fio2 = strval($entity->fio2);
+
+        $res->status_use = $entity->status_use;
+
+        $res->status_use_other = strval($entity->status_use_other);
+
+        $res->spo2 = strval($entity->spo2);
+
+        $res->etco2 = strval($entity->etco2);
+
+        $res->pao2 = strval($entity->pao2);
+
+        $res->paco2 = strval($entity->paco2);
+
+        return $res;
     }
 
     public static function convertToVentilatorValueEntity(
-        Patient $patient,
         $ventilator_id,
+        $height,
+        $gender,
+        $ideal_weight,
         $airway_pressure,
         $air_flow,
         $o2_flow,
@@ -129,64 +135,125 @@ class VentilatorValueConverter
         $estimated_peep,
         $fio2,
         $total_flow,
-        $user_id,
-        $appkey_id
+        $registered_at,
+        $appkey_id,
+        $user_id = null
     ) {
         $entity = new VentilatorValue;
 
         $entity->ventilator_id = $ventilator_id;
 
-        $entity->height = $patient->height;
+        $entity->height = strval($height);
 
-        $entity->gender = $patient->gender;
+        $entity->gender = $gender;
 
-        $entity->airway_pressure = $airway_pressure;
+        $entity->ideal_weight = strval($ideal_weight);
 
-        $entity->air_flow = $air_flow;
+        $entity->airway_pressure = strval($airway_pressure);
 
-        $entity->o2_flow = $o2_flow;
+        $entity->air_flow = strval($air_flow);
 
-        $entity->rr = $rr;
+        $entity->o2_flow = strval($o2_flow);
 
-        $entity->inspiratory_time = $i_avg;
+        $entity->rr = strval($rr);
 
-        $entity->expiratory_time = $e_avg;
+        $entity->inspiratory_time = strval($i_avg);
 
-        $entity->vt_per_kg = $vt_per_kg ?? 6;
+        $entity->expiratory_time = strval($e_avg);
 
-        $entity->predicted_vt = $predicted_vt;
+        $entity->vt_per_kg = strval($vt_per_kg);
 
-        $entity->estimated_vt = $estimated_vt;
+        $entity->predicted_vt = strval($predicted_vt);
 
-        $entity->estimated_mv = $estimated_mv;
+        $entity->estimated_vt = strval($estimated_vt);
 
-        $entity->estimated_peep = $estimated_peep;
+        $entity->estimated_mv = strval($estimated_mv);
 
-        $entity->fio2 = $fio2;
+        $entity->estimated_peep = strval($estimated_peep);
 
-        $entity->total_flow = $total_flow;
+        $entity->fio2 = strval($fio2);
 
-        $entity->registered_user_id = $user_id ?? null;
+        $entity->total_flow = strval($total_flow);
+
+        $entity->registered_at = $registered_at;
 
         $entity->appkey_id = $appkey_id;
 
-        return $entity;
-    }
-
-    public static function convertToVentilatorValueUpdateEntity(VentilatorValue $entity, $start_using_at, $fixed_at)
-    {
-        $entity->start_using_at = $start_using_at;
-
-        $entity->fixed_at = $fixed_at;
-
-        //確認用インターフェースができるまで、最終設定フラグが立ったものは確認済みとみなす。
-        $entity->confirmed_flg = $start_using_at;
-        $entity->confirmed_at = $fixed_at;
+        $entity->registered_user_id = $user_id;
 
         return $entity;
     }
 
-    public static function convertToVentilatorValueListElm($id,$registered_at,$registered_user_name = null)
+    public static function convertToVentilatorValueUpdateEntity(
+        VentilatorValue $entity,
+        $height,
+        $gender,
+        $ideal_weight,
+        $airway_pressure,
+        $air_flow,
+        $o2_flow,
+        $vt_per_kg,
+        $predicted_vt,
+        $estimated_vt,
+        $estimated_mv,
+        $estimated_peep,
+        $fio2,
+        $total_flow,
+        $registered_at,
+        $weight = '',
+        $status_use = null,
+        $status_use_other = '',
+        $spo2 = '',
+        $etco2 = '',
+        $pao2 = '',
+        $paco2 = ''
+    ) {
+        $entity->height = strval($height);
+
+        $entity->gender = $gender;
+
+        $entity->ideal_weight = strval($ideal_weight);
+
+        $entity->airway_pressure = strval($airway_pressure);
+
+        $entity->air_flow = strval($air_flow);
+
+        $entity->o2_flow = strval($o2_flow);
+
+        $entity->vt_per_kg = strval($vt_per_kg);
+
+        $entity->predicted_vt = strval($predicted_vt);
+
+        $entity->estimated_vt = strval($estimated_vt);
+
+        $entity->estimated_mv = strval($estimated_mv);
+
+        $entity->estimated_peep = strval($estimated_peep);
+
+        $entity->fio2 = strval($fio2);
+
+        $entity->total_flow = strval($total_flow);
+
+        $entity->registered_at = $registered_at;
+
+        $entity->weight = strval($weight);
+
+        $entity->status_use = $status_use;
+
+        $entity->status_use_other = strval($status_use_other);
+
+        $entity->spo2 = strval($spo2);
+
+        $entity->etco2 = strval($etco2);
+
+        $entity->pao2 = strval($pao2);
+
+        $entity->paco2 = strval($paco2);
+
+        return $entity;
+    }
+
+    public static function convertToVentilatorValueListElm($id, $registered_at, $registered_user_name = null)
     {
         $res = new Response\Api\VentilatorValueElm;
 
@@ -199,14 +266,25 @@ class VentilatorValueConverter
         return $res;
     }
 
-    public static function convertToVentilatorValueUpdateResult()
+    public static function convertToVentilatorValueUpdateResult($revised_at)
     {
-        return <<<EOF
-        {
-            "result": {
-              "revised_at": "2021-04-04 12:34:06"
-            }
-          }       
-        EOF;
+        $res = new Response\Api\VentilatorValueResult;
+
+        $res->revised_at = $revised_at;
+
+        return $res;
+    }
+
+    public static function convertToVentilatorValueRevisionEntity($ventilator_value_id, $operated_user_id, $operation)
+    {
+        $entity = new VentilatorValueRevision;
+
+        $entity->ventilator_value_id = $ventilator_value_id;
+
+        $entity->operation = $operation;
+
+        $entity->operated_user_id = $operated_user_id;
+
+        return $entity;
     }
 }

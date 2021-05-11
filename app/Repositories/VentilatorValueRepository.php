@@ -14,6 +14,11 @@ class VentilatorValueRepository
         return VentilatorValue::query();
     }
 
+    public static function findOneById($id)
+    {
+        return static::query()->where('id', $id)->first();
+    }
+
     public static function existsByVentilatorId($ventilator_id)
     {
         return static::query()->where('ventilator_id', $ventilator_id)->exists();

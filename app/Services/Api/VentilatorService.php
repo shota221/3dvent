@@ -62,7 +62,7 @@ class VentilatorService
             $city = (new Support\Client\ReverseGeocodingApiClient)->getReverseGeocodingData($form->latitude, $form->longitude, 13)->display_name;
         }
 
-        $entity = Converter\VentilatorConverter::convertToVentilatorEntity($form->gs1_code, $serial_number, $form->latitude, $form->longitude, $city, $organization_id, $registered_user_id);
+        $entity = Converter\VentilatorConverter::convertToVentilatorEntity($form->gs1_code, $serial_number, DateUtil::toDatetimeStr(DateUtil::now()) ,$form->latitude, $form->longitude, $city, $organization_id, $registered_user_id);
 
         DBUtil::Transaction(
             '呼吸器情報登録',

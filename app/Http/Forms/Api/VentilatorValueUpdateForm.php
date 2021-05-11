@@ -41,15 +41,15 @@ class VentilatorValueUpdateForm extends BaseForm
     {
         return [
             'id' => 'required|'.Rule::VALUE_POSITIVE_INTEGER,
-            'registered_at' => 'nullable|'.Rule::VALUE_POSITIVE,
-            'gender' => 'nullable|in:1,2',
-            'height' => 'nullable|'.Rule::VALUE_POSITIVE,
+            'registered_at' => 'required|date',
+            'gender' => 'required|in:1,2',
+            'height' => 'required|'.Rule::VALUE_POSITIVE,
             'weight' => 'nullable|'.Rule::VALUE_POSITIVE,
-            'airway_pressure' => 'nullable|'.Rule::VALUE_POSITIVE,
-            'air_flow' => 'nullable|'.Rule::VALUE_POSITIVE,
-            'o2_flow' => 'nullable|'.Rule::VALUE_POSITIVE,
+            'airway_pressure' => 'required|'.Rule::VALUE_POSITIVE,
+            'air_flow' => 'required|'.Rule::VALUE_POSITIVE,
+            'o2_flow' => 'required|'.Rule::VALUE_POSITIVE,
             'status_use' => 'nullable|in:1,2,3,4',
-            'status_use_other' => 'nullable|'.Rule::VALUE_POSITIVE,
+            'status_use_other' => 'nullable|'.Rule::VALUE_STRING,
             'spo2' => 'nullable|'.Rule::VALUE_POSITIVE,
             'etco2' => 'nullable|'.Rule::VALUE_POSITIVE,
             'pao2' => 'nullable|'.Rule::VALUE_POSITIVE,
@@ -61,19 +61,19 @@ class VentilatorValueUpdateForm extends BaseForm
     {
         $this->id = $input['id'];
 
-        $this->registered_at = $input['registered_at'] ?? null;
+        $this->registered_at = $input['registered_at'];
 
-        $this->gender = $input['gender'] ?? null;
+        $this->gender = $input['gender'];
 
-        $this->height = $input['height'] ?? null;
+        $this->height = $input['height'];
 
         $this->weight = $input['weight'] ?? null;
 
-        $this->airway_pressure = $input['airway_pressure'] ?? null;
+        $this->airway_pressure = $input['airway_pressure'];
 
-        $this->air_flow = $input['air_flow'] ?? null;
+        $this->air_flow = $input['air_flow'];
 
-        $this->o2_flow = $input['o2_flow'] ?? null;
+        $this->o2_flow = $input['o2_flow'];
 
         $this->status_use = $input['status_use'] ?? null;
 
