@@ -137,6 +137,7 @@ return [
     'unauthenticated' => '認証エラー',
     'auth_token_expired' => 'トークン有効期限切れ',
     'user_token_required' => 'ユーザートークンは必須です。',
+    'organization_mismatch' => '組織情報が一致しません。',
 
     /*
     |--------------------------------------------------------------------------
