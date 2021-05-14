@@ -201,14 +201,28 @@ paths:
               schema:
                 description: ''
                 type: object
+                x-examples:
+                  example-1:
+                    result:
+                      is_registered: true
+                      organization_checked: true
+                      organization_code: string
+                      ventilator_id: 0
+                      patient_id: 0
+                      organization_name: string
+                      serial_number: 0
+                      start_using_at: string
                 properties:
                   result:
                     type: object
-                    required:
-                      - is_registered
                     properties:
                       is_registered:
                         type: boolean
+                      organization_checked:
+                        type: boolean
+                      organization_code:
+                        type: string
+                        minLength: 1
                       ventilator_id:
                         type: number
                       patient_id:
@@ -217,23 +231,32 @@ paths:
                         type: string
                         minLength: 1
                       serial_number:
-                        type: number
+                        type: string
                       start_using_at:
                         type: string
                         minLength: 1
                 required:
                   - result
               examples:
-                example-1:
+                登録済みであるが、組織コードに齟齬がある場合:
                   value:
                     result:
                       is_registered: true
+                      organization_checked: false
+                      organization_code: string
+                      organization_name: string
+                登録済みかつ、組織コードが合致する場合(組織コードが紐付いていない場合も含む):
+                  value:
+                    result:
+                      is_registered: true
+                      organization_checked: true
+                      organization_code: string
                       ventilator_id: 1
                       patient_id: 1
-                      organization_name: テスト組織
-                      serial_number: 1
-                      start_using_at: '2021-04-22 13:09:04'
-                example-2:
+                      organization_name: string
+                      serial_number: string
+                      start_using_at: string
+                未登録の場合:
                   value:
                     result:
                       is_registered: false
@@ -259,6 +282,12 @@ paths:
           in: query
           name: gs1_code
           description: QR読み取りにより取得される識別コード
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: X-User-Token
+          description: ユーザー識別用トークン
           required: true
     post:
       summary: 設定データを登録する
@@ -598,8 +627,6 @@ paths:
                 start_using_at:
                   type: string
                   minLength: 1
-              required:
-                - start_using_at
             examples:
               example-1:
                 value:
@@ -2015,6 +2042,78 @@ paths:
         このときユーザー識別用トークンが付与されている場合はその組織名を返す。
       tags:
         - ventilator
+    get:
+      summary: 人工呼吸器情報取得
+      tags:
+        - ventilator
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  result:
+                    type: object
+                    required:
+                      - is_registered
+                    properties:
+                      is_registered:
+                        type: boolean
+                      ventilator_id:
+                        type: number
+                      patient_id:
+                        type: number
+                      organization_name:
+                        type: string
+                        minLength: 1
+                      serial_number:
+                        type: string
+                      start_using_at:
+                        type: string
+                        minLength: 1
+                required:
+                  - result
+              examples:
+                example-2:
+                  value:
+                    result:
+                      is_registered: false
+                example-3:
+                  value:
+                    result:
+                      is_registered: true
+                      ventilator_id: 0
+                      patient_id: 0
+                      organization_name: string
+                      organization_code: string
+                      serial_number: string
+                      start_using_at: string
+      operationId: get-ventilator-no_auth
+      description: |
+        GS1コードにより人工呼吸器に紐付いた患者の身長体重情報を取得する。存在しない場合はregistered:falseを返す。
+        紐付けがされている場合は、患者IDや組織名も返す。
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: X-App-Key
+          description: 疎通用トークン
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: Accept
+          description: application/json
+          required: true
+        - schema:
+            type: string
+          in: query
+          name: gs1_code
+          description: QR読み取りにより取得される識別コード
+          required: true
   /patient/no_auth:
     post:
       summary: 患者情報を新しく登録する

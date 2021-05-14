@@ -26,16 +26,24 @@ class VentilatorService
      * @param [type] $form
      * @return void
      */
-    public function getVentilatorResult($form)
+    public function getVentilatorResult($form, $user = null)
     {
         if (!Repos\VentilatorRepository::existsByGs1Code($form->gs1_code)) {
-
             return Converter\VentilatorConverter::convertToVentilatorResult();
         }
 
         $ventilator = Repos\VentilatorRepository::findOneByGs1Code($form->gs1_code);
 
-        return Converter\VentilatorConverter::convertToVentilatorResult($ventilator);
+        //no_auth
+        if(is_null($user)) {
+            return  Converter\VentilatorConverter::convertToVentilatorResult($ventilator);
+        }
+
+        $v_org_id = $ventilator->organization_id;
+
+        $u_org_id = $user->organization_id;
+
+        return Converter\VentilatorConverter::convertToVentilatorResult($ventilator,is_null($v_org_id) || $v_org_id === $u_org_id);
     }
 
     /**
@@ -77,7 +85,7 @@ class VentilatorService
         return Converter\VentilatorConverter::convertToVentilatorRegistrationResult($ventilator);
     }
 
-    public function update($form)
+    public function update($form, $user)
     {
         if (!Repos\VentilatorRepository::existsById($form->id)){
             $form->addError('id','validation.id_not_found');
@@ -86,7 +94,17 @@ class VentilatorService
 
         $ventilator = Repos\VentilatorRepository::findOneById($form->id);
 
-        $entity = Converter\VentilatorConverter::convertToVentilatorUpdateEntity($ventilator,$form->start_using_at);
+        $v_org_id = $ventilator->organization_id;
+
+        $u_org_id = $user->organization_id;
+
+        //組織情報の整合チェック
+        if (!is_null($v_org_id) && $v_org_id !==$u_org_id){
+            $form->addError('id','validation.organization_mismatch');
+            return false;
+        }
+
+        $entity = Converter\VentilatorConverter::convertToVentilatorUpdateEntity($ventilator,$u_org_id,$form->start_using_at);
 
         DBUtil::Transaction(
             'ユーザー情報更新',

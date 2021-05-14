@@ -199,7 +199,6 @@ class VentilatorValueConverter
         $estimated_peep,
         $fio2,
         $total_flow,
-        $registered_at,
         $weight = '',
         $status_use = null,
         $status_use_other = '',
@@ -233,8 +232,6 @@ class VentilatorValueConverter
         $entity->fio2 = strval($fio2);
 
         $entity->total_flow = strval($total_flow);
-
-        $entity->registered_at = $registered_at;
 
         $entity->weight = strval($weight);
 

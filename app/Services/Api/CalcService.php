@@ -22,7 +22,7 @@ class CalcService
 
     public function getDefaultFlow($form)
     {
-        return Converter\VentilatorConverter::convertToDefaultFlowResult();
+        return Converter\VentilatorValueConverter::convertToDefaultFlowResult();
     }
 
     public function getEstimatedData($form)
@@ -38,7 +38,7 @@ class CalcService
         } else {
             $fio2 = null;
         }
-        return Converter\VentilatorConverter::convertToEstimatedDataResult($estimated_peep, $fio2);
+        return Converter\VentilatorValueConverter::convertToEstimatedDataResult($estimated_peep, $fio2);
     }
 
     public function getIeManual($form)

@@ -25,7 +25,10 @@ class VentilatorController extends ApiController
     {
         $form = new Form\VentilatorShowForm($request->all());
 
-        if ($form->hasError() || !$response = $this->service->getVentilatorResult($form)) {
+        //組織紐付けされている呼吸器へのログインユーザ組織整合性チェック用
+        $user = $this->getUser();
+
+        if ($form->hasError() || !$response = $this->service->getVentilatorResult($form, $user)) {
             throw new Exceptions\InvalidFormException($form);
         }
 
@@ -48,10 +51,12 @@ class VentilatorController extends ApiController
     public function update(Request $request, $id)
     {
         $request->merge(['id' => $id]);
-
+        
         $form = new Form\VentilatorUpdateForm($request->all());
 
-        if ($form->hasError() || !$response = $this->service->update($form)) {
+        $user = $this->getUser();
+
+        if ($form->hasError() || !$response = $this->service->update($form, $user)) {
             throw new Exceptions\InvalidFormException($form);
         }
 

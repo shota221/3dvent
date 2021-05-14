@@ -179,7 +179,6 @@ class VentilatorValueService
             $estimated_peep,
             $fio2,
             $total_flow,
-            $form->registered_at,
             $form->weight,
             $form->status_use,
             $form->status_use_other,

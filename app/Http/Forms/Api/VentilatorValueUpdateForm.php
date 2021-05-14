@@ -10,8 +10,6 @@ class VentilatorValueUpdateForm extends BaseForm
 {
     public $id;
 
-    public $registered_at;
-
     public $gender;
 
     public $height;
@@ -41,7 +39,6 @@ class VentilatorValueUpdateForm extends BaseForm
     {
         return [
             'id' => 'required|'.Rule::VALUE_POSITIVE_INTEGER,
-            'registered_at' => 'required|date',
             'gender' => 'required|in:1,2',
             'height' => 'required|'.Rule::VALUE_POSITIVE,
             'weight' => 'nullable|'.Rule::VALUE_POSITIVE,
@@ -60,8 +57,6 @@ class VentilatorValueUpdateForm extends BaseForm
     protected function bind($input)
     {
         $this->id = $input['id'];
-
-        $this->registered_at = $input['registered_at'];
 
         $this->gender = $input['gender'];
 

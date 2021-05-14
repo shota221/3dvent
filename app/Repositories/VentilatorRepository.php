@@ -62,6 +62,7 @@ class VentilatorRepository
             ->addSelect([
                 $table . '.*',
                 $organization_table . '.name AS organization_name',
+                $organization_table . '.code AS organization_code'
             ]);
     }
 }

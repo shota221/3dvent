@@ -81,8 +81,8 @@ Route::group(['middleware' => ['routetype:api']], function () {
         /**************
          * ventilator *
          **************/
-        //呼吸器情報取得（GS1コード読み込み）(未ログインユーザとログインユーザで共通の処理)
-        Route::get('/ventilator', 'VentilatorController@show')->name('api.ventilator.show');
+        //呼吸器情報取得（GS1コード読み込み）
+        Route::get('/ventilator/no_auth', 'VentilatorController@show')->name('api.ventilator.show.no_auth');
 
         //呼吸器情報登録
         Route::post('/ventilator/no_auth', 'VentilatorController@create')->name('api.ventilator.create.no_auth');
@@ -137,6 +137,8 @@ Route::group(['middleware' => ['routetype:api']], function () {
             /**************
              * ventilator *
              **************/
+            //ログインユーザによる呼吸器読み取り。組織紐付け済み呼吸器との整合チェックを伴う
+            Route::get('/ventilator', 'VentilatorController@show')->name('api.ventilator.show');
             //呼吸器情報登録
             Route::post('/ventilator', 'VentilatorController@create')->name('api.ventilator.create');
             //呼吸器情報更新

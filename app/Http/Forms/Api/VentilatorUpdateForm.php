@@ -17,7 +17,7 @@ class VentilatorUpdateForm extends BaseForm
         return [
             'id' => 'required|' . Rule::VALUE_POSITIVE_INTEGER,
 
-            'start_using_at' => 'required|date'
+            'start_using_at' => 'date'
         ];
     }
 
@@ -25,6 +25,6 @@ class VentilatorUpdateForm extends BaseForm
     {
         $this->id = intval($input['id']);
 
-        $this->start_using_at = $input['start_using_at'];
+        $this->start_using_at = isset($input['start_using_at']) ? $input['start_using_at'] : null;
     }
 }
