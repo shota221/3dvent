@@ -20,4 +20,9 @@ class PatientValueRepository
     {
         return static::query()->where('patient_id', $patient_id)->first();
     }
+
+    public static function findOneByPatientIdAndDeletedAtIsNull($patient_id)
+    {
+        return static::query()->where('patient_id', $patient_id)->whereNull('deleted_at')->first();
+    }
 }

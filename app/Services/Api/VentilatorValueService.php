@@ -7,7 +7,7 @@ use App\Models;
 use App\Http\Forms\Api as Form;
 use App\Http\Response as Response;
 use App\Repositories as Repos;
-use App\Models\VentilatorValueRevision;
+use App\Models\VentilatorValueHistory;
 use App\Services\Support as Support;
 use App\Services\Support\Client\ReverseGeocodingClient;
 use Illuminate\Support\Facades\Auth;
@@ -15,6 +15,7 @@ use Carbon\Carbon;
 use App\Services\Support\Converter;
 use App\Services\Support\DBUtil;
 use App\Services\Support\DateUtil;
+use App\Services\Support\HistoryUtil;
 use Illuminate\Support\Facades\Date;
 
 class VentilatorValueService
@@ -122,6 +123,8 @@ class VentilatorValueService
             }
         );
 
+        HistoryUtil::create($entity, $registered_user_id);
+
         return Converter\VentilatorValueConverter::convertToVentilatorValueRegistrationResult($entity);
     }
 
@@ -200,20 +203,12 @@ class VentilatorValueService
         );
 
         //create記録挿入
-        $revision_create = Converter\VentilatorValueConverter::convertToVentilatorValueRevisionEntity($entity->id, $user->id, VentilatorValueRevision::CREATE);
+        $create_history = HistoryUtil::create($entity, $user->id);
 
         //delete記録挿入
-        $revision_delete = Converter\VentilatorValueConverter::convertToVentilatorValueRevisionEntity($ventilator_value->id, $user->id, VentilatorValueRevision::DELETE);
+        $delte_history = HistoryUtil::delete($ventilator_value, $user->id);
 
-        DBUtil::Transaction(
-            '修正情報の挿入',
-            function() use($revision_create,$revision_delete){
-                $revision_create->save();
-                $revision_delete->save();
-            }
-        );
-
-        return Converter\VentilatorValueConverter::convertToVentilatorValueUpdateResult(DateUtil::toDatetimeStr($revision_create->created_at));
+        return Converter\VentilatorValueConverter::convertToVentilatorValueUpdateResult(DateUtil::toDatetimeStr($create_history->created_at));
     }
 
     public function getVentilatorValueListResult($form)

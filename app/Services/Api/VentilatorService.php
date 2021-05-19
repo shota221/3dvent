@@ -35,7 +35,7 @@ class VentilatorService
         $ventilator = Repos\VentilatorRepository::findOneByGs1Code($form->gs1_code);
 
         //no_auth
-        if(is_null($user)) {
+        if (is_null($user)) {
             return  Converter\VentilatorConverter::convertToVentilatorResult($ventilator);
         }
 
@@ -43,7 +43,7 @@ class VentilatorService
 
         $u_org_id = $user->organization_id;
 
-        return Converter\VentilatorConverter::convertToVentilatorResult($ventilator,is_null($v_org_id) || $v_org_id === $u_org_id);
+        return Converter\VentilatorConverter::convertToVentilatorResult($ventilator, is_null($v_org_id) || $v_org_id === $u_org_id);
     }
 
     /**
@@ -70,7 +70,7 @@ class VentilatorService
             $city = (new Support\Client\ReverseGeocodingApiClient)->getReverseGeocodingData($form->latitude, $form->longitude, 13)->display_name;
         }
 
-        $entity = Converter\VentilatorConverter::convertToVentilatorEntity($form->gs1_code, $serial_number, DateUtil::toDatetimeStr(DateUtil::now()) ,$form->latitude, $form->longitude, $city, $organization_id, $registered_user_id);
+        $entity = Converter\VentilatorConverter::convertToVentilatorEntity($form->gs1_code, $serial_number, DateUtil::toDatetimeStr(DateUtil::now()), $form->latitude, $form->longitude, $city, $organization_id, $registered_user_id);
 
         DBUtil::Transaction(
             '呼吸器情報登録',
@@ -87,8 +87,8 @@ class VentilatorService
 
     public function update($form, $user)
     {
-        if (!Repos\VentilatorRepository::existsById($form->id)){
-            $form->addError('id','validation.id_not_found');
+        if (!Repos\VentilatorRepository::existsById($form->id)) {
+            $form->addError('id', 'validation.id_not_found');
             return false;
         }
 
@@ -99,12 +99,12 @@ class VentilatorService
         $u_org_id = $user->organization_id;
 
         //組織情報の整合チェック
-        if (!is_null($v_org_id) && $v_org_id !==$u_org_id){
-            $form->addError('id','validation.organization_mismatch');
+        if (!is_null($v_org_id) && $v_org_id !== $u_org_id) {
+            $form->addError('id', 'validation.organization_mismatch');
             return false;
         }
 
-        $entity = Converter\VentilatorConverter::convertToVentilatorUpdateEntity($ventilator,$u_org_id,$form->start_using_at);
+        $entity = Converter\VentilatorConverter::convertToVentilatorUpdateEntity($ventilator, $u_org_id, $form->start_using_at);
 
         DBUtil::Transaction(
             'ユーザー情報更新',

@@ -12,7 +12,9 @@ use App\Services\Support as Support;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Services\Support\Converter;
+use App\Services\Support\DateUtil;
 use App\Services\Support\DBUtil;
+use App\Services\Support\HistoryUtil;
 
 use function PHPUnit\Framework\isJson;
 
@@ -200,6 +202,8 @@ class PatientService
             }
         );
 
+        HistoryUtil::create($entity, $user->id);
+
         return Converter\PatientConverter::convertToPatientValueUpdateResult($patient->patient_code);
     }
 
@@ -212,15 +216,18 @@ class PatientService
             return false;
         }
 
-        $patient_value = Repos\PatientValueRepository::findOneByPatientId($form->id);
+        $patient_value = Repos\PatientValueRepository::findOneByPatientIdAndDeletedAtIsNull($form->id);
 
         if (is_null($patient_value)) {
             $form->addError('id', 'validation.has_not_been_observed');
             return false;
         }
 
+        //編集前データの複製
+        $patient_value_copy = $patient_value->replicate();
+
         $entity = Converter\PatientConverter::convertToPatientValueUpdateEntity(
-            $patient_value,
+            $patient_value_copy,
             $user->id,
             $form->opt_out_flg,
             $form->age,
@@ -237,12 +244,22 @@ class PatientService
             $form->adverse_event_contents,
         );
 
+        //編集元にdeleted_atを記録
+        $patient_value->deleted_at = DateUtil::toDatetimeStr(DateUtil::now());
+
         DBUtil::Transaction(
-            '患者観察研究データ更新',
-            function()use($entity){
+            '編集後データの挿入',
+            function() use($entity,$patient_value){
                 $entity->save();
+                $patient_value->save();
             }
         );
+
+        //create記録挿入
+        HistoryUtil::create($entity, $user->id);
+
+        //delete記録挿入
+        HistoryUtil::delete($patient_value, $user->id);
 
         return Converter\PatientConverter::convertToPatientValueUpdateResult($patient->patient_code);
     }

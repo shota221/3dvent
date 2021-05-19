@@ -7,7 +7,7 @@ use App\Http\Response as Response;
 use App\Models\Ventilator;
 use App\Models\VentilatorValue;
 use App\Models\Patient;
-use App\Models\VentilatorValueRevision;
+use App\Models\VentilatorValueHistory;
 use App\Services\Support\DateUtil;
 
 class VentilatorValueConverter
@@ -270,18 +270,5 @@ class VentilatorValueConverter
         $res->revised_at = $revised_at;
 
         return $res;
-    }
-
-    public static function convertToVentilatorValueRevisionEntity($ventilator_value_id, $operated_user_id, $operation)
-    {
-        $entity = new VentilatorValueRevision;
-
-        $entity->ventilator_value_id = $ventilator_value_id;
-
-        $entity->operation = $operation;
-
-        $entity->operated_user_id = $operated_user_id;
-
-        return $entity;
     }
 }
