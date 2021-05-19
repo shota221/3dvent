@@ -25,10 +25,7 @@ class UserService
 
     public function update($form, $user)
     {
-        echo $user->tableName();
-        echo $user->historyTableName();
-        echo $user->targetColumnOfHistoryTable();
-        //フォームとアップデート先両方に患者コードがあり、それらが同一でないかつ、同一組織内に同じ患者コードが存在するかどうか
+        //フォームとアップデート先両方にユーザ名があり、それらが同一でないかつ、同一組織内に同じユーザ名が存在するかどうか
         $exists =  !is_null($form->name) && !is_null($user->name) && $form->name !== $user->name && Repos\UserRepository::existsByNameAndOrganizationId($form->name, $user->organization_id);
         //ユーザー名は組織内にて一意
         if ($exists) {
