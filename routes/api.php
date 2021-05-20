@@ -27,7 +27,7 @@ Route::group(['middleware' => ['routetype:api']], function () {
         Route::post('/appkey', 'AppkeyController@create')->name('api.appkey.create');
 
         /**********
-         * obserbation(TRI_API) *
+         * observation(TRI_API) *
          **********/
         // 観察研究データ数取得
         Route::get('/observation/count', 'ObservationController@count')->name('api.observation.count');

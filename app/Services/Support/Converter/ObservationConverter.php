@@ -15,8 +15,8 @@ class ObservationConverter
         return <<<EOF
         {
             "result":{
-                "ventilator_observed_count":180,
-                "patient_observed_count":98
+                "ventilator_observed_count":3,
+                "patient_observed_count":6
             }
         }
         EOF;
