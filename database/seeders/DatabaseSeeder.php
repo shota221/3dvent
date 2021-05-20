@@ -4,6 +4,11 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 
+/**
+ * 組織・組織ユーザ順に生成
+ * ./composer.phar dump-autoload
+ * ./artisan db:seed --class=DatabaseSeeder --env=local
+ */
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -13,6 +18,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // \App\Models\User::factory(10)->create();
+        $this->call(OrganizationSeeder::class);
+        $this->call(UserSeeder::class);
     }
 }

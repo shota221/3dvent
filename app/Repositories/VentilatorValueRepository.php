@@ -50,6 +50,7 @@ class VentilatorValueRepository
             ]);
     }
 
+    //TODO DELETE ME
     public static function updateFixedFlg($now, $interval)
     {
         $table = VentilatorValue::tableName();
@@ -57,17 +58,21 @@ class VentilatorValueRepository
         //指定時間以前のレコードのうちscanned_atがnullのものをはいて、そこから指定時間以内に同呼吸器に対してのレコードがなければfixed_flgとfixed_atを記録する。
         $sql_to_fix =
             'UPDATE ' . $table . ' AS a 
-            SET a.fixed_flg = ' . VentilatorValue::BOOLEAN_TRUE . ',a.fixed_at = "'.$now.'" 
+            SET a.fixed_flg = ' . VentilatorValue::BOOLEAN_TRUE . ',a.fixed_at = "' . $now . '" 
             WHERE a.ventilator_value_scanned_at IS NULL 
-            AND a.registered_at<=DATE_SUB("'.$now.'",INTERVAL ' . $interval . ' HOUR) 
-            AND NOT EXISTS(SELECT 1 FROM (SELECT id,ventilator_id, registered_at FROM ventilator_values) AS b WHERE b.id>a.id AND b.ventilator_id = a.ventilator_id AND b.registered_at BETWEEN a.registered_at AND DATE_ADD(a.registered_at,INTERVAL ' . $interval . ' HOUR))';
+            AND a.registered_at<=DATE_SUB("' . $now . '",INTERVAL ' . $interval . ' HOUR) 
+            AND NOT EXISTS(
+                SELECT 1 FROM (SELECT id,ventilator_id, registered_at FROM ventilator_values WHERE ventilator_value_scanned_at IS NULL) AS b 
+                WHERE b.id>a.id AND b.ventilator_id = a.ventilator_id 
+                AND b.registered_at BETWEEN a.registered_at 
+                AND DATE_ADD(a.registered_at,INTERVAL ' . $interval . ' HOUR))';
 
         //↑ではいたもの全てにscanned_atを記録する
         $sql_to_record_scanned_at =
             'UPDATE ' . $table . '  
-            SET ventilator_value_scanned_at = "'.$now.'" 
+            SET ventilator_value_scanned_at = "' . $now . '" 
             WHERE ventilator_value_scanned_at IS NULL 
-            AND registered_at<=DATE_SUB("'.$now.'",INTERVAL ' . $interval . ' HOUR)';
+            AND registered_at<=DATE_SUB("' . $now . '",INTERVAL ' . $interval . ' HOUR)';
 
         \DB::update($sql_to_fix);
         \DB::update($sql_to_record_scanned_at);
@@ -122,5 +127,32 @@ class VentilatorValueRepository
                 $table . '.*',
                 $user_table . '.name AS registered_user_name',
             ]);
+    }
+
+
+    /**
+     * バッチスキャン対象:未スキャンかつregistered_atが現在時刻から指定インターバルより過去の危機観察研究データ(現在時刻から指定インターバル以内のデータはfixed_flgが立ち得ないため)
+     * チャンク処理をおこなうためqueryで返す。
+     * @param [type] $registered_at_to
+     */
+    public static function queryByScannedAtIsNullAndRegisteredAtTo($registered_at_to)
+    {
+        return static::query()->whereNull('ventilator_value_scanned_at')
+            ->where('registered_at', '<=', $registered_at_to);
+    }
+
+    /**
+     * fixed_flg判定用。スキャン対象きき観察研究データのregistered_atから指定インターバル以内に登録されたデータが存在するかどうか。
+     *
+     * @param [type] $ventilator_id
+     * @param [type] $registered_at_from
+     * @param [type] $registered_at_to
+     */
+    public static function existsByVentilatorIdAndRegisteredAtFromTo($ventilator_id, $registered_at_from, $registered_at_to)
+    {
+        return static::query()->where('ventilator_id', $ventilator_id)
+            ->where('registered_at', '>', $registered_at_from)
+            ->where('registered_at', '<=', $registered_at_to)
+            ->exists();
     }
 }

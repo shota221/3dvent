@@ -114,6 +114,7 @@ class PatientConverter
   public static function convertToPatientValueEntity(
     $patient_id,
     $patient_obs_user_id,
+    $registered_at,
     $opt_out_flg = null,
     $age = null,
     $vent_disease_name = null,
@@ -163,6 +164,8 @@ class PatientConverter
     if (!is_null($adverse_event_flg)) {
       $entity->adverse_event_flg = $adverse_event_flg;
     }
+
+    $entity->registered_at = $registered_at;
 
     return $entity;
   }

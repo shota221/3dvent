@@ -32,6 +32,8 @@ class PatientValueResult extends SuccessJsonResult
 
     public $treatment;
 
+    public $registered_at;
+
     public $adverse_event_flg;
 
     public $adverse_event_contents;

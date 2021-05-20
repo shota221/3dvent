@@ -53,6 +53,11 @@ class DateUtil {
         return self::ZERO_DATETIME === $date;
     }
 
+    public static function datetimeStrToCarbon($str)
+    {
+        return self::createFromFormat(self::DATETIME_FORMAT , $str);
+    }
+
     public static function now() 
     {
         return Carbon::now();
@@ -101,6 +106,11 @@ class DateUtil {
     public static function hourAgo(Carbon $date, int $ago = 1)
     {
         return $date->copy()->subHour($ago);
+    }
+
+    public static function hourLater(Carbon $date, int $later = 1)
+    {
+        return $date->copy()->addHour($later);
     }
 
     public static function toMonthStr(Carbon $date)

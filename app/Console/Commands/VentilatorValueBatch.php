@@ -16,7 +16,7 @@ class VentilatorValueBatch extends Command
      *
      * @var string
      */
-    protected $signature = 'set_fixed_flg';
+    protected $signature = 'set_fixed_flg {chunk_size=500}';
 
     /**
      * The console command description.
@@ -46,8 +46,9 @@ class VentilatorValueBatch extends Command
      */
     public function handle()
     {
+        $chunk_size = $this->argument('chunk_size');
         try {
-            $this->service->updateFixedFlg();
+            $this->service->updateFixedFlg($chunk_size);
         } catch (\Exception $e) {
             throw new BatchErrorException('VentilatorValueBatch 処理に失敗しました。', $e);
         }

@@ -181,9 +181,12 @@ class PatientService
             return false;
         }
 
+        $registered_at = DateUtil::toDatetimeStr(DateUtil::now());
+
         $entity = Converter\PatientConverter::convertToPatientValueEntity(
             $form->id,
             $user->id,
+            $registered_at,
             $form->opt_out_flg,
             $form->age,
             $form->vent_disease_name,
@@ -196,7 +199,7 @@ class PatientService
             $form->outcome,
             $form->treatment,
             $form->adverse_event_flg,
-            $form->adverse_event_contents,
+            $form->adverse_event_contents
         );
 
         DBUtil::Transaction(
