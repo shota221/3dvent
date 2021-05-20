@@ -3,20 +3,13 @@
 namespace App\Services\Api;
 
 use App\Exceptions;
-use App\Models;
-use App\Http\Forms\Api as Form;
 use App\Http\Response as Response;
+use App\Models\HistoryBaseModel;
 use App\Repositories as Repos;
-use App\Models\VentilatorValueHistory;
 use App\Services\Support as Support;
-use App\Services\Support\Client\ReverseGeocodingClient;
-use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon;
 use App\Services\Support\Converter;
 use App\Services\Support\DBUtil;
 use App\Services\Support\DateUtil;
-use App\Services\Support\HistoryUtil;
-use Illuminate\Support\Facades\Date;
 
 class VentilatorValueService
 {
@@ -39,7 +32,7 @@ class VentilatorValueService
 
         $registered_user_id = $ventilator_value->registered_user_id;
 
-        $registered_user_name = !is_null($registered_user_id) ? Repos\UserRepository::findOneById($registered_user_id )->name : null;
+        $registered_user_name = !is_null($registered_user_id) ? Repos\UserRepository::findOneById($registered_user_id)->name : null;
 
         return Converter\VentilatorValueConverter::convertToVentilatorValueResult($ventilator_value, $registered_user_name);
     }
@@ -71,7 +64,11 @@ class VentilatorValueService
         $registered_user_id = !is_null($user) ? $user->id : null;
 
         //組織の設定値が存在すればそっちの値を使用
-        $organization_setting = !is_null($user) ? Repos\OrganizationSettingRepository::findOneByOrganizationId($user->organization_id) : null;
+        $organization_setting = null;
+
+        if (!is_null($user)) {
+            $organization_setting = Repos\OrganizationSettingRepository::findOneByOrganizationId($user->organization_id);
+        }
 
         $vt_per_kg = !is_null($organization_setting) ? $organization_setting->vt_per_kg : config('calc.default.vt_per_kg');
 
@@ -117,13 +114,14 @@ class VentilatorValueService
         );
 
         DBUtil::Transaction(
-            '機器関連情報登録',
-            function () use ($entity) {
+            '機器観察研究データ登録',
+            function () use ($entity, $registered_user_id) {
                 $entity->save();
+                //登録履歴追加
+                $history = Converter\HistoryConverter::convertToHistoryEntity($entity, HistoryBaseModel::CREATE, $registered_user_id);
+                $history->save();
             }
         );
-
-        HistoryUtil::create($entity, $registered_user_id);
 
         return Converter\VentilatorValueConverter::convertToVentilatorValueRegistrationResult($entity);
     }
@@ -190,25 +188,28 @@ class VentilatorValueService
             $form->pao2,
             $form->paco2
         );
-        
+
         //編集元にdeleted_atを記録
         $ventilator_value->deleted_at = DateUtil::toDatetimeStr(DateUtil::now());
 
         DBUtil::Transaction(
             '編集後データの挿入',
-            function() use($entity,$ventilator_value){
-                $entity->save();
+            function () use ($entity, $ventilator_value, $user) {
+                //編集前データ削除
                 $ventilator_value->save();
+                //削除履歴追加
+                $delete_history = Converter\HistoryConverter::convertToHistoryEntity($ventilator_value, HistoryBaseModel::DELETE, $user->id);
+                $delete_history->save();
+
+                //編集後データ登録
+                $entity->save();
+                //登録履歴追加
+                $create_history = Converter\HistoryConverter::convertToHistoryEntity($entity, HistoryBaseModel::CREATE, $user->id);
+                $create_history->save();
             }
         );
 
-        //create記録挿入
-        $create_history = HistoryUtil::create($entity, $user->id);
-
-        //delete記録挿入
-        $delte_history = HistoryUtil::delete($ventilator_value, $user->id);
-
-        return Converter\VentilatorValueConverter::convertToVentilatorValueUpdateResult(DateUtil::toDatetimeStr($create_history->created_at));
+        return Converter\VentilatorValueConverter::convertToVentilatorValueUpdateResult(DateUtil::toDatetimeStr($entity->created_at));
     }
 
     public function getVentilatorValueListResult($form)

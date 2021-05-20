@@ -13,7 +13,6 @@ use Illuminate\Support\Str;
  */
 class TraceableBaseModel extends BaseModel
 {
-
     /**
      * ヒストリテーブル名取得
      * 

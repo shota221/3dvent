@@ -3,18 +3,12 @@
 namespace App\Services\Api;
 
 use App\Exceptions;
-use App\Models;
-use App\Http\Forms\Api as Form;
-use App\Http\Response as Response;
+use App\Models\HistoryBaseModel;
 use App\Repositories as Repos;
-use App\Models\Report;
 use App\Services\Support as Support;
-use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon;
 use App\Services\Support\Converter;
 use App\Services\Support\DateUtil;
 use App\Services\Support\DBUtil;
-use App\Services\Support\HistoryUtil;
 
 use function PHPUnit\Framework\isJson;
 
@@ -66,7 +60,11 @@ class PatientService
         );
 
         //組織の設定値が存在すればそっちの値を使用
-        $organization_setting = !is_null($organization_id) ? Repos\OrganizationSettingRepository::findOneByOrganizationId($organization_id) : null;
+        $organization_setting = null;
+
+        if (!is_null($organization_id)) {
+            $organization_setting = Repos\OrganizationSettingRepository::findOneByOrganizationId($organization_id);
+        }
 
         $vt_per_kg = !is_null($organization_setting) ? $organization_setting->vt_per_kg : config('calc.default.vt_per_kg');
 
@@ -88,7 +86,11 @@ class PatientService
         }
 
         //組織の設定値が存在すればそっちの値を使用
-        $organization_setting = !is_null($patient->organization_id) ? Repos\OrganizationSettingRepository::findOneByOrganizationId($patient->organization_id) : null;
+        $organization_setting = null;
+
+        if (!is_null($patient->organization_id)) {
+            $organization_setting = Repos\OrganizationSettingRepository::findOneByOrganizationId($patient->organization_id);
+        }
 
         $vt_per_kg = !is_null($organization_setting) ? $organization_setting->vt_per_kg : config('calc.default.vt_per_kg');
 
@@ -132,12 +134,14 @@ class PatientService
             }
         );
 
-        $vt_per_kg = config('calc.default.vt_per_kg');
-
         //組織の設定値が存在すればそっちの値を使用
-        if (!is_null($patient->organization_id) && !is_null($organization_setting = Repos\OrganizationSettingRepository::findOneByOrganizationId($patient->organization_id))) {
-            $vt_per_kg = $organization_setting->vt_per_kg;
+        $organization_setting = null;
+
+        if (!is_null($patient->organization_id)) {
+            $organization_setting = Repos\OrganizationSettingRepository::findOneByOrganizationId($patient->organization_id);
         }
+
+        $vt_per_kg = !is_null($organization_setting) ? $organization_setting->vt_per_kg : config('calc.default.vt_per_kg');
 
         //理想体重の算出
         $ideal_weight = strval($this->calcIdealWeight(floatval($form->height), $form->gender));
@@ -172,7 +176,7 @@ class PatientService
 
         $patient_value = Repos\PatientValueRepository::findOneByPatientId($form->id);
 
-        if(!is_null($patient_value)) {
+        if (!is_null($patient_value)) {
             $form->addError('id', 'validation.duplicated_patient_id');
             return false;
         }
@@ -197,12 +201,13 @@ class PatientService
 
         DBUtil::Transaction(
             '患者観察研究データ登録',
-            function()use($entity){
+            function () use ($entity, $user) {
                 $entity->save();
+                //登録履歴追加
+                $create_history = Converter\HistoryConverter::convertToHistoryEntity($entity, HistoryBaseModel::CREATE, $user->id);
+                $create_history->save();
             }
         );
-
-        HistoryUtil::create($entity, $user->id);
 
         return Converter\PatientConverter::convertToPatientValueUpdateResult($patient->patient_code);
     }
@@ -249,17 +254,20 @@ class PatientService
 
         DBUtil::Transaction(
             '編集後データの挿入',
-            function() use($entity,$patient_value){
-                $entity->save();
+            function () use ($entity, $patient_value, $user) {
+                //編集前データ削除
                 $patient_value->save();
+                //削除履歴追加
+                $delete_history = Converter\HistoryConverter::convertToHistoryEntity($patient_value, HistoryBaseModel::DELETE, $user->id);
+                $delete_history->save();
+
+                //編集後データ登録
+                $entity->save();
+                //登録履歴追加
+                $create_history = Converter\HistoryConverter::convertToHistoryEntity($entity, HistoryBaseModel::CREATE, $user->id);
+                $create_history->save();
             }
         );
-
-        //create記録挿入
-        HistoryUtil::create($entity, $user->id);
-
-        //delete記録挿入
-        HistoryUtil::delete($patient_value, $user->id);
 
         return Converter\PatientConverter::convertToPatientValueUpdateResult($patient->patient_code);
     }
