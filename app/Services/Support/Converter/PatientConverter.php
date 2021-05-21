@@ -5,114 +5,229 @@ namespace App\Services\Support\Converter;
 use App\Http\Forms\Api as Form;
 use App\Http\Response as Response;
 use App\Models\Patient;
+use App\Models\PatientValue;
 
 class PatientConverter
 {
-    public static function convertToPatientRegistrationResult($entity, $predicted_vt)
-    {
-        $res = new Response\Api\PatientResult;
+  public static function convertToPatientRegistrationResult($entity, $predicted_vt)
+  {
+    $res = new Response\Api\PatientResult;
 
-        $res->patient_id = $entity->id;
+    $res->patient_id = $entity->id;
 
-        $res->predicted_vt = strval($predicted_vt);
+    $res->predicted_vt = strval($predicted_vt);
 
-        return $res;
+    return $res;
+  }
+
+  public static function convertToPatientResult($entity, $predicted_vt)
+  {
+    $res = new Response\Api\PatientResult;
+
+    $res->patient_code = strval($entity->patient_code);
+
+    $res->height = strval($entity->height);
+
+    $res->gender = $entity->gender;
+
+    $res->predicted_vt = strval($predicted_vt);
+
+    return $res;
+  }
+
+  public static function convertToEntity(
+    $height,
+    $gender,
+    $patient_code = null,
+    $organization_id = null
+  ) {
+    $entity = new Patient;
+
+    $entity->patient_code = $patient_code;
+
+    $entity->height = $height;
+
+    $entity->gender = $gender;
+
+    $entity->organization_id = $organization_id;
+
+    return $entity;
+  }
+
+  public static function convertToUpdateEntity(
+    Patient $entity,
+    $patient_code,
+    $height,
+    $gender
+  ) {
+    $entity->patient_code = $patient_code;
+
+    $entity->height = $height;
+
+    $entity->gender = $gender;
+
+    return $entity;
+  }
+
+  public static function convertToPatientValueResult($patient_code, $entity)
+  {
+    $res = new Response\Api\PatientValueResult;
+
+    if (is_null($entity)) {
+      $res->has_observed = false;
+      return $res;
     }
 
-    public static function convertToPatientResult($entity, $predicted_vt)
-    {
-        $res = new Response\Api\PatientResult;
+    $res->has_observed = true;
 
-        $res->patient_code = strval($entity->patient_code);
+    $res->patient_code = $patient_code;
 
-        $res->height = strval($entity->height);
+    $res->opt_out_flg = $entity->opt_out_flg;
 
-        $res->gender = $entity->gender;
+    $res->age = $entity->age;
 
-        $res->predicted_vt = strval($predicted_vt);
+    $res->vent_disease_name = $entity->vent_disease_name;
 
-        return $res;
+    $res->other_disease_name_1 = $entity->other_disease_name_1;
+
+    $res->other_disease_name_2 = $entity->other_disease_name_2;
+
+    $res->used_place = $entity->used_place;
+
+    $res->hospital = $entity->hospital;
+
+    $res->national = $entity->national;
+
+    $res->discontinuation_at = $entity->discontinuation_at;
+
+    $res->outcome = $entity->outcome;
+
+    $res->treatment = $entity->treatment;
+
+    $res->adverse_event_flg = $entity->adverse_event_flg;
+
+    $res->adverse_event_contents = $entity->adverse_event_contents;
+
+    return $res;
+  }
+
+  public static function convertToPatientValueEntity(
+    $patient_id,
+    $patient_obs_user_id,
+    $registered_at,
+    $opt_out_flg = null,
+    $age = null,
+    $vent_disease_name = null,
+    $other_disease_name_1 = null,
+    $other_disease_name_2 = null,
+    $used_place = null,
+    $hospital = null,
+    $national = null,
+    $discontinuation_at = null,
+    $outcome = null,
+    $treatment = null,
+    $adverse_event_flg = null,
+    $adverse_event_contents = "",
+  ) {
+    $entity = new PatientValue;
+
+    $entity->patient_id = $patient_id;
+
+    $entity->patient_obs_user_id = $patient_obs_user_id;
+
+    $entity->age = $age;
+
+    $entity->vent_disease_name = $vent_disease_name;
+
+    $entity->other_disease_name_1 = $other_disease_name_1;
+
+    $entity->other_disease_name_2 = $other_disease_name_2;
+
+    $entity->used_place = $used_place;
+
+    $entity->hospital = $hospital;
+
+    $entity->national = $national;
+
+    $entity->discontinuation_at = $discontinuation_at;
+
+    $entity->outcome = $outcome;
+
+    $entity->treatment = $treatment;
+
+    $entity->adverse_event_contents = $adverse_event_contents;
+
+    if (!is_null($opt_out_flg)) {
+      $entity->opt_out_flg = $opt_out_flg;
     }
 
-    public static function convertToEntity(
-        $height,
-        $gender,
-        $patient_code = null,
-        $organization_id = null
-    ) {
-        $entity = new Patient;
-
-        $entity->patient_code = $patient_code;
-
-        $entity->height = $height;
-
-        $entity->gender = $gender;
-
-        $entity->organization_id = $organization_id;
-
-        return $entity;
+    if (!is_null($adverse_event_flg)) {
+      $entity->adverse_event_flg = $adverse_event_flg;
     }
 
-    public static function convertToUpdateEntity(
-        Patient $entity,
-        $patient_code,
-        $height,
-        $gender
-    ) {
-        $entity->patient_code = $patient_code;
+    $entity->registered_at = $registered_at;
 
-        $entity->height = $height;
+    return $entity;
+  }
 
-        $entity->gender = $gender;
+  public static function convertToPatientValueUpdateEntity(
+    PatientValue $entity,
+    $patient_obs_user_id,
+    $opt_out_flg = null,
+    $age = null,
+    $vent_disease_name = null,
+    $other_disease_name_1 = null,
+    $other_disease_name_2 = null,
+    $used_place = null,
+    $hospital = null,
+    $national = null,
+    $discontinuation_at = null,
+    $outcome = null,
+    $treatment = null,
+    $adverse_event_flg = null,
+    $adverse_event_contents = "",
+  ) {
+    $entity->patient_obs_user_id = $patient_obs_user_id;
 
-        return $entity;
+    $entity->age = $age;
+
+    $entity->vent_disease_name = $vent_disease_name;
+
+    $entity->other_disease_name_1 = $other_disease_name_1;
+
+    $entity->other_disease_name_2 = $other_disease_name_2;
+
+    $entity->used_place = $used_place;
+
+    $entity->hospital = $hospital;
+
+    $entity->national = $national;
+
+    $entity->discontinuation_at = $discontinuation_at;
+
+    $entity->outcome = $outcome;
+
+    $entity->treatment = $treatment;
+
+    $entity->adverse_event_contents = $adverse_event_contents;
+
+    if (!is_null($opt_out_flg)) {
+      $entity->opt_out_flg = $opt_out_flg;
     }
 
-    //TODO 以下補完作業
-    public static function convertToPatientValueResult()
-    {
-        return <<<EOF
-        {
-            "result": {
-              "has_observed": true,
-              "opt_out_flg": 1,
-              "patient_code": "999",
-              "age": "21",
-              "vent_disease_name": "XXXXXX",
-              "other_disease_name_1": "xXXXXX",
-              "other_disease_name_2": "XXXXXX",
-              "used_place": 3,
-              "hospital": "XXXXXX",
-              "national": "XXXXXX",
-              "discontinuation_at": "2021-04-08 17:04:01",
-              "outcome": 1,
-              "treatment": 1,
-              "adverse_event_flg": 1,
-              "adverse_event_contents": "XXXXXX"
-            }
-          }
-        EOF;
+    if (!is_null($adverse_event_flg)) {
+      $entity->adverse_event_flg = $adverse_event_flg;
     }
 
-    public static function convertToPatientValueRegistrationResult()
-    {
-        return <<<EOF
-        {
-            "result": {
-              "patient_code": "999"
-            }
-          }
-        EOF;
-    }
+    return $entity;
+  }
 
-    public static function convertToPatientValueUpdateResult()
-    {
-        return <<<EOF
-        {
-            "result": {
-              "patient_code": "999"
-            }
-          }
-        EOF;
-    }
+  public static function convertToPatientValueUpdateResult($patient_code)
+  {
+    $res = new Response\Api\PatientValueResult;
+
+    $res->patient_code = $patient_code;
+
+    return $res;
+  }
 }

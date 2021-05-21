@@ -14,6 +14,11 @@ class VentilatorValueRepository
         return VentilatorValue::query();
     }
 
+    public static function findOneById($id)
+    {
+        return static::query()->where('id', $id)->first();
+    }
+
     public static function existsByVentilatorId($ventilator_id)
     {
         return static::query()->where('ventilator_id', $ventilator_id)->exists();
@@ -45,11 +50,6 @@ class VentilatorValueRepository
             ]);
     }
 
-    public static function updateFixedFlg($created_at_least)
-    {
-        //TODO fixed_flgアップデート処理
-    }
-
     public static function findBySeachValuesAndLimitOffsetOrderByRegisteredAtDesc(array $search_values, $limit = null, $offset = null)
     {
         return self::createLimitOffsetClause(
@@ -71,7 +71,7 @@ class VentilatorValueRepository
 
         if (isset($search_values['confirmed_user_id'])) $query->where('confirmed_user_id', $search_values['confirmed_user_id']);
 
-        return $query->orderBy('registered_at','DESC');
+        return $query->orderBy('registered_at', 'DESC');
     }
 
     private static function createLimitOffsetClause($query, $limit = null, $offset = 0)
@@ -99,5 +99,26 @@ class VentilatorValueRepository
                 $table . '.*',
                 $user_table . '.name AS registered_user_name',
             ]);
+    }
+
+    public static function queryByScannedAtIsNullOrderByRegisteredAtASC()
+    {
+        return static::query()
+            ->whereNull('ventilator_value_scanned_at')
+            ->orderBy('registered_at','ASC');
+    }
+
+    public static function updateFixedFlgAndFixedAt($fix_ids,$fixed_at)
+    {
+        static::query()
+        ->whereIn('id',$fix_ids)
+        ->update(['fixed_flg'=>VentilatorValue::FIX,'fixed_at'=>$fixed_at]);
+    }
+
+    public static function updateScannedAt($scanned_ids, $scanned_at)
+    {
+        static::query()
+        ->whereIn('id',$scanned_ids)
+        ->update(['ventilator_value_scanned_at'=>$scanned_at]);
     }
 }

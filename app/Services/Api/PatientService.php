@@ -3,15 +3,11 @@
 namespace App\Services\Api;
 
 use App\Exceptions;
-use App\Models;
-use App\Http\Forms\Api as Form;
-use App\Http\Response as Response;
+use App\Models\HistoryBaseModel;
 use App\Repositories as Repos;
-use App\Models\Report;
 use App\Services\Support as Support;
-use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon;
 use App\Services\Support\Converter;
+use App\Services\Support\DateUtil;
 use App\Services\Support\DBUtil;
 
 use function PHPUnit\Framework\isJson;
@@ -42,7 +38,7 @@ class PatientService
 
         $ventilator = Repos\VentilatorRepository::findOneById($form->ventilator_id);
 
-        if (is_null($ventilator)){
+        if (is_null($ventilator)) {
             $form->addError('ventilator_id', 'validation.id_not_found');
             return false;
         }
@@ -62,9 +58,13 @@ class PatientService
                 $ventilator->save();
             }
         );
-        
+
         //組織の設定値が存在すればそっちの値を使用
-        $organization_setting = !is_null($organization_id) ? Repos\OrganizationSettingRepository::findOneByOrganizationId($organization_id) : null;
+        $organization_setting = null;
+
+        if (!is_null($organization_id)) {
+            $organization_setting = Repos\OrganizationSettingRepository::findOneByOrganizationId($organization_id);
+        }
 
         $vt_per_kg = !is_null($organization_setting) ? $organization_setting->vt_per_kg : config('calc.default.vt_per_kg');
 
@@ -86,10 +86,14 @@ class PatientService
         }
 
         //組織の設定値が存在すればそっちの値を使用
-        $organization_setting = !is_null($patient->organization_id) ? Repos\OrganizationSettingRepository::findOneByOrganizationId($patient->organization_id) : null;
+        $organization_setting = null;
+
+        if (!is_null($patient->organization_id)) {
+            $organization_setting = Repos\OrganizationSettingRepository::findOneByOrganizationId($patient->organization_id);
+        }
 
         $vt_per_kg = !is_null($organization_setting) ? $organization_setting->vt_per_kg : config('calc.default.vt_per_kg');
-        
+
         //理想体重の算出
         $ideal_weight = strval($this->calcIdealWeight(floatval($patient->height), $patient->gender));
 
@@ -130,12 +134,14 @@ class PatientService
             }
         );
 
-        $vt_per_kg = config('calc.default.vt_per_kg');
-        
         //組織の設定値が存在すればそっちの値を使用
-        if (!is_null($patient->organization_id) && !is_null($organization_setting = Repos\OrganizationSettingRepository::findOneByOrganizationId($patient->organization_id))) {
-            $vt_per_kg =$organization_setting->vt_per_kg;
+        $organization_setting = null;
+
+        if (!is_null($patient->organization_id)) {
+            $organization_setting = Repos\OrganizationSettingRepository::findOneByOrganizationId($patient->organization_id);
         }
+
+        $vt_per_kg = !is_null($organization_setting) ? $organization_setting->vt_per_kg : config('calc.default.vt_per_kg');
 
         //理想体重の算出
         $ideal_weight = strval($this->calcIdealWeight(floatval($form->height), $form->gender));
@@ -145,19 +151,127 @@ class PatientService
         return Converter\PatientConverter::convertToPatientResult($entity, $predicted_vt);
     }
 
-    //TODO 以下補完作業
-    public function getPatientValueResult()
+    public function getPatientValueResult($form)
     {
-        return json_decode(Converter\PatientConverter::convertToPatientValueResult(), true);
+        $patient = Repos\PatientRepository::findOneById($form->id);
+
+        if (is_null($patient)) {
+            $form->addError('id', 'validation.id_not_found');
+            return false;
+        }
+
+        $patient_value = Repos\PatientValueRepository::findOneByPatientId($form->id);
+
+        return Converter\PatientConverter::convertToPatientValueResult($patient->patient_code, $patient_value);
     }
 
-    public function createPatientValue()
+    public function createPatientValue($form, $user)
     {
-        return json_decode(Converter\PatientConverter::convertToPatientValueRegistrationResult(), true);
+        $patient = Repos\PatientRepository::findOneById($form->id);
+
+        if (is_null($patient)) {
+            $form->addError('id', 'validation.id_not_found');
+            return false;
+        }
+
+        $patient_value = Repos\PatientValueRepository::findOneByPatientId($form->id);
+
+        if (!is_null($patient_value)) {
+            $form->addError('id', 'validation.duplicated_patient_id');
+            return false;
+        }
+
+        $registered_at = DateUtil::toDatetimeStr(DateUtil::now());
+
+        $entity = Converter\PatientConverter::convertToPatientValueEntity(
+            $form->id,
+            $user->id,
+            $registered_at,
+            $form->opt_out_flg,
+            $form->age,
+            $form->vent_disease_name,
+            $form->other_disease_name_1,
+            $form->other_disease_name_2,
+            $form->used_place,
+            $form->hospital,
+            $form->national,
+            $form->discontinuation_at,
+            $form->outcome,
+            $form->treatment,
+            $form->adverse_event_flg,
+            $form->adverse_event_contents
+        );
+
+        DBUtil::Transaction(
+            '患者観察研究データ登録',
+            function () use ($entity, $user) {
+                $entity->save();
+                //登録履歴追加
+                $create_history = Converter\HistoryConverter::convertToHistoryEntity($entity, HistoryBaseModel::CREATE, $user->id);
+                $create_history->save();
+            }
+        );
+
+        return Converter\PatientConverter::convertToPatientValueUpdateResult($patient->patient_code);
     }
 
-    public function updatePatientValue()
+    public function updatePatientValue($form, $user)
     {
-        return json_decode(Converter\PatientConverter::convertToPatientValueUpdateResult(), true);
+        $patient = Repos\PatientRepository::findOneById($form->id);
+
+        if (is_null($patient)) {
+            $form->addError('id', 'validation.id_not_found');
+            return false;
+        }
+
+        $patient_value = Repos\PatientValueRepository::findOneByPatientId($form->id);
+
+        if (is_null($patient_value)) {
+            $form->addError('id', 'validation.has_not_been_observed');
+            return false;
+        }
+
+        //編集前データの複製
+        $patient_value_copy = $patient_value->replicate();
+
+        $entity = Converter\PatientConverter::convertToPatientValueUpdateEntity(
+            $patient_value_copy,
+            $user->id,
+            $form->opt_out_flg,
+            $form->age,
+            $form->vent_disease_name,
+            $form->other_disease_name_1,
+            $form->other_disease_name_2,
+            $form->used_place,
+            $form->hospital,
+            $form->national,
+            $form->discontinuation_at,
+            $form->outcome,
+            $form->treatment,
+            $form->adverse_event_flg,
+            $form->adverse_event_contents,
+        );
+
+        //編集元にdeleted_atを記録
+        $patient_value->deleted_at = DateUtil::toDatetimeStr(DateUtil::now());
+
+        DBUtil::Transaction(
+            '編集後データの挿入',
+            function () use ($entity, $patient_value, $user) {
+                //編集前データ削除
+                $patient_value->save();
+                //削除履歴追加
+                $delete_history = Converter\HistoryConverter::convertToHistoryEntity($patient_value, HistoryBaseModel::DELETE, $user->id);
+                $delete_history->save();
+
+                //編集後データ登録
+                $entity->save();
+                //登録履歴追加
+                $create_history = Converter\HistoryConverter::convertToHistoryEntity($entity, HistoryBaseModel::CREATE, $user->id);
+                $create_history->save();
+            }
+        );
+
+        return Converter\PatientConverter::convertToPatientValueUpdateResult($patient->patient_code);
     }
 }

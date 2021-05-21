@@ -3,39 +3,74 @@
 namespace App\Services;
 
 use App\Repositories as Repos;
-use App\Services\Support\Converter;
-use App\Http\Response as Response;
-use App\Services\Support;
 use App\Exceptions;
-use App\Exceptions\InvalidException;
 use App\Models\VentilatorValue;
-use App\Models\Format;
-use App\Repositories\VentilatorValueRepository;
 use App\Services\Support\DateUtil;
+use App\Services\Support\DBUtil;
 
 class VentilatorValueBatchService
 {
-
-    public function test()
-    {
-        echo 'test';
-    }
-
     public function updateFixedFlg()
     {
-        $ago = config('system.fixed_flg_interval');
+        $interval = config('system.fixed_flg_interval');
 
-        /**
-         * TODO バッチ処理一本型
-         * 前回バッチが処理した最後のIDを保持しておいて、
-         * そのID以降の全データをなめ、一時間インターバルが空いているレコードにFIXを立てるという実装
-         * 
-         * 現実装だと、7:10登録 8:00バッチ処理 8:20登録といったケースで7:10のレコードにfixがつかないため。
-         */
-        Support\DBUtil::Transaction(
-            'fixed_flgを立てる',
-            function () use ($ago) {
-                Repos\VentilatorValueRepository::updateFixedFlg(DateUtil::hourAgo(DateUtil::now(), $ago));
+        $chunk_size = 5000;
+
+        $now = DateUtil::now();
+
+        $fix_ids = [];
+
+        $scanned_ids = [];
+
+        //連想配列を用いて同ventilator_idを持つ前の値とregistered_atを比較する。
+        $ventilator_id_to_current_value_map = [];
+
+        $query = Repos\VentilatorValueRepository::queryByScannedAtIsNullOrderByRegisteredAtASC();
+
+        $query->chunk(
+            $chunk_size,
+            function ($ventilator_values) use ($interval, &$fix_ids, &$scanned_ids, &$ventilator_id_to_current_value_map) {
+
+                foreach ($ventilator_values as $ventilator_value) {
+
+                    $ventilator_id = $ventilator_value->ventilator_id;
+
+                    if (isset($ventilator_id_to_current_value_map[$ventilator_id])) {
+
+                        $current_value = $ventilator_id_to_current_value_map[$ventilator_id];
+
+                        $registered_at_next = DateUtil::datetimeStrToCarbon($ventilator_value->registered_at);
+
+                        $registered_at = DateUtil::datetimeStrToCarbon($current_value->registered_at);
+
+                        if ($registered_at->diffInHours($registered_at_next) >= $interval) {
+                            $fix_ids[] = $current_value->id;
+                        }
+
+                        $scanned_ids[] = $current_value->id;
+                    }
+
+                    $ventilator_id_to_current_value_map[$ventilator_id] = $ventilator_value;
+                }
+            }
+        );
+
+        //最新データに対してはfixed_flgが立つものに対してのみscanned_atを記録する。
+        foreach ($ventilator_id_to_current_value_map as $ventilator_value) {
+            if (DateUtil::datetimeStrToCarbon($ventilator_value->registered_at)->diffInHours($now) >= $interval) {
+                $fix_ids[] = $ventilator_value->id;
+                $scanned_ids[] = $ventilator_value->id;
+            }
+        }
+
+        DBUtil::Transaction(
+            'fixed_flgを建ててfixed_at,scanned_atを記録',
+            function () use ($fix_ids, $scanned_ids, $now) {
+                //fixed_flg・fixed_atの更新
+                Repos\VentilatorValueRepository::updateFixedFlgAndFixedAt($fix_ids, $now);
+
+                //scanned_atの更新
+                Repos\VentilatorValueRepository::updateScannedAt($scanned_ids, $now);
             }
         );
     }

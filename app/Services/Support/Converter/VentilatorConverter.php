@@ -11,21 +11,27 @@ use App\Services\Support\DateUtil;
 
 class VentilatorConverter
 {
-    public static function convertToVentilatorResult($entity = null)
+    public static function convertToVentilatorResult($entity = null, $organization_checked = null)
     {
         $res = new Response\Api\VentilatorResult;
 
         if ($res->is_registered = !is_null($entity)) {
+            $res->organization_checked = $organization_checked;
 
-            $res->ventilator_id = $entity->id;
+            $res->organization_name = $entity->organization_name;
 
-            $res->patient_id = $entity->patient_id ?? null;
+            $res->organization_code = $entity->organization_code;
+            //nullの場合も諸情報を返す
+            if ($organization_checked !== false){
+                $res->ventilator_id = $entity->id;
 
-            $res->organization_name = $entity->organization_name ?? null;
+                $res->patient_id = $entity->patient_id;
+    
+                $res->serial_number = strval($entity->serial_number);
+    
+                $res->start_using_at = $entity->start_using_at;
+            }
 
-            $res->serial_number = $entity->serial_number;
-
-            $res->start_using_at = $entity->start_using_at;
         }
 
         return $res;
@@ -37,16 +43,22 @@ class VentilatorConverter
 
         $res->ventilator_id = $entity->id;
 
-        $res->organization_name = $entity->organization_name ?? null;
+        $res->organization_name = $entity->organization_name;
 
-        $res->serial_number = $entity->serial_number;
+        $res->organization_code = $entity->organization_code;
+
+        $res->serial_number = strval($entity->serial_number);
 
         return $res;
     }
 
-    public static function convertToVentilatorUpdateEntity($entity,$start_using_at)
+    public static function convertToVentilatorUpdateEntity($entity,$organization_id,$start_using_at = null)
     {
-        $entity->start_using_at = $start_using_at;
+        $entity->organization_id = $organization_id;
+
+        if(!is_null($start_using_at)){
+            $entity->start_using_at = $start_using_at;
+        }
 
         return $entity;
     }
@@ -60,7 +72,7 @@ class VentilatorConverter
         return $res;
     }
 
-    public static function convertToVentilatorEntity($gs1_code, $serial_number, $latitude = null, $longitude = null, $city = null, $organization_id = null, $registered_user_id = null)
+    public static function convertToVentilatorEntity($gs1_code, $serial_number, $qr_read_at, $latitude = null, $longitude = null, $city = null, $organization_id = null, $registered_user_id = null)
     {
         $entity = new Ventilator;
 
@@ -78,7 +90,9 @@ class VentilatorConverter
 
         $entity->registered_user_id = $registered_user_id;
 
-        $entity->start_using_at = DateUtil::now();
+        $entity->start_using_at = $qr_read_at;
+
+        $entity->qr_read_at = $qr_read_at;
 
         return $entity;
     }

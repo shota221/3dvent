@@ -3,14 +3,8 @@
 namespace App\Services\Api;
 
 use App\Exceptions;
-use App\Models;
-use App\Http\Forms\Api as Form;
-use App\Http\Response as Response;
 use App\Repositories as Repos;
-use App\Models\Report;
 use App\Services\Support as Support;
-use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon;
 use App\Services\Support\Converter;
 use App\Services\Support\DBUtil;
 
@@ -25,7 +19,8 @@ class UserService
 
     public function update($form, $user)
     {
-        $exists = Repos\UserRepository::existsByNameAndOrganizationId($form->name, $user->organization_id);
+        //フォームとアップデート先両方にユーザ名があり、それらが同一でないかつ、同一組織内に同じユーザ名が存在するかどうか
+        $exists =  !is_null($form->name) && !is_null($user->name) && $form->name !== $user->name && Repos\UserRepository::existsByNameAndOrganizationId($form->name, $user->organization_id);
         //ユーザー名は組織内にて一意
         if ($exists) {
             $form->addError('user_name', 'validation.duplicated_user_name');

@@ -11,6 +11,11 @@ class OrganizationRepository
         return Organization::query();
     }
 
+    public static function count($query = null)
+    {
+        return !is_null($query) ? $query->count() : static::query()->count();
+    }
+
     public static function findOneById(int $organization_id)
     {
         return static::query()->where('id', $organization_id)->first();

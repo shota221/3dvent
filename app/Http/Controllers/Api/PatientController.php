@@ -27,7 +27,7 @@ class PatientController extends ApiController
 
         $user = $this->getUser();
 
-        if ($form->hasError() || !$response = $this->service->create($form,$user)) {
+        if ($form->hasError() || !$response = $this->service->create($form, $user)) {
             throw new Exceptions\InvalidFormException($form);
         }
 
@@ -52,7 +52,7 @@ class PatientController extends ApiController
         $request->merge(['id' => $id]);
 
         $form = new Form\PatientUpdateForm($request->all());
-        
+
         if ($form->hasError() || !$response = $this->service->update($form)) {
             throw new Exceptions\InvalidFormException($form);
         }
@@ -60,19 +60,46 @@ class PatientController extends ApiController
         return $response;
     }
 
-    //TODO　以下補完作業
-    public function showDetail(Request $request)
+    public function showDetail(Request $request, $id)
     {
-        return $this->service->getPatientValueResult();
+        $request->merge(['id' => $id]);
+
+        $form = new Form\PatientShowForm($request->all());
+
+        if ($form->hasError() || !$response = $this->service->getPatientValueResult($form)) {
+            throw new Exceptions\InvalidFormException($form);
+        }
+
+        return $response;
     }
 
-    public function createDetail(Request $request)
+    public function createDetail(Request $request, $id)
     {
-        return $this->service->createPatientValue();
+        $request->merge(['id' => $id]);
+
+        $form = new Form\PatientValueForm($request->all());
+
+        $user = $this->getUser();
+
+        if ($form->hasError() || !$response = $this->service->createPatientValue($form, $user)) {
+            throw new Exceptions\InvalidFormException($form);
+        }
+
+        return $response;
     }
 
-    public function updateDetail(Request $request)
+    public function updateDetail(Request $request, $id)
     {
-        return $this->service->updatePatientValue();
+        $request->merge(['id' => $id]);
+
+        $form = new Form\PatientValueForm($request->all());
+
+        $user = $this->getUser();
+
+        if ($form->hasError() || !$response = $this->service->updatePatientValue($form, $user)) {
+            throw new Exceptions\InvalidFormException($form);
+        }
+
+        return $response;
     }
 }

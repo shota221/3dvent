@@ -5,9 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class VentilatorValue extends TraceableBaseModel
+class HistoryBaseModel extends BaseModel
 {
     const
-        UPDATED_AT = null,
-        FIX = 1;
+    UPDATED_AT = null,
+    CREATE = 1,
+    DELETE = 2;
 }
