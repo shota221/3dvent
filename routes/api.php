@@ -25,6 +25,20 @@ Route::group(['middleware' => ['routetype:api']], function () {
          **********/
         //idfv登録・アプリキー発行
         Route::post('/appkey', 'AppkeyController@create')->name('api.appkey.create');
+
+        /**********
+         * observation(TRI_API) *
+         **********/
+        // 観察研究データ数取得
+        Route::get('/observation/count', 'ObservationController@count')->name('api.observation.count');
+
+        // 患者観察研究データ取得
+        Route::get('/observation/patient/list', 'ObservationController@patientList')->name('api.observation.patient.list');
+        
+        // 機器観察研究データ取得
+        Route::get('/observation/ventilator/list', 'ObservationController@ventilatorList')->name('api.observation.ventilator.list');
+
+
     });
 
     //アプリキー認証ルート
