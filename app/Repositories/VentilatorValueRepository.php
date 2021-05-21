@@ -101,42 +101,24 @@ class VentilatorValueRepository
             ]);
     }
 
-
-    /**
-     * バッチスキャン対象:未スキャンかつregistered_atが現在時刻から指定インターバルより過去の危機観察研究データ(現在時刻から指定インターバル以内のデータはfixed_flgが立ち得ないため)
-     * を持つventilator_idを配列として返す。
-     * @param [type] $registered_at_to
-     */
-    public static function listOfVentilatorIdByScannedAtIsNullAndRegisteredAtTo($registered_at_to)
+    public static function queryByScannedAtIsNullOrderByRegisteredAtASC()
     {
         return static::query()
-            ->select('ventilator_id')
             ->whereNull('ventilator_value_scanned_at')
-            ->where('registered_at', '<=', $registered_at_to)
-            ->groupBy('ventilator_id')
-            ->pluck('ventilator_id');
+            ->orderBy('registered_at','ASC');
     }
 
-    public static function findByVenitilatorIdAndScannedAtIsNull($ventilator_id)
-    {
-        return static::query()
-            ->where('ventilator_id', $ventilator_id)
-            ->whereNull('ventilator_value_scanned_at')
-            ->orderBy('registered_at','DESC')
-            ->get();
-    }
-
-    public static function updateBulkFixedFlgAndFixedAt($ids_to_fix,$fixed_at)
+    public static function updateFixedFlgAndFixedAt($fix_ids,$fixed_at)
     {
         static::query()
-        ->whereIn('id',$ids_to_fix)
-        ->update(['fixed_flg'=>1,'fixed_at'=>$fixed_at]);
+        ->whereIn('id',$fix_ids)
+        ->update(['fixed_flg'=>VentilatorValue::FIX,'fixed_at'=>$fixed_at]);
     }
 
-    public static function updateBulkScannedAt($ids_scanned, $scanned_at)
+    public static function updateScannedAt($scanned_ids, $scanned_at)
     {
         static::query()
-        ->whereIn('id',$ids_scanned)
+        ->whereIn('id',$scanned_ids)
         ->update(['ventilator_value_scanned_at'=>$scanned_at]);
     }
 }

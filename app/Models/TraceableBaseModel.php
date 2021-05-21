@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model as EloquentModel;
-
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
@@ -13,6 +13,12 @@ use Illuminate\Support\Str;
  */
 class TraceableBaseModel extends BaseModel
 {
+    use SoftDeletes;
+
+    //論理削除されているレコードをみない
+    protected $dates = ['deleted_at'];
+    //削除済みのデータも含める->Model::withTrashed()
+
     /**
      * ヒストリテーブル名取得
      * 
