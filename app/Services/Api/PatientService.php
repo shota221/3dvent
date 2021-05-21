@@ -160,7 +160,7 @@ class PatientService
             return false;
         }
 
-        $patient_value = Repos\PatientValueRepository::findOneByPatientId($form->id);
+        $patient_value = Repos\PatientValueRepository::findOneByPatientIdAndDeletedAtIsNull($form->id);
 
         return Converter\PatientConverter::convertToPatientValueResult($patient->patient_code, $patient_value);
     }
@@ -174,7 +174,7 @@ class PatientService
             return false;
         }
 
-        $patient_value = Repos\PatientValueRepository::findOneByPatientId($form->id);
+        $patient_value = Repos\PatientValueRepository::findOneByPatientIdAndDeletedAtIsNull($form->id);
 
         if (!is_null($patient_value)) {
             $form->addError('id', 'validation.duplicated_patient_id');

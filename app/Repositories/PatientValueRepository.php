@@ -11,18 +11,13 @@ class PatientValueRepository
         return PatientValue::query();
     }
 
-    public static function findOneById(int $patient_id)
+    public static function findOneById(int $id)
     {
-        return static::query()->where('id', $patient_id)->first();
+        return static::query()->where('id', $id)->first();
     }
-
-    public static function findOneByPatientId($patient_id)
-    {
-        return static::query()->where('patient_id', $patient_id)->first();
-    }
-
+    
     public static function findOneByPatientIdAndDeletedAtIsNull($patient_id)
     {
-        return static::query()->where('patient_id', $patient_id)->whereNull('deleted_at')->first();
+        return static::query()->where('patient_id', $patient_id)->whereNull('deleted_at')->orderBy('registered_at','DESC')->first();
     }
 }

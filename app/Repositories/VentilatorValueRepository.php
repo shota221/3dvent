@@ -50,34 +50,6 @@ class VentilatorValueRepository
             ]);
     }
 
-    //TODO DELETE ME
-    public static function updateFixedFlg($now, $interval)
-    {
-        $table = VentilatorValue::tableName();
-
-        //指定時間以前のレコードのうちscanned_atがnullのものをはいて、そこから指定時間以内に同呼吸器に対してのレコードがなければfixed_flgとfixed_atを記録する。
-        $sql_to_fix =
-            'UPDATE ' . $table . ' AS a 
-            SET a.fixed_flg = ' . VentilatorValue::BOOLEAN_TRUE . ',a.fixed_at = "' . $now . '" 
-            WHERE a.ventilator_value_scanned_at IS NULL 
-            AND a.registered_at<=DATE_SUB("' . $now . '",INTERVAL ' . $interval . ' HOUR) 
-            AND NOT EXISTS(
-                SELECT 1 FROM (SELECT id,ventilator_id, registered_at FROM ventilator_values WHERE ventilator_value_scanned_at IS NULL) AS b 
-                WHERE b.id>a.id AND b.ventilator_id = a.ventilator_id 
-                AND b.registered_at BETWEEN a.registered_at 
-                AND DATE_ADD(a.registered_at,INTERVAL ' . $interval . ' HOUR))';
-
-        //↑ではいたもの全てにscanned_atを記録する
-        $sql_to_record_scanned_at =
-            'UPDATE ' . $table . '  
-            SET ventilator_value_scanned_at = "' . $now . '" 
-            WHERE ventilator_value_scanned_at IS NULL 
-            AND registered_at<=DATE_SUB("' . $now . '",INTERVAL ' . $interval . ' HOUR)';
-
-        \DB::update($sql_to_fix);
-        \DB::update($sql_to_record_scanned_at);
-    }
-
     public static function findBySeachValuesAndLimitOffsetOrderByRegisteredAtDesc(array $search_values, $limit = null, $offset = null)
     {
         return self::createLimitOffsetClause(
@@ -132,27 +104,39 @@ class VentilatorValueRepository
 
     /**
      * バッチスキャン対象:未スキャンかつregistered_atが現在時刻から指定インターバルより過去の危機観察研究データ(現在時刻から指定インターバル以内のデータはfixed_flgが立ち得ないため)
-     * チャンク処理をおこなうためqueryで返す。
+     * を持つventilator_idを配列として返す。
      * @param [type] $registered_at_to
      */
-    public static function queryByScannedAtIsNullAndRegisteredAtTo($registered_at_to)
+    public static function listOfVentilatorIdByScannedAtIsNullAndRegisteredAtTo($registered_at_to)
     {
-        return static::query()->whereNull('ventilator_value_scanned_at')
-            ->where('registered_at', '<=', $registered_at_to);
+        return static::query()
+            ->select('ventilator_id')
+            ->whereNull('ventilator_value_scanned_at')
+            ->where('registered_at', '<=', $registered_at_to)
+            ->groupBy('ventilator_id')
+            ->pluck('ventilator_id');
     }
 
-    /**
-     * fixed_flg判定用。スキャン対象きき観察研究データのregistered_atから指定インターバル以内に登録されたデータが存在するかどうか。
-     *
-     * @param [type] $ventilator_id
-     * @param [type] $registered_at_from
-     * @param [type] $registered_at_to
-     */
-    public static function existsByVentilatorIdAndRegisteredAtFromTo($ventilator_id, $registered_at_from, $registered_at_to)
+    public static function findByVenitilatorIdAndScannedAtIsNull($ventilator_id)
     {
-        return static::query()->where('ventilator_id', $ventilator_id)
-            ->where('registered_at', '>', $registered_at_from)
-            ->where('registered_at', '<=', $registered_at_to)
-            ->exists();
+        return static::query()
+            ->where('ventilator_id', $ventilator_id)
+            ->whereNull('ventilator_value_scanned_at')
+            ->orderBy('registered_at','DESC')
+            ->get();
+    }
+
+    public static function updateBulkFixedFlgAndFixedAt($ids_to_fix,$fixed_at)
+    {
+        static::query()
+        ->whereIn('id',$ids_to_fix)
+        ->update(['fixed_flg'=>1,'fixed_at'=>$fixed_at]);
+    }
+
+    public static function updateBulkScannedAt($ids_scanned, $scanned_at)
+    {
+        static::query()
+        ->whereIn('id',$ids_scanned)
+        ->update(['ventilator_value_scanned_at'=>$scanned_at]);
     }
 }
