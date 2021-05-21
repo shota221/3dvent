@@ -122,20 +122,7 @@ class ObservationConverter
                 {
                     "operation":"create",
                     "patient_id":2,
-                    "optout":1,
-                    "organization_name":"●●施設",
-                    "patient_code":"nb00002",
-                    "age":"50",
-                    "vent_disease_name":"",
-                    "other_disease_name_1":"",
-                    "other_disease_name_2":"",
-                    "used_place":1,
-                    "hospital":"",
-                    "national":"",
-                    "discontinuation_at":"",
-                    "adverse_event_flg":0,
-                    "adverse_event_contents":"",
-                    "registered_at":"2021/05/11 15:50:10"
+                    "optout":1
                 }
             ]
         }
