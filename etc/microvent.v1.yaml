@@ -1318,17 +1318,26 @@ paths:
                   result:
                     type: object
                     properties:
+                      patient_id:
+                        type: number
                       patient_code:
                         type: string
                         minLength: 1
                     required:
+                      - patient_id
                       - patient_code
                 required:
                   - result
+                x-examples:
+                  example-1:
+                    result:
+                      patient_id: 1
+                      patient_code: '999'
               examples:
                 example-1:
                   value:
                     result:
+                      patient_id: 1
                       patient_code: '999'
       description: 患者観察研究データの登録
       parameters:
@@ -1422,17 +1431,26 @@ paths:
                   result:
                     type: object
                     properties:
+                      patient_id:
+                        type: number
                       patient_code:
                         type: string
                         minLength: 1
                     required:
+                      - patient_id
                       - patient_code
                 required:
                   - result
+                x-examples:
+                  example-1:
+                    result:
+                      patient_id: 1
+                      patient_code: '999'
               examples:
                 example-1:
                   value:
                     result:
+                      patient_id: 1
                       patient_code: '999'
       description: 患者観察研究データの更新
       parameters:
@@ -1873,16 +1891,25 @@ paths:
                   result:
                     type: object
                     properties:
+                      id:
+                        type: number
                       revised_at:
                         type: string
                     required:
+                      - id
                       - revised_at
                 required:
                   - result
+                x-examples:
+                  example-1:
+                    result:
+                      id: 1
+                      revised_at: ''
               examples:
                 example-1:
                   value:
                     result:
+                      id: 1
                       revised_at: ''
       description: 該当ventilator_value_idに対する機器観察研究データの更新
       parameters:

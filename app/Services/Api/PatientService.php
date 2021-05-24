@@ -18,7 +18,22 @@ class PatientService
 
     public function create($form, $user = null)
     {
-        $organization_id = !is_null($user) ? $user->organization_id : null;
+        $ventilator = Repos\VentilatorRepository::findOneById($form->ventilator_id);
+
+        if (is_null($ventilator)) {
+            $form->addError('ventilator_id', 'validation.id_not_found');
+            return false;
+        }
+
+        $organization_id = null;
+
+        if(!is_null($user)) {
+            $organization_id = $user->organization_id;
+        }
+
+        if(!is_null($ventilator->organization_id)){
+            $organization_id = $ventilator->organization_id;
+        }
 
         //同一組織内に同じ患者コードが存在するかどうか
         $exists = !is_null($organization_id) && !is_null($form->patient_code) && Repos\PatientRepository::existsByPatientCodeAndOrganizationId($form->patient_code, $organization_id);
@@ -36,28 +51,15 @@ class PatientService
             $organization_id
         );
 
-        $ventilator = Repos\VentilatorRepository::findOneById($form->ventilator_id);
-
-        if (is_null($ventilator)) {
-            $form->addError('ventilator_id', 'validation.id_not_found');
-            return false;
-        }
-
         DBUtil::Transaction(
-            '患者情報登録',
-            function () use ($entity) {
+            '患者情報登録,呼吸器に患者id登録',
+            function () use ($entity, $ventilator) {
                 $entity->save();
-            }
-        );
-
-        $ventilator->patient_id = $entity->id;
-
-        DBUtil::Transaction(
-            '呼吸器に患者ID登録',
-            function () use ($ventilator) {
+                $ventilator->patient_id = $entity->id;
                 $ventilator->save();
             }
         );
+
 
         //組織の設定値が存在すればそっちの値を使用
         $organization_setting = null;
@@ -212,7 +214,7 @@ class PatientService
             }
         );
 
-        return Converter\PatientConverter::convertToPatientValueUpdateResult($patient->patient_code);
+        return Converter\PatientConverter::convertToPatientValueUpdateResult($patient->id, $patient->patient_code);
     }
 
     public function updatePatientValue($form, $user)
@@ -272,6 +274,6 @@ class PatientService
             }
         );
 
-        return Converter\PatientConverter::convertToPatientValueUpdateResult($patient->patient_code);
+        return Converter\PatientConverter::convertToPatientValueUpdateResult($patient->id, $patient->patient_code);
     }
 }

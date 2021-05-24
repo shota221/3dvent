@@ -124,7 +124,7 @@ return [
 
     'duplicated_email_registration' => 'すでに登録されているメールアドレスです。別のメールアドレスを利用してください。',
     'duplicated_registration' => 'すでに登録されています。',
-    'id_not_found'=>'存在しないIDです。',
+    'id_not_found'=>'削除されているか、存在しないIDです。',
     'appkey_not_found'=>'存在しないアプリキーです。',
     'appkey_required'=>'アプリキーは必須です。',
     'not_enough_pulses'=>'十分なパルスが検出できませんでした。スマートフォンを呼吸器に近づけてください。',
