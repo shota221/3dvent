@@ -222,9 +222,11 @@ class PatientConverter
     return $entity;
   }
 
-  public static function convertToPatientValueUpdateResult($patient_code)
+  public static function convertToPatientValueUpdateResult($patient_id, $patient_code)
   {
     $res = new Response\Api\PatientValueResult;
+
+    $res->patient_id = $patient_id;
 
     $res->patient_code = $patient_code;
 

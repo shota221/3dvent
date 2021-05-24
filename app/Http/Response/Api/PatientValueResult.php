@@ -6,6 +6,8 @@ use App\Http\Response\SuccessJsonResult;
 
 class PatientValueResult extends SuccessJsonResult
 {
+    public $patient_id;
+
     public $has_observed;
 
     public $patient_code;

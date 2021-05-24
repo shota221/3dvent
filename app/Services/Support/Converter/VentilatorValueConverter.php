@@ -62,7 +62,7 @@ class VentilatorValueConverter
 
         $res->has_observed = true;
 
-        $res->ventilator_value_id = $entity->ventilator_value_id;
+        $res->ventilator_value_id = $entity->id;
 
         $res->registered_at = $entity->registered_at;
 
@@ -263,9 +263,11 @@ class VentilatorValueConverter
         return $res;
     }
 
-    public static function convertToVentilatorValueUpdateResult($revised_at)
+    public static function convertToVentilatorValueUpdateResult($id, $revised_at)
     {
         $res = new Response\Api\VentilatorValueResult;
+
+        $res->id = $id;
 
         $res->revised_at = $revised_at;
 

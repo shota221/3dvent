@@ -4,6 +4,7 @@ namespace App\Services\Api;
 
 use App\Exceptions;
 use App\Repositories as Repos;
+use App\Repositories\PatientRepository;
 use App\Services\Support as Support;
 use App\Services\Support\Client\ReverseGeocodingClient;
 use App\Services\Support\Converter;
@@ -100,10 +101,28 @@ class VentilatorService
 
         $entity = Converter\VentilatorConverter::convertToVentilatorUpdateEntity($ventilator, $u_org_id, $form->start_using_at);
 
+        //初回未ログイン状態で機器を読み取ったものの、患者登録を行わないまま中断。次回ログイン状態で機器を読み取った場合の処理
+        if (is_null($entity->patient_id)) {
+            DBUtil::Transaction(
+                '呼吸器情報更新',
+                function () use ($entity) {
+                    $entity->save();
+                }
+            );
+
+            return Converter\VentilatorConverter::convertToVentilatorUpdateResult($entity);
+        }
+
+        $patient = Repos\PatientRepository::findOneById($entity->patient_id);
+
+        //呼吸器の組織ひも付き→呼吸器に紐づく患者も組織に紐づく
+        $patient->organization_id = $u_org_id;
+
         DBUtil::Transaction(
-            'ユーザー情報更新',
-            function () use ($entity) {
+            '呼吸器情報更新',
+            function () use ($entity, $patient) {
                 $entity->save();
+                $patient->save();
             }
         );
 

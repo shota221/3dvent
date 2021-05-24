@@ -209,7 +209,7 @@ class VentilatorValueService
             }
         );
 
-        return Converter\VentilatorValueConverter::convertToVentilatorValueUpdateResult(DateUtil::toDatetimeStr($entity->created_at));
+        return Converter\VentilatorValueConverter::convertToVentilatorValueUpdateResult($entity->id, DateUtil::toDatetimeStr($entity->created_at));
     }
 
     public function getVentilatorValueListResult($form)
