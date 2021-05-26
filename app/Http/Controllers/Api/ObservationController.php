@@ -44,4 +44,12 @@ class ObservationController extends Controller
 
         return $response;
     }
+
+    
+    public function ventilatorBugList(Request $request) 
+    {
+        $response = $this->service->getVentilatorBugList();
+
+        return $response;
+    }
 }

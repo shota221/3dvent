@@ -10,5 +10,6 @@ class HistoryBaseModel extends BaseModel
     const
     UPDATED_AT = null,
     CREATE = 1,
-    DELETE = 2;
+    DELETE = 2
+    ;
 }
