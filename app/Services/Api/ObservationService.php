@@ -28,5 +28,8 @@ class ObservationService
         return json_decode(Converter\ObservationConverter::convertToVentilatorList(), true);
     }
 
+    public function getVentilatorBugList() {
+        return json_decode(Converter\ObservationConverter::convertToVentilatorBugList(), true);
+    }
 
 }

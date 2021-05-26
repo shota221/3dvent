@@ -16,7 +16,8 @@ class ObservationConverter
         {
             "result":{
                 "ventilator_observed_count":3,
-                "patient_observed_count":6
+                "patient_observed_count":6,
+                "ventilator_bug_count":2
             }
         }
         EOF;
@@ -30,6 +31,7 @@ class ObservationConverter
                 {
                     "operation":"create",
                     "patient_id":1,
+                    "organization_id":"1",    
                     "optout":0,
                     "organization_name":"●●施設",
                     "patient_code":"nb00001",
@@ -48,6 +50,7 @@ class ObservationConverter
                 {
                     "operation":"delete",
                     "patient_id":1,
+                    "organization_id":"1",    
                     "optout":0,
                     "organization_name":"●●施設",
                     "patient_code":"nb00001",
@@ -66,6 +69,7 @@ class ObservationConverter
                 {
                     "operation":"create",
                     "patient_id":1,
+                    "organization_id":"1",    
                     "optout":0,
                     "organization_name":"●●施設",
                     "patient_code":"nb00001",
@@ -86,6 +90,7 @@ class ObservationConverter
                 {
                     "operation":"create",
                     "patient_id":2,
+                    "organization_id":"1",    
                     "optout":0,
                     "organization_name":"●●施設",
                     "patient_code":"nb00002",
@@ -104,6 +109,7 @@ class ObservationConverter
                 {
                     "operation":"delete",
                     "patient_id":2,
+                    "organization_id":"1",    
                     "optout":0,
                     "organization_name":"●●施設",
                     "patient_code":"nb00002",
@@ -122,6 +128,7 @@ class ObservationConverter
                 {
                     "operation":"create",
                     "patient_id":2,
+                    "organization_id":"1",    
                     "optout":1
                 }
             ]
@@ -166,13 +173,7 @@ class ObservationConverter
                     "etco2":"",
                     "pao2":"",
                     "paco2":"4.5",
-                    "registered_at":"2021/05/11 13:50:10",
-                    "ventilator_bugs":[
-                        {
-                            "bug_name":"",
-                            "request_improvement":""
-                        }
-                    ]
+                    "registered_at":"2021/05/11 13:50:10"
                 },
                 {
                     "operation":"delete",
@@ -206,13 +207,7 @@ class ObservationConverter
                     "etco2":"",
                     "pao2":"",
                     "paco2":"4.5",
-                    "registered_at":"2021/05/11 13:50:10",
-                    "ventilator_bugs":[
-                        {
-                            "bug_name":"",
-                            "request_improvement":""
-                        }
-                    ]
+                    "registered_at":"2021/05/11 13:50:10"
                 },
                 {
                     "operation":"create",
@@ -247,16 +242,33 @@ class ObservationConverter
                     "etco2":"12.5",
                     "pao2":"5.5",
                     "paco2":"4.5",
-                    "registered_at":"2021/05/11 13:50:10",
-                    "ventilator_bugs":[
-                        {
-                            "bug_name":"切替音が小さい",
-                            "request_improvement":"呼気、吸気切替音をもう少し大きくしてほしい。"
-                        }
-                    ]
+                    "registered_at":"2021/05/11 13:50:10"
+                }
+            ]
+        }
+        EOF;
+    }
+
+    public static function convertToVentilatorBugList()
+    {
+        return <<<EOF
+        {
+            "result":[
+                {            
+                    "organization_id":1,
+                    "ventilator_id":5,
+                    "bug_name":"切替音が小さい",
+                    "request_improvement":"呼気、吸気切替音をもう少し大きくしてほしい。"
+                },
+                {
+                    "organization_id":2,
+                    "ventilator_id":6,
+                    "bug_name":"切替音が小さい",
+                    "request_improvement":"呼気、吸気切替音をもう少し大きくしてほしい。"
                 }
             ]
         }
         EOF;
     }
 }
+
