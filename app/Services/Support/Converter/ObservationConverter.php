@@ -258,13 +258,15 @@ class ObservationConverter
                     "organization_id":1,
                     "ventilator_id":5,
                     "bug_name":"切替音が小さい",
-                    "request_improvement":"呼気、吸気切替音をもう少し大きくしてほしい。"
+                    "request_improvement":"呼気、吸気切替音をもう少し大きくしてほしい。",
+                    "registered_at":"2021/05/11 13:50:10"
                 },
                 {
                     "organization_id":2,
                     "ventilator_id":6,
                     "bug_name":"切替音が小さい",
-                    "request_improvement":"呼気、吸気切替音をもう少し大きくしてほしい。"
+                    "request_improvement":"呼気、吸気切替音をもう少し大きくしてほしい。",
+                    "registered_at":"2021/05/12 13:50:10"
                 }
             ]
         }
