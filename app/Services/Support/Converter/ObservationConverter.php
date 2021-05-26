@@ -31,7 +31,7 @@ class ObservationConverter
                 {
                     "operation":"create",
                     "patient_id":1,
-                    "organization_id":"1",    
+                    "organization_id":1,    
                     "optout":0,
                     "organization_name":"●●施設",
                     "patient_code":"nb00001",
@@ -50,7 +50,7 @@ class ObservationConverter
                 {
                     "operation":"delete",
                     "patient_id":1,
-                    "organization_id":"1",    
+                    "organization_id":1,    
                     "optout":0,
                     "organization_name":"●●施設",
                     "patient_code":"nb00001",
@@ -69,11 +69,11 @@ class ObservationConverter
                 {
                     "operation":"create",
                     "patient_id":1,
-                    "organization_id":"1",    
+                    "organization_id":1,    
                     "optout":0,
                     "organization_name":"●●施設",
                     "patient_code":"nb00001",
-                    "age":"50",
+                    "":"50",
                     "vent_disease_name":"肺炎",
                     "other_disease_name_1":"糖尿病",
                     "other_disease_name_2":"高血圧症",
@@ -90,7 +90,7 @@ class ObservationConverter
                 {
                     "operation":"create",
                     "patient_id":2,
-                    "organization_id":"1",    
+                    "organization_id":1,    
                     "optout":0,
                     "organization_name":"●●施設",
                     "patient_code":"nb00002",
@@ -109,7 +109,7 @@ class ObservationConverter
                 {
                     "operation":"delete",
                     "patient_id":2,
-                    "organization_id":"1",    
+                    "organization_id":1,    
                     "optout":0,
                     "organization_name":"●●施設",
                     "patient_code":"nb00002",
@@ -128,7 +128,7 @@ class ObservationConverter
                 {
                     "operation":"create",
                     "patient_id":2,
-                    "organization_id":"1",    
+                    "organization_id":1,    
                     "optout":1
                 }
             ]
