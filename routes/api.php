@@ -38,6 +38,10 @@ Route::group(['middleware' => ['routetype:api']], function () {
         // 機器観察研究データ取得
         Route::get('/observation/ventilator/list', 'ObservationController@ventilatorList')->name('api.observation.ventilator.list');
 
+        
+        //音声解析テスト端末用音声データ保存API
+        Route::post('/calculate/ie/sound_sampling', 'CalcController@ieSoundSampling')->name('api.calc.ie_sound_sampling');
+
 
     });
 
@@ -62,8 +66,6 @@ Route::group(['middleware' => ['routetype:api']], function () {
         Route::get('/calculate/estimated_data', 'CalcController@estimatedData')->name('api.calc.estimated_data');
         Route::post('/calculate/ie/manual', 'CalcController@ieManual')->name('api.calc.ie_manual');
         Route::post('/calculate/ie/sound', 'CalcController@ieSound')->name('api.calc.ie_sound');
-        //音声解析テスト端末用音声データ保存API
-        Route::post('/calculate/ie/sound_sampling', 'CalcController@ieSoundSampling')->name('api.calc.ie_sound_sampling');
 
 
         /***********
