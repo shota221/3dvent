@@ -26,7 +26,7 @@ class PatientObservationListForm extends BaseForm
             'edcid'     => 'required|' . Rule::VALUE_STRING,
             'date_from' => 'nullable|date',
             'date_to'   => 'nullable|date',
-            'limit'     => 'required|'.Rule::VALUE_POSITIVE_INTEGER,
+            'limit'     => 'required|'.Rule::VALUE_POSITIVE_INTEGER .'|between:0,200',
             'offset'    => 'required|'.Rule::VALUE_POSITIVE_INTEGER,
         ];
     }
