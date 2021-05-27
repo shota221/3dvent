@@ -16,21 +16,21 @@ class VentilatorBugRepository
     public static function countBySearchValues(array $search_values)
     {
         $query = static::query();
+        $query = self::joinVentilatorAndOrganization($query);
+        $query = self::createWhereClauseFromSearchValues($query, $search_values);
 
-        return self::createWhereClauseFromSearchValues(
-            self::joinVentilatorAndOrganization($query), 
-            $search_values)->count();
+        return $query->count();
     }
 
     public static function findBySeachValuesAndLimitOffsetOrderByRegisteredAtAsc(array $search_values, int $limit, int $offset)
     {
         $query = static::query();
+        $query = self::joinVentilatorAndOrganization($query);
+        $query = self::createWhereClauseFromSearchValuesOrderByRegisteredAtAsc($query, $search_values);
+        $query = self::createLimitOffsetClause($query, $limit, $offset);
+
+        return $query->get();
         
-        return self::createLimitOffsetClause(
-            self::createWhereClauseFromSearchValuesOrderByRegisteredAtAsc(static::joinVentilatorAndOrganization($query), $search_values),
-            $limit,
-            $offset
-        )->get();
     }
    
     private static function createLimitOffsetClause($query, int $limit, int $offset)

@@ -18,21 +18,21 @@ class VentilatorValueHistoryRepository
     public static function countBySearchValues(array $search_values)
     {
         $query = static::query();
+        $query = self::joinVentilatorValueAndVentilatorAndOrganization($query);
+        $query = self::createWhereClauseFromSearchValues($query, $search_values);
 
-        return self::createWhereClauseFromSearchValues(
-            self::joinVentilatorValueAndVentilatorAndOrganization($query), 
-            $search_values)->count();
+        return $query->count();
     }
 
     public static function findBySeachValuesAndLimitOffsetOrderByVentilatorValueRegisteredAtAscAndCreatedAtAsc(array $search_values, int $limit, int $offset)
     {
         $query = static::query();
+        $query = self::joinVentilatorValueAndVentilatorAndUserAndOrganization($query);
+        $query = self::createWhereClauseFromSearchValuesOrderByVentilatorValueRegisteredAtAscAndCreatedAtAsc($query, $search_values);
+        $query = self::createLimitOffsetClause($query, $limit, $offset);
+
+        return $query->get();
         
-        return self::createLimitOffsetClause(
-            self::createWhereClauseFromSearchValuesOrderByVentilatorValueRegisteredAtAscAndCreatedAtAsc(static::joinVentilatorValueAndVentilatorAndUserAndOrganization($query), $search_values),
-            $limit,
-            $offset
-        )->get();
     }
 
     private static function createLimitOffsetClause($query, int $limit, int $offset)

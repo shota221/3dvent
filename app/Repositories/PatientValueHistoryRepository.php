@@ -18,21 +18,20 @@ class PatientValueHistoryRepository
     public static function countBySearchValues(array $search_values)
     {
         $query = static::query();
+        $query = self::joinUserAndOrgazation($query);
+        $query = self::createWhereClauseFromSearchValues($query, $search_values);
 
-        return self::createWhereClauseFromSearchValues(
-            self::joinUserAndOrgazation($query), 
-            $search_values)->count();
+        return $query->count();    
     }
 
     public static function findBySeachValuesAndLimitOffsetOrderByPatientValueRegisteredAtAscAndCreatedAtAsc(array $search_values, int $limit, int $offset)
     {
         $query = static::query();
+        $query = self::joinPatientValueAndPatientAndOrganization($query);
+        $query = self::createWhereClauseFromSearchValuesOrderByPatientValueRegisteredAtAscAndCreatedAtAsc($query, $search_values);
+        $query = self::createLimitOffsetClause($query, $limit, $offset);
 
-        return self::createLimitOffsetClause(
-            self::createWhereClauseFromSearchValuesOrderByPatientValueRegisteredAtAscAndCreatedAtAsc(static::joinPatientValueAndPatientAndOrganization($query), $search_values),
-            $limit,
-            $offset
-        )->get();
+        return $query->get();
     }
 
     private static function createLimitOffsetClause($query, int $limit, int $offset)
