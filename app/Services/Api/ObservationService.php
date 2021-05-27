@@ -33,7 +33,7 @@ class ObservationService
         $ventilator_bug_count = Repos\VentilatorBugRepository::countBySearchValues($search_values);
 
         return Converter\ObservationConverter::convertToObservationCount($ventilator_observed_count, $patient_observed_count, $ventilator_bug_count);
-    }そｎ
+    }
 
     /**
      * 指定期間に操作された（CUD）患者観察研究データ一覧取得
