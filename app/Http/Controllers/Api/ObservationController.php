@@ -25,9 +25,11 @@ class ObservationController extends Controller
     {
         $form = new Form\ObservationCountForm($request->all());
 
-        if ($form->hasError() || !$response = $this->service->count($form)) {
+        if ($form->hasError()) {
             throw new Exceptions\InvalidFormException($form);
         }
+
+        $response = $this->service->count($form);
 
         return $response;
     }
@@ -36,9 +38,11 @@ class ObservationController extends Controller
     {        
         $form = new Form\PatientObservationListForm($request->all());
 
-        if ($form->hasError() || !$response = $this->service->getPatientList($form)) {
+        if ($form->hasError()) {
             throw new Exceptions\InvalidFormException($form);
         }
+
+        $response = $this->service->getPatientList($form);
 
         return $response;
     }
@@ -48,9 +52,11 @@ class ObservationController extends Controller
     {
         $form = new Form\VentilatorObservationListForm($request->all());
 
-        if ($form->hasError() || !$response = $this->service->getVentilatorList($form)) {
+        if ($form->hasError()) {
             throw new Exceptions\InvalidFormException($form);
         }
+
+        $response = $this->service->getVentilatorList($form);
 
         return $response;
     }
@@ -59,9 +65,11 @@ class ObservationController extends Controller
     {
         $form = new Form\VentilatorBugListForm($request->all());
 
-        if ($form->hasError() || !$response = $this->service->getVentilatorBugList($form)) {
+        if ($form->hasError()) {
             throw new Exceptions\InvalidFormException($form);
         }
+
+        $response = $this->service->getVentilatorBugList($form);
 
         return $response;
     }

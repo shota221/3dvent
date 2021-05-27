@@ -18,7 +18,7 @@ class VentilatorBugRepository
         $query = static::query();
 
         return self::createWhereClauseFromSearchValues(
-            self::leftJoinVentilatorAndOrganization($query), 
+            self::joinVentilatorAndOrganization($query), 
             $search_values)->count();
     }
 
@@ -27,7 +27,7 @@ class VentilatorBugRepository
         $query = static::query();
         
         return self::createLimitOffsetClause(
-            self::createWhereClauseFromSearchValuesOrderByRegisteredAtAsc(static::leftJoinVentilatorAndOrganization($query), $search_values),
+            self::createWhereClauseFromSearchValuesOrderByRegisteredAtAsc(static::joinVentilatorAndOrganization($query), $search_values),
             $limit,
             $offset
         )->get();
@@ -77,7 +77,7 @@ class VentilatorBugRepository
         return $query;
     }
 
-    private static function leftJoinVentilatorAndOrganization($query)
+    private static function joinVentilatorAndOrganization($query)
     {
         $table = VentilatorBug::tableName();
 
@@ -85,8 +85,8 @@ class VentilatorBugRepository
 
         $organization_table = Organization::tableName();
         
-        $query->leftjoin($ventilator_table, $table . '.ventilator_id', '=' , $ventilator_table . '.id');
-        $query->leftjoin($organization_table, $ventilator_table . '.organization_id', '=' , $organization_table . '.id');
+        $query->join($ventilator_table, $table . '.ventilator_id', '=' , $ventilator_table . '.id');
+        $query->join($organization_table, $ventilator_table . '.organization_id', '=' , $organization_table . '.id');
         
         return $query;
 

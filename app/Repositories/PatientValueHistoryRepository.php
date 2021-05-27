@@ -20,7 +20,7 @@ class PatientValueHistoryRepository
         $query = static::query();
 
         return self::createWhereClauseFromSearchValues(
-            self::leftJoinUserAndOrgazation($query), 
+            self::joinUserAndOrgazation($query), 
             $search_values)->count();
     }
 
@@ -29,7 +29,7 @@ class PatientValueHistoryRepository
         $query = static::query();
 
         return self::createLimitOffsetClause(
-            self::createWhereClauseFromSearchValuesOrderByPatientValueRegisteredAtAscAndCreatedAtAsc(static::leftJoinPatientValueAndPatientAndOrganization($query), $search_values),
+            self::createWhereClauseFromSearchValuesOrderByPatientValueRegisteredAtAscAndCreatedAtAsc(static::joinPatientValueAndPatientAndOrganization($query), $search_values),
             $limit,
             $offset
         )->get();
@@ -88,7 +88,7 @@ class PatientValueHistoryRepository
     }
 
 
-    private static function leftJoinUserAndOrgazation($query)
+    private static function joinUserAndOrgazation($query)
     {
         $table = PatientValueHistory::tableName();
         
@@ -96,14 +96,14 @@ class PatientValueHistoryRepository
 
         $organization_table = Organization::tableName();
 
-        $query->leftjoin($user_table, $table . '.operated_user_id', '=' , $user_table . '.id');
-        $query->leftjoin($organization_table, $user_table . '.organization_id', '=' , $organization_table . '.id');
+        $query->join($user_table, $table . '.operated_user_id', '=' , $user_table . '.id');
+        $query->join($organization_table, $user_table . '.organization_id', '=' , $organization_table . '.id');
 
         return $query;
 
     }
 
-    private static function leftJoinPatientValueAndPatientAndOrganization($query)
+    private static function joinPatientValueAndPatientAndOrganization($query)
     {
         $table = PatientValueHistory::tableName();
 
@@ -113,9 +113,9 @@ class PatientValueHistoryRepository
         
         $organization_table = Organization::tableName();
         
-        $query->leftjoin($patient_value_table, $table . '.patient_value_id', '=' , $patient_value_table . '.id');
-        $query->leftjoin($patient_table, $patient_value_table . '.patient_id', '=' , $patient_table . '.id');
-        $query->leftjoin($organization_table, $patient_table . '.organization_id', '=' , $organization_table . '.id');
+        $query->join($patient_value_table, $table . '.patient_value_id', '=' , $patient_value_table . '.id');
+        $query->join($patient_table, $patient_value_table . '.patient_id', '=' , $patient_table . '.id');
+        $query->join($organization_table, $patient_table . '.organization_id', '=' , $organization_table . '.id');
 
         $query->addSelect([
             $table . '.*',

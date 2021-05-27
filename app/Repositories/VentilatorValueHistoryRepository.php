@@ -20,7 +20,7 @@ class VentilatorValueHistoryRepository
         $query = static::query();
 
         return self::createWhereClauseFromSearchValues(
-            self::leftJoinVentilatorValueAndVentilatorAndOrganization($query), 
+            self::joinVentilatorValueAndVentilatorAndOrganization($query), 
             $search_values)->count();
     }
 
@@ -29,7 +29,7 @@ class VentilatorValueHistoryRepository
         $query = static::query();
         
         return self::createLimitOffsetClause(
-            self::createWhereClauseFromSearchValuesOrderByVentilatorValueRegisteredAtAscAndCreatedAtAsc(static::leftJoinVentilatorValueAndVentilatorAndUserAndOrganization($query), $search_values),
+            self::createWhereClauseFromSearchValuesOrderByVentilatorValueRegisteredAtAscAndCreatedAtAsc(static::joinVentilatorValueAndVentilatorAndUserAndOrganization($query), $search_values),
             $limit,
             $offset
         )->get();
@@ -89,7 +89,7 @@ class VentilatorValueHistoryRepository
         return $query;
     }
 
-    private static function leftJoinVentilatorValueAndVentilatorAndOrganization($query)
+    private static function joinVentilatorValueAndVentilatorAndOrganization($query)
     {
         $table = VentilatorValueHistory::tableName();
 
@@ -99,15 +99,15 @@ class VentilatorValueHistoryRepository
 
         $organization_table = Organization::tableName();
 
-        $query->leftjoin($ventilator_value_table, $table . '.ventilator_value_id', '=' , $ventilator_value_table . '.id');
-        $query->leftjoin($ventilator_table, $ventilator_value_table . '.ventilator_id', '=' , $ventilator_table . '.id');
-        $query->leftjoin($organization_table, $ventilator_table . '.organization_id', '=' , $organization_table . '.id');
+        $query->join($ventilator_value_table, $table . '.ventilator_value_id', '=' , $ventilator_value_table . '.id');
+        $query->join($ventilator_table, $ventilator_value_table . '.ventilator_id', '=' , $ventilator_table . '.id');
+        $query->join($organization_table, $ventilator_table . '.organization_id', '=' , $organization_table . '.id');
 
         return $query;
 
     }
 
-    private static function leftJoinVentilatorValueAndVentilatorAndUserAndOrganization($query)
+    private static function joinVentilatorValueAndVentilatorAndUserAndOrganization($query)
     {
         $table = VentilatorValueHistory::tableName();
 
@@ -119,10 +119,11 @@ class VentilatorValueHistoryRepository
 
         $organization_table = Organization::tableName();
         
-        $query->leftjoin($ventilator_value_table, $table . '.ventilator_value_id', '=' , $ventilator_value_table . '.id');
-        $query->leftjoin($ventilator_table, $ventilator_value_table . '.ventilator_id', '=' , $ventilator_table . '.id');
+        $query->join($ventilator_value_table, $table . '.ventilator_value_id', '=' , $ventilator_value_table . '.id');
+        $query->join($ventilator_table, $ventilator_value_table . '.ventilator_id', '=' , $ventilator_table . '.id');
+        // ventilator_valueは未ログインユーザーが登録する場合もあるためleftjoin
         $query->leftjoin($user_table, $ventilator_value_table . '.registered_user_id', '=' , $user_table . '.id');
-        $query->leftjoin($organization_table, $ventilator_table . '.organization_id', '=' , $organization_table . '.id');
+        $query->join($organization_table, $ventilator_table . '.organization_id', '=' , $organization_table . '.id');
         
         $query->addSelect([
             $table . '.*',
