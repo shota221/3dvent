@@ -116,18 +116,18 @@ class PatientConverter
     $patient_obs_user_id,
     $registered_at,
     $opt_out_flg = null,
-    $age = null,
-    $vent_disease_name = null,
-    $other_disease_name_1 = null,
-    $other_disease_name_2 = null,
+    $age = '',
+    $vent_disease_name = '',
+    $other_disease_name_1 = '',
+    $other_disease_name_2 = '',
     $used_place = null,
-    $hospital = null,
-    $national = null,
+    $hospital = '',
+    $national = '',
     $discontinuation_at = null,
     $outcome = null,
     $treatment = null,
     $adverse_event_flg = null,
-    $adverse_event_contents = "",
+    $adverse_event_contents = ''
   ) {
     $entity = new PatientValue;
 
@@ -135,19 +135,19 @@ class PatientConverter
 
     $entity->patient_obs_user_id = $patient_obs_user_id;
 
-    $entity->age = $age;
+    $entity->age = strval($age);
 
-    $entity->vent_disease_name = $vent_disease_name;
+    $entity->vent_disease_name = strval($vent_disease_name);
 
-    $entity->other_disease_name_1 = $other_disease_name_1;
+    $entity->other_disease_name_1 = strval($other_disease_name_1);
 
-    $entity->other_disease_name_2 = $other_disease_name_2;
+    $entity->other_disease_name_2 = strval($other_disease_name_2);
 
     $entity->used_place = $used_place;
 
-    $entity->hospital = $hospital;
+    $entity->hospital = strval($hospital);
 
-    $entity->national = $national;
+    $entity->national = strval($national);
 
     $entity->discontinuation_at = $discontinuation_at;
 
@@ -185,7 +185,7 @@ class PatientConverter
     $outcome = null,
     $treatment = null,
     $adverse_event_flg = null,
-    $adverse_event_contents = "",
+    $adverse_event_contents = ""
   ) {
     $entity->patient_obs_user_id = $patient_obs_user_id;
 

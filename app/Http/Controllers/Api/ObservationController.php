@@ -21,18 +21,28 @@ class ObservationController extends Controller
         $this->service = new Service\ObservationService;
     }
 
-    // TODO 以下補完作業
-
     public function count(Request $request)
     {
-         $response = $this->service->count();
+        $form = new Form\ObservationCountForm($request->all());
+
+        if ($form->hasError()) {
+            throw new Exceptions\InvalidFormException($form);
+        }
+
+        $response = $this->service->count($form);
 
         return $response;
     }
 
     public function patientList(Request $request) 
-    {
-        $response = $this->service->getPatientList();
+    {        
+        $form = new Form\PatientObservationListForm($request->all());
+
+        if ($form->hasError()) {
+            throw new Exceptions\InvalidFormException($form);
+        }
+
+        $response = $this->service->getPatientList($form);
 
         return $response;
     }
@@ -40,15 +50,26 @@ class ObservationController extends Controller
 
     public function ventilatorList(Request $request) 
     {
-        $response = $this->service->getVentilatorList();
+        $form = new Form\VentilatorObservationListForm($request->all());
+
+        if ($form->hasError()) {
+            throw new Exceptions\InvalidFormException($form);
+        }
+
+        $response = $this->service->getVentilatorList($form);
 
         return $response;
     }
 
-    
     public function ventilatorBugList(Request $request) 
     {
-        $response = $this->service->getVentilatorBugList();
+        $form = new Form\VentilatorBugListForm($request->all());
+
+        if ($form->hasError()) {
+            throw new Exceptions\InvalidFormException($form);
+        }
+
+        $response = $this->service->getVentilatorBugList($form);
 
         return $response;
     }

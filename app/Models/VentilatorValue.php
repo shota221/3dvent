@@ -9,5 +9,7 @@ class VentilatorValue extends TraceableBaseModel
 {
     const
         UPDATED_AT = null,
-        FIX = 1;
+        FIX = 1,
+        CONFIRM = 1
+        ;
 }

@@ -9,268 +9,156 @@ use App\Models;
 class ObservationConverter
 {
   
-    //TODO 以下補完作業
-    public static function convertToObservationCount()
+    public static function convertToObservationCount(int $ventilator_observed_count, int $patient_observed_count, int $ventilator_bug_count)
     {
-        return <<<EOF
-        {
-            "result":{
-                "ventilator_observed_count":3,
-                "patient_observed_count":6,
-                "ventilator_bug_count":2
-            }
-        }
-        EOF;
+        $res = new Response\Api\ObservationCount;
+
+        $res->ventilator_observed_count = $ventilator_observed_count;
+
+        $res->patient_observed_count = $patient_observed_count;
+
+        $res->ventilator_bug_count = $ventilator_bug_count;
+ 
+        return $res;
     }
 
-    public static function convertToPatientList()
+    public static function convertToPatientObservedValueListElm($patient_observed_value)
     {
-        return <<<EOF
-        {
-            "result":[
-                {
-                    "operation":"create",
-                    "patient_id":1,
-                    "organization_id":1,    
-                    "optout":0,
-                    "organization_name":"●●施設",
-                    "patient_code":"nb00001",
-                    "age":"50",
-                    "vent_disease_name":"",
-                    "other_disease_name_1":"",
-                    "other_disease_name_2":"",
-                    "used_place":1,
-                    "hospital":"",
-                    "national":"",
-                    "discontinuation_at":"",
-                    "adverse_event_flg":0,
-                    "adverse_event_contents":"",
-                    "registered_at":"2021/05/11 13:50:10"
-                },
-                {
-                    "operation":"delete",
-                    "patient_id":1,
-                    "organization_id":1,    
-                    "optout":0,
-                    "organization_name":"●●施設",
-                    "patient_code":"nb00001",
-                    "age":"50",
-                    "vent_disease_name":"",
-                    "other_disease_name_1":"",
-                    "other_disease_name_2":"",
-                    "used_place":1,
-                    "hospital":"",
-                    "national":"",
-                    "discontinuation_at":"",
-                    "adverse_event_flg":0,
-                    "adverse_event_contents":"",
-                    "registered_at":"2021/05/11 13:50:10"
-                },
-                {
-                    "operation":"create",
-                    "patient_id":1,
-                    "organization_id":1,    
-                    "optout":0,
-                    "organization_name":"●●施設",
-                    "patient_code":"nb00001",
-                    "":"50",
-                    "vent_disease_name":"肺炎",
-                    "other_disease_name_1":"糖尿病",
-                    "other_disease_name_2":"高血圧症",
-                    "used_place":1,
-                    "hospital":"●●病院",
-                    "national":"日本",
-                    "discontinuation_at":"2021/05/13 14:50",
-                    "outcome":1,
-                    "treatment":2,
-                    "adverse_event_flg":0,
-                    "adverse_event_contents":"",
-                    "registered_at":"2021/05/11 13:50:10"
-                },
-                {
-                    "operation":"create",
-                    "patient_id":2,
-                    "organization_id":1,    
-                    "optout":0,
-                    "organization_name":"●●施設",
-                    "patient_code":"nb00002",
-                    "age":"50",
-                    "vent_disease_name":"",
-                    "other_disease_name_1":"",
-                    "other_disease_name_2":"",
-                    "used_place":1,
-                    "hospital":"",
-                    "national":"",
-                    "discontinuation_at":"",
-                    "adverse_event_flg":0,
-                    "adverse_event_contents":"",
-                    "registered_at":"2021/05/11 15:50:10"
-                },
-                {
-                    "operation":"delete",
-                    "patient_id":2,
-                    "organization_id":1,    
-                    "optout":0,
-                    "organization_name":"●●施設",
-                    "patient_code":"nb00002",
-                    "age":"50",
-                    "vent_disease_name":"",
-                    "other_disease_name_1":"",
-                    "other_disease_name_2":"",
-                    "used_place":1,
-                    "hospital":"",
-                    "national":"",
-                    "discontinuation_at":"",
-                    "adverse_event_flg":0,
-                    "adverse_event_contents":"",
-                    "registered_at":"2021/05/11 15:50:10"
-                },
-                {
-                    "operation":"create",
-                    "patient_id":2,
-                    "organization_id":1,    
-                    "optout":1
-                }
-            ]
+        $res = new Response\Api\PatientObservedValueListElm;
+
+        $res->operation = $patient_observed_value->operation;
+   
+        $res->patient_id = $patient_observed_value->patient_id;
+    
+        $res->organization_id = $patient_observed_value->organization_id;
+        
+        $res->optout = $patient_observed_value->opt_out_flg;
+
+        if (!$patient_observed_value->opt_out_flg) {
+
+        
+            $res->organization_name = $patient_observed_value->organization_name;
+        
+            $res->patient_code = $patient_observed_value->patient_code;
+        
+            $res->age = strval($patient_observed_value->age);
+        
+            $res->vent_disease_name = $patient_observed_value->vent_disease_name;
+        
+            $res->other_disease_name_1 = $patient_observed_value->other_disease_name_1;
+        
+            $res->other_disease_name_2 = $patient_observed_value->other_disease_name_2;
+        
+            $res->used_place = $patient_observed_value->used_place;
+        
+            $res->hospital = $patient_observed_value->hospital;
+        
+            $res->national = $patient_observed_value->national;
+        
+            $res->discontinuation_at = $patient_observed_value->discontinuation_at;
+        
+            $res->outcome = $patient_observed_value->outcome;
+        
+            $res->treatment = $patient_observed_value->treatment;
+        
+            $res->adverse_event_flg = $patient_observed_value->adverse_event_flg;
+        
+            $res->adverse_event_contents = $patient_observed_value->adverse_event_contents;
+        
+            $res->registered_at = $patient_observed_value->registered_at;
         }
-        EOF;
+    
+
+        return $res;
     }
 
-    public static function convertToVentilatorList()
+    public static function convertToVentilatorObservedValueListElm($ventilator_observed_value)
     {
-        return <<<EOF
-        {
-            "result":[
-                {
-                    "operation":"create",
-                    "organization_id":1,
-                    "ventilator_id":5,
-                    "patient_id":1,
-                    "ventilator_value_id":1,
-                    "serial_number":"13216",
-                    "qr_read_at":"2021/05/11 12:50:30",
-                    "start_using_at":"2021/05/11 12:50:30",
-                    "city":"千代田区, 東京都, 日本",
-                    "user_name":"satou",
-                    "gender":1,
-                    "height":"170.5",
-                    "weight":"60.5",
-                    "ideal_weight":"63.2",
-                    "status_use_other":"",
-                    "vt_per_kg":"6",
-                    "predicted_vt":"352.4",
-                    "airway_pressure":"20",
-                    "air_flow":"8",
-                    "o2_flow":"4",
-                    "total_flow":"12",
-                    "fio2":"85.2",
-                    "inspiratory_time":"1.340",
-                    "expiratory_time":"0.657",
-                    "rr":"30.04",
-                    "estimated_vt":"268.1",
-                    "estimated_mv":"8.05",
-                    "spo2":"",
-                    "etco2":"",
-                    "pao2":"",
-                    "paco2":"4.5",
-                    "registered_at":"2021/05/11 13:50:10"
-                },
-                {
-                    "operation":"delete",
-                    "organization_id":1,
-                    "ventilator_id":5,
-                    "patient_id":1,
-                    "ventilator_value_id":1,
-                    "serial_number":"13216",
-                    "qr_read_at":"2021/05/11 12:50:30",
-                    "start_using_at":"2021/05/11 12:50:30",
-                    "city":"千代田区, 東京都, 日本",
-                    "user_name":"satou",
-                    "gender":1,
-                    "height":"170.5",
-                    "weight":"60.5",
-                    "ideal_weight":"63.2",
-                    "status_use_other":"",
-                    "vt_per_kg":"6",
-                    "predicted_vt":"352.4",
-                    "airway_pressure":"20",
-                    "air_flow":"8",
-                    "o2_flow":"4",
-                    "total_flow":"12",
-                    "fio2":"85.2",
-                    "inspiratory_time":"1.340",
-                    "expiratory_time":"0.657",
-                    "rr":"30.04",
-                    "estimated_vt":"268.1",
-                    "estimated_mv":"8.05",
-                    "spo2":"",
-                    "etco2":"",
-                    "pao2":"",
-                    "paco2":"4.5",
-                    "registered_at":"2021/05/11 13:50:10"
-                },
-                {
-                    "operation":"create",
-                    "organization_id":1,
-                    "ventilator_id":5,
-                    "patient_id":1,
-                    "ventilator_value_id":1,
-                    "serial_number":"13216",
-                    "qr_read_at":"2021/05/11 12:50:30",
-                    "start_using_at":"2021/05/11 12:50:30",
-                    "city":"千代田区, 東京都, 日本",
-                    "user_name":"satou",
-                    "gender":1,
-                    "height":"170.5",
-                    "weight":"60.5",
-                    "ideal_weight":"63.2",
-                    "status_use":3,
-                    "status_use_other":"",
-                    "vt_per_kg":"6",
-                    "predicted_vt":"352.4",
-                    "airway_pressure":"20",
-                    "air_flow":"8",
-                    "o2_flow":"4",
-                    "total_flow":"12",
-                    "fio2":"85.2",
-                    "inspiratory_time":"1.340",
-                    "expiratory_time":"0.657",
-                    "rr":"30.04",
-                    "estimated_vt":"268.1",
-                    "estimated_mv":"8.05",
-                    "spo2":"92.5",
-                    "etco2":"12.5",
-                    "pao2":"5.5",
-                    "paco2":"4.5",
-                    "registered_at":"2021/05/11 13:50:10"
-                }
-            ]
-        }
-        EOF;
+        $res = new Response\Api\VentilatorObservedValueListElm;
+
+        $res->operation = $ventilator_observed_value->operation;
+
+        $res->patient_id = $ventilator_observed_value->patient_id;
+        
+        $res->organization_id = $ventilator_observed_value->organization_id;
+    
+        $res->ventilator_id = $ventilator_observed_value->ventilator_id;
+        
+        $res->ventilator_value_id = $ventilator_observed_value->ventilator_value_id;
+    
+        $res->serial_number = $ventilator_observed_value->serial_number;
+    
+        $res->user_name = $ventilator_observed_value->user_name;
+        
+        $res->city = $ventilator_observed_value->city;
+        
+        $res->gender = $ventilator_observed_value->gender;
+        
+        $res->height = $ventilator_observed_value->height;
+        
+        $res->weight = $ventilator_observed_value->weight;
+        
+        $res->ideal_weight = $ventilator_observed_value->ideal_weight;
+        
+        $res->status_use = $ventilator_observed_value->status_use;
+        
+        $res->status_use_other = $ventilator_observed_value->status_use_other;
+        
+        $res->vt_per_kg = $ventilator_observed_value->vt_per_kg;
+        
+        $res->predicted_vt = $ventilator_observed_value->predicted_vt;
+        
+        $res->airway_pressure = $ventilator_observed_value->airway_pressure;
+        
+        $res->air_flow = $ventilator_observed_value->air_flow;
+        
+        $res->o2_flow = $ventilator_observed_value->o2_flow;
+        
+        $res->total_flow = $ventilator_observed_value->total_flow;
+        
+        $res->fio2 = $ventilator_observed_value->fio2;
+       
+        $res->inspiratory_time = $ventilator_observed_value->inspiratory_time;
+       
+        $res->expiratory_time = $ventilator_observed_value->expiratory_time;
+       
+        $res->rr = $ventilator_observed_value->rr;
+       
+        $res->estimated_vt = $ventilator_observed_value->estimated_vt;
+       
+        $res->estimated_mv = $ventilator_observed_value->estimated_mv;
+       
+        $res->spo2 = $ventilator_observed_value->spo2;
+       
+        $res->etco2 = $ventilator_observed_value->etco2;
+       
+        $res->pao2 = $ventilator_observed_value->pao2;
+       
+        $res->paco2 = $ventilator_observed_value->paco2;
+       
+        $res->qr_read_at = $ventilator_observed_value->qr_read_at;
+    
+        $res->start_using_at = $ventilator_observed_value->start_using_at;
+       
+        $res->registered_at = $ventilator_observed_value->registered_at;
+
+        return $res;
     }
 
-    public static function convertToVentilatorBugList()
+    public static function convertToVentilatorBugListElm($ventilator_bug)
     {
-        return <<<EOF
-        {
-            "result":[
-                {            
-                    "organization_id":1,
-                    "ventilator_id":5,
-                    "bug_name":"切替音が小さい",
-                    "request_improvement":"呼気、吸気切替音をもう少し大きくしてほしい。",
-                    "registered_at":"2021/05/11 13:50:10"
-                },
-                {
-                    "organization_id":2,
-                    "ventilator_id":6,
-                    "bug_name":"切替音が小さい",
-                    "request_improvement":"呼気、吸気切替音をもう少し大きくしてほしい。",
-                    "registered_at":"2021/05/12 13:50:10"
-                }
-            ]
-        }
-        EOF;
+        $res = new Response\Api\VentilatorBugListElm;
+
+        $res->organization_id = $ventilator_bug->organization_id;
+
+        $res->ventilator_id = $ventilator_bug->ventilator_id;
+    
+        $res->bug_name = $ventilator_bug->bug_name;
+        
+        $res->request_improvement = $ventilator_bug->request_improvement;
+    
+        $res->registered_at = $ventilator_bug->registered_at;
+ 
+        return $res;
     }
 }
-

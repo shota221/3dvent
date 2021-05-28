@@ -162,4 +162,22 @@ class DateUtil {
     {
         return $date->format(self::TIME_FORMAT);
     }
+
+    public static function parseToDate(string $str, $format = null)
+    {
+        try {
+            $format = $format ?? self::DATE_FORMAT;
+
+            if ($format !== self::DATE_FORMAT) {
+                $date =  self::createFromFormat($format, $str); 
+
+                // createFromFormatは現在時刻を勝手に付与するためまた文字に戻し、初期化の引数にあたえる
+                $str = $date->format(self::DATE_FORMAT);
+            }
+
+            return new Carbon($str);
+        } catch (\InvalidArgumentException $e) {
+            throw new DateUtilException(('パースに失敗 $str=' . $str . ' $format=' . $format), $e);
+        }
+    }
 }
