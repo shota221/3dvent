@@ -1,0 +1,122 @@
+@CHARSET "UTF-8";
+
+/************************
+* AdminLTE BASIC Builtin
+*************************/
+/* 
+* margin
+* margin-bottom
+* no-padding
+* no-margin
+* no-shadow
+* no-border
+* bg-green
+* text-red
+*/
+.margin-top {
+    margin-top: 20px;
+}
+.no-right-padding {
+    padding-right: 0!important;
+}
+.no-left-padding {
+    padding-left: 0!important;
+}
+.no-top-padding {
+    padding-top: 0!important;
+}
+.no-margin {
+    margin: 0!important;
+}
+.inline-block {
+    display: inline-block!important;
+    vertical-align: middle!important;
+}
+.background-inherit {
+    background-color: inherit !important;
+}
+.page-question i {
+/*    color: yellowgreen;*/
+    vertical-align: top;
+    cursor: pointer;
+  /*  color: #09334f;*/
+}
+.popover-content p {
+    font-size: 13px;
+    margin: 5px 0;
+}
+.popover-content h1 {
+    font-size: 16px;
+    padding: 5px;
+    margin: 0;
+}
+.popover-content small {
+    display: block;
+    padding: 5px 0 5px 15px;
+    font-size: 12px;
+}
+.description {
+    font-size: 12px;
+    color: #777;
+}
+.description strong {
+  color: #555;
+}
+.description a {
+  font-weight: bold
+}
+/********************
+* Override AdminLTE 
+*********************/
+
+/** box **/
+
+.register-box {
+    width: 1000px;
+}
+@media (max-width: 768px) {
+  .register-box {
+    width: 90%;
+    margin-top: 20px;
+  }
+}
+form.search-form .search-box {
+    border-radius: 0px;
+}
+
+/** bg **/
+
+.bg-cream {
+    background-color: #f4f4f4;
+    border-color: #f4f4f4;
+}
+.bg-yellowgreen {
+    background-color: yellowgreen;
+}
+
+/** popover **/
+
+.popover {
+    max-width: 500px!important;
+}
+
+/** checkbox **/
+
+.icheckbox_square-blue {
+    position: relative;
+}
+.icheckbox_square-blue.checked.disabled.colored {
+    background-position: -48px 0;
+}
+
+.checkbox label {
+    vertical-align: middle;
+    padding: 5px;
+}
+
+/** modal **/
+
+.modal-dialog{
+    max-width: inherit!important;
+    overflow-y: initial !important
+}

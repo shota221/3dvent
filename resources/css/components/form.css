@@ -1,0 +1,55 @@
+@CHARSET "UTF-8";
+
+/*****************
+ * Form
+ *****************/
+
+form .required::before {
+    content: " * ";
+    color: #dd4b39;
+}
+
+.ng-alert {
+    color: #dd4b39;
+    font-size: 13px;
+    word-break: break-all;
+    white-space: normal;
+    width: 100%;
+}
+
+.ng-alert + input,
+.ng-alert + select,
+.ng-alert + select + .select2-container,
+.ng-alert + textarea {
+    border: 1px solid #dd4b39;
+    box-shadow: none;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+/**
+* DROP ZONE
+*/
+.dropzone {
+  color: #ccc;
+  min-height: 200px;
+  border-style: dashed;
+  border-width: 2px;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+}
+
+.dropzone input[type="file"] {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.dropzone button.dz-button,
+.dropzone button.dz-button:active {
+    border: inherit;
+    background: inherit;
+    color: inherit;
+}
