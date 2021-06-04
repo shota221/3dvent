@@ -88,7 +88,7 @@ class Handler extends ExceptionHandler
             
             $type = app()->getRouteType();
 
-            if (! app()->isHttpRouteTypeApi() && ! app()->isHttpRouteTypeForm()) {
+            if (! app()->isHttpRouteTypeApi()) {
                 $user = Auth::id();
             }
         } 

@@ -43,6 +43,14 @@ class RouteServiceProvider extends ServiceProvider
             ->namespace($this->namespace . '\Api')
             ->group(base_path('routes/api.php'));
 
+         // manualルーティング
+        Route::prefix('')
+            ->domain('manual.' . $host)
+            ->middleware('manual')
+            ->namespace($this->namespace . '\Manual')
+            ->group(base_path('routes/manual.php'));
+
+
         // // adminルーティング
         // Route::prefix('')
         //     ->domain('admin.' . $host)
@@ -50,6 +58,5 @@ class RouteServiceProvider extends ServiceProvider
         //     ->namespace($this->namespace . '\Admin')
         //     ->group(base_path('routes/admin.php'));
 
-        
     }
 }
