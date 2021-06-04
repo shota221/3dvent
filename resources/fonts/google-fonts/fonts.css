@@ -1,0 +1,63 @@
+@font-face {
+	font-family: 'Source Sans Pro';
+	font-style: italic;
+	font-weight: 300;
+	font-display: auto;
+	src: local('Source Sans Pro Light Italic'), local('SourceSansPro-LightItalic'), url(fonts/Source_Sans_Pro-italic-300.woff) format('woff');
+	unicode-range: U+0-10FFFF;
+}
+
+@font-face {
+	font-family: 'Source Sans Pro';
+	font-style: italic;
+	font-weight: 400;
+	font-display: auto;
+	src: local('Source Sans Pro Italic'), local('SourceSansPro-Italic'), url(fonts/Source_Sans_Pro-italic-400.woff) format('woff');
+	unicode-range: U+0-10FFFF;
+}
+
+@font-face {
+	font-family: 'Source Sans Pro';
+	font-style: italic;
+	font-weight: 600;
+	font-display: auto;
+	src: local('Source Sans Pro SemiBold Italic'), local('SourceSansPro-SemiBoldItalic'), url(fonts/Source_Sans_Pro-italic-600.woff) format('woff');
+	unicode-range: U+0-10FFFF;
+}
+
+@font-face {
+	font-family: 'Source Sans Pro';
+	font-style: normal;
+	font-weight: 300;
+	font-display: auto;
+	src: local('Source Sans Pro Light'), local('SourceSansPro-Light'), url(fonts/Source_Sans_Pro-normal-300.woff) format('woff');
+	unicode-range: U+0-10FFFF;
+}
+
+@font-face {
+	font-family: 'Source Sans Pro';
+	font-style: normal;
+	font-weight: 400;
+	font-display: auto;
+	src: local('Source Sans Pro Regular'), local('SourceSansPro-Regular'), url(fonts/Source_Sans_Pro-normal-400.woff) format('woff');
+	unicode-range: U+0-10FFFF;
+}
+
+@font-face {
+	font-family: 'Source Sans Pro';
+	font-style: normal;
+	font-weight: 600;
+	font-display: auto;
+	src: local('Source Sans Pro SemiBold'), local('SourceSansPro-SemiBold'), url(fonts/Source_Sans_Pro-normal-600.woff) format('woff');
+	unicode-range: U+0-10FFFF;
+}
+
+@font-face {
+	font-family: 'Source Sans Pro';
+	font-style: normal;
+	font-weight: 700;
+	font-display: auto;
+	src: local('Source Sans Pro Bold'), local('SourceSansPro-Bold'), url(fonts/Source_Sans_Pro-normal-700.woff) format('woff');
+	unicode-range: U+0-10FFFF;
+}
+

@@ -35,6 +35,7 @@ class Application extends BaseApplication
             // http route type設定
             switch ($httpRouteType) {
                 case 'api'      :
+                case 'manual'      :
                     $this->httpRouteType = $httpRouteType; 
 
                     break;
@@ -55,6 +56,12 @@ class Application extends BaseApplication
     {
         return 'api' === $this->httpRouteType;
     }
+
+    public function isHttpRouteTypeManual()
+    {
+        return 'manual' === $this->httpRouteType;
+    }
+
 
     
   

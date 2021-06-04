@@ -1,0 +1,19 @@
+@CHARSET "UTF-8";
+
+/** modal **/
+
+.modal-body:not(.auto-height){
+    height: 600px;
+    overflow-y: auto;
+}
+#modal-form-confirm .modal-dialog {
+    width: 1000px;
+}
+@media (max-width: 1000px) {
+  #modal-form-confirm .modal-dialog {
+    width: auto;
+  }
+}
+#modal-form-confirm .modal-body table th {
+    width: 20%;
+}
