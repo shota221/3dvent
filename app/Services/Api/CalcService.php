@@ -56,7 +56,6 @@ class CalcService
 
         unlink($temp_file);
 
-        //以下解析処理詳細はTest/ExampleTest2参照
         //正規化
         $y_max = max($wave_data->func[0]);
         $func = array_map(function ($x) use ($y_max) {
@@ -65,125 +64,139 @@ class CalcService
 
         $n = 2; //呼吸音取得サンプル数設定（2回分の平均をとる）
 
-        $max_sec = 15; //取得測定時間上限（計算時間比例）
+        $max_sec = 20; //取得測定時間上限（計算時間比例）
 
         $sr = $wave_data->sampling_rate;
         $dt = 1 / $sr;
-        $wave_length = $wave_data->length;
-        $step = 128; //second/step=$step*$dt
-        $win_length = 256; //窓幅を大きくすると周波数分解能があがりダイナミックレンジがさがる
-        $df = $sr / $win_length; //周波数分解幅
+        $step = 1024;//step間隔を落とすと時間分解能が上がるが、雑音による精度減少が目立つ(TODO要検討)
+        $win_length = 1024; //窓幅を大きくすると周波数分解能があがりダイナミックレンジがさがる
 
-        //窓関数準備
-        $blackman = function ($index, $value) use ($win_length) {
-            return $value * (0.42 - (0.5 * cos(2 * M_PI * $index / ($win_length - 1))) + 0.08 * cos(4 * M_PI * $index / ($win_length - 1)));
-        }; //ブラックマン窓は周波数分解能が悪く、ダイナミック・レンジが広い。この種のフィルタの中では最もよく使われる、らしい。
-        // $hann = function ($index, $value) use ($win_length) {
-        //     return $value * (0.5 - (0.5 * cos(2 * M_PI * $index / ($win_length - 1))));
-        // };
-        // $hamming = function ($index, $value) use ($win_length) {
-        //     return $value * (0.54 - (0.46 * cos(2 * M_PI * $index / ($win_length - 1))));
-        // };
+        //音量によるie解析測定
+        //※注意点
+        //電圧計算あたりが完璧か不明
+        //分類の偏差値50が適当か
+        //雑音入ったときに呼気の誤検知ありえる。連続区間で5区間以上など吸気と同じように処理する必要ありそう
+        //結果セットで呼気、吸気のバランスみて同じペースじゃなかったら1サイクル増やして正しい2回を検出するようにしたほうがよいかも
+        //=呼気吸気の異常値判定(TODO)
+        
 
-        $fft = new Math\Fft($win_length);
-
-        $pulse_count = 0;
-        $pulse_times = [];
-        $cool_time = 100; //ピーク検出後に飛ばすインデックス
-        $exhs = []; //呼気：小さめのピーク
-        $inhs = []; //吸気：大きめのピーク
-
-        $mode = false; //falseのときカチ音検出モード、trueでシュー音検出モード
-
-        for ($i = 0; $i * $step <= min($wave_length - $win_length, $sr * $max_sec); $i++) {
-            $peak_indice = [];
+        $db_at_t = [];
+        for ($i = 0; $i * $step <= $sr * $max_sec; $i++) {
             $sliced_func = array_slice($func, $i * $step, $win_length);
-            $wined_func = array_map($blackman, array_keys($sliced_func), $sliced_func);
-
-            $fftfunc = $fft->fft($wined_func);
-            $fftabs = $fft->getAbsFFT($fftfunc);
-
-            $peak_indice = $this->findPeakIndex(array_slice($fftabs, 0, 128), $mode);
-
-            if (
-                count($peak_indice) >= ($mode ? 2 : 3)
-            ) {
-                $pulse_times[] = round($i * $step * $dt, 2);
-                $pulse_count++;
-                $i += $cool_time; //クールタイム分とばす
-                $mode = !$mode;
+            $V = 0;
+            foreach ($sliced_func as $v) {
+                $V += $v * $v;
             }
+            if (count($sliced_func) === 0) {
+                continue;
+            }
+            $wined_V_avg = 1 / count($sliced_func) * $V;
+            $calc_v = sqrt($wined_V_avg);
+            //電圧からデシベルへ
+            $calc_db = log10($calc_v);
+            $db_at_t[round($i * $step * $dt, 2) * 100] = $calc_db;
+        }
+        //標準偏差
+        $length = count($db_at_t);
+        $average = array_sum($db_at_t) / count($db_at_t);
 
-            //パルスが2*$n+1カウントされた時点で終了
-            if ($pulse_count === 2 * $n + 1) break;
+        $sum = 0;
+        foreach ($db_at_t as $t) {
+            $sum += pow(abs($t - $average), 2);
         }
 
-        if ($pulse_count < 2 * $n + 1) {
-            //音が小さすぎるor測定時間が短すぎる
-            $form->addError('sound', 'validation.not_enough_pulses');
-            return false;
+        $start = false; //2周期計測開始判定。1回目のinh_counter開始時にtrue
+        $inh_start_ = false; //呼気からスタートしている判定用。吸気5回で呼気判定スタート。
+        $inh_start_counter = 0;
+        $exh_times = 0; //2周期カウント用
+        $inh_times = 0; //2周期カウント用=exh_times(3)でもOK？
+        //1024=0.02秒の対象区画($sr=44100の場合)が呼気、吸気のそれぞれに加算された回数
+        $inh = 0;
+        $exh = 0;
+
+        $exh_counter = 0;
+
+        //偏差値が50を下回る音量が$switch_time_bufferだけ続いたら確定してその分をinhに追加。途中でまた音がしたら（=たぶんカチ）の場合はexhに加算。
+        $switch_time_buffer = 0.1;
+        $inh_counter_threshold = round($switch_time_buffer/($step*$dt));
+        $inh_start_threshold = $inh_counter_threshold *2;
+
+
+        $message = "";
+
+        //結果確認用
+        $all_result_message = "";
+        foreach ($db_at_t as $k => $v) {
+            //echo ($k/100)."<br />";
+
+            $standard_score = ($v - $average) / sqrt($sum / $length) * 10 + 50;
+            $threshold = 50;
+            if ($standard_score > $threshold && $inh_start_) { //偏差値50以上は呼気またはカチと判断。調整検討要
+                $start = true; //測定範囲対象フラグON
+                $exh_counter++; //吸気
+                if ($exh_counter == 1) {
+                    $start_at = ($k / 100);
+                    $exh_times++;
+                    if ($exh_times == 3) {
+                        $message .= "<br />end with 3rd loop on " . $start_at;
+                        break;
+                    }
+                    $message .= $start_at . "～";
+                }
+                $exh++;
+                if (isset($inh_counter)) { //カチの前に無音があって下でカウントしていた分戻す用処理。
+                    $exh += $inh_counter;
+                    unset($inh_counter);
+                }
+                $all_result_message .= ($k / 100) . "\t" . $standard_score . "<br />";
+            } else {
+                $all_result_message .= "(" . ($k / 100) . ")<br />";
+                if ($start) { //呼気から開始サイクルとする。
+                    //吸気終了間際の無音対策 exh_counterがセットされていたらカチの前の無音処理として呼気にするため溜めておいて一気に処理。
+                    if ($exh_counter > 1) {
+                        if (!isset($inh_counter)) {
+                            $inh_counter = 0;
+                            $end_at = ($k / 100);
+                        }
+                        $inh_counter++;
+                        //5区画=0.1秒続いたら確定してその分を追加。途中でまた音がしたら（=たぶんカチ）の場合はexhに加算。
+                        if ($inh_counter >  $inh_counter_threshold) {
+                            $exh_counter = 0;
+                            $inh += $inh_counter;
+                            unset($inh_counter);
+                            $message .= $end_at . "<br />";
+                            $inh_times++; //inh_times加算。
+                        }
+                    } else {
+                        //呼気カウンタなしなら5区画以上の連続なのでそのまま吸気としてそのままカウント
+                        $inh++;
+                    }
+                } else {
+                    //10区間無音で吸気からの録音部分判定。この判定後に呼気の開始検出を始める。
+                    if ($standard_score < $threshold) {
+                        $inh_start_counter++;
+                        if ($inh_start_counter == $inh_start_threshold) {
+                            $inh_start_ = true;
+                        }
+                    }
+                }
+            }
         }
 
-        for ($i = 0; $i < $n; $i++) {
-            $inhs[] = $pulse_times[2 * $i + 1] - $pulse_times[2 * $i];
-            $exhs[] = $pulse_times[2 * $i + 2] - $pulse_times[2 * $i + 1];
-        }
+        // echo $all_result_message;
 
-        $i_e_avg = ['i' => round(array_sum($inhs) / $n, 2), 'e' => round(array_sum($exhs) / $n, 2)];
+        $i_e_avg = ['i' => round($inh * $step * $dt / $n, 2), 'e' => round($exh * $step * $dt / $n, 2)];
 
         $rr = $this->calcRr($i_e_avg['i'], $i_e_avg['e']);
 
         return Converter\IeConverter::convertToIeResult($i_e_avg['i'], $i_e_avg['e'], $rr);
     }
 
-    private function findPeakIndex($func, bool $mode = false)
-    {
-        $peaks = [];
-
-        for ($i = 1; $i < count($func) - 1; $i++) {
-            $check = $this->checkThreshold($i, $func[$i], $mode);
-            if (
-                $check >= 0
-                && $func[$i - 1] <= $func[$i]
-                && $func[$i + 1] <= $func[$i]
-            ) {
-                $peaks[$check] = $i;
-            }
-        }
-
-        return $peaks;
-    }
-
-    /**
-     * modeがfalseならカチッ音、trueならシュー音検出
-     * 検知したしきい値のインデックスを返す。検知してなければ-1をかえす
-     * @param [type] $i
-     * @param [type] $val
-     * @param boolean $mode
-     * @return void
-     */
-    private function checkThreshold($i, $val, bool $mode = false)
-    {
-        $threshold = $mode ? config('analysis.threshold.ex') : config('analysis.threshold.in');
-
-        foreach ($threshold as $key => $thr) {
-            if (
-                $i >= $thr['index_min']
-                && $i <= $thr['index_max']
-                && $val >= $thr['amp']
-            ) {
-                return $key;
-            }
-        }
-        return -1;
-    }
-
-
     //音声サンプリングテスト用
     public function putIeSound($form)
     {
-        $result =  Support\FileUtil::putSoundSamplingFile($form->sound->filename,base64_decode($form->sound->file_data),$form->os);
+        $result =  Support\FileUtil::putSoundSamplingFile($form->sound->filename, base64_decode($form->sound->file_data), $form->os);
 
-        return $result ? ['result'=>'success'] : ['result'=>'failure'] ;
+        return $result ? ['result' => 'success'] : ['result' => 'failure'];
     }
 }
