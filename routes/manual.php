@@ -18,7 +18,18 @@
  */
 
 Route::group(['middleware' => ['routetype:manual']], function() {
-    // TODO　テストページ　後で消す
-    Route::get('/test', 'ManualController@test')->name('manual.test');
 
+    Route::get('/qr', 'ManualController@showQrManual')->name('manual.qr');
+    
+    Route::get('/auth', 'ManualController@showAuthManual')->name('manual.auth');
+
+    Route::get('/patient_setting', 'ManualController@showPatientSetting')->name('manual.patient_setting');
+
+    Route::get('/ventilator_setting', 'ManualController@showVentilatorSetting')->name('manual.ventilator_setting');
+
+    Route::get('/manual_measurement', 'ManualController@showManualMeasurement')->name('manual.manual_measurement');
+
+    Route::get('/sound_measurement', 'ManualController@showSoundMeasurement')->name('manual.sound_measurement');
+
+    Route::get('/ventilator_result', 'ManualController@showVentilatorResult')->name('manual.ventilator_result');
 });
