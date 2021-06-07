@@ -27,7 +27,7 @@ class UserService
             return false;
         }
 
-        $entity = Converter\UserConverter::convertToUserUpdateEntity($user, $form->name, $form->email, $user->id);
+        $entity = Converter\UserConverter::convertToUserUpdateEntity($user, $form->name, $user->id, $form->email);
 
         DBUtil::Transaction(
             'ユーザー情報更新',

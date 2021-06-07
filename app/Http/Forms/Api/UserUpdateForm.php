@@ -25,6 +25,6 @@ class UserUpdateForm extends BaseForm
     {
         $this->name = $input['user_name'];
 
-        $this->email = $input['email'] ?? null;
+        $this->email = isset($input['email']) ? strval($input['email']) : null;
     }
 }
