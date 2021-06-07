@@ -13,7 +13,7 @@ class AppkeyCreateForm extends BaseForm
     protected function validationRule()
     {
         return [
-            'idfv' => 'required|'.Rule::VALUE_NAME,
+            'idfv' => 'required|'.Rule::VALUE_TEXT,
         ]; 
     }
 
