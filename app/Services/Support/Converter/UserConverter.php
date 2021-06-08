@@ -55,13 +55,18 @@ class UserConverter
         return $res;
     }
 
-    public static function convertToUserUpdateEntity(User $entity,string $user_name, string $email = null, string $updated_user_id)
-    {
+    // 追加　php8から必須でないパラメータが必須パラメータより前に定義されているとエラーを吐くようになったため$update_user_idと$emailの順番を入れ替えた。$emailのデフォは空文字に変更
+    public static function convertToUserUpdateEntity(
+        User $entity,
+        string $user_name, 
+        $updated_user_id,
+        $email = ''
+    ) {
         $entity->name = $user_name;
 
-        $entity->email = $email;
-
         $entity->updated_user_id = $updated_user_id;
+        
+        $entity->email = strval($email);
 
         return $entity;
     }

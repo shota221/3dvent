@@ -115,6 +115,15 @@ class VentilatorService
 
         $patient = Repos\PatientRepository::findOneById($entity->patient_id);
 
+        
+        // 追加　未ログインユーザーが患者コードを登録後、ログインユーザーがQRを読み込んだ際に、患者コードが重複した場合の処理
+        $exists = !is_null($u_org_id) && !is_null($patient->patient_code) && Repos\PatientRepository::existsByPatientCodeAndOrganizationId($patient->patient_code, $u_org_id);
+        
+        if ($exists) {
+            $form->addError('patient_code', 'validation.duplicated_patient_code');
+            return false;
+        }
+        
         //呼吸器の組織ひも付き→呼吸器に紐づく患者も組織に紐づく
         $patient->organization_id = $u_org_id;
 

@@ -114,7 +114,7 @@ class PatientService
         }
 
         //フォームとアップデート先両方に患者コードがあり、それらが同一でないかつ、同一組織内に同じ患者コードが存在するかどうか
-        $exists =  !is_null($form->patient_code) && !is_null($patient->patient_code) && $form->patient_code !== $patient->patient_code && Repos\PatientRepository::existsByPatientCodeAndOrganizationId($form->patient_code, $patient->organization_id);
+        $exists = !is_null($form->patient_code) && !is_null($patient->patient_code) && $form->patient_code !== $patient->patient_code && Repos\PatientRepository::existsByPatientCodeAndOrganizationId($form->patient_code, $patient->organization_id);
 
         if ($exists) {
             $form->addError('patient_code', 'validation.duplicated_patient_code');
