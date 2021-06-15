@@ -12,9 +12,9 @@ class PatientObservationListForm extends BaseForm
 {
     public $edcid;
 
-    public $date_from;
+    public $datetime_from;
 
-    public $date_to;
+    public $datetime_to;
 
     public $limit;
 
@@ -23,32 +23,32 @@ class PatientObservationListForm extends BaseForm
     protected function validationRule()
     {
         return [
-            'edcid'     => 'required|' . Rule::VALUE_STRING,
-            'date_from' => 'nullable|date',
-            'date_to'   => 'nullable|date',
-            'limit'     => 'required|'.Rule::VALUE_POSITIVE_INTEGER .'|between:0,200',
-            'offset'    => 'required|'.Rule::VALUE_POSITIVE_INTEGER,
+            'edcid'         => 'required|' . Rule::VALUE_STRING,
+            'datetime_from' => 'nullable|date_format:Y-m-d H:i:s',
+            'datetime_to'   => 'nullable|date_format:Y-m-d H:i:s',
+            'limit'         => 'required|'.Rule::VALUE_POSITIVE_INTEGER .'|between:0,200',
+            'offset'        => 'required|'.Rule::VALUE_POSITIVE_INTEGER,
         ];
     }
 
     protected function bind($input)
     {
         $this->edcid = $input['edcid'];
-
+        
         try {
-            $this->date_from = isset($input['date_from']) 
-                ? Support\DateUtil::dayStart(Support\DateUtil::parseToDate($input['date_from'])) 
+            $this->datetime_from = isset($input['datetime_from']) 
+                ? Support\DateUtil::parseToDateTime($input['datetime_from']) 
                 : null;
         } catch (Exceptions\DateUtilException $e) {
-            $this->addError('date_from', 'validation.date');
+            $this->addError('datetime_from', 'validation.date');
         }
 
         try {
-            $this->date_to = isset($input['date_to']) 
-                ? Support\DateUtil::dayEnd(Support\DateUtil::parseToDate($input['date_to'])) 
+            $this->datetime_to = isset($input['datetime_to']) 
+                ? Support\DateUtil::parseToDateTime($input['datetime_to']) 
                 : null;
         } catch (Exceptions\DateUtilException $e) {
-            $this->addError('date_to', 'validation.date');
+            $this->addError('datetime_to', 'validation.date');
         }
 
         $this->limit = intval($input['limit']);

@@ -54,12 +54,12 @@ class VentilatorValueHistoryRepository
         
         $query->where($ventilator_value_table . '.confirmed_flg', $search_values['confirmed_flg']);
 
-        if (isset($search_values['date_from'])) {
-            $query->where($table . '.created_at', '>=', $search_values['date_from']);
+        if (isset($search_values['datetime_from'])) {
+            $query->where($table . '.created_at', '>=', $search_values['datetime_from']);
         }
 
-        if (isset($search_values['date_to'])) {
-            $query->where($table . '.created_at', '<=', $search_values['date_to']);
+        if (isset($search_values['datetime_to'])) {
+            $query->where($table . '.created_at', '<', $search_values['datetime_to']);
         }
 
         return $query->orderBy($ventilator_value_table . '.registered_at', 'ASC')->orderBy($table . '.created_at', 'ASC');
@@ -77,12 +77,12 @@ class VentilatorValueHistoryRepository
         
         $query->where($ventilator_value_table . '.confirmed_flg', $search_values['confirmed_flg']);
 
-        if (isset($search_values['date_from'])) {
-            $query->where($table . '.created_at', '>=', $search_values['date_from']);
+        if (isset($search_values['datetime_from'])) {
+            $query->where($table . '.created_at', '>=', $search_values['datetime_from']);
         }
 
-        if (isset($search_values['date_to'])) {
-            $query->where($table . '.created_at', '<=', $search_values['date_to']);
+        if (isset($search_values['datetime_to'])) {
+            $query->where($table . '.created_at', '<', $search_values['datetime_to']);
         }
 
         
