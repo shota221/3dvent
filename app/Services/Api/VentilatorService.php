@@ -3,6 +3,7 @@
 namespace App\Services\Api;
 
 use App\Exceptions;
+use App\Http\Forms\Api\VentilatorShowForm;
 use App\Repositories as Repos;
 use App\Repositories\PatientRepository;
 use App\Services\Support as Support;
@@ -10,10 +11,14 @@ use App\Services\Support\Client\ReverseGeocodingClient;
 use App\Services\Support\Converter;
 use App\Services\Support\DBUtil;
 use App\Services\Support\DateUtil;
+use App\Services\Support\Logic as Logic;
+use Illuminate\Validation\Rules\Exists;
 
 class VentilatorService
 {
-    use Support\Logic\CalculationLogic;
+    use Logic\CalculationLogic;
+    use Logic\OrganizationCheckLogic;
+    
 
     /**
      * gs1コードから呼吸器情報を取得する
@@ -21,24 +26,30 @@ class VentilatorService
      * @param [type] $form
      * @return void
      */
-    public function getVentilatorResult($form, $user = null)
+    public function getVentilatorResult(VentilatorShowForm $form, $user = null)
     {
-        if (!Repos\VentilatorRepository::existsByGs1Code($form->gs1_code)) {
+        //未登録の場合
+        $exists = Repos\VentilatorRepository::existsByGs1Code($form->gs1_code);
+        if (!$exists) {
             return Converter\VentilatorConverter::convertToVentilatorResult();
         }
 
         $ventilator = Repos\VentilatorRepository::findOneByGs1Code($form->gs1_code);
 
-        //no_auth
-        if (is_null($user)) {
+        //no_authの場合
+        $is_no_auth = is_null($user);
+        if ($is_no_auth) {
             return  Converter\VentilatorConverter::convertToVentilatorResult($ventilator);
         }
 
-        $v_org_id = $ventilator->organization_id;
+        $is_valid_user = $this->checkUserAgainstVentilator($user->id,$ventilator->id);
 
-        $u_org_id = $user->organization_id;
-
-        return Converter\VentilatorConverter::convertToVentilatorResult($ventilator, is_null($v_org_id) || $v_org_id === $u_org_id);
+        if(!$is_valid_user){
+            $form->addError('gs1_code','validation.organization_mismatch');
+            throw new Exceptions\InvalidFormException($form);
+        }
+        
+        return Converter\VentilatorConverter::convertToVentilatorResult($ventilator);
     }
 
     /**

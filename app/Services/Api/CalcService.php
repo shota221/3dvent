@@ -44,6 +44,8 @@ class CalcService
 
     public function getIeSound($form)
     {
+        $max_sec = 20; //取得測定時間上限（計算時間比例）
+
         //音声ファイル作成
         $temp_file = tempnam(sys_get_temp_dir(), 'Tmp');
 
@@ -52,19 +54,17 @@ class CalcService
 
         fclose($handle);
 
-        $wave_data = Support\WaveUtil::extractWaveData($temp_file);
+        $wave_data = Support\WaveUtil::extractWaveData($temp_file,$max_sec);
 
         unlink($temp_file);
 
         //正規化
-        $y_max = max($wave_data->func[0]);
+        $y_max = max(max($wave_data->func[0]),-min($wave_data->func[0]));
         $func = array_map(function ($x) use ($y_max) {
             return $x / $y_max;
         }, $wave_data->func[0]);
 
         $n = 2; //呼吸音取得サンプル数設定（2回分の平均をとる）
-
-        $max_sec = 20; //取得測定時間上限（計算時間比例）
 
         $sr = $wave_data->sampling_rate;
         $dt = 1 / $sr;
@@ -118,8 +118,8 @@ class CalcService
 
         //偏差値が50を下回る音量が$switch_time_bufferだけ続いたら確定してその分をinhに追加。途中でまた音がしたら（=たぶんカチ）の場合はexhに加算。
         $switch_time_buffer = 0.1;
-        $inh_counter_threshold = round($switch_time_buffer/($step*$dt));
-        $inh_start_threshold = $inh_counter_threshold *2;
+        $inh_counter_threshold = 10;
+        $inh_start_threshold = 20;
 
 
         $message = "";

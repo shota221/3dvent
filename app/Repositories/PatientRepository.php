@@ -23,4 +23,9 @@ class PatientRepository
             ->where('organization_id', $organization_id)
             ->exists();
     }
+
+    public static function getOrganizationIdById(int $id)
+    {
+        return static::query()->where('id',$id)->value('organization_id');
+    }
 }
