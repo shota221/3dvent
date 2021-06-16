@@ -96,6 +96,7 @@ class VentilatorService
         // 組織情報の整合チェック
         if (!is_null($v_org_id) && $v_org_id !== $u_org_id) {
             $form->addError('id', 'validation.organization_mismatch');
+            return false;
         }
 
         $entity = Converter\VentilatorConverter::convertToVentilatorUpdateEntity($ventilator, $u_org_id, $form->start_using_at);
