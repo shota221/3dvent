@@ -12,12 +12,12 @@ use App\Services\Support\Converter;
 use App\Services\Support\DBUtil;
 use App\Services\Support\DateUtil;
 use App\Services\Support\Logic as Logic;
+use App\Services\Support\OrganizationCheckUtil;
 use Illuminate\Validation\Rules\Exists;
 
 class VentilatorService
 {
     use Logic\CalculationLogic;
-    use Logic\OrganizationCheckLogic;
     
 
     /**
@@ -42,9 +42,9 @@ class VentilatorService
             return  Converter\VentilatorConverter::convertToVentilatorResult($ventilator);
         }
 
-        $is_valid_user = $this->checkUserAgainstVentilator($user->id,$ventilator->id);
+        $is_match_organization_id = OrganizationCheckUtil::checkUserAgainstVentilator($user,$ventilator->id);
 
-        if(!$is_valid_user){
+        if(!$is_match_organization_id){
             $form->addError('gs1_code','validation.organization_mismatch');
             throw new Exceptions\InvalidFormException($form);
         }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Support\Logic;
+namespace App\Services\Support;
 
 use App\Exceptions;
 
@@ -16,18 +16,18 @@ use Closure;
 /**
  * 組織整合性を調べるためのトレイト
  */
-trait OrganizationCheckLogic
+class OrganizationCheckUtil
 {
     /**
      * ユーザーと呼吸器の組織整合がとれているかどうか
      *
-     * @param $user_id
+     * @param User $user
      * @param $ventilator_id
      * @return boolean
      */
-    public function checkUserAgainstVentilator($user_id, $ventilator_id)
+    public static function checkUserAgainstVentilator(User $user, $ventilator_id)
     {
-        $u_org_id = Repos\UserRepository::getOrganizationIdById($user_id);
+        $u_org_id = $user->organization_id;
         $v_org_id = Repos\VentilatorRepository::getOrganizationIdById($ventilator_id);
 
         $organization_check = is_null($v_org_id) || $v_org_id === $u_org_id;
@@ -38,13 +38,13 @@ trait OrganizationCheckLogic
     /**
      * ユーザーと患者の組織整合がとれているかどうか
      *
-     * @param $user_id
+     * @param User $user
      * @param $patient_id
      * @return boolean
      */
-    public function checkUserAgainstPatient($user_id, $patient_id)
+    public function checkUserAgainstPatient(User $user, $patient_id)
     {
-        $u_org_id = Repos\UserRepository::getOrganizationIdById($user_id);
+        $u_org_id = $user->organization_id;
         $p_org_id = Repos\PatientRepository::getOrganizationIdById($patient_id);
 
         $organization_check = is_null($p_org_id) || $p_org_id === $u_org_id;
