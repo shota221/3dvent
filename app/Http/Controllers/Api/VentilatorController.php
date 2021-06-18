@@ -28,9 +28,11 @@ class VentilatorController extends ApiController
         //組織紐付けされている呼吸器へのログインユーザ組織整合性チェック用
         $user = $this->getUser();
 
-        if ($form->hasError() || !$response = $this->service->getVentilatorResult($form, $user)) {
+        if ($form->hasError()) {
             throw new Exceptions\InvalidFormException($form);
         }
+
+        $response = $this->service->getVentilatorResult($form, $user);
 
         return $response;
     }

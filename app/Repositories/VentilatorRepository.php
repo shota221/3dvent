@@ -65,4 +65,9 @@ class VentilatorRepository
                 $organization_table . '.code AS organization_code'
             ]);
     }
+
+    public static function getOrganizationIdById(int $id)
+    {
+        return static::query()->where('id',$id)->value('organization_id');
+    }
 }

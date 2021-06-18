@@ -13,9 +13,13 @@ class FftTest extends TestCase
      */
     public function testBasicTest()
     {
-        $fn = 'public/2-20_新潟病院 #42.wav';
-        $wave_data = WaveUtil::extractWaveData($fn);
-        $y_max = max($wave_data->func[0]);
+        $max_sec = 20; //取得測定時間上限（計算時間比例）
+
+        $code = '5_MV002_SN210202-16_45cmH2O_30LPM_210529';
+        $fn = '../analyze/sound_file/'.$code.'.wav';
+        $wave_data = WaveUtil::extractWaveData($fn,$max_sec);
+        $y_max = max(max($wave_data->func[0]),-min($wave_data->func[0]));
+        echo $y_max;
         $func = array_map(function ($x) use ($y_max) {
             return $x / $y_max;
         }, $wave_data->func[0]);
@@ -24,12 +28,9 @@ class FftTest extends TestCase
         $dt = 1 / $sr;
         $n = 2; //呼吸音取得サンプル数指定
 
-        $max_sec = 15; //取得測定時間上限（計算時間比例）
-
         $wave_length = $wave_data->length;
         $step = 128; //second/step=$step*$dt
-        $win_length = 128; //窓幅を大きくすると周波数分解能があがりダイナミックレンジがさがる
-
+        $win_length = 256; //窓幅を大きくすると周波数分解能があがりダイナミックレンジがさがる
 
         $df = $sr / $win_length; //周波数分解幅
 
@@ -63,12 +64,13 @@ class FftTest extends TestCase
         $hear_flg = 1; //1のときヒア状態。ピーク検出で0に
 
         $slice_starts = [
-            50410,
-            123250,
-            195650,
-            268715,
-            341330            
+            70910,
+            122390,
+            182838
         ];
+
+        $status = 'click';//カチッ音：click、呼気：in_initial(序盤),in_middle(中盤),in_terminal(終盤)
+
         foreach ($slice_starts as $slice_start) {
             $sliced_func = array_slice($func, $slice_start, $win_length);
             $wined_func = array_map($blackman, array_keys($sliced_func), $sliced_func);
@@ -76,12 +78,8 @@ class FftTest extends TestCase
             $fftfunc = $fft->fft($wined_func);
             $fftabs = $fft->getAbsFFT($fftfunc);
 
-            // echo 'case' . $slice_start . "\n";
-            // foreach ($this->findPeakIndex(array_slice($fftabs, 0, 128),true) as $num) {
-            //     echo $num . "\n";
-            // }
             //書き出し
-            $stream = fopen('../analyze/2-20-128click' . $slice_start . '.csv', 'w');
+            $stream = fopen('../analyze/'.$slice_start. $code. $slice_start . '.csv', 'w');
             foreach ($fftabs as $key => $value) {
                 fputcsv($stream, [$key, $value]);
                 if ($key === 63) break;

@@ -11,28 +11,30 @@ use App\Services\Support\DateUtil;
 
 class VentilatorConverter
 {
-    public static function convertToVentilatorResult($entity = null, $organization_checked = null)
+    public static function convertToVentilatorResult($entity = null)
     {
         $res = new Response\Api\VentilatorResult;
 
-        if ($res->is_registered = !is_null($entity)) {
-            $res->organization_checked = $organization_checked;
+        $isRegisteredVentilator = !is_null($entity);
+
+        $res->is_registered = $isRegisteredVentilator;
+
+        if ($isRegisteredVentilator) {
 
             $res->organization_name = $entity->organization_name;
 
             $res->organization_code = $entity->organization_code;
-            //nullの場合も諸情報を返す
-            if ($organization_checked !== false){
-                $res->ventilator_id = $entity->id;
 
-                $res->patient_id = $entity->patient_id;
-    
-                $res->serial_number = strval($entity->serial_number);
-    
-                $res->start_using_at = $entity->start_using_at;
-            }
+            $res->ventilator_id = $entity->id;
 
+            $res->patient_id = $entity->patient_id;
+
+            $res->serial_number = strval($entity->serial_number);
+
+            $res->start_using_at = $entity->start_using_at;
         }
+
+        $res->units = config('units');
 
         return $res;
     }
@@ -52,11 +54,11 @@ class VentilatorConverter
         return $res;
     }
 
-    public static function convertToVentilatorUpdateEntity($entity,$organization_id,$start_using_at = null)
+    public static function convertToVentilatorUpdateEntity($entity, $organization_id, $start_using_at = null)
     {
         $entity->organization_id = $organization_id;
 
-        if(!is_null($start_using_at)){
+        if (!is_null($start_using_at)) {
             $entity->start_using_at = $start_using_at;
         }
 

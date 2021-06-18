@@ -34,17 +34,15 @@ Route::group(['middleware' => ['routetype:api']], function () {
 
         // 患者観察研究データ取得
         Route::get('/observation/patient/list', 'ObservationController@patientList')->name('api.observation.patient.list');
-        
+
         // 機器観察研究データ取得
         Route::get('/observation/ventilator/list', 'ObservationController@ventilatorList')->name('api.observation.ventilator.list');
-        
+
         // 機器不具合データ取得
         Route::get('/observation/ventilator_bug/list', 'ObservationController@ventilatorBugList')->name('api.observation.ventilator_bug.list');
-        
+
         //音声解析テスト端末用音声データ保存API
         Route::post('/calculate/ie/sound_sampling', 'CalcController@ieSoundSampling')->name('api.calc.ie_sound_sampling');
-
-
     });
 
     //アプリキー認証ルート

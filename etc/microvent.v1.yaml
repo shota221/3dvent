@@ -205,20 +205,43 @@ paths:
                   example-1:
                     result:
                       is_registered: true
-                      organization_checked: true
                       organization_code: string
-                      ventilator_id: 0
-                      patient_id: 0
+                      ventilator_id: 1
+                      patient_id: 1
                       organization_name: string
-                      serial_number: 0
+                      serial_number: string
                       start_using_at: string
+                      units:
+                        height: cm
+                        weight: kg
+                        air_flow: L/min
+                        o2_flow: L/min
+                        total_flow: L/min
+                        estimated_mv: L/min
+                        airway_pressure: cmH2O
+                        estimated_peep: cmH2O
+                        vt_per_kg: mL
+                        predicted_vt: mL
+                        estimated_vt: mL
+                        i: s
+                        e: s
+                        i_avg: s
+                        e_avg: s
+                        rr: times/min
+                        fio2: '%'
+                        spo2: '%'
+                        etco2: mmHg
+                        pao2: mmHg
+                        paco2: mmHg
                 properties:
                   result:
                     type: object
+                    required:
+                      - is_registered
+                      - start_using_at
+                      - units
                     properties:
                       is_registered:
-                        type: boolean
-                      organization_checked:
                         type: boolean
                       organization_code:
                         type: string
@@ -232,34 +255,159 @@ paths:
                         minLength: 1
                       serial_number:
                         type: string
+                        minLength: 1
                       start_using_at:
                         type: string
                         minLength: 1
+                      units:
+                        type: object
+                        required:
+                          - height
+                          - weight
+                          - air_flow
+                          - o2_flow
+                          - total_flow
+                          - estimated_mv
+                          - airway_pressure
+                          - estimated_peep
+                          - vt_per_kg
+                          - predicted_vt
+                          - estimated_vt
+                          - i
+                          - e
+                          - i_avg
+                          - e_avg
+                          - rr
+                          - fio2
+                          - spo2
+                          - etco2
+                          - pao2
+                          - paco2
+                        properties:
+                          height:
+                            type: string
+                            minLength: 1
+                          weight:
+                            type: string
+                            minLength: 1
+                          air_flow:
+                            type: string
+                            minLength: 1
+                          o2_flow:
+                            type: string
+                            minLength: 1
+                          total_flow:
+                            type: string
+                            minLength: 1
+                          estimated_mv:
+                            type: string
+                            minLength: 1
+                          airway_pressure:
+                            type: string
+                            minLength: 1
+                          estimated_peep:
+                            type: string
+                            minLength: 1
+                          vt_per_kg:
+                            type: string
+                            minLength: 1
+                          predicted_vt:
+                            type: string
+                            minLength: 1
+                          estimated_vt:
+                            type: string
+                            minLength: 1
+                          i:
+                            type: string
+                            minLength: 1
+                          e:
+                            type: string
+                            minLength: 1
+                          i_avg:
+                            type: string
+                            minLength: 1
+                          e_avg:
+                            type: string
+                            minLength: 1
+                          rr:
+                            type: string
+                            minLength: 1
+                          fio2:
+                            type: string
+                            minLength: 1
+                          spo2:
+                            type: string
+                            minLength: 1
+                          etco2:
+                            type: string
+                            minLength: 1
+                          pao2:
+                            type: string
+                            minLength: 1
+                          paco2:
+                            type: string
+                            minLength: 1
                 required:
                   - result
               examples:
-                登録済みであるが、組織コードに齟齬がある場合:
-                  value:
-                    result:
-                      is_registered: true
-                      organization_checked: false
-                      organization_code: string
-                      organization_name: string
                 登録済みかつ、組織コードが合致する場合(組織コードが紐付いていない場合も含む):
                   value:
                     result:
                       is_registered: true
-                      organization_checked: true
                       organization_code: string
                       ventilator_id: 1
                       patient_id: 1
                       organization_name: string
                       serial_number: string
                       start_using_at: string
+                      units:
+                        height: cm
+                        weight: kg
+                        air_flow: L/min
+                        o2_flow: L/min
+                        total_flow: L/min
+                        estimated_mv: L/min
+                        airway_pressure: cmH2O
+                        estimated_peep: cmH2O
+                        vt_per_kg: mL
+                        predicted_vt: mL
+                        estimated_vt: mL
+                        i: s
+                        e: s
+                        i_avg: s
+                        e_avg: s
+                        rr: times/min
+                        fio2: '%'
+                        spo2: '%'
+                        etco2: mmHg
+                        pao2: mmHg
+                        paco2: mmHg
                 未登録の場合:
                   value:
                     result:
                       is_registered: false
+                      units:
+                        height: cm
+                        weight: kg
+                        air_flow: L/min
+                        o2_flow: L/min
+                        total_flow: L/min
+                        estimated_mv: L/min
+                        airway_pressure: cmH2O
+                        estimated_peep: cmH2O
+                        vt_per_kg: mL
+                        predicted_vt: mL
+                        estimated_vt: mL
+                        i: s
+                        e: s
+                        i_avg: s
+                        e_avg: s
+                        rr: times/min
+                        fio2: '%'
+                        spo2: '%'
+                        etco2: mmHg
+                        pao2: mmHg
+                        paco2: mmHg
       operationId: get-ventilator
       description: |
         GS1コードにより人工呼吸器に紐付いた患者の身長体重情報を取得する。存在しない場合はregistered:falseを返す。
@@ -2081,14 +2229,50 @@ paths:
               schema:
                 description: ''
                 type: object
+                x-examples:
+                  example-1:
+                    result:
+                      is_registered: true
+                      organization_code: string
+                      ventilator_id: 1
+                      patient_id: 1
+                      organization_name: string
+                      serial_number: string
+                      start_using_at: string
+                      units:
+                        height: cm
+                        weight: kg
+                        air_flow: L/min
+                        o2_flow: L/min
+                        total_flow: L/min
+                        estimated_mv: L/min
+                        airway_pressure: cmH2O
+                        estimated_peep: cmH2O
+                        vt_per_kg: mL
+                        predicted_vt: mL
+                        estimated_vt: mL
+                        i: s
+                        e: s
+                        i_avg: s
+                        e_avg: s
+                        rr: times/min
+                        fio2: '%'
+                        spo2: '%'
+                        etco2: mmHg
+                        pao2: mmHg
+                        paco2: mmHg
                 properties:
                   result:
                     type: object
                     required:
                       - is_registered
+                      - units
                     properties:
                       is_registered:
                         type: boolean
+                      organization_code:
+                        type: string
+                        minLength: 1
                       ventilator_id:
                         type: number
                       patient_id:
@@ -2098,9 +2282,98 @@ paths:
                         minLength: 1
                       serial_number:
                         type: string
+                        minLength: 1
                       start_using_at:
                         type: string
                         minLength: 1
+                      units:
+                        type: object
+                        required:
+                          - height
+                          - weight
+                          - air_flow
+                          - o2_flow
+                          - total_flow
+                          - estimated_mv
+                          - airway_pressure
+                          - estimated_peep
+                          - vt_per_kg
+                          - predicted_vt
+                          - estimated_vt
+                          - i
+                          - e
+                          - i_avg
+                          - e_avg
+                          - rr
+                          - fio2
+                          - spo2
+                          - etco2
+                          - pao2
+                          - paco2
+                        properties:
+                          height:
+                            type: string
+                            minLength: 1
+                          weight:
+                            type: string
+                            minLength: 1
+                          air_flow:
+                            type: string
+                            minLength: 1
+                          o2_flow:
+                            type: string
+                            minLength: 1
+                          total_flow:
+                            type: string
+                            minLength: 1
+                          estimated_mv:
+                            type: string
+                            minLength: 1
+                          airway_pressure:
+                            type: string
+                            minLength: 1
+                          estimated_peep:
+                            type: string
+                            minLength: 1
+                          vt_per_kg:
+                            type: string
+                            minLength: 1
+                          predicted_vt:
+                            type: string
+                            minLength: 1
+                          estimated_vt:
+                            type: string
+                            minLength: 1
+                          i:
+                            type: string
+                            minLength: 1
+                          e:
+                            type: string
+                            minLength: 1
+                          i_avg:
+                            type: string
+                            minLength: 1
+                          e_avg:
+                            type: string
+                            minLength: 1
+                          rr:
+                            type: string
+                            minLength: 1
+                          fio2:
+                            type: string
+                            minLength: 1
+                          spo2:
+                            type: string
+                            minLength: 1
+                          etco2:
+                            type: string
+                            minLength: 1
+                          pao2:
+                            type: string
+                            minLength: 1
+                          paco2:
+                            type: string
+                            minLength: 1
                 required:
                   - result
               examples:
@@ -2108,16 +2381,60 @@ paths:
                   value:
                     result:
                       is_registered: false
+                      units:
+                        height: cm
+                        weight: kg
+                        air_flow: L/min
+                        o2_flow: L/min
+                        total_flow: L/min
+                        estimated_mv: L/min
+                        airway_pressure: cmH2O
+                        estimated_peep: cmH2O
+                        vt_per_kg: mL
+                        predicted_vt: mL
+                        estimated_vt: mL
+                        i: s
+                        e: s
+                        i_avg: s
+                        e_avg: s
+                        rr: times/min
+                        fio2: '%'
+                        spo2: '%'
+                        etco2: mmHg
+                        pao2: mmHg
+                        paco2: mmHg
                 example-3:
                   value:
                     result:
                       is_registered: true
-                      ventilator_id: 0
-                      patient_id: 0
-                      organization_name: string
                       organization_code: string
+                      ventilator_id: 1
+                      patient_id: 1
+                      organization_name: string
                       serial_number: string
                       start_using_at: string
+                      units:
+                        height: cm
+                        weight: kg
+                        air_flow: L/min
+                        o2_flow: L/min
+                        total_flow: L/min
+                        estimated_mv: L/min
+                        airway_pressure: cmH2O
+                        estimated_peep: cmH2O
+                        vt_per_kg: mL
+                        predicted_vt: mL
+                        estimated_vt: mL
+                        i: s
+                        e: s
+                        i_avg: s
+                        e_avg: s
+                        rr: times/min
+                        fio2: '%'
+                        spo2: '%'
+                        etco2: mmHg
+                        pao2: mmHg
+                        paco2: mmHg
       operationId: get-ventilator-no_auth
       description: |
         GS1コードにより人工呼吸器に紐付いた患者の身長体重情報を取得する。存在しない場合はregistered:falseを返す。

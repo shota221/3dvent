@@ -25,7 +25,8 @@ class RequestLog
 
     private function writeLog($request)                                                                                                 
     {
-        $query = collect($request->all())->except("q")->all();
+        //音声データは容量が大きいためログに残さない
+        $query = collect($request->all())->except("sound")->all();
 
         \Log::debug(
             'ーーリクエスト処理 STARTーー' . "\n" 

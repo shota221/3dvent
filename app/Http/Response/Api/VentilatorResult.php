@@ -14,7 +14,11 @@ class VentilatorResult extends SuccessJsonResult
 
     public $organization_name;
 
+    public $organization_code;
+
     public $serial_number;
     
     public $start_using_at;
+
+    public $units;
 }
