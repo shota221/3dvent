@@ -180,4 +180,22 @@ class DateUtil {
             throw new DateUtilException(('パースに失敗 $str=' . $str . ' $format=' . $format), $e);
         }
     }
+
+    public static function parseToDatetime(string $str, $format = null)
+    {
+        try {
+            if (is_null($format)) { 
+                if (strpos($str, '.') !== false) {
+                    // microtime stringの場合
+                    $format = self::DATETIME_MS_FORMAT;
+                } 
+            }
+
+            $format = $format ?? self::DATETIME_FORMAT;
+
+            return self::createFromFormat($format, $str);
+        } catch (\InvalidArgumentException $e) {
+            throw new DateUtilException(('パースに失敗 $str=' . $str . ' $format=' . $format), $e);
+        }
+    }
 }

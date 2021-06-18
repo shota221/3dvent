@@ -82,9 +82,9 @@ class VentilatorService
 
     public function update($form, $user)
     {
+
         if (!Repos\VentilatorRepository::existsById($form->id)) {
-            $form->addError('id', 'validation.id_not_found');
-            return false;
+            throw new HttpNotFoundException();
         }
 
         $ventilator = Repos\VentilatorRepository::findOneById($form->id);
@@ -93,48 +93,61 @@ class VentilatorService
 
         $u_org_id = $user->organization_id;
 
-        //組織情報の整合チェック
-        if (!is_null($v_org_id) && $v_org_id !== $u_org_id) {
+        $is_match_organization_id = !is_null($v_org_id) && $v_org_id !== $u_org_id;
+
+        // 組織情報の整合チェック
+        if ($is_match_organization_id) {
             $form->addError('id', 'validation.organization_mismatch');
             return false;
         }
 
         $entity = Converter\VentilatorConverter::convertToVentilatorUpdateEntity($ventilator, $u_org_id, $form->start_using_at);
 
-        //初回未ログイン状態で機器を読み取ったものの、患者登録を行わないまま中断。次回ログイン状態で機器を読み取った場合の処理
-        if (is_null($entity->patient_id)) {
-            DBUtil::Transaction(
-                '呼吸器情報更新',
-                function () use ($entity) {
-                    $entity->save();
+        $patient = null;
+
+        $isRegisteredPatient = !is_null($entity->patient_id);
+
+        if ($isRegisteredPatient) {
+            $patient = Repos\PatientRepository::findOneById($entity->patient_id);
+
+            // 現在の患者コード
+            $current_patient_code = $patient->patient_code;
+
+            // 現在の患者組織ID
+            $current_patient_organization_id = $patient->organization_id;
+
+            // 新患者組織ID　呼吸器の紐づき->呼吸器に紐づく患者も組織に紐づく 
+            $new_patient_organization_id = $u_org_id;
+
+            if ($current_patient_organization_id !== $new_patient_organization_id) {
+                // この場合はcurrent_patient_organization_idはNULLの時に限る
+
+                if (!is_null($current_patient_code)) {
+                    $exists_new_organization_patient = Repos\PatientRepository::existsByPatientCodeAndOrganizationId(
+                        $current_patient_code,
+                        $new_patient_organization_id
+                        );
+
+                    if ($exists_new_organization_patient) {
+                        $form->addError('patient_code', 'validation.duplicated_patient_code');
+                        return false; 
+                    }
                 }
-            );
 
-            return Converter\VentilatorConverter::convertToVentilatorUpdateResult($entity);
-        }
-
-        $patient = Repos\PatientRepository::findOneById($entity->patient_id);
-
-        
-        // 追加　未ログインユーザーが患者コードを登録後、ログインユーザーがQRを読み込んだ際に、患者コードが重複した場合の処理
-        $exists = !is_null($u_org_id) && !is_null($patient->patient_code) && Repos\PatientRepository::existsByPatientCodeAndOrganizationId($patient->patient_code, $u_org_id);
-        
-        if ($exists) {
-            $form->addError('patient_code', 'validation.duplicated_patient_code');
-            return false;
-        }
-        
-        //呼吸器の組織ひも付き→呼吸器に紐づく患者も組織に紐づく
-        $patient->organization_id = $u_org_id;
+                // 組織セット 
+                $patient->organization_id = $new_patient_organization_id;
+            }
+        } 
 
         DBUtil::Transaction(
             '呼吸器情報更新',
             function () use ($entity, $patient) {
                 $entity->save();
-                $patient->save();
+                if (!is_null($patient)) $patient->save();
             }
         );
 
         return Converter\VentilatorConverter::convertToVentilatorUpdateResult($entity);
+
     }
 }

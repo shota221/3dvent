@@ -48,12 +48,12 @@ class VentilatorBugRepository
 
         $query->where($organization_table . '.edcid', $search_values['edcid']);
         
-        if (isset($search_values['date_from'])) {
-            $query->where($table . '.created_at', '>=', $search_values['date_from']);
+        if (isset($search_values['datetime_from'])) {
+            $query->where($table . '.created_at', '>=', $search_values['datetime_from']);
         }
 
-        if (isset($search_values['date_to'])) {
-            $query->where($table . '.created_at', '<=', $search_values['date_to']);
+        if (isset($search_values['datetime_to'])) {
+            $query->where($table . '.created_at', '<', $search_values['datetime_to']);
         }
 
         return $query->orderBy($table . '.created_at', 'ASC');
@@ -66,12 +66,12 @@ class VentilatorBugRepository
 
         $query->where($organization_table . '.edcid', $search_values['edcid']);
         
-        if (isset($search_values['date_from'])) {
-            $query->where($table . '.created_at', '>=', $search_values['date_from']);
+        if (isset($search_values['datetime_from'])) {
+            $query->where($table . '.created_at', '>=', $search_values['datetime_from']);
         }
 
-        if (isset($search_values['date_to'])) {
-            $query->where($table . '.created_at', '<=', $search_values['date_to']);
+        if (isset($search_values['datetime_to'])) {
+            $query->where($table . '.created_at', '<', $search_values['datetime_to']);
         }
 
         return $query;

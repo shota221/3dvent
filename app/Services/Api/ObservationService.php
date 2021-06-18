@@ -126,9 +126,9 @@ class ObservationService
         
         $search_values['edcid'] = $form->edcid;
 
-        if (! is_null($form->date_from)) $search_values['date_from'] = $form->date_from; 
+        if (! is_null($form->datetime_from)) $search_values['datetime_from'] = $form->datetime_from; 
         
-        if (! is_null($form->date_to)) $search_values['date_to'] = $form->date_to; 
+        if (! is_null($form->datetime_to)) $search_values['datetime_to'] = $form->datetime_to; 
 
         $search_values['confirmed_flg'] = VentilatorValue::CONFIRM;
      
