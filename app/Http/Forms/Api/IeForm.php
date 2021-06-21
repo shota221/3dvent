@@ -15,9 +15,9 @@ class IeForm extends BaseForm
     protected function validationRule()
     {
         return [        
-            'i' => 'required|'.Rule::VALUE_POSITIVE,
+            'i' => 'required|'.Rule::VALUE_POSITIVE_NON_ZERO,
 
-            'e' => 'required|'.Rule::VALUE_POSITIVE,
+            'e' => 'required|'.Rule::VALUE_POSITIVE_NON_ZERO,
         ];  
     }
 
