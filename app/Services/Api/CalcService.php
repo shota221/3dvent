@@ -44,6 +44,7 @@ class CalcService
 
     public function getIeSound($form)
     {
+        $min_sec = 1.5; //取得測定時間下限
         $max_sec = 20; //取得測定時間上限（計算時間比例）
 
         //音声ファイル作成
@@ -58,6 +59,14 @@ class CalcService
 
         unlink($temp_file);
 
+        $sr = $wave_data->sampling_rate;
+        $dt = 1 / $sr;
+
+        if($dt*$wave_data->length < $min_sec){
+                $form->addError('sound','validation.not_enough_recording_time');
+                throw new Exceptions\InvalidFormException($form);
+        }
+
         //正規化
         $y_max = max(max($wave_data->func[0]),-min($wave_data->func[0]));
         $func = array_map(function ($x) use ($y_max) {
@@ -66,8 +75,6 @@ class CalcService
 
         $n = 2; //呼吸音取得サンプル数設定（2回分の平均をとる）
 
-        $sr = $wave_data->sampling_rate;
-        $dt = 1 / $sr;
         $step = 1024;//step間隔を落とすと時間分解能が上がるが、雑音による精度減少が目立つ(TODO要検討)
         $win_length = 1024; //窓幅を大きくすると周波数分解能があがりダイナミックレンジがさがる
 
@@ -186,6 +193,11 @@ class CalcService
         // echo $all_result_message;
 
         $i_e_avg = ['i' => round($inh * $step * $dt / $n, 2), 'e' => round($exh * $step * $dt / $n, 2)];
+
+        if($i_e_avg['i']*$i_e_avg['e']===0.0){
+                $form->addError('sound','validation.not_enough_pulses');
+                throw new Exceptions\InvalidFormException($form);
+        }
 
         $rr = $this->calcRr($i_e_avg['i'], $i_e_avg['e']);
 

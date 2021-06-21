@@ -12,6 +12,8 @@ class ValidationRule
 
         VALUE_POSITIVE          = 'numeric|min:0',
 
+        VALUE_POSITIVE_NON_ZERO = 'numeric|min:0|not_in:0',
+
         VALUE_NAME              = 'string|max:100',
 
         VALUE_STRING            = 'string|max:250',
