@@ -36,7 +36,8 @@ abstract class BaseForm
                         // array nested form
                         if (is_a($val, '\App\Http\Forms\BaseForm')) {
                             if ($val->hasError()) {
-                                $this->errors[] = (new Error($attribute))->addNestErrors($index, $val->errors);
+                                // $indexが「0」と「0以外」だとerrorsの構造が変わるため共通化するために$indexに＋1
+                                $this->errors[] = (new Error($attribute))->addNestErrors($index + 1, $val->errors);
                             }
                         }
                     }
