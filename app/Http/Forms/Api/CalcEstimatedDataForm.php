@@ -19,11 +19,11 @@ class CalcEstimatedDataForm extends BaseForm
     protected function validationRule()
     {
         return [        
-            'airway_pressure' => 'required|'.Rule::VALUE_POSITIVE,
+            'airway_pressure' => 'required|'.Rule::VALUE_POSITIVE.'|between:8,45',
 
-            'air_flow' => 'required|'.Rule::VALUE_POSITIVE,
+            'air_flow' => 'required|'.Rule::VALUE_POSITIVE.'|between:0,30',
 
-            'o2_flow' => 'required|'.Rule::VALUE_POSITIVE,
+            'o2_flow' => 'required|'.Rule::VALUE_POSITIVE.'|between:0,30',
         ];  
     }
 

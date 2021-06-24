@@ -108,14 +108,27 @@ class PatientService
     {
         $patient = Repos\PatientRepository::findOneById($form->id);
 
-        if (is_null($patient)) {
+        $isRegisteredPatient = !is_null($patient);
+
+        if (!$isRegisteredPatient) {
             $form->addError('id', 'validation.id_not_found');
             return false;
         }
 
-        //フォームとアップデート先両方に患者コードがあり、それらが同一でないかつ、同一組織内に同じ患者コードが存在するかどうか
-        $exists = !is_null($form->patient_code) && !is_null($patient->patient_code) && $form->patient_code !== $patient->patient_code && Repos\PatientRepository::existsByPatientCodeAndOrganizationId($form->patient_code, $patient->organization_id);
+        $exists = false;
 
+        // $exists = true の場合（前提：患者組織ID有）
+        // フォームとアップデート先の患者コードが同一ではなく、組織内に同じ患者コードが存在した場合
+        // アップデート先の患者コードが存在せず、組織内にフォームと同じ患者コードが存在した場合
+        if (!is_null($patient->organization_id)) {
+            // フォームの患者コードが患者所属組織内に存在するかどうか
+            if(!is_null($form->patient_code)) {
+                $is_match_patient_code = !is_null($patient->patient_code) && $form->patient_code === $patient->patient_code;
+                
+                $exists = !$is_match_patient_code && Repos\PatientRepository::existsByPatientCodeAndOrganizationId($form->patient_code, $patient->organization_id);
+            }
+        }
+        
         if ($exists) {
             $form->addError('patient_code', 'validation.duplicated_patient_code');
             return false;
