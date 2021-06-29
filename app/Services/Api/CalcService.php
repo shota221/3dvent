@@ -6,6 +6,7 @@ use App\Exceptions;
 use App\Repositories as Repos;
 use App\Services\Support as Support;
 use App\Services\Support\Converter;
+use App\Services\Support\DateUtil;
 use App\Services\Support\Math;
 use App\Services\Support\Statistic;
 
@@ -45,6 +46,7 @@ class CalcService
 
     public function getIeSound($form)
     {
+        \Log::debug('--getIeSoundStart--'.DateUtil::now());
         $min_sec = 2.0; //取得測定時間下限
         $max_sec = 20; //取得測定時間上限（計算時間比例）
         $cycle = 4; //呼吸音取得サンプル数
@@ -61,7 +63,7 @@ class CalcService
         $wave_data = Support\WaveUtil::extractWaveData($temp_file,$max_sec);
 
         unlink($temp_file);
-
+        \Log::debug('--tempFileWritten--'.DateUtil::now());
         $sr = $wave_data->sampling_rate;
         $dt = 1 / $sr;
 
@@ -88,6 +90,7 @@ class CalcService
         //=呼気吸気の異常値判定(TODO)
         
 
+        \Log::debug('--analyzeStart--'.DateUtil::now());
 
         $db_arr = [];
         for ($i = 0; $i * $step <= $sr * $max_sec; $i++) {
@@ -108,6 +111,7 @@ class CalcService
 
         $statistic = new Statistic($db_arr);
 
+        \Log::debug('--dbArrCollected--'.DateUtil::now());
 
 
         $standard_score_threshold = 50;
@@ -128,6 +132,9 @@ class CalcService
         $inh_times = [];
 
         $error_allowable = 10;//集めた呼気吸気時間に対してそれぞれ偏差値をとり、その50からの差でふるいをかける
+
+
+        \Log::debug('--analyzeEachDb--'.DateUtil::now());
 
         foreach ($db_arr as $key => $value) {
             $standard_score = $statistic->standardScore($value);
@@ -169,6 +176,8 @@ class CalcService
             throw new Exceptions\InvalidFormException($form);
         }
 
+        \Log::debug('--dataCleaningStart--'.DateUtil::now());
+
         $exh_times_statistic = new Statistic($exh_times);
         $inh_times_statistic = new Statistic($inh_times);
         /**
@@ -197,6 +206,8 @@ class CalcService
         }
 
         $rr = $this->calcRr($i_e_avg['i'], $i_e_avg['e']);
+
+        \Log::debug('--analyzeDone--'.DateUtil::now());
 
         return Converter\IeConverter::convertToIeResult($i_e_avg['i'], $i_e_avg['e'], $rr);
     }
