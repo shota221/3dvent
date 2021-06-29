@@ -7,6 +7,7 @@ use App\Repositories as Repos;
 use App\Services\Support as Support;
 use App\Services\Support\Converter;
 use App\Services\Support\Math;
+use App\Services\Support\Statistic;
 
 class CalcService
 {
@@ -44,8 +45,10 @@ class CalcService
 
     public function getIeSound($form)
     {
-        $min_sec = 1.5; //取得測定時間下限
+        $min_sec = 2.0; //取得測定時間下限
         $max_sec = 20; //取得測定時間上限（計算時間比例）
+        $cycle = 4; //呼吸音取得サンプル数
+        $cycle_min = 3; //最低呼吸音取得サンプル数
 
         //音声ファイル作成
         $temp_file = tempnam(sys_get_temp_dir(), 'Tmp');
@@ -73,9 +76,7 @@ class CalcService
             return $x / $y_max;
         }, $wave_data->func[0]);
 
-        $n = 2; //呼吸音取得サンプル数設定（2回分の平均をとる）
-
-        $step = 1024;//step間隔を落とすと時間分解能が上がるが、雑音による精度減少が目立つ(TODO要検討)
+        $step = 256;//step間隔を落とすと時間分解能が上がるが、雑音による精度減少が目立つ(TODO要検討)
         $win_length = 1024; //窓幅を大きくすると周波数分解能があがりダイナミックレンジがさがる
 
         //音量によるie解析測定
@@ -87,7 +88,8 @@ class CalcService
         //=呼気吸気の異常値判定(TODO)
         
 
-        $db_at_t = [];
+
+        $db_arr = [];
         for ($i = 0; $i * $step <= $sr * $max_sec; $i++) {
             $sliced_func = array_slice($func, $i * $step, $win_length);
             $V = 0;
@@ -101,98 +103,93 @@ class CalcService
             $calc_v = sqrt($wined_V_avg);
             //電圧からデシベルへ
             $calc_db = log10($calc_v);
-            $db_at_t[round($i * $step * $dt, 2) * 100] = $calc_db;
-        }
-        //標準偏差
-        $length = count($db_at_t);
-        $average = array_sum($db_at_t) / count($db_at_t);
-
-        $sum = 0;
-        foreach ($db_at_t as $t) {
-            $sum += pow(abs($t - $average), 2);
+            $db_arr[] = $calc_db;
         }
 
-        $start = false; //2周期計測開始判定。1回目のinh_counter開始時にtrue
-        $inh_start_ = false; //呼気からスタートしている判定用。吸気5回で呼気判定スタート。
-        $inh_start_counter = 0;
-        $exh_times = 0; //2周期カウント用
-        $inh_times = 0; //2周期カウント用=exh_times(3)でもOK？
-        //1024=0.02秒の対象区画($sr=44100の場合)が呼気、吸気のそれぞれに加算された回数
-        $inh = 0;
-        $exh = 0;
-
-        $exh_counter = 0;
-
-        //偏差値が50を下回る音量が$switch_time_bufferだけ続いたら確定してその分をinhに追加。途中でまた音がしたら（=たぶんカチ）の場合はexhに加算。
-        $switch_time_buffer = 0.1;
-        $inh_counter_threshold = 10;
-        $inh_start_threshold = 20;
+        $statistic = new Statistic($db_arr);
 
 
-        $message = "";
 
-        //結果確認用
-        $all_result_message = "";
-        foreach ($db_at_t as $k => $v) {
-            //echo ($k/100)."<br />";
+        $standard_score_threshold = 50;
+        $standard_score_threshold_under = 48;
+        $standard_score_gap_threshold = 20; //直近$k_2回(>k_1回)のうちの最大値との偏差値差がこれ以上である場合に吸気移行判定
+        $standard_score_history = []; //過去n回分の偏差値ストック
+        $n = 20; //この分だけ無音判定が続いて初めて計測開始
+        $m = 20; //この分だけ呼気判定が続いて初めて呼気ストックに追加
+        $k_1 = 5; //この分だけ無音判定が続いて初めてギャップ判定
+        $k_2 = 20; //この分のストックの最大値を現在の値と比べ、$standard_score_gap_threshold以上差があれば吸気ストック追加
+        //過去10回のうち8回しきい値超えていれば…みたいな判定方法もありかも（要検討）
+        $hear = false; //受付開始
+        $mode = 0; //0:吸気中,1:呼気中
 
-            $standard_score = ($v - $average) / sqrt($sum / $length) * 10 + 50;
-            $threshold = 50;
-            if ($standard_score > $threshold && $inh_start_) { //偏差値50以上は呼気またはカチと判断。調整検討要
-                $start = true; //測定範囲対象フラグON
-                $exh_counter++; //吸気
-                if ($exh_counter == 1) {
-                    $start_at = ($k / 100);
-                    $exh_times++;
-                    if ($exh_times == 3) {
-                        $message .= "<br />end with 3rd loop on " . $start_at;
-                        break;
+        $last_exh_start_at = null; //最後に呼気開始検出したインデックス
+        $last_inh_start_at = null; //最後に吸気開始検出したインデックス
+        $exh_times = [];
+        $inh_times = [];
+
+        $error_allowable = 10;//集めた呼気吸気時間に対してそれぞれ偏差値をとり、その50からの差でふるいをかける
+
+        foreach ($db_arr as $key => $value) {
+            $standard_score = $statistic->standardScore($value);
+            $standard_score_history[] = $standard_score;
+            if (count($standard_score_history) < max($n, $m, $k_2)) {
+
+                continue;
+            }
+            if ($hear === true) {
+                if ($mode === 0 && min(array_slice($standard_score_history, -$m, $m)) > $standard_score_threshold) {
+                    //吸気中に過去m回すべてしきい値を上回れば呼気移行と判定
+                    $last_exh_start_at = $key - $m + 1;
+                    $mode = 1;
+                    if ($last_inh_start_at !== null) {
+                        $inh_times[] = ($last_exh_start_at - $last_inh_start_at) * $step * $dt;
                     }
-                    $message .= $start_at . "～";
+                    //print_r(array_slice($standard_score_history, -$m, $m));
+                    //print_r("last_exh_start_at" . $last_exh_start_at . "\n");
+                } else if (
+                    $mode === 1
+                    && max(array_slice($standard_score_history, -$k_1, $k_1)) < $standard_score_threshold_under
+                    && max(array_slice($standard_score_history, -$k_2, $k_2)) - $standard_score > $standard_score_gap_threshold
+                ) {
+                    $last_inh_start_at = $key - $k_1 + 1;
+                    $mode = 0;
+                    $exh_times[] = ($last_inh_start_at - $last_exh_start_at) * $step * $dt;
+                    //print_r("last_inh_start_at" . $last_inh_start_at . "\n");
                 }
-                $exh++;
-                if (isset($inh_counter)) { //カチの前に無音があって下でカウントしていた分戻す用処理。
-                    $exh += $inh_counter;
-                    unset($inh_counter);
-                }
-                $all_result_message .= ($k / 100) . "\t" . $standard_score . "<br />";
-            } else {
-                $all_result_message .= "(" . ($k / 100) . ")<br />";
-                if ($start) { //呼気から開始サイクルとする。
-                    //吸気終了間際の無音対策 exh_counterがセットされていたらカチの前の無音処理として呼気にするため溜めておいて一気に処理。
-                    if ($exh_counter > 1) {
-                        if (!isset($inh_counter)) {
-                            $inh_counter = 0;
-                            $end_at = ($k / 100);
-                        }
-                        $inh_counter++;
-                        //5区画=0.1秒続いたら確定してその分を追加。途中でまた音がしたら（=たぶんカチ）の場合はexhに加算。
-                        if ($inh_counter >  $inh_counter_threshold) {
-                            $exh_counter = 0;
-                            $inh += $inh_counter;
-                            unset($inh_counter);
-                            $message .= $end_at . "<br />";
-                            $inh_times++; //inh_times加算。
-                        }
-                    } else {
-                        //呼気カウンタなしなら5区画以上の連続なのでそのまま吸気としてそのままカウント
-                        $inh++;
-                    }
-                } else {
-                    //10区間無音で吸気からの録音部分判定。この判定後に呼気の開始検出を始める。
-                    if ($standard_score < $threshold) {
-                        $inh_start_counter++;
-                        if ($inh_start_counter == $inh_start_threshold) {
-                            $inh_start_ = true;
-                        }
-                    }
-                }
+            } else if (max(array_slice($standard_score_history, -$n, $n)) < $standard_score_threshold_under) {
+                $hear = true;
+                // print_r($key . "\n");
+            }
+
+            if (count($inh_times) === $cycle) break;
+        }
+
+        if(count($inh_times)<$cycle_min){
+            $form->addError('sound','validation.not_enough_pulses');
+            throw new Exceptions\InvalidFormException($form);
+        }
+
+        $exh_times_statistic = new Statistic($exh_times);
+        $inh_times_statistic = new Statistic($inh_times);
+        /**
+         * 外れ値削除
+         */
+        foreach($exh_times as $key => $exh_time){
+            if(abs($exh_times_statistic->standardScore($exh_time)-50)>$error_allowable){
+                unset($exh_times[$key]);
             }
         }
 
-        // echo $all_result_message;
+        foreach($inh_times as $inh_time){
+            if(abs($inh_times_statistic->standardScore($inh_time)-50)>$error_allowable){
+                unset($inh_times[$key]);
+            }
+        }
 
-        $i_e_avg = ['i' => round($inh * $step * $dt / $n, 2), 'e' => round($exh * $step * $dt / $n, 2)];
+        $exh_times_statistic_good = new Statistic($exh_times);
+        $inh_times_statistic_good = new Statistic($inh_times);
+
+        $i_e_avg = ['i' => round($inh_times_statistic_good->mean, 2), 'e' => round($exh_times_statistic_good->mean, 2)];
 
         if($i_e_avg['i']*$i_e_avg['e']===0.0){
                 $form->addError('sound','validation.not_enough_pulses');
