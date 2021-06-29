@@ -15,7 +15,7 @@ class ExampleTest4 extends TestCase
 
         $cycle = 4; //取得周期数
 
-        $code = '3_MV002_SN210202-16_8cmH2O_12LPM_20210506';
+        $code = '5_MV002_SN210202-16_15cmH2O_9LPM_210529';
 
         $fn = '../analyze/sound_file/' . $code . '.wav';
         $wave_data = WaveUtil::extractWaveData($fn, $max_sec);
@@ -70,7 +70,10 @@ class ExampleTest4 extends TestCase
         $exh_times = [];
         $inh_times = [];
 
-        $error_allowable = 10;
+        $error_allowable = 10; //集めた呼気吸気時間に対してそれぞれ偏差値をとり、その50からの差でふるいをかける
+        $click_allowable_time = 0.2; //呼気終了後であってもこの時間分だけはカチ音を受け付ける。
+        $click_allowable_index = floor($click_allowable_time / $dt / $step);
+        $click_threshold = 60; //呼気判定に入ってから$click_allowable_indexすぎるまでにこれを偏差値で上回る点があればクリック音として判定
 
         foreach ($db_arr as $key => $value) {
             $standard_score = $statistic->standardScore($value);
@@ -80,21 +83,29 @@ class ExampleTest4 extends TestCase
                 continue;
             }
             if ($hear === true) {
-                if ($mode === 0 && min(array_slice($standard_score_history, -$m, $m)) > $standard_score_threshold) {
-                    //吸気中に過去m回すべてしきい値を上回れば呼気移行と判定
-                    $last_exh_start_at = $key - $m + 1;
-                    $mode = 1;
-                    if ($last_inh_start_at !== null) {
-                        $inh_times[] = ($last_exh_start_at - $last_inh_start_at) * $step * $dt;
+                if ($mode === 0) {
+                    if (min(array_slice($standard_score_history, -$m, $m)) > $standard_score_threshold) {
+                        //吸気中に過去m回すべてしきい値を上回れば呼気移行と判定
+                        $last_exh_start_at = $key - $m + 1;
+                        $mode = 1;
+                        if ($last_inh_start_at !== null) {
+                            $inh_times[] = ($last_exh_start_at - $last_inh_start_at) * $step * $dt;
+                        }
+                    } else if ($last_inh_start_at !== null && $key - $last_inh_start_at <= $click_allowable_index && $standard_score > $click_threshold) {
+                        //吸気中と判定していたがクリック音が検出された場合の処理
+                        $last_inh_start_at = $key;
+                        array_pop($exh_times);
+                        $exh_times[] = ($last_inh_start_at - $last_exh_start_at) * $step * $dt;
                     }
-                    print_r(array_slice($standard_score_history, -$m, $m));
-                    print_r("last_exh_start_at" . $last_exh_start_at . "\n");
+                    //print_r(array_slice($standard_score_history, -$m, $m));
+                    //print_r("last_exh_start_at" . $last_exh_start_at . "\n");
                 } else if (
                     $mode === 1
                     && max(array_slice($standard_score_history, -$k_1, $k_1)) < $standard_score_threshold_under
-                    && max(array_slice($standard_score_history, -$k_2, $k_2)) - $standard_score > $standard_score_gap_threshold
+                    && max($gap_judge_array = array_slice($standard_score_history, -$k_2, $k_2)) - $standard_score > $standard_score_gap_threshold
                 ) {
-                    $last_inh_start_at = $key - $k_1 + 1;
+                    $maxes = array_keys($gap_judge_array, max($gap_judge_array));
+                    $last_inh_start_at = $key - $k_2 + 1 + $maxes[0];
                     $mode = 0;
                     $exh_times[] = ($last_inh_start_at - $last_exh_start_at) * $step * $dt;
                     print_r("last_inh_start_at" . $last_inh_start_at . "\n");
@@ -112,27 +123,26 @@ class ExampleTest4 extends TestCase
 
         print_r($exh_times);
         print_r($inh_times);
-        
+
         /**
          * 外れ値削除
          */
-        foreach($exh_times as $key => $exh_time){
-            if(abs($exh_times_statistics->standardScore($exh_time)-50)>$error_allowable){
+        foreach ($exh_times as $key => $exh_time) {
+            if (abs($exh_times_statistics->standardScore($exh_time) - 50) > $error_allowable) {
                 unset($exh_times[$key]);
             }
         }
 
-        foreach($inh_times as $inh_time){
-            if(abs($inh_times_statistics->standardScore($inh_time)-50)>$error_allowable){
+        foreach ($inh_times as $key => $inh_time) {
+            if (abs($inh_times_statistics->standardScore($inh_time) - 50) > $error_allowable) {
                 unset($inh_times[$key]);
             }
         }
 
         $exh_times_statistics = new Statistic($exh_times);
         $inh_times_statistics = new Statistic($inh_times);
-        
-        print_r($exh_times_statistics->mean."\n");
-        print_r($inh_times_statistics->mean."\n");
 
+        print_r($exh_times_statistics->mean . "\n");
+        print_r($inh_times_statistics->mean . "\n");
     }
 }
