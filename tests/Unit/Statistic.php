@@ -52,6 +52,6 @@ class Statistic
      * 偏差値
      */
     public function standardScore($value){
-        return ($value-$this->mean)/$this->ssd * 10 + 50;
+        return $this->ssd === 0.0 ? 50 : ($value-$this->mean)/$this->ssd * 10 + 50;
     }
 }
