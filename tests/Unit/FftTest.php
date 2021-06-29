@@ -15,7 +15,16 @@ class FftTest extends TestCase
     {
         $max_sec = 20; //取得測定時間上限（計算時間比例）
 
-        $code = '5_MV002_SN210202-16_45cmH2O_30LPM_210529';
+        $code = '5_MV002_SN210202-16_8cmH2O_5LPM_210529';
+
+        $slice_starts = [
+            67441,
+            164305,
+            261929,
+        ];
+
+        $status = 'click_middle';//カチッ音：click、呼気：in_initial(序盤),in_middle(中盤),in_terminal(終盤)
+
         $fn = '../analyze/sound_file/'.$code.'.wav';
         $wave_data = WaveUtil::extractWaveData($fn,$max_sec);
         $y_max = max(max($wave_data->func[0]),-min($wave_data->func[0]));
@@ -30,7 +39,7 @@ class FftTest extends TestCase
 
         $wave_length = $wave_data->length;
         $step = 128; //second/step=$step*$dt
-        $win_length = 256; //窓幅を大きくすると周波数分解能があがりダイナミックレンジがさがる
+        $win_length = 128; //窓幅を大きくすると周波数分解能があがりダイナミックレンジがさがる
 
         $df = $sr / $win_length; //周波数分解幅
 
@@ -63,13 +72,9 @@ class FftTest extends TestCase
         $inhs = []; //吸気：大きめのピーク(カチッ)
         $hear_flg = 1; //1のときヒア状態。ピーク検出で0に
 
-        $slice_starts = [
-            70910,
-            122390,
-            182838
-        ];
 
-        $status = 'click';//カチッ音：click、呼気：in_initial(序盤),in_middle(中盤),in_terminal(終盤)
+        echo count($func);
+
 
         foreach ($slice_starts as $slice_start) {
             $sliced_func = array_slice($func, $slice_start, $win_length);
@@ -78,10 +83,12 @@ class FftTest extends TestCase
             $fftfunc = $fft->fft($wined_func);
             $fftabs = $fft->getAbsFFT($fftfunc);
 
+            
+
             //書き出し
-            $stream = fopen('../analyze/'.$slice_start. $code. $slice_start . '.csv', 'w');
+            $stream = fopen('../analyze/'.$slice_start. $code. $status . '.csv', 'w');
             foreach ($fftabs as $key => $value) {
-                fputcsv($stream, [$key, $value]);
+                fputcsv($stream, [$key, StatisticUtil::standardScore($fftabs,$value)]);
                 if ($key === 63) break;
             }
             fclose($stream);
