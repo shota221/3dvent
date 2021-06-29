@@ -125,6 +125,7 @@ return [
     'duplicated_email_registration' => 'すでに登録されているメールアドレスです。別のメールアドレスを利用してください。',
     'duplicated_registration' => 'すでに登録されています。',
     'id_not_found'=>'削除されているか、存在しないIDです。',
+    'account_not_found'=>'削除されているか、存在しないアカウント名です。',
     'appkey_not_found'=>'存在しないアプリキーです。',
     'appkey_required'=>'アプリキーは必須です。',
     'not_enough_recording_time'=>'録音時間が短すぎます。再度録音してください。',

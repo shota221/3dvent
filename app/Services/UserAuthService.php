@@ -29,7 +29,7 @@ class UserAuthService
         $organization = Repos\OrganizationRepository::findOneByCode($form->organization_code);
 
         if (is_null($organization)) {
-            $form->addError('organization_code', 'validation.id_not_found');
+            $form->addError('organization_code', 'validation.account_not_found');
             return false;
         }
 
@@ -77,7 +77,7 @@ class UserAuthService
         $organization = Repos\OrganizationRepository::findOneByCode($form->organization_code);
 
         if (is_null($organization)) {
-            $form->addError('organization_code', 'validation.id_not_found');
+            $form->addError('organization_code', 'validation.account_not_found');
             return false;
         }
 
