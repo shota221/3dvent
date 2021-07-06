@@ -37,7 +37,7 @@ class PatientCreateForm extends BaseForm
 
         $this->height = strval(round($input['height'],1));
 
-        $this->weight = isset($input['weight']) ? strval(round($input['weight'],1)) : null;
+        $this->weight = isset($input['weight']) ? strval(round($input['weight'],1)) : '';
 
         $this->gender = intval($input['gender']);
 
