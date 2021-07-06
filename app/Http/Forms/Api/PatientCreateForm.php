@@ -22,6 +22,8 @@ class PatientCreateForm extends BaseForm
             'patient_code' => 'nullable|'.Rule::VALUE_STRING,
         
             'height' => 'required|'.Rule::VALUE_POSITIVE.'|max:999',
+
+            'weight' => 'nullable|'.Rule::VALUE_POSITIVE.'|max:999',
         
             'gender' => 'required|integer|min:1|max:2',
 
@@ -34,6 +36,8 @@ class PatientCreateForm extends BaseForm
         $this->patient_code = isset($input['patient_code']) ? strval($input['patient_code']) : null;
 
         $this->height = strval(round($input['height'],1));
+
+        $this->weight = isset($input['weight']) ? strval(round($input['weight'],1)) : null;
 
         $this->gender = intval($input['gender']);
 

@@ -34,6 +34,7 @@ trait CalculationLogic
 
     /**
      * 予測一回換気量(ml/回)の算出、小数点第一位まで
+     * 予測一回換気量は実際の体重ではなく、理想体重で計算を行う。
      *
      * @param float $ideal_weight
      * @param float $vt_per_kg

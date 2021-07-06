@@ -43,6 +43,6 @@ class PatientUpdateForm extends BaseForm
 
         $this->gender = intval($input['gender']);
 
-        $this->weight = isset($input['weight']) ? strval(round($input['weight'],1)) : '';
+        $this->weight = isset($input['weight']) ? strval(round($input['weight'],1)) : null;
     }
 }

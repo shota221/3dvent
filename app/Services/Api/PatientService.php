@@ -47,6 +47,7 @@ class PatientService
         $entity = Converter\PatientConverter::convertToEntity(
             $form->height,
             $form->gender,
+            $form->weight,
             $form->patient_code,
             $organization_id
         );

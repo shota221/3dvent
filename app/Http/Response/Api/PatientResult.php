@@ -12,6 +12,8 @@ class PatientResult extends SuccessJsonResult
 
     public $gender;
 
+    public $weight;
+
     public $ideal_weight;
 
     public $predicted_vt;

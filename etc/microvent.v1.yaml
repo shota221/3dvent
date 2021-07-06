@@ -238,7 +238,6 @@ paths:
                     type: object
                     required:
                       - is_registered
-                      - start_using_at
                       - units
                     properties:
                       is_registered:
@@ -646,11 +645,21 @@ paths:
             schema:
               description: ''
               type: object
+              x-examples:
+                example-1:
+                  patient_code: '999'
+                  height: string
+                  weight: string
+                  gender: 1
+                  ventilator_id: 1
               properties:
                 patient_code:
                   type: string
                   minLength: 1
                 height:
+                  type: string
+                  minLength: 1
+                weight:
                   type: string
                   minLength: 1
                 gender:
@@ -666,6 +675,7 @@ paths:
                 value:
                   patient_code: '999'
                   height: string
+                  weight: string
                   gender: 1
                   ventilator_id: 1
     parameters: []
@@ -842,6 +852,10 @@ paths:
                       height:
                         type: string
                         minLength: 1
+                      weight:
+                        type: string
+                      '':
+                        type: string
                 required:
                   - result
               examples:
@@ -852,6 +866,7 @@ paths:
                       gender: 1
                       predicted_vt: 393
                       height: '169.5'
+                      weight: '80.2'
       operationId: get-patient-id
       parameters:
         - schema:
@@ -897,6 +912,8 @@ paths:
                       height:
                         type: string
                         minLength: 1
+                      weight:
+                        type: string
                 required:
                   - result
               examples:
@@ -907,6 +924,7 @@ paths:
                       gender: 1
                       predicted_vt: 393
                       height: '169.5'
+                      weight: '50.5'
       operationId: put-patient-id
       parameters:
         - schema:
@@ -945,6 +963,8 @@ paths:
                 height:
                   type: string
                   minLength: 1
+                weight:
+                  type: string
                 gender:
                   type: number
               required:
@@ -955,6 +975,7 @@ paths:
                 value:
                   patient_code: '999'
                   height: '169.5'
+                  weight: '50.5'
                   gender: 1
       description: 患者データを更新する
   /calculate/ie/manual:

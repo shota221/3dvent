@@ -28,6 +28,8 @@ class PatientConverter
 
     $res->height = strval($entity->height);
 
+    $res->weight = strval($entity->weight);
+
     $res->gender = $entity->gender;
 
     $res->predicted_vt = strval($predicted_vt);
@@ -38,6 +40,7 @@ class PatientConverter
   public static function convertToEntity(
     $height,
     $gender,
+    $weight = null,
     $patient_code = null,
     $organization_id = null
   ) {
@@ -49,6 +52,8 @@ class PatientConverter
 
     $entity->gender = $gender;
 
+    $entity->weight = $weight;
+
     $entity->organization_id = $organization_id;
 
     return $entity;
@@ -58,13 +63,16 @@ class PatientConverter
     Patient $entity,
     $patient_code,
     $height,
-    $gender
+    $gender,
+    $weight
   ) {
     $entity->patient_code = $patient_code;
 
     $entity->height = $height;
 
     $entity->gender = $gender;
+
+    $entity->weight = $weight;
 
     return $entity;
   }

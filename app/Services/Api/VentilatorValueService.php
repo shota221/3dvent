@@ -86,6 +86,8 @@ class VentilatorValueService
 
         $height = $patient->height;
 
+        $weight = $patient->weight;
+
         $gender = $patient->gender;
 
         $ideal_weight = $this->calcIdealWeight($height, $gender);
@@ -93,6 +95,7 @@ class VentilatorValueService
         $entity = Converter\VentilatorValueConverter::convertToVentilatorValueEntity(
             $form->ventilator_id,
             $height,
+            $weight,
             $gender,
             $ideal_weight,
             $form->airway_pressure,

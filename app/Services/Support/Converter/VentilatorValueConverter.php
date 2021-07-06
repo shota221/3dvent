@@ -120,6 +120,7 @@ class VentilatorValueConverter
     public static function convertToVentilatorValueEntity(
         $ventilator_id,
         $height,
+        $weight,
         $gender,
         $ideal_weight,
         $airway_pressure,
@@ -144,6 +145,8 @@ class VentilatorValueConverter
         $entity->ventilator_id = $ventilator_id;
 
         $entity->height = strval($height);
+
+        $entity->weight = strval($weight);
 
         $entity->gender = $gender;
 
@@ -181,7 +184,7 @@ class VentilatorValueConverter
 
         $entity->registered_user_id = $user_id;
 
-        //TODO:delete me（edc連携テスト用）//
+        //TODO:delete me（実運用前テスト用）//
         $entity->fixed_flg = 1;
         $entity->confirmed_flg = 1;
         ////////////////////////////////////
