@@ -27,9 +27,11 @@ class VentilatorValueConverter
     {
         $res = new Response\Api\VentilatorValueResult;
 
-        $res->estimated_peep = !is_null($estimated_peep) ? strval($estimated_peep) : null;
+        $round_at = config('calc.default.number_of_decimal_places');
 
-        $res->fio2 = !is_null($fio2) ? strval($fio2) : null;
+        $res->estimated_peep = !is_null($estimated_peep) ? strval(round($estimated_peep,$round_at)) : null;
+
+        $res->fio2 = !is_null($fio2) ? strval(round($fio2,$round_at)) : null;
 
         return $res;
     }
@@ -38,15 +40,17 @@ class VentilatorValueConverter
     {
         $res = new Response\Api\VentilatorValueResult;
 
+        $round_at = config('calc.default.number_of_decimal_places');
+
         $res->ventilator_id = $entity->ventilator_id;
 
-        $res->estimated_vt = strval($entity->estimated_vt);
+        $res->estimated_vt = !empty($entity->estimated_vt) ? strval(round($entity->estimated_vt,$round_at)) : $entity->estimated_vt;
 
-        $res->estimated_mv = strval($entity->estimated_mv);
+        $res->estimated_mv = !empty($entity->estimated_mv) ? strval(round($entity->estimated_mv,$round_at)) : $entity->estimated_mv;
 
-        $res->estimated_peep = strval($entity->estimated_peep);
+        $res->estimated_peep = !empty($entity->estimated_peep) ? strval(round($entity->estimated_peep,$round_at)) : $entity->estimated_peep;
 
-        $res->fio2 = strval($entity->fio2);
+        $res->fio2 = !empty($entity->fio2) ? strval(round($entity->fio2,$round_at)) : $entity->fio2;
 
         return $res;
     }
@@ -60,6 +64,8 @@ class VentilatorValueConverter
             return $res;
         }
 
+        $round_at = config('calc.default.number_of_decimal_places');
+
         $res->has_observed = true;
 
         $res->ventilator_value_id = $entity->id;
@@ -72,47 +78,47 @@ class VentilatorValueConverter
 
         $res->gender = $entity->gender;
 
-        $res->height = strval($entity->height);
+        $res->height = !empty($entity->height) ? strval(round($entity->height,$round_at)) : $entity->height;
 
-        $res->weight = strval($entity->weight);
+        $res->weight = !empty($entity->weight) ? strval(round($entity->weight,$round_at)) : $entity->weight;
 
-        $res->airway_pressure = strval($entity->airway_pressure);
+        $res->airway_pressure = !empty($entity->airway_pressure) ? strval(round($entity->airway_pressure,$round_at)) : $entity->airway_pressure;
 
-        $res->total_flow = strval($entity->total_flow);
+        $res->total_flow = !empty($entity->total_flow) ? strval(round($entity->total_flow,$round_at)) : $entity->total_flow;
 
-        $res->air_flow = strval($entity->air_flow);
+        $res->air_flow = !empty($entity->air_flow) ? strval(round($entity->air_flow,$round_at)) : $entity->air_flow;
 
-        $res->o2_flow = strval($entity->o2_flow);
+        $res->o2_flow = !empty($entity->o2_flow) ? strval(round($entity->o2_flow,$round_at)) : $entity->o2_flow;
 
-        $res->rr = strval($entity->rr);
+        $res->rr = !empty($entity->rr) ? strval(round($entity->rr,$round_at)) : $entity->rr;
 
-        $res->expiratory_time = strval($entity->expiratory_time);
+        $res->expiratory_time = !empty($entity->expiratory_time) ? strval(round($entity->expiratory_time,$round_at)) : $entity->expiratory_time;
 
-        $res->inspiratory_time = strval($entity->inspiratory_time);
+        $res->inspiratory_time = !empty($entity->inspiratory_time) ? strval(round($entity->inspiratory_time,$round_at)) : $entity->inspiratory_time;
 
-        $res->vt_per_kg = strval($entity->vt_per_kg);
+        $res->vt_per_kg = !empty($entity->vt_per_kg) ? strval(round($entity->vt_per_kg,$round_at)) : $entity->vt_per_kg;
 
-        $res->predicted_vt = strval($entity->predicted_vt);
+        $res->predicted_vt = !empty($entity->predicted_vt) ? strval(round($entity->predicted_vt,$round_at)) : $entity->predicted_vt;
 
-        $res->estimated_vt = strval($entity->estimated_vt);
+        $res->estimated_vt = !empty($entity->estimated_vt) ? strval(round($entity->estimated_vt,$round_at)) : $entity->estimated_vt;
 
-        $res->estimated_mv = strval($entity->estimated_mv);
+        $res->estimated_mv = !empty($entity->estimated_mv) ? strval(round($entity->estimated_mv,$round_at)) : $entity->estimated_mv;
 
-        $res->estimated_peep = strval($entity->estimated_peep);
+        $res->estimated_peep = !empty($entity->estimated_peep) ? strval(round($entity->estimated_peep,$round_at)) : $entity->estimated_peep;
 
-        $res->fio2 = strval($entity->fio2);
+        $res->fio2 = !empty($entity->fio2) ? strval(round($entity->fio2,$round_at)) : $entity->fio2;
 
         $res->status_use = $entity->status_use;
 
         $res->status_use_other = strval($entity->status_use_other);
 
-        $res->spo2 = strval($entity->spo2);
+        $res->spo2 = !empty($entity->spo2) ? strval(round($entity->spo2,$round_at)) : $entity->spo2;
 
-        $res->etco2 = strval($entity->etco2);
+        $res->etco2 = !empty($entity->etco2) ? strval(round($entity->etco2,$round_at)) : $entity->etco2;
 
-        $res->pao2 = strval($entity->pao2);
+        $res->pao2 = !empty($entity->pao2) ? strval(round($entity->pao2,$round_at)) : $entity->pao2;
 
-        $res->paco2 = strval($entity->paco2);
+        $res->paco2 = !empty($entity->paco2) ? strval(round($entity->paco2,$round_at)) : $entity->paco2;
 
         return $res;
     }
@@ -142,41 +148,43 @@ class VentilatorValueConverter
     ) {
         $entity = new VentilatorValue;
 
+        $round_at = config('calc.default.number_of_decimal_places');
+
         $entity->ventilator_id = $ventilator_id;
 
-        $entity->height = strval($height);
+        $entity->height = !empty($height) ? strval(round($height,$round_at)) : $height;
 
-        $entity->weight = strval($weight);
+        $entity->weight = !empty($weight) ? strval(round($weight,$round_at)) : $weight;
 
         $entity->gender = $gender;
 
-        $entity->ideal_weight = strval($ideal_weight);
+        $entity->ideal_weight = !empty($ideal_weight) ? strval(round($ideal_weight,$round_at)) : $ideal_weight;
 
-        $entity->airway_pressure = strval($airway_pressure);
+        $entity->airway_pressure = !empty($airway_pressure) ? strval(round($airway_pressure,$round_at)) : $airway_pressure;
 
-        $entity->air_flow = strval($air_flow);
+        $entity->air_flow = !empty($air_flow) ? strval(round($air_flow,$round_at)) : $air_flow;
 
-        $entity->o2_flow = strval($o2_flow);
+        $entity->o2_flow = !empty($o2_flow) ? strval(round($o2_flow,$round_at)) : $o2_flow;
 
-        $entity->rr = strval($rr);
+        $entity->rr = !empty($rr) ? strval(round($rr,$round_at)) : $rr;
 
-        $entity->inspiratory_time = strval($i_avg);
+        $entity->inspiratory_time = !empty($i_avg) ? strval(round($i_avg,$round_at)) : $i_avg;
 
-        $entity->expiratory_time = strval($e_avg);
+        $entity->expiratory_time = !empty($e_avg) ? strval(round($e_avg,$round_at)) : $e_avg;
 
-        $entity->vt_per_kg = strval($vt_per_kg);
+        $entity->vt_per_kg = !empty($vt_per_kg) ? strval(round($vt_per_kg,$round_at)) : $vt_per_kg;
 
-        $entity->predicted_vt = strval($predicted_vt);
+        $entity->predicted_vt = !empty($predicted_vt) ? strval(round($predicted_vt,$round_at)) : $predicted_vt;
 
-        $entity->estimated_vt = strval($estimated_vt);
+        $entity->estimated_vt = !empty($estimated_vt) ? strval(round($estimated_vt,$round_at)) : $estimated_vt;
 
-        $entity->estimated_mv = strval($estimated_mv);
+        $entity->estimated_mv = !empty($estimated_mv) ? strval(round($estimated_mv,$round_at)) : $estimated_mv;
 
-        $entity->estimated_peep = strval($estimated_peep);
+        $entity->estimated_peep = !empty($estimated_peep) ? strval(round($estimated_peep,$round_at)) : $estimated_peep;
 
-        $entity->fio2 = strval($fio2);
+        $entity->fio2 = !empty($fio2) ? strval(round($fio2,$round_at)) : $fio2;
 
-        $entity->total_flow = strval($total_flow);
+        $entity->total_flow = !empty($total_flow) ? strval(round($total_flow,$round_at)) : $total_flow;
 
         $entity->registered_at = $registered_at;
 
@@ -216,45 +224,47 @@ class VentilatorValueConverter
         $pao2 = '',
         $paco2 = ''
     ) {
-        $entity->height = strval($height);
+        $round_at = config('calc.default.number_of_decimal_places');
+
+        $entity->height = !empty($height) ? strval(round($height,$round_at)) : $height;
 
         $entity->gender = $gender;
 
-        $entity->ideal_weight = strval($ideal_weight);
+        $entity->ideal_weight = !empty($ideal_weight) ? strval(round($ideal_weight,$round_at)) : $ideal_weight;
 
-        $entity->airway_pressure = strval($airway_pressure);
+        $entity->airway_pressure = !empty($airway_pressure) ? strval(round($airway_pressure,$round_at)) : $airway_pressure;
 
-        $entity->air_flow = strval($air_flow);
+        $entity->air_flow = !empty($air_flow) ? strval(round($air_flow,$round_at)) : $air_flow;
 
-        $entity->o2_flow = strval($o2_flow);
+        $entity->o2_flow = !empty($o2_flow) ? strval(round($o2_flow,$round_at)) : $o2_flow;
 
-        $entity->vt_per_kg = strval($vt_per_kg);
+        $entity->vt_per_kg = !empty($vt_per_kg) ? strval(round($vt_per_kg,$round_at)) : $vt_per_kg;
 
-        $entity->predicted_vt = strval($predicted_vt);
+        $entity->predicted_vt = !empty($predicted_vt) ? strval(round($predicted_vt,$round_at)) : $predicted_vt;
 
-        $entity->estimated_vt = strval($estimated_vt);
+        $entity->estimated_vt = !empty($estimated_vt) ? strval(round($estimated_vt,$round_at)) : $estimated_vt;
 
-        $entity->estimated_mv = strval($estimated_mv);
+        $entity->estimated_mv = !empty($estimated_mv) ? strval(round($estimated_mv,$round_at)) : $estimated_mv;
 
-        $entity->estimated_peep = strval($estimated_peep);
+        $entity->estimated_peep = !empty($estimated_peep) ? strval(round($estimated_peep,$round_at)) : $estimated_peep;
 
-        $entity->fio2 = strval($fio2);
+        $entity->fio2 = !empty($fio2) ? strval(round($fio2,$round_at)) : $fio2;
 
-        $entity->total_flow = strval($total_flow);
+        $entity->total_flow = !empty($total_flow) ? strval(round($total_flow,$round_at)) : $total_flow;
 
-        $entity->weight = strval($weight);
+        $entity->weight = !empty($weight) ? strval(round($weight,$round_at)) : $weight;
 
         $entity->status_use = $status_use;
 
         $entity->status_use_other = strval($status_use_other);
 
-        $entity->spo2 = strval($spo2);
+        $entity->spo2 = !empty($spo2) ? strval(round($spo2,$round_at)) : $spo2;
 
-        $entity->etco2 = strval($etco2);
+        $entity->etco2 = !empty($etco2) ? strval(round($etco2,$round_at)) : $etco2;
 
-        $entity->pao2 = strval($pao2);
+        $entity->pao2 = !empty($pao2) ? strval(round($pao2,$round_at)) : $pao2;
 
-        $entity->paco2 = strval($paco2);
+        $entity->paco2 = !empty($paco2) ? strval(round($paco2,$round_at)) : $paco2;
 
         return $entity;
     }

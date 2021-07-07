@@ -10,13 +10,15 @@ class IeConverter
     {
         $res = new Response\Api\IeResult;
 
-        $res->i_avg = strval($i_avg);
+        $round_at = config('calc.default.number_of_decimal_places');
 
-        $res->e_avg = strval($e_avg);
+        $res->i_avg = !empty($i_avg) ? strval(round($i_avg,$round_at)) : $i_avg;
 
-        $res->rr = strval($rr);
+        $res->e_avg = !empty($e_avg) ? strval(round($e_avg,$round_at)) : $e_avg;
 
-        $res->ie_ratio = '1：'.strval(round($e_avg/$i_avg,1));
+        $res->rr = !empty($rr) ? strval(round($rr,$round_at)) : $rr;
+
+        $res->ie_ratio = '1：'.strval(round($e_avg/$i_avg,$round_at));
 
         return $res;
     }
