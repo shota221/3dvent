@@ -16,6 +16,8 @@ class IeConverter
 
         $res->rr = strval($rr);
 
+        $res->ie_ratio = '1：'.strval(round($e_avg/$i_avg,1));
+
         return $res;
     }
 }

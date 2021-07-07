@@ -8,6 +8,7 @@ use App\Models\Ventilator;
 use App\Models\VentilatorValue;
 use App\Models\Patient;
 use App\Services\Support\DateUtil;
+use Carbon\Carbon;
 
 class VentilatorConverter
 {
@@ -32,6 +33,12 @@ class VentilatorConverter
             $res->serial_number = strval($entity->serial_number);
 
             $res->start_using_at = $entity->start_using_at;
+
+            $from = DateUtil::parseToDatetime($entity->start_using_at);
+
+            $to = DateUtil::hourLater($from,config('calc.default.recommended_period_hour'));
+
+            $res->is_recommended_period = DateUtil::isBetweenDateTimeToAnother(DateUtil::now(),$from,$to);
         }
 
         $res->units = config('units');
