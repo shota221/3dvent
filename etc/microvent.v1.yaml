@@ -258,6 +258,8 @@ paths:
                       start_using_at:
                         type: string
                         minLength: 1
+                      is_recommended_period:
+                        type: boolean
                       units:
                         type: object
                         required:
@@ -359,6 +361,7 @@ paths:
                       organization_name: string
                       serial_number: string
                       start_using_at: string
+                      is_recommended_period: true
                       units:
                         height: cm
                         weight: kg
@@ -1004,12 +1007,23 @@ paths:
                       rr:
                         type: string
                         minLength: 1
+                      ie_ratio:
+                        type: string
+                        minLength: 1
                     required:
                       - i_avg
                       - e_avg
                       - rr
+                      - ie_ratio
                 required:
                   - result
+                x-examples:
+                  example-1:
+                    result:
+                      i_avg: '2.2'
+                      e_avg: '1.2'
+                      rr: '17.6'
+                      ie_ratio: '1:X'
               examples:
                 example-1:
                   value:
@@ -1017,6 +1031,7 @@ paths:
                       i_avg: '2.2'
                       e_avg: '1.2'
                       rr: '17.6'
+                      ie_ratio: '1:X'
       requestBody:
         content:
           application/json:
@@ -1125,8 +1140,23 @@ paths:
                       rr:
                         type: string
                         minLength: 1
+                      ie_ratio:
+                        type: string
+                        minLength: 1
+                    required:
+                      - i_avg
+                      - e_avg
+                      - rr
+                      - ie_ratio
                 required:
                   - result
+                x-examples:
+                  example-1:
+                    result:
+                      i_avg: '2.2'
+                      e_avg: '1.2'
+                      rr: '17.6'
+                      ie_ratio: '1:X'
               examples:
                 example-1:
                   value:
@@ -1134,6 +1164,7 @@ paths:
                       i_avg: '2.2'
                       e_avg: '1.2'
                       rr: '17.6'
+                      ie_ratio: '1:X'
       description: 音声ファイルをもとにI/Eを取得
       parameters:
         - schema:
@@ -1822,6 +1853,14 @@ paths:
                       - estimated_peep
                 required:
                   - result
+                x-examples:
+                  example-1:
+                    result:
+                      ventilator_id: 0
+                      fio2: string
+                      estimated_vt: string
+                      estimated_mv: string
+                      estimated_peep: string
               examples:
                 example-1:
                   value:
@@ -2307,6 +2346,8 @@ paths:
                       start_using_at:
                         type: string
                         minLength: 1
+                      is_recommended_period:
+                        type: boolean
                       units:
                         type: object
                         required:
@@ -2668,6 +2709,12 @@ paths:
                 properties:
                   result:
                     type: object
+                    required:
+                      - ventilator_id
+                      - fio2
+                      - estimated_vt
+                      - estimated_mv
+                      - estimated_peep
                     properties:
                       ventilator_id:
                         type: number
@@ -2683,12 +2730,6 @@ paths:
                       estimated_peep:
                         type: string
                         minLength: 1
-                    required:
-                      - ventilator_id
-                      - fio2
-                      - estimated_vt
-                      - estimated_mv
-                      - estimated_peep
                 required:
                   - result
               examples:

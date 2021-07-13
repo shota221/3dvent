@@ -13,9 +13,11 @@ class PatientConverter
   {
     $res = new Response\Api\PatientResult;
 
+    $round_at = config('calc.default.number_of_decimal_places');
+
     $res->patient_id = $entity->id;
 
-    $res->predicted_vt = strval($predicted_vt);
+    $res->predicted_vt = !empty($predicted_vt) ? strval(round($predicted_vt,$round_at)) : $predicted_vt;
 
     return $res;
   }
@@ -23,6 +25,8 @@ class PatientConverter
   public static function convertToPatientResult($entity, $predicted_vt)
   {
     $res = new Response\Api\PatientResult;
+
+    $round_at = config('calc.default.number_of_decimal_places');
 
     $res->patient_code = strval($entity->patient_code);
 
@@ -32,7 +36,7 @@ class PatientConverter
 
     $res->gender = $entity->gender;
 
-    $res->predicted_vt = strval($predicted_vt);
+    $res->predicted_vt = !empty($predicted_vt) ? strval(round($predicted_vt,$round_at)) : $predicted_vt;
 
     return $res;
   }

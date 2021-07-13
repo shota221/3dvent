@@ -16,7 +16,7 @@ use Closure;
 trait CalculationLogic
 {
     /**
-     * 理想体重(kg)の算出、小数点第一位まで
+     * 理想体重(kg)の算出
      *
      * @param float $height
      * @param integer $gender
@@ -33,7 +33,7 @@ trait CalculationLogic
     }
 
     /**
-     * 予測一回換気量(ml/回)の算出、小数点第一位まで
+     * 予測一回換気量(ml/回)の算出
      * 予測一回換気量は実際の体重ではなく、理想体重で計算を行う。
      *
      * @param float $ideal_weight
@@ -46,7 +46,7 @@ trait CalculationLogic
     }
 
     /**
-     * EstimatedPeep(cmH2O)の算出、小数点第一位まで
+     * EstimatedPeep(cmH2O)の算出
      * 臨床データをもとに線形近似。$a,$bは変更の可能性アリ
      *
      * @param float $airway_pressure
@@ -61,7 +61,7 @@ trait CalculationLogic
     }
 
     /**
-     * FiO2(%)の算出、小数点第一位まで
+     * FiO2(%)の算出
      *
      * @param float $air_flow
      * @param float $o2_flow
@@ -93,7 +93,7 @@ trait CalculationLogic
         return $i_e_avg;
     }
     /**
-     * RR(回/min)の算出、小数点第二位まで
+     * RR(回/min)の算出
      *
      * @param float $i_avg
      * @param float $e_avg
@@ -105,7 +105,7 @@ trait CalculationLogic
     }
 
     /**
-     * EstimatedVt(ml/回)の算出、小数点第一位まで
+     * EstimatedVt(ml/回)の算出
      *
      * @param float $i_avg
      * @param float $total_flow
@@ -117,7 +117,7 @@ trait CalculationLogic
     }
 
     /**
-     * EstimatedMV(L/min)の算出、小数点第二位まで
+     * EstimatedMV(L/min)の算出
      *
      * @param float $vt
      * @param float $rr

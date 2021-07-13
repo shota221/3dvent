@@ -11,4 +11,6 @@ class IeResult extends SuccessJsonResult
     public $e_avg;
 
     public $rr;
+
+    public $ie_ratio;
 }

@@ -20,5 +20,7 @@ class VentilatorResult extends SuccessJsonResult
     
     public $start_using_at;
 
+    public $is_recommended_period;
+
     public $units;
 }

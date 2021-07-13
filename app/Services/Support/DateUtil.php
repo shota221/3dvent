@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Services\Support;
 
@@ -6,9 +6,10 @@ use Carbon\Carbon;
 
 use App\Exceptions\DateUtilException;
 
-class DateUtil {
+class DateUtil
+{
 
-    const   
+    const
         ZERO_DATE               = '0000-00-00',
         ZERO_DATETIME           = '0000-00-00 00:00:00',
         DAY_START_TIME          = '00:00:00',
@@ -22,8 +23,7 @@ class DateUtil {
         DATETIME_FORMAT         = 'Y-m-d H:i:s',
         DATETIME_MS_FORMAT      = 'Y-m-d H:i:s.u',
         DATETIME_FORMAT_JP      = 'Y年n月j日 G時i分',
-        DATETIME_FORMAT_CHAR    = 'YmdHis'
-    ;
+        DATETIME_FORMAT_CHAR    = 'YmdHis';
 
     /**
      * うるう年などcarbonは勝手に翌日にしてしまうのでチェックを実行
@@ -55,10 +55,10 @@ class DateUtil {
 
     public static function datetimeStrToCarbon($str)
     {
-        return self::createFromFormat(self::DATETIME_FORMAT , $str);
+        return self::createFromFormat(self::DATETIME_FORMAT, $str);
     }
 
-    public static function now() 
+    public static function now()
     {
         return Carbon::now();
     }
@@ -163,13 +163,24 @@ class DateUtil {
         return $date->format(self::TIME_FORMAT);
     }
 
+    public static function isBetweenDateTimeToAnother(Carbon $date, Carbon $from, Carbon $to)
+    {
+        return $date->between($from, $to);
+    }
+
+
+    /**
+     * @param string $str
+     * @param [type] $format
+     * @return Carbon
+     */
     public static function parseToDate(string $str, $format = null)
     {
         try {
             $format = $format ?? self::DATE_FORMAT;
 
             if ($format !== self::DATE_FORMAT) {
-                $date =  self::createFromFormat($format, $str); 
+                $date =  self::createFromFormat($format, $str);
 
                 // createFromFormatは現在時刻を勝手に付与するためまた文字に戻し、初期化の引数にあたえる
                 $str = $date->format(self::DATE_FORMAT);
@@ -181,14 +192,19 @@ class DateUtil {
         }
     }
 
+    /**
+     * @param string $str
+     * @param [type] $format
+     * @return Carbon
+     */
     public static function parseToDatetime(string $str, $format = null)
     {
         try {
-            if (is_null($format)) { 
+            if (is_null($format)) {
                 if (strpos($str, '.') !== false) {
                     // microtime stringの場合
                     $format = self::DATETIME_MS_FORMAT;
-                } 
+                }
             }
 
             $format = $format ?? self::DATETIME_FORMAT;
