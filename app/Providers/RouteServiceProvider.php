@@ -43,7 +43,7 @@ class RouteServiceProvider extends ServiceProvider
             ->namespace($this->namespace . '\Api')
             ->group(base_path('routes/api.php'));
 
-         // manualルーティング
+        // manualルーティング
         Route::prefix('')
             ->domain('manual.' . $host)
             ->middleware('manual')
@@ -51,12 +51,25 @@ class RouteServiceProvider extends ServiceProvider
             ->group(base_path('routes/manual.php'));
 
 
-        // // adminルーティング
-        // Route::prefix('')
-        //     ->domain('admin.' . $host)
-        //     ->middleware('admin')
-        //     ->namespace($this->namespace . '\Admin')
-        //     ->group(base_path('routes/admin.php'));
+        // adminルーティング
+        Route::prefix('')
+            ->domain('admin.' . $host)
+            ->middleware('admin')
+            ->namespace($this->namespace . '\Admin')
+            ->group(base_path('routes/admin.php'));
 
+        // orgルーティング
+        Route::prefix('')
+            ->domain('org.' . $host)
+            ->middleware('org')
+            ->namespace($this->namespace . '\Org')
+            ->group(base_path('routes/org.php'));
+
+        // formルーティング
+        Route::prefix('')
+            ->domain('form.' . $host)
+            ->middleware('form')
+            ->namespace($this->namespace . '\Form')
+            ->group(base_path('routes/form.php'));
     }
 }

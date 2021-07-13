@@ -30,13 +30,16 @@ class Application extends BaseApplication
     public function __construct($basePath, $httpRouteType)
     {
         parent::__construct($basePath);
-        
-        if (! $this->runningInConsole()) { 
+
+        if (!$this->runningInConsole()) {
             // http route type設定
             switch ($httpRouteType) {
-                case 'api'      :
-                case 'manual'      :
-                    $this->httpRouteType = $httpRouteType; 
+                case 'api':
+                case 'manual':
+                case 'admin':
+                case 'org':
+                case 'form':
+                    $this->httpRouteType = $httpRouteType;
 
                     break;
                 default:
@@ -62,9 +65,21 @@ class Application extends BaseApplication
         return 'manual' === $this->httpRouteType;
     }
 
+    public function isHttpRouteTypeAdmin()
+    {
+        return 'admin' === $this->httpRouteType;
+    }
 
-    
-  
+    public function isHttpRouteTypeOrg()
+    {
+        return 'org' === $this->httpRouteType;
+    }
+
+    public function isHttpRouteTypeForm()
+    {
+        return 'form' === $this->httpRouteType;
+    }
+
     public function getRouteType()
     {
         return $this->httpRouteType;
