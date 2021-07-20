@@ -2,10 +2,12 @@
 
 namespace App\Repositories;
 
+use App\Models\OrganizationSetting;
 use App\Models\Ventilator;
 use App\Models\User;
 use App\Models\VentilatorValue;
 use App\Services\Support\DateUtil;
+use GuzzleHttp\Psr7\FnStream;
 
 class VentilatorValueRepository
 {
@@ -47,6 +49,36 @@ class VentilatorValueRepository
             ->addSelect([
                 $table . '.*',
                 $ventilator_table . '.patient_id AS patient_id',
+                $ventilator_table . '.organization_id AS organization_id'
+            ]);
+    }
+
+    private static function leftJoinOrganizationSettings($query = null)
+    {
+        $table = VentilatorValue::tableName();
+
+        $ventilator_table = Ventilator::tableName();
+
+        $organization_setting_table = OrganizationSetting::tableName();
+
+        return (!is_null($query) ? $query : static::query())
+            ->join(
+                $ventilator_table,
+                function ($join) use ($table, $ventilator_table) {
+                    $join
+                        ->on($ventilator_table . '.id', '=', $table . '.ventilator_id');
+                }
+            )
+            ->leftJoin(
+                $organization_setting_table,
+                function ($join) use ($ventilator_table, $organization_setting_table) {
+                    $join
+                        ->on($organization_setting_table . '.organization_id', '=', $ventilator_table . '.organization_id');
+                }
+            )
+            ->addSelect([
+                $table . '.*',
+                $organization_setting_table . '.ventilator_value_scan_interval AS ventilator_value_scan_interval'
             ]);
     }
 
@@ -103,22 +135,22 @@ class VentilatorValueRepository
 
     public static function queryByScannedAtIsNullOrderByRegisteredAtASC()
     {
-        return static::query()
+        return static::leftJoinOrganizationSettings()
             ->whereNull('ventilator_value_scanned_at')
-            ->orderBy('registered_at','ASC');
+            ->orderBy('registered_at', 'ASC');
     }
 
-    public static function updateFixedFlgAndFixedAt($fix_ids,$fixed_at)
+    public static function updateFixedFlgAndFixedAt($fix_ids, $fixed_at)
     {
         static::query()
-        ->whereIn('id',$fix_ids)
-        ->update(['fixed_flg'=>VentilatorValue::FIX,'fixed_at'=>$fixed_at]);
+            ->whereIn('id', $fix_ids)
+            ->update(['fixed_flg' => VentilatorValue::FIX, 'fixed_at' => $fixed_at]);
     }
 
     public static function updateScannedAt($scanned_ids, $scanned_at)
     {
         static::query()
-        ->whereIn('id',$scanned_ids)
-        ->update(['ventilator_value_scanned_at'=>$scanned_at]);
+            ->whereIn('id', $scanned_ids)
+            ->update(['ventilator_value_scanned_at' => $scanned_at]);
     }
 }

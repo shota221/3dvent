@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'fixed_flg_interval' => 1
+    'fixed_flg_interval' => 60
 ];

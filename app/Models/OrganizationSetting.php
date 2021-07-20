@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class OrganizationSetting extends Model
+class OrganizationSetting extends BaseModel
 {
-    use HasFactory;
 }
