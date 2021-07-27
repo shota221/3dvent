@@ -25,9 +25,9 @@ class OrgRegistrationApplicationController extends Controller
     function create(Request $request)
     {
         $form = new Form\OrgRegistrationApplicationForm($request->all());
-        if($form->hasError()){
-            throw new InvalidFormException($form);
-        }
-            return $this->service->create($form);
+        
+        if ($form->hasError()) throw new InvalidFormException($form);
+
+        return $this->service->create($form);
     }
 }

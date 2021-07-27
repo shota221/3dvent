@@ -13,7 +13,7 @@ class OrganizationConverter
     $representative_name,
     $representative_email,
     $status = Organization::DISABLED,
-    $patient_obs_approved_flg = Organization::PARIENT_OBS_UNAPPROVED,
+    $patient_obs_approved_flg = Organization::PATIENT_OBS_UNAPPROVED,
   ) {
     $entity = new Organization;
 

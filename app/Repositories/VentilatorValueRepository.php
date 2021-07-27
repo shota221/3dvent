@@ -53,7 +53,7 @@ class VentilatorValueRepository
             ]);
     }
 
-    private static function leftJoinOrganizationSettings($query = null)
+    private static function joinVentilatorsAndOrganizationSettings($query = null)
     {
         $table = VentilatorValue::tableName();
 
@@ -135,7 +135,7 @@ class VentilatorValueRepository
 
     public static function queryByScannedAtIsNullOrderByRegisteredAtASC()
     {
-        return static::leftJoinOrganizationSettings()
+        return static::joinVentilatorsAndOrganizationSettings()
             ->whereNull('ventilator_value_scanned_at')
             ->orderBy('registered_at', 'ASC');
     }

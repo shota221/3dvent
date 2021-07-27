@@ -12,9 +12,6 @@ class OrgRegistrationApplicationForm extends BaseForm
     public $representative_name;
     public $representative_email;
     public $organization_code;
-    public $user_name;
-    public $password;
-    public $password_confirmation;
     
     protected function validationRule()
     {

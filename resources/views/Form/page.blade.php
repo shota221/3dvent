@@ -45,6 +45,8 @@
 
     @yield('hiddens')
 
+    <script src="{{ mix('js/form/app.js') }}"></script>
+    <script src="{{ mix('js/form/index.js') }}"></script>
     @yield('js')
 
 </body>

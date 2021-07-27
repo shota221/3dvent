@@ -10,16 +10,10 @@
     JS
 ************************/ --}}
 @section('js')
-    <script src="{{ mix('js/form/app.js') }}"></script>
-    <script src="{{ mix('js/form/index.js') }}"></script>
 @stop
 
 @section('title')
     @lang('messages.form.org_registration_form')
-@stop
-
-@section('hiddens')
-    <input type="hidden" id="has-page-editable-role" value="true" />
 @stop
 
 @section('content')
@@ -48,7 +42,7 @@
                             class="required"></span></label>
                     <div>
                         <input class="form-control" type="text" name="representative_name" id="representative_name"
-                            placeholder='' requireed>
+                            placeholder='' required>
                     </div>
                 </div>
 

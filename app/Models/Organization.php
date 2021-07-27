@@ -9,6 +9,6 @@ class Organization extends BaseModel
 {
     const
         PATIENT_OBS_APPROVED = 1,
-        PARIENT_OBS_UNAPPROVED = 0
+        PATIENT_OBS_UNAPPROVED = 0
         ;
 }
