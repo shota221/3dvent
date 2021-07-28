@@ -20,4 +20,11 @@
 Route::group(['middleware' => ['routetype:org']], function() {
     //TODO:DELETE ME
     Route::get('/test','TestController@index')->name('org.test');
+
+    // 組織設定管理
+    Route::get('/setting','OrganizationSettingController@index')->name('org.setting.index');
+    Route::put('/setting','OrganizationSettingController@asyncUpdate')->name('org.setting.update');
+
+
+
 });

@@ -210,6 +210,8 @@ return [
         'start_using_at' => '使用開始日時',
         'email' => 'メールアドレス',
         'user_name' => 'ユーザー名',
+        'ventilator_value_scan_interval' => '最終値決定時間',
+        'vt_per_kg' => '理想体重1kgあたりの予測一回換気量',
     ],
 
 ];

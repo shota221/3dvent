@@ -1,103 +1,794 @@
-/******/ (function(modules) { // webpackBootstrap
-/******/ 	// The module cache
-/******/ 	var installedModules = {};
-/******/
-/******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
-/******/
-/******/ 		// Check if module is in cache
-/******/ 		if(installedModules[moduleId]) {
-/******/ 			return installedModules[moduleId].exports;
-/******/ 		}
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = installedModules[moduleId] = {
-/******/ 			i: moduleId,
-/******/ 			l: false,
-/******/ 			exports: {}
-/******/ 		};
-/******/
-/******/ 		// Execute the module function
-/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-/******/
-/******/ 		// Flag the module as loaded
-/******/ 		module.l = true;
-/******/
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
-/******/
-/******/
-/******/ 	// expose the modules object (__webpack_modules__)
-/******/ 	__webpack_require__.m = modules;
-/******/
-/******/ 	// expose the module cache
-/******/ 	__webpack_require__.c = installedModules;
-/******/
-/******/ 	// define getter function for harmony exports
-/******/ 	__webpack_require__.d = function(exports, name, getter) {
-/******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
-/******/ 		}
-/******/ 	};
-/******/
-/******/ 	// define __esModule on exports
-/******/ 	__webpack_require__.r = function(exports) {
-/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 		}
-/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 	};
-/******/
-/******/ 	// create a fake namespace object
-/******/ 	// mode & 1: value is a module id, require it
-/******/ 	// mode & 2: merge all properties of value into the ns
-/******/ 	// mode & 4: return value when already ns object
-/******/ 	// mode & 8|1: behave like require
-/******/ 	__webpack_require__.t = function(value, mode) {
-/******/ 		if(mode & 1) value = __webpack_require__(value);
-/******/ 		if(mode & 8) return value;
-/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
-/******/ 		var ns = Object.create(null);
-/******/ 		__webpack_require__.r(ns);
-/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
-/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
-/******/ 		return ns;
-/******/ 	};
-/******/
-/******/ 	// getDefaultExport function for compatibility with non-harmony modules
-/******/ 	__webpack_require__.n = function(module) {
-/******/ 		var getter = module && module.__esModule ?
-/******/ 			function getDefault() { return module['default']; } :
-/******/ 			function getModuleExports() { return module; };
-/******/ 		__webpack_require__.d(getter, 'a', getter);
-/******/ 		return getter;
-/******/ 	};
-/******/
-/******/ 	// Object.prototype.hasOwnProperty.call
-/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
-/******/
-/******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "/";
-/******/
-/******/
-/******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 4);
-/******/ })
-/************************************************************************/
-/******/ ({
+/******/ (() => { // webpackBootstrap
+/******/ 	var __webpack_modules__ = ({
+
+/***/ "./resources/js/admin/password_reset/_form_password_reset.class.js":
+/*!*************************************************************************!*\
+  !*** ./resources/js/admin/password_reset/_form_password_reset.class.js ***!
+  \*************************************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+;
+
+(function (factory) {
+  module.exports = factory(jQuery, __webpack_require__(/*! ../../components/util/class.js */ "./resources/js/components/util/class.js"), __webpack_require__(/*! ../../components/form.class.js */ "./resources/js/components/form.class.js"));
+})(function ($, ClassUtils, BaseFormClass) {
+  'use strict';
+
+  var FormRegist;
+  return FormRegist = ClassUtils.Extend(BaseFormClass, function FormRegist($elem) {
+    FormRegist.prototype.__super__.constructor.call(this, $elem);
+
+    this.$fieldTokenInput = this.$form.find('input[name="token"]');
+    this.$fieldEmailInput = this.$form.find('input[name="email"]');
+    this.$fieldPasswordInput = this.$form.find('input[name="password"]');
+    this.$fieldPasswordConfirmInput = this.$form.find('input[name="passwordConfirm"]');
+  }, {
+    validationTypes: function validationTypes() {
+      var self = this;
+      return {
+        passwordConfirm: [function unmatched(value) {
+          return self.$fieldPasswordInput.val() === self.$fieldPasswordConfirmInput.val();
+        }]
+      };
+    }
+  });
+});
+
+/***/ }),
+
+/***/ "./resources/js/admin/password_reset/index.js":
+/*!****************************************************!*\
+  !*** ./resources/js/admin/password_reset/index.js ***!
+  \****************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+;
+
+(function (factory) {
+  module.exports = factory(jQuery, i18n, __webpack_require__(/*! ./_form_password_reset.class */ "./resources/js/admin/password_reset/_form_password_reset.class.js"));
+})(function ($, i18n, FormRegistClass) {
+  'use strict';
+
+  var FormRegist = new FormRegistClass($('form')).build();
+  ;
+  subscribeEvents();
+  /**
+   * イベントリスナー
+   * 
+   * @return {[type]} [description]
+   */
+
+  function subscribeEvents() {
+    FormRegist.on('submit', submit).on('cancel', function (cancelDeferred) {
+      location.reload();
+    });
+  }
+  /**
+   * 確定
+   * 
+   * @return {[type]} [description]
+   */
+
+
+  function submit(submitDeferred, formData, url, method) {
+    FormRegist.clearErrors();
+    $.ext.ajax({
+      ajaxName: 'submit',
+      type: method,
+      url: url,
+      data: formData,
+      success: function success(parsedResult) {
+        if (confirm(i18n('message.accept_password_reset'))) {
+          location.href = parsedResult.homeUrl;
+        } else {
+          submitDeferred.resolve();
+        }
+      },
+      error: function error(errors) {
+        if (errors) {
+          FormRegist.handleFieldErrors(errors);
+        }
+
+        submitDeferred.reject();
+      }
+    });
+  }
+});
+
+/***/ }),
+
+/***/ "./resources/js/components/form.class.js":
+/*!***********************************************!*\
+  !*** ./resources/js/components/form.class.js ***!
+  \***********************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+;
+
+(function (factory) {
+  module.exports = factory(jQuery, i18n, __webpack_require__(/*! ./util/class */ "./resources/js/components/util/class.js"), __webpack_require__(/*! ./util/observable.class */ "./resources/js/components/util/observable.class.js"), __webpack_require__(/*! ./util/validator */ "./resources/js/components/util/validator.js"), __webpack_require__(/*! ladda */ "./node_modules/ladda/js/ladda.js"));
+})(function ($, i18n, ClassUtils, Observable, Validator, Ladda) {
+  'use strict';
+
+  return ClassUtils.Extend(Observable, function Form($elem) {
+    this.$form = $elem;
+    this.method = this.$form.attr('method');
+    this.action = this.$form.attr('action');
+  }, {
+    build: function build(options) {
+      var self = this,
+          opts = $.extend({
+        editable: true,
+        selectBox: null
+      }, options); // icheck init
+
+      $('input[type="checkbox"]', this.$form).iCheck({
+        checkboxClass: 'icheckbox_square-blue'
+      }); // select init
+
+      $('select', this.$form).selectBox(opts.selectBox); // datepicker
+
+      $('.input-group.date', this.$form).daterangepicker({
+        timePicker: false,
+        singleDatePicker: true
+      }, function (start) {
+        this.element.find('input').val(start.format('YYYY-MM-DD'));
+      }); // datetimepicker
+
+      $('.input-group.datetime', this.$form).daterangepicker({
+        timePicker: true,
+        timePickerIncrement: 10,
+        singleDatePicker: true
+      }, function (start) {
+        this.element.find('input').val(start.format('YYYY-MM-DD HH:mm'));
+      }); // input enter key submit制御
+
+      $('input', this.$form).keydown(function (e) {
+        if (e.which && e.which === 13 || e.keyCode && e.keyCode === 13) {
+          return false;
+        } else {
+          return true;
+        }
+      }).attr('autocomplete', "off").attr('autocorrect', "off").attr('autocapitalize', "off").attr('spellcheck', "false");
+      !opts.editable && this.$form.find('.btn-submit').prop('disabled', true); // events
+
+      this.$form.on('click.form', '.btn-submit', function () {
+        if (!opts.editable) return false;
+        var deferred = $.Deferred(),
+            LaddaSubmit = Ladda.create($(this)[0]);
+        deferred.done(function () {
+          self.bind({});
+        }).always(function () {
+          LaddaSubmit.stop().remove();
+        });
+        self.clearErrors();
+        LaddaSubmit.start();
+
+        if ($(this).data('withValidation') && !self.validate()) {
+          deferred.reject();
+        } else {
+          self.trigger('submit', deferred, self.getData(), self.action, self.method);
+        }
+
+        return false;
+      }).on('click.form', '.btn-cancel', function () {
+        var deferred = $.Deferred(),
+            LaddaCancel = Ladda.create($(this)[0]);
+        deferred.always(function () {
+          LaddaCancel.stop().remove();
+        });
+        self.clearErrors();
+        self.trigger('cancel', deferred);
+        self.bind({});
+        return false;
+      });
+      return this;
+    },
+    bind: function bind(data) {// override
+    },
+    validate: function validate() {
+      var error = false,
+          fieldErrors = [],
+          appendTypes = this.validationTypes ? this.validationTypes() : {};
+      this.clearErrors();
+      collectFields.call(this).each(function () {
+        var $elem = $(this),
+            name = $elem.prop('name'),
+            value = getFieldValue($elem),
+            defaultTypes = $elem.data('validationTypes'),
+            types = (defaultTypes || []).concat(appendTypes[name] || []),
+            title = $elem.data('validationTitle') || '',
+            result;
+        result = Validator(value, types, title);
+
+        if (!result.result) {
+          error = true;
+          fieldErrors[name] = [result.message];
+        }
+      });
+      this.handleFieldErrors(fieldErrors);
+
+      if (appendTypes['global']) {
+        var result = Validator(null, appendTypes['global'], 'global');
+
+        if (!result.result) {
+          error = true; // TODO global error field
+        }
+      }
+
+      error && $.ext.notify.warn(i18n('message.invalid_form_inputs'));
+      return !error;
+    },
+    handleFieldErrors: function handleFieldErrors(errors) {
+      collectFields.call(this).each(function () {
+        var $elem = $(this),
+            name = $elem.prop('name');
+        errors[name] && createFieldError($elem, errors[name]);
+      });
+      return this;
+    },
+    getData: function getData() {
+      var data = {};
+      collectFields.call(this).each(function () {
+        var $elem = $(this),
+            name = $elem.prop('name'),
+            value = getFieldValue($elem);
+
+        if (null !== value && '' !== value) {
+          if (name.endsWith('[]')) {
+            name = name.replace('[]', '');
+            if (!data[name]) data[name] = [];
+            data[name].push(value);
+          } else {
+            data[name] = value;
+          }
+        }
+      });
+      return data;
+    },
+    hasError: function hasError() {
+      return this.$form.find('.ng-alert').length ? true : false;
+    },
+    clearErrors: function clearErrors(errors) {
+      this.$form.find('.ng-alert').remove();
+      return this;
+    },
+    clear: function clear() {
+      collectFields.call(this).each(function () {
+        clearFieldValue($(this));
+      });
+      return this;
+    },
+    destroy: function destroy() {
+      this.$form.off('.form'); // icheck init
+
+      $('input[type="checkbox"]', this.$form).iCheck('destroy'); // select init
+
+      $('select', this.$form).selectBox('destroy'); // datepicker
+
+      $('.input-group.date, .input-group.datetime', this.$form).daterangepicker('destroy'); // input enter key submit制御
+
+      $('input', this.$form).off();
+      return this;
+    }
+  });
+  /**
+   * field値を取得
+   * 
+   * @param  {[type]} $field [description]
+   * @return {[type]}        [description]
+   */
+
+  function getFieldValue($field) {
+    var value = '';
+
+    switch ($field.prop('tagName')) {
+      case 'INPUT':
+      case 'SELECT':
+      case 'TEXTAREA':
+        if ($field.is(':checkbox')) {
+          value = $field.is(':checked') ? 1 : 0;
+        } else if ($field.is(':radio')) {
+          value = $field.filter(function () {
+            return $(this).is(':checked');
+          }).val();
+        } else {
+          value = $field.val();
+        }
+
+        break;
+    }
+
+    return value;
+  }
+  /** 
+   * field値を空にする
+   * 
+   * @param  {[type]} $field [description]
+   * @return {[type]}        [description]
+   */
+
+
+  function clearFieldValue($field) {
+    switch ($field.prop('tagName')) {
+      case 'INPUT':
+      case 'SELECT':
+      case 'TEXTAREA':
+        if ($field.is(':checkbox') || $field.is(':radio')) {
+          $field.iCheck('uncheck').prop('checked', false);
+        } else if ($field.is('select')) {
+          $field.val(null).change();
+        } else {
+          $field.val('');
+        }
+
+        break;
+    }
+  }
+  /** 
+   * フィールド入力値を取得
+   * @return {[type]} [description]
+   */
+
+
+  function collectFields() {
+    var $fields = $();
+
+    for (var property in this) {
+      if (property.startsWith('$field')) {
+        this[property].each(function () {
+          $fields.push($(this)[0]);
+        });
+      }
+    }
+
+    return $fields;
+  }
+  /**
+   * フィールドエラー生成
+   * 
+   * @param  {[type]} $field [description]
+   * @param  {[type]} messages [description]
+   * @return {[type]}        [description]
+   */
+
+
+  function createFieldError($field, messages) {
+    if (messages) {
+      $field.before('<p class="ng-alert">' + messages.join('<br />') + '</p>');
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./resources/js/components/util/class.js":
+/*!***********************************************!*\
+  !*** ./resources/js/components/util/class.js ***!
+  \***********************************************/
+/***/ ((module) => {
+
+var ClassUtils = {};
+module.exports = ClassUtils;
+/**
+ * Class Extend
+ * 
+ * ex)
+ * ChildClass = Utils.Extend(SuperClass, function ChildClass() {
+ *          // Chlid constructor
+ *      }), {
+ *          // Child methods
+ *      });
+ */
+
+ClassUtils.Extend = function (SuperClass, ChildClass, ChildClassMethod) {
+  var SuperClass = typeof SuperClass === "string" ? ClassUtils.classes[SuperClass] : SuperClass || Object;
+  ChildClass.prototype.__extends__ = (ChildClass.prototype.__extends__ || []).concat([SuperClass.prototype.constructor.name]).concat(SuperClass.prototype.__extends__ || []);
+  ChildClass.prototype = $.extend({}, SuperClass.prototype, ChildClass.prototype, {
+    constructor: ChildClass.prototype.constructor,
+    __super__: SuperClass.prototype
+  });
+
+  if (ChildClassMethod && !$.isEmptyObject(ChildClassMethod)) {
+    // forはプロトタイプチェーンをたどる、hasOwnPropertyはたどらない
+    for (var key in ChildClassMethod || {}) {
+      if (ChildClassMethod.hasOwnProperty(key)) {
+        ChildClass.prototype[key] = ChildClassMethod[key];
+      }
+    }
+  }
+
+  return ChildClass;
+};
+/**
+ * Class 定義
+ * 
+ * 継承のないCLass
+ */
+
+
+ClassUtils.Class = function (Class, ClassMethod) {
+  return ClassUtils.Extend(null, Class, ClassMethod);
+};
+/**
+ * Classが対象インスタンスかどうか調べる
+ */
+
+
+ClassUtils.instanceOf = function (Obj, className) {
+  return className === Obj.constructor.name || Obj.__extends__ && 0 <= Obj.__extends__.indexOf(className);
+};
+
+/***/ }),
+
+/***/ "./resources/js/components/util/observable.class.js":
+/*!**********************************************************!*\
+  !*** ./resources/js/components/util/observable.class.js ***!
+  \**********************************************************/
+/***/ ((module) => {
+
+/********************
+ * Class Observable 
+ ********************/
+module.exports = Observable;
+
+function Observable() {}
+
+;
+
+Observable.prototype.on = function (event, callback) {
+  this.listeners = this.listeners || {};
+
+  if (event in this.listeners) {
+    this.listeners[event].push(callback);
+  } else {
+    this.listeners[event] = [callback];
+  }
+
+  return this;
+};
+
+Observable.prototype.one = function (event, callback) {
+  this.oneTimeListenersIndexes = this.oneTimeListenersIndexes || {};
+  if (!this.oneTimeListenersIndexes[event]) this.oneTimeListenersIndexes[event] = [];
+  this.on(event, callback);
+  this.oneTimeListenersIndexes[event].push(this.listeners[event].length - 1);
+  return this;
+};
+
+Observable.prototype.off = function (event) {
+  if (this.listeners) {
+    if (event) {
+      delete this.listeners[event];
+    } else {
+      this.listeners = null;
+    }
+  }
+
+  return this;
+};
+
+Observable.prototype.trigger = function (event) {
+  if (this.listeners && event in this.listeners) {
+    this.invoke.call(this, event, Array.prototype.slice.call(arguments, 1));
+  }
+
+  if (this.listeners && '*' in this.listeners) {
+    this.invoke.call(this, '*', arguments);
+  }
+
+  return this;
+};
+
+Observable.prototype.invoke = function (event, params) {
+  var eventListeners = this.listeners[event],
+      survivalEventListeners = [];
+
+  for (var i = 0, len = eventListeners.length; i < len; i++) {
+    var listener = eventListeners[i];
+    listener.apply(this, params);
+
+    if (!this.oneTimeListenersIndexes || !this.oneTimeListenersIndexes[event] || !this.oneTimeListenersIndexes[event].includes(i)) {
+      survivalEventListeners.push(listener);
+    }
+  }
+
+  this.oneTimeListenersIndexes && delete this.oneTimeListenersIndexes[event];
+  survivalEventListeners.length ? this.listeners[event] = survivalEventListeners : delete this.listeners[event];
+};
+
+/***/ }),
+
+/***/ "./resources/js/components/util/validator.js":
+/*!***************************************************!*\
+  !*** ./resources/js/components/util/validator.js ***!
+  \***************************************************/
+/***/ ((module) => {
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+;
+
+(function (factory) {
+  module.exports = factory(jQuery, i18n);
+})(function ($, i18n) {
+  var methods = {
+    _mergeResult: function _mergeResult(resultObjs) {
+      var result = true,
+          messages = [],
+          errors = [];
+      $.each(resultObjs, function (i, resultObj) {
+        if (!resultObj.result) {
+          result = false;
+          messages.push(resultObj.message);
+          errors.push(resultObj);
+        }
+      });
+      return {
+        result: result,
+        errors: errors,
+        message: result ? null : $.unique(messages)
+      };
+    },
+    _createResult: function _createResult(result, messageKey, title, messageArgs) {
+      var message = null;
+
+      if (!result) {
+        var messageArgs = $.extend({
+          name: title ? title : ''
+        }, messageArgs || {});
+        message = i18n('validate.' + messageKey, messageArgs);
+      }
+
+      return {
+        result: result,
+        validationName: messageKey,
+        message: message
+      };
+    },
+    _stop: function _stop(type, currentResult) {
+      if (type == 'required' && !currentResult.result) {
+        return true;
+      }
+
+      return false;
+    },
+    numeric: function numeric(value, title) {
+      var result = true,
+          over = false;
+
+      if (!isEmptyValue(value)) {
+        $.each($.isArray(value) ? value : [value], function (i, v) {
+          if (!$.isNumeric(v)) {
+            result = false;
+          } else {
+            if (Number.MAX_SAFE_INTEGER >= v && -Number.MAX_SAFE_INTEGER <= v) {
+              result = true;
+            } else {
+              result = false;
+              over = true;
+            }
+          }
+        });
+      }
+
+      return methods._createResult(result, result ? null : over ? 'over_max_safe_integer' : 'numeric', title);
+    },
+    positiveNum: function positiveNum(value, title) {
+      // 正数バリデーション
+      var result = true;
+
+      if (!isEmptyValue(value)) {
+        var numericValidation = methods.numeric(value, title);
+
+        if (!numericValidation.result) {
+          return numericValidation;
+        } else {
+          if ('' !== value && 0 > +value) {
+            result = false;
+          }
+        }
+      }
+
+      return methods._createResult(result, result ? null : 'positive_num', title);
+    },
+    strMaxWidth: function strMaxWidth(value, title, range) {
+      var result = true;
+
+      if (!isEmptyValue(value)) {
+        if (range.max < value.length) result = false;
+      }
+
+      return methods._createResult(result, result ? null : 'str_max_width', title);
+    },
+    digitsGreaterThan: function digitsGreaterThan(value, title, range) {
+      var result = true,
+          messageKey;
+
+      if (!isEmptyValue(value)) {
+        var numericValidation = methods.numeric(value, title);
+
+        if (!numericValidation.result) {
+          return numericValidation;
+        } else {
+          var allowEqual = range.equal;
+
+          if (allowEqual && range.min === +value || range.min < +value) {
+            result = true;
+          } else {
+            result = false;
+          }
+
+          messageKey = allowEqual ? 'digits_greater_than_equal_to' : 'digits_greater_than';
+        }
+      }
+
+      return methods._createResult(result, result ? null : messageKey, title, {
+        min: range.min
+      });
+    },
+    digitsLessThan: function digitsLessThan(value, title, range) {
+      var result = true,
+          messageKey;
+
+      if (!isEmptyValue(value)) {
+        var numericValidation = methods.numeric(value, title);
+
+        if (!numericValidation.result) {
+          return numericValidation;
+        } else {
+          var allowEqual = range.equal;
+
+          if (allowEqual && range.max === +value || range.max > +value) {
+            result = true;
+          } else {
+            result = false;
+          }
+
+          messageKey = allowEqual ? 'digits_less_than_equal_to' : 'digits_less_than';
+        }
+      }
+
+      return methods._createResult(result, result ? null : messageKey, title, {
+        max: range.max
+      });
+    },
+    decimalDigitsInRange: function decimalDigitsInRange(value, title, range) {
+      // 小数バリデーション（許容は設定値）
+      var result = true;
+
+      if (!isEmptyValue(value)) {
+        var numericValidation = methods.numeric(value, title);
+
+        if (!numericValidation.result) {
+          return numericValidation;
+        }
+
+        var numbers = String(value).split('.');
+
+        if (2 < numbers.length || numbers[1] && range.max < numbers[1].length) {
+          result = false;
+        }
+      }
+
+      return methods._createResult(result, result ? null : 'decimal_digit_in_range', title, {
+        digits: range.max,
+        name: title
+      });
+    },
+    required: function required(value, title) {
+      var result = !isEmptyValue(value);
+      return methods._createResult(result, result ? null : 'required', title);
+    },
+    length: function length(value, title, range) {
+      var result = true;
+
+      if (!isEmptyValue(value)) {
+        if (value.length > range.max) {
+          result = false;
+        }
+
+        return methods._createResult(result, result ? null : 'length', title, {
+          max: range.max,
+          name: title
+        });
+      }
+    },
+    date: function date(value, title) {
+      var result = true;
+
+      if (!isEmptyValue(value)) {
+        if (!/^\d{1,4}(\/|-)\d{1,2}\1\d{1,2}$/.test(value)) {
+          result = false;
+        } else {
+          var _value$split$map = value.split(/\/|-/).map(function (v) {
+            return parseInt(v, 10);
+          }),
+              _value$split$map2 = _slicedToArray(_value$split$map, 3),
+              year = _value$split$map2[0],
+              month = _value$split$map2[1],
+              day = _value$split$map2[2];
+
+          var date = new Date(year, month - 1, day);
+          result = date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day;
+        }
+      }
+
+      return methods._createResult(result, result ? null : 'date', title);
+    },
+    custom: function custom(value, title, callback) {
+      var result = true;
+
+      if (!isEmptyValue(value)) {
+        result = callback(value);
+      }
+
+      return methods._createResult(result, callback.name, title);
+    }
+  };
+  return function (value, types, title) {
+    if (null == types) {
+      return methods._createResult(true);
+    }
+
+    var results = [];
+    $.each(Array.isArray(types) ? types : [types], function (i, type) {
+      var result;
+
+      if (typeof type === 'function') {
+        result = methods.custom(value, title, type);
+      } else {
+        var matchedArgsStr = type.match(/\{.+\}/);
+
+        if (matchedArgsStr) {
+          var argsStr = matchedArgsStr[0];
+          var args = new Function("return " + argsStr)();
+          result = methods[type.replace(argsStr, '')](value, title, args);
+        } else {
+          result = methods[type](value, title);
+        }
+      }
+
+      results.push(result);
+      if (methods._stop(type, result)) return false; // break;
+    });
+    return methods._mergeResult(results);
+  };
+
+  function isEmptyValue(value) {
+    if (null != value && '' != value && !$.isEmptyObject(value)) {
+      return false;
+    }
+
+    return true;
+  }
+});
+
+/***/ }),
 
 /***/ "./node_modules/ladda/js/ladda.js":
 /*!****************************************!*\
   !*** ./node_modules/ladda/js/ladda.js ***!
   \****************************************/
-/*! exports provided: create, bind, stopAll */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "create", function() { return create; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "bind", function() { return bind; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "stopAll", function() { return stopAll; });
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "create": () => (/* binding */ create),
+/* harmony export */   "bind": () => (/* binding */ bind),
+/* harmony export */   "stopAll": () => (/* binding */ stopAll)
+/* harmony export */ });
 /* harmony import */ var spin_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! spin.js */ "./node_modules/spin.js/spin.js");
 /*!
  * Ladda
@@ -381,7 +1072,7 @@ function createSpinner( button ) {
 		length = radius * 0.6,
 		width = radius < 7 ? 2 : 3;
 
-	return new spin_js__WEBPACK_IMPORTED_MODULE_0__["Spinner"]( {
+	return new spin_js__WEBPACK_IMPORTED_MODULE_0__.Spinner( {
 		color: spinnerColor || '#fff',
 		lines: spinnerLines || 12,
 		radius: radius,
@@ -455,12 +1146,13 @@ function bindElement( element, options ) {
 /*!**************************************!*\
   !*** ./node_modules/spin.js/spin.js ***!
   \**************************************/
-/*! exports provided: Spinner */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Spinner", function() { return Spinner; });
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Spinner": () => (/* binding */ Spinner)
+/* harmony export */ });
 var __assign = (undefined && undefined.__assign) || function () {
     __assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -653,799 +1345,69 @@ function convertOffset(x, y, degrees) {
 }
 
 
-/***/ }),
-
-/***/ "./resources/js/admin/password_reset/_form_password_reset.class.js":
-/*!*************************************************************************!*\
-  !*** ./resources/js/admin/password_reset/_form_password_reset.class.js ***!
-  \*************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-;
-
-(function (factory) {
-  module.exports = factory(jQuery, __webpack_require__(/*! ../../components/util/class.js */ "./resources/js/components/util/class.js"), __webpack_require__(/*! ../../components/form.class.js */ "./resources/js/components/form.class.js"));
-})(function ($, ClassUtils, BaseFormClass) {
-  'use strict';
-
-  var FormRegist;
-  return FormRegist = ClassUtils.Extend(BaseFormClass, function FormRegist($elem) {
-    FormRegist.prototype.__super__.constructor.call(this, $elem);
-
-    this.$fieldTokenInput = this.$form.find('input[name="token"]');
-    this.$fieldEmailInput = this.$form.find('input[name="email"]');
-    this.$fieldPasswordInput = this.$form.find('input[name="password"]');
-    this.$fieldPasswordConfirmInput = this.$form.find('input[name="passwordConfirm"]');
-  }, {
-    validationTypes: function validationTypes() {
-      var self = this;
-      return {
-        passwordConfirm: [function unmatched(value) {
-          return self.$fieldPasswordInput.val() === self.$fieldPasswordConfirmInput.val();
-        }]
-      };
-    }
-  });
-});
-
-/***/ }),
-
-/***/ "./resources/js/admin/password_reset/index.js":
-/*!****************************************************!*\
-  !*** ./resources/js/admin/password_reset/index.js ***!
-  \****************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-;
-
-(function (factory) {
-  module.exports = factory(jQuery, i18n, __webpack_require__(/*! ./_form_password_reset.class */ "./resources/js/admin/password_reset/_form_password_reset.class.js"));
-})(function ($, i18n, FormRegistClass) {
-  'use strict';
-
-  var FormRegist = new FormRegistClass($('form')).build();
-  ;
-  subscribeEvents();
-  /**
-   * イベントリスナー
-   * 
-   * @return {[type]} [description]
-   */
-
-  function subscribeEvents() {
-    FormRegist.on('submit', submit).on('cancel', function (cancelDeferred) {
-      location.reload();
-    });
-  }
-  /**
-   * 確定
-   * 
-   * @return {[type]} [description]
-   */
-
-
-  function submit(submitDeferred, formData, url, method) {
-    FormRegist.clearErrors();
-    $.ext.ajax({
-      ajaxName: 'submit',
-      type: method,
-      url: url,
-      data: formData,
-      success: function success(parsedResult) {
-        if (confirm(i18n('message.accept_password_reset'))) {
-          location.href = parsedResult.homeUrl;
-        } else {
-          submitDeferred.resolve();
-        }
-      },
-      error: function error(errors) {
-        if (errors) {
-          FormRegist.handleFieldErrors(errors);
-        }
-
-        submitDeferred.reject();
-      }
-    });
-  }
-});
-
-/***/ }),
-
-/***/ "./resources/js/components/form.class.js":
-/*!***********************************************!*\
-  !*** ./resources/js/components/form.class.js ***!
-  \***********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-;
-
-(function (factory) {
-  module.exports = factory(jQuery, i18n, __webpack_require__(/*! ./util/class */ "./resources/js/components/util/class.js"), __webpack_require__(/*! ./util/observable.class */ "./resources/js/components/util/observable.class.js"), __webpack_require__(/*! ./util/validator */ "./resources/js/components/util/validator.js"), __webpack_require__(/*! ladda */ "./node_modules/ladda/js/ladda.js"));
-})(function ($, i18n, ClassUtils, Observable, Validator, Ladda) {
-  'use strict';
-
-  return ClassUtils.Extend(Observable, function Form($elem) {
-    this.$form = $elem;
-    this.method = this.$form.attr('method');
-    this.action = this.$form.attr('action');
-  }, {
-    build: function build(options) {
-      var self = this,
-          opts = $.extend({
-        editable: true,
-        selectBox: null
-      }, options); // icheck init
-
-      $('input[type="checkbox"]', this.$form).iCheck({
-        checkboxClass: 'icheckbox_square-blue'
-      }); // select init
-
-      $('select', this.$form).selectBox(opts.selectBox); // datepicker
-
-      $('.input-group.date', this.$form).daterangepicker({
-        timePicker: false,
-        singleDatePicker: true
-      }, function (start) {
-        this.element.find('input').val(start.format('YYYY-MM-DD'));
-      }); // datetimepicker
-
-      $('.input-group.datetime', this.$form).daterangepicker({
-        timePicker: true,
-        timePickerIncrement: 10,
-        singleDatePicker: true
-      }, function (start) {
-        this.element.find('input').val(start.format('YYYY-MM-DD HH:mm'));
-      }); // input enter key submit制御
-
-      $('input', this.$form).keydown(function (e) {
-        if (e.which && e.which === 13 || e.keyCode && e.keyCode === 13) {
-          return false;
-        } else {
-          return true;
-        }
-      }).attr('autocomplete', "off").attr('autocorrect', "off").attr('autocapitalize', "off").attr('spellcheck', "false");
-      !opts.editable && this.$form.find('.btn-submit').prop('disabled', true); // events
-
-      this.$form.on('click.form', '.btn-submit', function () {
-        if (!opts.editable) return false;
-        var deferred = $.Deferred(),
-            LaddaSubmit = Ladda.create($(this)[0]);
-        deferred.done(function () {
-          self.bind({});
-        }).always(function () {
-          LaddaSubmit.stop().remove();
-        });
-        self.clearErrors();
-        LaddaSubmit.start();
-
-        if ($(this).data('withValidation') && !self.validate()) {
-          deferred.reject();
-        } else {
-          self.trigger('submit', deferred, self.getData(), self.action, self.method);
-        }
-
-        return false;
-      }).on('click.form', '.btn-cancel', function () {
-        var deferred = $.Deferred(),
-            LaddaCancel = Ladda.create($(this)[0]);
-        deferred.always(function () {
-          LaddaCancel.stop().remove();
-        });
-        self.clearErrors();
-        self.trigger('cancel', deferred);
-        self.bind({});
-        return false;
-      });
-      return this;
-    },
-    bind: function bind(data) {// override
-    },
-    validate: function validate() {
-      var error = false,
-          fieldErrors = [],
-          appendTypes = this.validationTypes ? this.validationTypes() : {};
-      this.clearErrors();
-      collectFields.call(this).each(function () {
-        var $elem = $(this),
-            name = $elem.prop('name'),
-            value = getFieldValue($elem),
-            defaultTypes = $elem.data('validationTypes'),
-            types = (defaultTypes || []).concat(appendTypes[name] || []),
-            title = $elem.data('validationTitle') || '',
-            result;
-        result = Validator(value, types, title);
-
-        if (!result.result) {
-          error = true;
-          fieldErrors[name] = [result.message];
-        }
-      });
-      this.handleFieldErrors(fieldErrors);
-
-      if (appendTypes['global']) {
-        var result = Validator(null, appendTypes['global'], 'global');
-
-        if (!result.result) {
-          error = true; // TODO global error field
-        }
-      }
-
-      error && $.ext.notify.warn(i18n('message.invalid_form_inputs'));
-      return !error;
-    },
-    handleFieldErrors: function handleFieldErrors(errors) {
-      collectFields.call(this).each(function () {
-        var $elem = $(this),
-            name = $elem.prop('name');
-        errors[name] && createFieldError($elem, errors[name]);
-      });
-      return this;
-    },
-    getData: function getData() {
-      var data = {};
-      collectFields.call(this).each(function () {
-        var $elem = $(this),
-            name = $elem.prop('name'),
-            value = getFieldValue($elem);
-
-        if (null !== value && '' !== value) {
-          if (name.endsWith('[]')) {
-            name = name.replace('[]', '');
-            if (!data[name]) data[name] = [];
-            data[name].push(value);
-          } else {
-            data[name] = value;
-          }
-        }
-      });
-      return data;
-    },
-    hasError: function hasError() {
-      return this.$form.find('.ng-alert').length ? true : false;
-    },
-    clearErrors: function clearErrors(errors) {
-      this.$form.find('.ng-alert').remove();
-      return this;
-    },
-    clear: function clear() {
-      collectFields.call(this).each(function () {
-        clearFieldValue($(this));
-      });
-      return this;
-    },
-    destroy: function destroy() {
-      this.$form.off('.form'); // icheck init
-
-      $('input[type="checkbox"]', this.$form).iCheck('destroy'); // select init
-
-      $('select', this.$form).selectBox('destroy'); // datepicker
-
-      $('.input-group.date, .input-group.datetime', this.$form).daterangepicker('destroy'); // input enter key submit制御
-
-      $('input', this.$form).off();
-      return this;
-    }
-  });
-  /**
-   * field値を取得
-   * 
-   * @param  {[type]} $field [description]
-   * @return {[type]}        [description]
-   */
-
-  function getFieldValue($field) {
-    var value = '';
-
-    switch ($field.prop('tagName')) {
-      case 'INPUT':
-      case 'SELECT':
-      case 'TEXTAREA':
-        if ($field.is(':checkbox')) {
-          value = $field.is(':checked') ? 1 : 0;
-        } else if ($field.is(':radio')) {
-          value = $field.filter(function () {
-            return $(this).is(':checked');
-          }).val();
-        } else {
-          value = $field.val();
-        }
-
-        break;
-    }
-
-    return value;
-  }
-  /** 
-   * field値を空にする
-   * 
-   * @param  {[type]} $field [description]
-   * @return {[type]}        [description]
-   */
-
-
-  function clearFieldValue($field) {
-    switch ($field.prop('tagName')) {
-      case 'INPUT':
-      case 'SELECT':
-      case 'TEXTAREA':
-        if ($field.is(':checkbox') || $field.is(':radio')) {
-          $field.iCheck('uncheck').prop('checked', false);
-        } else if ($field.is('select')) {
-          $field.val(null).change();
-        } else {
-          $field.val('');
-        }
-
-        break;
-    }
-  }
-  /** 
-   * フィールド入力値を取得
-   * @return {[type]} [description]
-   */
-
-
-  function collectFields() {
-    var $fields = $();
-
-    for (var property in this) {
-      if (property.startsWith('$field')) {
-        this[property].each(function () {
-          $fields.push($(this)[0]);
-        });
-      }
-    }
-
-    return $fields;
-  }
-  /**
-   * フィールドエラー生成
-   * 
-   * @param  {[type]} $field [description]
-   * @param  {[type]} messages [description]
-   * @return {[type]}        [description]
-   */
-
-
-  function createFieldError($field, messages) {
-    if (messages) {
-      $field.before('<p class="ng-alert">' + messages.join('<br />') + '</p>');
-    }
-  }
-});
-
-/***/ }),
-
-/***/ "./resources/js/components/util/class.js":
-/*!***********************************************!*\
-  !*** ./resources/js/components/util/class.js ***!
-  \***********************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-var ClassUtils = {};
-module.exports = ClassUtils;
-/**
- * Class Extend
- * 
- * ex)
- * ChildClass = Utils.Extend(SuperClass, function ChildClass() {
- *          // Chlid constructor
- *      }), {
- *          // Child methods
- *      });
- */
-
-ClassUtils.Extend = function (SuperClass, ChildClass, ChildClassMethod) {
-  var SuperClass = typeof SuperClass === "string" ? ClassUtils.classes[SuperClass] : SuperClass || Object;
-  ChildClass.prototype.__extends__ = (ChildClass.prototype.__extends__ || []).concat([SuperClass.prototype.constructor.name]).concat(SuperClass.prototype.__extends__ || []);
-  ChildClass.prototype = $.extend({}, SuperClass.prototype, ChildClass.prototype, {
-    constructor: ChildClass.prototype.constructor,
-    __super__: SuperClass.prototype
-  });
-
-  if (ChildClassMethod && !$.isEmptyObject(ChildClassMethod)) {
-    // forはプロトタイプチェーンをたどる、hasOwnPropertyはたどらない
-    for (var key in ChildClassMethod || {}) {
-      if (ChildClassMethod.hasOwnProperty(key)) {
-        ChildClass.prototype[key] = ChildClassMethod[key];
-      }
-    }
-  }
-
-  return ChildClass;
-};
-/**
- * Class 定義
- * 
- * 継承のないCLass
- */
-
-
-ClassUtils.Class = function (Class, ClassMethod) {
-  return ClassUtils.Extend(null, Class, ClassMethod);
-};
-/**
- * Classが対象インスタンスかどうか調べる
- */
-
-
-ClassUtils.instanceOf = function (Obj, className) {
-  return className === Obj.constructor.name || Obj.__extends__ && 0 <= Obj.__extends__.indexOf(className);
-};
-
-/***/ }),
-
-/***/ "./resources/js/components/util/observable.class.js":
-/*!**********************************************************!*\
-  !*** ./resources/js/components/util/observable.class.js ***!
-  \**********************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-/********************
- * Class Observable 
- ********************/
-module.exports = Observable;
-
-function Observable() {}
-
-;
-
-Observable.prototype.on = function (event, callback) {
-  this.listeners = this.listeners || {};
-
-  if (event in this.listeners) {
-    this.listeners[event].push(callback);
-  } else {
-    this.listeners[event] = [callback];
-  }
-
-  return this;
-};
-
-Observable.prototype.one = function (event, callback) {
-  this.oneTimeListenersIndexes = this.oneTimeListenersIndexes || {};
-  if (!this.oneTimeListenersIndexes[event]) this.oneTimeListenersIndexes[event] = [];
-  this.on(event, callback);
-  this.oneTimeListenersIndexes[event].push(this.listeners[event].length - 1);
-  return this;
-};
-
-Observable.prototype.off = function (event) {
-  if (this.listeners) {
-    if (event) {
-      delete this.listeners[event];
-    } else {
-      this.listeners = null;
-    }
-  }
-
-  return this;
-};
-
-Observable.prototype.trigger = function (event) {
-  if (this.listeners && event in this.listeners) {
-    this.invoke.call(this, event, Array.prototype.slice.call(arguments, 1));
-  }
-
-  if (this.listeners && '*' in this.listeners) {
-    this.invoke.call(this, '*', arguments);
-  }
-
-  return this;
-};
-
-Observable.prototype.invoke = function (event, params) {
-  var eventListeners = this.listeners[event],
-      survivalEventListeners = [];
-
-  for (var i = 0, len = eventListeners.length; i < len; i++) {
-    var listener = eventListeners[i];
-    listener.apply(this, params);
-
-    if (!this.oneTimeListenersIndexes || !this.oneTimeListenersIndexes[event] || !this.oneTimeListenersIndexes[event].includes(i)) {
-      survivalEventListeners.push(listener);
-    }
-  }
-
-  this.oneTimeListenersIndexes && delete this.oneTimeListenersIndexes[event];
-  survivalEventListeners.length ? this.listeners[event] = survivalEventListeners : delete this.listeners[event];
-};
-
-/***/ }),
-
-/***/ "./resources/js/components/util/validator.js":
-/*!***************************************************!*\
-  !*** ./resources/js/components/util/validator.js ***!
-  \***************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
-
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
-function _iterableToArrayLimit(arr, i) { var _i = arr && (typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]); if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
-
-;
-
-(function (factory) {
-  module.exports = factory(jQuery, i18n);
-})(function ($, i18n) {
-  var methods = {
-    _mergeResult: function _mergeResult(resultObjs) {
-      var result = true,
-          messages = [],
-          errors = [];
-      $.each(resultObjs, function (i, resultObj) {
-        if (!resultObj.result) {
-          result = false;
-          messages.push(resultObj.message);
-          errors.push(resultObj);
-        }
-      });
-      return {
-        result: result,
-        errors: errors,
-        message: result ? null : $.unique(messages)
-      };
-    },
-    _createResult: function _createResult(result, messageKey, title, messageArgs) {
-      var message = null;
-
-      if (!result) {
-        var messageArgs = $.extend({
-          name: title ? title : ''
-        }, messageArgs || {});
-        message = i18n('validate.' + messageKey, messageArgs);
-      }
-
-      return {
-        result: result,
-        validationName: messageKey,
-        message: message
-      };
-    },
-    _stop: function _stop(type, currentResult) {
-      if (type == 'required' && !currentResult.result) {
-        return true;
-      }
-
-      return false;
-    },
-    numeric: function numeric(value, title) {
-      var result = true,
-          over = false;
-
-      if (!isEmptyValue(value)) {
-        $.each($.isArray(value) ? value : [value], function (i, v) {
-          if (!$.isNumeric(v)) {
-            result = false;
-          } else {
-            if (Number.MAX_SAFE_INTEGER >= v && -Number.MAX_SAFE_INTEGER <= v) {
-              result = true;
-            } else {
-              result = false;
-              over = true;
-            }
-          }
-        });
-      }
-
-      return methods._createResult(result, result ? null : over ? 'over_max_safe_integer' : 'numeric', title);
-    },
-    positiveNum: function positiveNum(value, title) {
-      // 正数バリデーション
-      var result = true;
-
-      if (!isEmptyValue(value)) {
-        var numericValidation = methods.numeric(value, title);
-
-        if (!numericValidation.result) {
-          return numericValidation;
-        } else {
-          if ('' !== value && 0 > +value) {
-            result = false;
-          }
-        }
-      }
-
-      return methods._createResult(result, result ? null : 'positive_num', title);
-    },
-    strMaxWidth: function strMaxWidth(value, title, range) {
-      var result = true;
-
-      if (!isEmptyValue(value)) {
-        if (range.max < value.length) result = false;
-      }
-
-      return methods._createResult(result, result ? null : 'str_max_width', title);
-    },
-    digitsGreaterThan: function digitsGreaterThan(value, title, range) {
-      var result = true,
-          messageKey;
-
-      if (!isEmptyValue(value)) {
-        var numericValidation = methods.numeric(value, title);
-
-        if (!numericValidation.result) {
-          return numericValidation;
-        } else {
-          var allowEqual = range.equal;
-
-          if (allowEqual && range.min === +value || range.min < +value) {
-            result = true;
-          } else {
-            result = false;
-          }
-
-          messageKey = allowEqual ? 'digits_greater_than_equal_to' : 'digits_greater_than';
-        }
-      }
-
-      return methods._createResult(result, result ? null : messageKey, title, {
-        min: range.min
-      });
-    },
-    digitsLessThan: function digitsLessThan(value, title, range) {
-      var result = true,
-          messageKey;
-
-      if (!isEmptyValue(value)) {
-        var numericValidation = methods.numeric(value, title);
-
-        if (!numericValidation.result) {
-          return numericValidation;
-        } else {
-          var allowEqual = range.equal;
-
-          if (allowEqual && range.max === +value || range.max > +value) {
-            result = true;
-          } else {
-            result = false;
-          }
-
-          messageKey = allowEqual ? 'digits_less_than_equal_to' : 'digits_less_than';
-        }
-      }
-
-      return methods._createResult(result, result ? null : messageKey, title, {
-        max: range.max
-      });
-    },
-    decimalDigitsInRange: function decimalDigitsInRange(value, title, range) {
-      // 小数バリデーション（許容は設定値）
-      var result = true;
-
-      if (!isEmptyValue(value)) {
-        var numericValidation = methods.numeric(value, title);
-
-        if (!numericValidation.result) {
-          return numericValidation;
-        }
-
-        var numbers = String(value).split('.');
-
-        if (2 < numbers.length || numbers[1] && range.max < numbers[1].length) {
-          result = false;
-        }
-      }
-
-      return methods._createResult(result, result ? null : 'decimal_digit_in_range', title, {
-        digits: range.max,
-        name: title
-      });
-    },
-    required: function required(value, title) {
-      var result = !isEmptyValue(value);
-      return methods._createResult(result, result ? null : 'required', title);
-    },
-    length: function length(value, title, range) {
-      var result = true;
-
-      if (!isEmptyValue(value)) {
-        if (value.length > range.max) {
-          result = false;
-        }
-
-        return methods._createResult(result, result ? null : 'length', title, {
-          max: range.max,
-          name: title
-        });
-      }
-    },
-    date: function date(value, title) {
-      var result = true;
-
-      if (!isEmptyValue(value)) {
-        if (!/^\d{1,4}(\/|-)\d{1,2}\1\d{1,2}$/.test(value)) {
-          result = false;
-        } else {
-          var _value$split$map = value.split(/\/|-/).map(function (v) {
-            return parseInt(v, 10);
-          }),
-              _value$split$map2 = _slicedToArray(_value$split$map, 3),
-              year = _value$split$map2[0],
-              month = _value$split$map2[1],
-              day = _value$split$map2[2];
-
-          var date = new Date(year, month - 1, day);
-          result = date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day;
-        }
-      }
-
-      return methods._createResult(result, result ? null : 'date', title);
-    },
-    custom: function custom(value, title, callback) {
-      var result = true;
-
-      if (!isEmptyValue(value)) {
-        result = callback(value);
-      }
-
-      return methods._createResult(result, callback.name, title);
-    }
-  };
-  return function (value, types, title) {
-    if (null == types) {
-      return methods._createResult(true);
-    }
-
-    var results = [];
-    $.each(Array.isArray(types) ? types : [types], function (i, type) {
-      var result;
-
-      if (typeof type === 'function') {
-        result = methods.custom(value, title, type);
-      } else {
-        var matchedArgsStr = type.match(/\{.+\}/);
-
-        if (matchedArgsStr) {
-          var argsStr = matchedArgsStr[0];
-          var args = new Function("return " + argsStr)();
-          result = methods[type.replace(argsStr, '')](value, title, args);
-        } else {
-          result = methods[type](value, title);
-        }
-      }
-
-      results.push(result);
-      if (methods._stop(type, result)) return false; // break;
-    });
-    return methods._mergeResult(results);
-  };
-
-  function isEmptyValue(value) {
-    if (null != value && '' != value && !$.isEmptyObject(value)) {
-      return false;
-    }
-
-    return true;
-  }
-});
-
-/***/ }),
-
-/***/ 4:
-/*!**********************************************************!*\
-  !*** multi ./resources/js/admin/password_reset/index.js ***!
-  \**********************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(/*! /mnt/workspace/resources/js/admin/password_reset/index.js */"./resources/js/admin/password_reset/index.js");
-
-
 /***/ })
 
-/******/ });
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/************************************************************************/
+/******/ 	
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	// This entry module is referenced by other modules so it can't be inlined
+/******/ 	var __webpack_exports__ = __webpack_require__("./resources/js/admin/password_reset/index.js");
+/******/ 	
+/******/ })()
+;
