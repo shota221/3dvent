@@ -35,8 +35,12 @@ class OrganizationSettingService
     {
         // TODO Auth::user->organization_idで取得
         $organization_setting = Repos\OrganizationSettingRepository::findOneByOrganizationId(1);
-
-        $entity = Converter\OrganizationSettingConverter::convertToUpdateEntity($organization_setting, $form);
+ 
+        $entity = Converter\OrganizationSettingConverter::convertToUpdateEntity(
+            $organization_setting, 
+            $form->ventilator_value_scan_interval,
+            $form->vt_per_kg
+        );
 
         DBUtil::Transaction(
             '組織設定値更新',

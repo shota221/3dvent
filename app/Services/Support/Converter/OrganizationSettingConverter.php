@@ -20,10 +20,11 @@ class OrganizationSettingConverter
 
     public static function convertToUpdateEntity(
         Models\OrganizationSetting $entity, 
-        Form\OrganizationSettingUpdateForm $form
+        string $ventilator_value_scan_interval,
+        string $vt_per_kg
     ) {
-        $entity->ventilator_value_scan_interval = $form->ventilator_value_scan_interval;
-        $entity->vt_per_kg = $form->vt_per_kg;
+        $entity->ventilator_value_scan_interval = $ventilator_value_scan_interval;
+        $entity->vt_per_kg = $vt_per_kg;
 
         return $entity;
     }

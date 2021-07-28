@@ -21,7 +21,7 @@ class OrganizationSettingUpdateForm extends BaseForm
 
     protected function bind($input)
     {
-        $this->ventilator_value_scan_interval = $input['ventilator_value_scan_interval'];
-        $this->vt_per_kg = $input['vt_per_kg'];
+        $this->ventilator_value_scan_interval = strval($input['ventilator_value_scan_interval']);
+        $this->vt_per_kg = strval($input['vt_per_kg']);
     }
 }
