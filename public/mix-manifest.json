@@ -1,13 +1,5 @@
 {
-    "/js/admin/app.js": "/js/admin/app.js",
-    "/js/admin/auth.js": "/js/admin/auth.js",
-    "/js/admin/ocr.js": "/js/admin/ocr.js",
-    "/js/admin/page.js": "/js/admin/page.js",
-    "/js/admin/password_reset.js": "/js/admin/password_reset.js",
     "/js/org/app.js": "/js/org/app.js",
-    "/js/org/auth.js": "/js/org/auth.js",
-    "/js/org/page.js": "/js/org/page.js",
-    "/js/org/password_reset.js": "/js/org/password_reset.js",
     "/js/common/adminlte/app.js": "/js/common/adminlte/app.js",
     "/css/common/adminlte/app.css": "/css/common/adminlte/app.css",
     "/css/admin/app.css": "/css/admin/app.css",

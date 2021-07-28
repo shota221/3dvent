@@ -182,19 +182,19 @@ JS
         <div id = "alert-message"></div>
         <div class="card card-default color-palette-box">
             <div class="card-header">
-                <h3>設定</h3>
+                <h3>@lang('messages.org.setting')</h3>
             </div>
             <div class="card-body">
                 <form id="setting-form" action="{{ route('org.setting.update') }}" name="update">
                     <div>
                         <p class="font-weight-bold">
-                            組織内共通設定
+                            @lang('messages.org.common_setting')
                         </p>
                         <p class="font-weight-bold">
-                            <span class="required"></span>&nbsp;は必須です。
+                            <span class="required"></span>&nbsp;@lang('messages.is_required_item')
                         </p>
                         <div class="form-group">
-                            <label for="ventilator_value_scan_interval">最終値決定時間（分）<span class="required"></span></label>
+                            <label for="ventilator_value_scan_interval">@lang('messages.org.ventilator_value_scan_interval')<span class="required"></span></label>
                             <input 
                                 class="form-control" 
                                 type="text" 
@@ -203,7 +203,7 @@ JS
                             >
                         </div>
                         <div class="form-group">
-                            <label for="vt_per_kg">理想体重1kgあたりの予測一回換気量（ml/kg）<span class="required"></span></label>
+                            <label for="vt_per_kg">@lang('messages.org.vt_per_kg')<span class="required"></span></label>
                             <input 
                                 class="form-control" 
                                 type="text" 
@@ -221,7 +221,7 @@ JS
                         class="btn btn-small btn-success btn-block" 
                         id="async" 
                         data-type="put"
-                        data-method="update">更新
+                        data-method="update">@lang('messages.update')
                     </button>
                 </div>
             </div>

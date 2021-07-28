@@ -11,9 +11,6 @@
 
 @section('page_js')
     <script src="{{ mix('js/org/app.js') }}"></script>
-
-    <script src="{{ mix('js/org/page.js') }}"></script>
-
     @yield('js')
 @stop
 
