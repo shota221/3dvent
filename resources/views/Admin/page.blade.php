@@ -3,7 +3,6 @@
     'nav_top_menu'  => 'Admin.top-menu',
     'nav_top_class' => 'navbar-white',
     'nav_left_class' => 'sidebar-dark-primary',
-    'asyncable' => (isset($asyncable) ? true : false)
 ])
 
 @section('title', 'システム管理者用ページ')

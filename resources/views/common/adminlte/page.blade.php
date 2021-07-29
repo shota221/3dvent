@@ -38,7 +38,7 @@
         <!-- Content Wrapper. Contains page content -->
         <div 
             id="page" 
-            class="content-wrapper {{ $asyncable ? 'async-content' : '' }}" 
+            class="content-wrapper"
             data-page-transactional="{{ isset($transactional) ? true : false }}"
             >
 
@@ -51,10 +51,8 @@
             </div>
 
             {{-- Main Content --}}
-            <div class="content async-load-area">
-                <div class="container-fluid">
-                    @yield('content')
-                </div>
+            <div class="content">
+                @yield('content')
             </div>
 
         </div>
