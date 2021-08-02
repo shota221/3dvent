@@ -16,13 +16,24 @@ class OrganizationRepository
         return !is_null($query) ? $query->count() : static::query()->count();
     }
 
-    public static function findOneById(int $organization_id)
+    public static function existsByCode(string $code)
     {
-        return static::query()->where('id', $organization_id)->first();
+        return static::query()->where('code',$code)->exists();
     }
 
-    public static function findOneByCode(string $organization_code)
+    public static function existsByRepresentativeEmail(string $representative_email)
     {
-        return static::query()->where('code', $organization_code)->first();
+        return static::query()->where('representative_email',$representative_email)->exists();
+    }
+
+
+    public static function findOneById(int $id)
+    {
+        return static::query()->where('id', $id)->first();
+    }
+
+    public static function findOneByCode(string $code)
+    {
+        return static::query()->where('code', $code)->first();
     }
 }

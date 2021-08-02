@@ -13,7 +13,9 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     const 
-        TOKEN_COLUMN_NAME = 'api_token'
+        TOKEN_COLUMN_NAME = 'api_token',
+        DISABLED = 1,
+        ENABLED = 0
     ;
 
     /**

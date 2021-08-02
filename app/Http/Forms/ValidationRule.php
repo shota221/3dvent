@@ -16,6 +16,8 @@ class ValidationRule
 
         VALUE_NAME              = 'string|max:100',
 
+        VALUE_CODE              = 'string|max:100|regex:/^[A-Za-z\d_-]+$/',
+
         VALUE_STRING            = 'string|max:250',
 
         VALUE_TEXT              = 'string|max:500',

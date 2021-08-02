@@ -23,9 +23,11 @@ abstract class BaseForm
      */
     public $errors = [];
 
+    public $validator;
+
     public function __construct($input)
     {
-        $this->validate($input);
+        $this->validator = $this->validate($input);
         
         if (! $this->hasError()) {
             $this->bind($input);
@@ -80,6 +82,8 @@ abstract class BaseForm
                 }
             }
         }
+
+        return $validation;
     }
 
     protected function validateAfterBinding() {}
@@ -96,6 +100,7 @@ abstract class BaseForm
         $translated = trans($messageKey, $replace);
 
         $this->errors[] = new Error($attribute, new Message($messageCode, $translated));
+        $this->validator->errors()->add($attribute,$translated);
     }
 
     public function addGlobalError($messageKey = null, $replace = []) 

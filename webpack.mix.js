@@ -6,7 +6,11 @@ const glob = require('glob');
 
 const path = require('path');
 
+<<<<<<< HEAD
 //const fs = require('fs');
+=======
+// const fs = require('fs');
+>>>>>>> bafd043... 組織登録申請フォーム（非同期バリデ未実装）
 
 const appSrcDir = 'resources';
 
@@ -18,6 +22,7 @@ const appDistDir = 'public';
  * @type {Object}
  */
 mix.webpackConfig({
+<<<<<<< HEAD
     resolve: {
         alias: {
             'node_modules': path.join(__dirname, 'node_modules'),
@@ -25,6 +30,8 @@ mix.webpackConfig({
             'jquery': path.join(__dirname, 'resources/js/components/jquery/jquery'),
         }           
     },
+=======
+>>>>>>> bafd043... 組織登録申請フォーム（非同期バリデ未実装）
     plugins: [
         // Ignore all locale files of moment.js
         new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
@@ -140,38 +147,67 @@ if (mix.inProduction()) {
  * JS 
  *******/
 
+<<<<<<< HEAD
 compileToPublishResources('admin', 'js');
 compileToPublishResources('form', 'js');
 compileToPublishResources('org', 'js');
 compileToPublishResources('common/adminlte', 'js');
+=======
+// ADMIN //
+compileToPublishResources('admin', 'js');
+
+// FORM //
+compileToPublishResources('form', 'js');
+>>>>>>> bafd043... 組織登録申請フォーム（非同期バリデ未実装）
 
 
 /*******
  * SCSS
  *******/
 
+<<<<<<< HEAD
 compileToPublishResources('admin', 'scss');
 compileToPublishResources('form', 'scss');
 compileToPublishResources('org', 'scss');
 compileToPublishResources('common/adminlte', 'scss');
+=======
+// ADMIN //
+compileToPublishResources('admin', 'scss');
+>>>>>>> bafd043... 組織登録申請フォーム（非同期バリデ未実装）
 
 
 /*******
  * CSS
  *******/
 
+<<<<<<< HEAD
 copyToPublishResources('admin', 'css');
 copyToPublishResources('form', 'css');
 copyToPublishResources('org', 'css');
+=======
+// ADMIN //
+copyToPublishResources('admin', 'css');
+
+// FORM //
+copyToPublishResources('form', 'css');
+>>>>>>> bafd043... 組織登録申請フォーム（非同期バリデ未実装）
 
 
 /*******
  * IMAGE
  *******/
 
+<<<<<<< HEAD
 copyToPublishResources('admin', 'images');
 copyToPublishResources('form', 'images');
 copyToPublishResources('org', 'images');
+=======
+// ADMIN //
+copyToPublishResources('admin', 'images');
+
+// FORM //
+copyToPublishResources('form', 'images');
+>>>>>>> bafd043... 組織登録申請フォーム（非同期バリデ未実装）
 
 // for debug
 //throw new Error();
