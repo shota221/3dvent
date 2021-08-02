@@ -1,17 +1,12 @@
 {
-<<<<<<< HEAD
     "/js/org/app.js": "/js/org/app.js",
     "/js/common/adminlte/app.js": "/js/common/adminlte/app.js",
     "/css/common/adminlte/app.css": "/css/common/adminlte/app.css",
     "/css/admin/app.css": "/css/admin/app.css",
-    "/css/org/app.css": "/css/org/app.css"
-=======
-    "/js/admin/app.js": "/js/admin/app.js",
+    "/css/org/app.css": "/css/org/app.css",
     "/js/admin/auth.js": "/js/admin/auth.js",
     "/js/admin/page.js": "/js/admin/page.js",
     "/js/admin/password_reset.js": "/js/admin/password_reset.js",
     "/js/form/app.js": "/js/form/app.js",
     "/js/form/index.js": "/js/form/index.js",
-    "/css/admin/app.css": "/css/admin/app.css"
->>>>>>> bafd043... 組織登録申請フォーム（非同期バリデ未実装）
 }

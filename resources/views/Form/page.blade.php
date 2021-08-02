@@ -14,11 +14,6 @@
     <link rel="stylesheet" href="css/admin/app.css">
 
     @yield('css')
-
-    <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
 </head>
 
 <body>
@@ -47,6 +42,7 @@
 
     <script src="{{ mix('js/form/app.js') }}"></script>
     <script src="{{ mix('js/form/index.js') }}"></script>
+
     @yield('js')
 
 </body>

@@ -19,6 +19,5 @@
  */
 
 Route::group(['middleware' => ['routetype:admin']], function () {
-    //TODO:DELETE ME
-    Route::get('/test', 'TestController@index')->name('admin.test');
+    Route::get('/organization', 'OrganizationController@show')->name('admin.organization.index');
 });

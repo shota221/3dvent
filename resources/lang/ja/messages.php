@@ -6,7 +6,9 @@ return [
      */
     'valid' => '有効',
     'invalid' => '無効',
+    'register' => '新規登録',
     'is_required_item' => ' は必須項目です。',
+    'send' => '送信する',
     'created' => '登録しました。',
     'updated' => '更新しました。',
     'deleted' => '削除しました。',
@@ -15,6 +17,8 @@ return [
     'create' => '登録',
     'update' => '更新',
     'delete' => '削除',
+
+
 
     /**
      * form
@@ -25,15 +29,15 @@ return [
         'representative_name'=>'代表者名',
         'representative_email'=>'代表者メールアドレス',
         'organization_code'=>'希望する組織コード(組織ログイン時利用)',
-        'user_name'=>'希望する組織管理者ユーザー名(組織ログイン時利用)',
-        'password'=>'希望するパスワード(組織ログイン時利用)',
-        'password_confirmation'=>'希望するパスワード(確認用)',
         'send' => '送信する',
+        'applied' => '申請しました'
     ],
     /**
      * admin
      */
     'admin'=>[
+        'project_administrator_page'=>'プロジェクト運営者ページ',
+        'project_administrator'=>'プロジェクト運営者',
         'organization_name'=>'組織名',
         'representative_name'=>'代表者名',
         'representative_email'=>'代表者メールアドレス',
@@ -42,10 +46,16 @@ return [
         'password'=>'パスワード(組織ログイン時利用)',
         'password_confirmation'=>'パスワード(確認用)',
         'status'=>'ステータス',
+        'edc_coordination'=>'EDC連携',
         'edc_id'=>'EDC施設ID(EDC連携する場合は入力してください。)',
+        'patient_observation'=>'患者観察研究',
         'patient_observation_status'=>'患者観察研究ステータス',
         'approved'=>'承認済み',
         'unapproved'=>'未承認',
+        'registered_at'=>'登録日時',
+        'status'=>'ステータス',
+        'organization_management'=>'組織管理',
+        'organization_list'=>'組織一覧'
     ],
     /**
      * org
