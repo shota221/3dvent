@@ -1,30 +1,40 @@
 ; (function (factory) {
     module.exports = factory(
         jQuery,
-        // require('../components/page.class'),
-        // require('./_form_org_regist.class')
-        );
-}(function ($) {
+        require('./_form_org_regist.class')
+    );
+}(function ($, FormOrgRegistClass) {
     'use strict'
 
-    // const
-    // Page = new PageClass(),
-    // FormOrgRegist = new FormOrgRegistClass(Page.$page.find('form'))
-    // ;
+    const
+        FormOrgRegist = new FormOrgRegistClass($('form#form-content'))
+        ;
 
-    // //ロード
-    // Page.load(function(deferred) {
-    //     var pageEditable = Page.pageEditable
+    subscribeEvents();
 
-    //     FormOrgRegist.build({
-    //         editable: pageEditable
-    //     })
+    FormOrgRegist.build();
 
-    //     deferred.resolve();
+    function subscribeEvents() {
+        FormOrgRegist
+            .on('submit', function (submitDeferred, formData, action, method) {
+                $.ext.ajax({
+                    ajaxName: 'registOrg',
+                    type: method,
+                    url: action,
+                    data: formData,
+                    success: function (parsedResult) {
+                        $.ext.notify.success(i18n('message.applied'));
 
-    // });
+                        //非同期処理完了
+                        submitDeferred.resolve();
+                    },
+                    error: function (errors) {
+                        FormOrgRegist.handleFieldErrors(errors);
 
-    console.log("indexTest");
-
-
+                        //非同期処理異常終了
+                        submitDeferred.reject();
+                    }
+                })
+            })
+    }
 }));

@@ -10,6 +10,7 @@
     JS
 ************************/ --}}
 @section('js')
+    <script src="{{ mix('js/form/app.js') }}"></script>
     <script src="{{ mix('js/form/index.js') }}"></script>
 @stop
 
@@ -23,16 +24,8 @@
 
 @section('content')
 
-    <!-- 送信完了/入力ミス -->
-    @if (Session::has('result'))
-        <div class="alert {{ session('result') ? 'alert-success' : 'alert-danger' }} alert-dismissible" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
-                    aria-hidden="true">&times;</span></button>
-            <strong></strong> {{ session('result') ? trans('messages.sent') : trans('messages.invalid_input') }}
-        </div>
-    @endif
     <div class="container-fluid">
-        <form action="{{ route('form.org_registration_application.create') }}" method="POST">
+        <form id="form-content" action="{{ route('form.org_registration_application.create') }}" method="POST">
             @csrf
             <div class="card-body">
                 <p>
@@ -45,11 +38,8 @@
                             class="required"></span></label>
                     <div>
                         <input class="form-control" type="text" name="organization_name" id="organization_name"
-                            placeholder='' value="{{ old('organization_name') }}" required>
+                            placeholder=''  required>
                     </div>
-                    @if ($errors->has('organization_name'))
-                        <small class="text-danger">{{ $errors->first('organization_name') }}</small>
-                    @endif
                 </div>
 
                 {{-- 代表者名 --}}
@@ -58,12 +48,8 @@
                             class="required"></span></label>
                     <div>
                         <input class="form-control" type="text" name="representative_name" id="representative_name"
-                            placeholder='' value="{{ old('representative_name') }}"
-                            data-validator-types='["required","numeric","positiveNum"]'>
+                            placeholder='' requireed>
                     </div>
-                    @if ($errors->has('representative_name'))
-                        <small class="text-danger">{{ $errors->first('representative_name') }}</small>
-                    @endif
                 </div>
 
                 {{-- 代表者メールアドレス --}}
@@ -72,11 +58,8 @@
                             class="required"></span></label>
                     <div>
                         <input class="form-control" type="text" name="representative_email" id="representative_email"
-                            placeholder='' value="{{ old('representative_email') }}" required>
+                            placeholder=''  required>
                     </div>
-                    @if ($errors->has('representative_email'))
-                        <small class="text-danger">{{ $errors->first('representative_email') }}</small>
-                    @endif
                 </div>
 
                 {{-- 組織コード --}}
@@ -85,16 +68,14 @@
                             class="required"></span></label>
                     <div>
                         <input class="form-control" type="text" name="organization_code" id="organization_code"
-                            placeholder='' value="{{ old('organization_code') }}" required>
+                            placeholder=''  required>
                     </div>
-                    @if ($errors->has('organization_code'))
-                        <small class="text-danger">{{ $errors->first('organization_code') }}</small>
-                    @endif
                 </div>
             </div>
             <div class="card-footer">
                 <div class="form-group">
-                    <button class="btn btn-small btn-success btn-block">@lang('messages.form.send')</button>
+                    <button type="button"
+                        class="btn btn-small btn-success btn-block btn-submit">@lang('messages.form.send')</button>
                 </div>
             </div>
         </form>

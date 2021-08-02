@@ -11,6 +11,7 @@
     "/js/admin/ocr.js": "/js/admin/ocr.js",
     "/js/admin/page.js": "/js/admin/page.js",
     "/js/admin/password_reset.js": "/js/admin/password_reset.js",
+    "/js/form/app.js": "/js/form/app.js",
     "/js/form/index.js": "/js/form/index.js",
     "/css/admin/app.css": "/css/admin/app.css"
 >>>>>>> bafd043... 組織登録申請フォーム（非同期バリデ未実装）

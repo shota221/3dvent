@@ -1,6 +1,7 @@
 {
     "message": {
         "registered": "登録しました。",
+        "applied": "申請しました。",
 
         "registered_reload": "登録しました。登録内容を反映するためページをリロードします。",
 
@@ -15,9 +16,6 @@
         "no_data": "データが存在しません。",
 
         "invalid_form_inputs": "入力値が不正です。",
-        
-        "dotpay_point_payment_success": "ドットペイポイント付与完了しました。",
-        "dotpay_point_payment_failed" : "ドットペイポイント付与に失敗しました。",
 
         "execute_search_to_csv_download":"CSV出力するためには検索を実行してください",
         "csv_download_faild": "CSVファイル作成に失敗しました。管理者にお問い合わせください。",
@@ -40,8 +38,6 @@
         "digits_less_than": "{{max}}より小さい数で入力してください",
         "decimal_digits_in_range" : "小数点以下{{digits}}桁までで入力してください",
         "duplicated" : "重複した登録です",
-        "probability_total_greater_than_100" : "確率合計値が100%を上回っています",
-        "point_limit": "ポイント上限が付与ポイント未満です",
         "unmatched": "入力値が一致していません",
         "over_upload_file_count_limit_at_once": "一度に処理できるファイル数は{{limit}}までです"
     }

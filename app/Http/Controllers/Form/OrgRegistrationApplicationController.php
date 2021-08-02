@@ -26,16 +26,8 @@ class OrgRegistrationApplicationController extends Controller
     {
         $form = new Form\OrgRegistrationApplicationForm($request->all());
         if($form->hasError()){
-            $result = false;
-            return redirect('/')->withErrors($form->validator)->withInput()->with(compact('result'));
+            throw new InvalidFormException($form);
         }
-        try{
-            $this->service->create($form);
-            $result = true;
-            return redirect('/')->with(compact('result'));
-        }catch(InvalidFormException $e){
-            $result = false;
-            return redirect('/')->withErrors($form->validator)->withInput()->with(compact('result'));
-        }
+            return $this->service->create($form);
     }
 }

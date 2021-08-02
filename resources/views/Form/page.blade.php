@@ -45,8 +45,6 @@
 
     @yield('hiddens')
 
-    <script src="js/common/adminlte/app.js"></script>
-
     @yield('js')
 
 </body>

@@ -22,5 +22,7 @@
         this.$fieldRepresentativeEmailInput = this.$form.find('input[name="representative_email"]');
 
         this.$fieldOrganizationCodeInput = this.$form.find('input[name="organization_code"]');
+    }, {
+        
     });
 }));
