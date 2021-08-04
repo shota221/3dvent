@@ -15,8 +15,11 @@ return [
     'sent' => '送信しました。',
     'invalid_input' =>'入力に誤りがあります。',
     'create' => '登録',
+    'post' => '登録',
     'update' => '更新',
+    'put' => '更新',
     'delete' => '削除',
+    'back' =>'戻る',
 
 
 
@@ -46,16 +49,20 @@ return [
         'password'=>'パスワード(組織ログイン時利用)',
         'password_confirmation'=>'パスワード(確認用)',
         'status'=>'ステータス',
-        'edc_coordination'=>'EDC連携',
+        'edc_link'=>'EDC連携',
         'edc_id'=>'EDC施設ID(EDC連携する場合は入力してください。)',
         'patient_observation'=>'患者観察研究',
         'patient_observation_status'=>'患者観察研究ステータス',
-        'approved'=>'承認済み',
+        'approved'=>'承認済',
         'unapproved'=>'未承認',
+        'linked'=>'連携済',
+        'unlinked'=>'未連携',
         'registered_at'=>'登録日時',
         'status'=>'ステータス',
         'organization_management'=>'組織管理',
-        'organization_list'=>'組織一覧'
+        'organization_list'=>'組織一覧',
+        'organization_create'=>'組織登録',
+        'organization_edit'=>'組織編集'
     ],
     /**
      * org

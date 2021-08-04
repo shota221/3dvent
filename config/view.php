@@ -33,4 +33,7 @@ return [
         realpath(storage_path('framework/views'))
     ),
 
+    //ページネーション件数
+    'items_per_page' => 50,
+
 ];

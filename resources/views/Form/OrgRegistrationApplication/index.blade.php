@@ -45,6 +45,17 @@
     JS
     ************************/ --}}
 @section('js')
+    <script>
+        $('#async').click(function(e) {
+            e.preventDefault();
+
+            var $featureElement = $(this).get(0);
+
+            var parameters = buildParameters(document.forms['org_regist_form'].elements);
+
+            executeAjax($featureElement, parameters, true);
+        });
+    </script>
 @stop
 
 @section('title')
@@ -54,9 +65,8 @@
 @section('content')
 
     <div class="container-fluid">
-        <div id = "alert-message"></div>
-        <form id="form-content" action="{{ route('form.org_registration_application.create') }}" method="POST"
-            name="create">
+        <div id="alert-message"></div>
+        <form id="form-content" name="org_regist_form">
             @csrf
             <div class="card-body">
                 <p>
@@ -106,8 +116,8 @@
         </form>
         <div class="card-footer">
             <div class="form-group">
-                <button class="btn btn-small btn-success btn-block" id="async" data-method="create"
-                    data-type="POST">@lang('messages.form.send')</button>
+                <button class="btn btn-small btn-success btn-block" id="async" data-url="{{ route('form.org_registration_application.create') }}"
+                    data-method="POST">@lang('messages.form.send')</button>
             </div>
         </div>
     </div>

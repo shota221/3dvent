@@ -1199,6 +1199,46 @@ table .content-overlay {
 #modal-form-confirm .modal-body table th {
     width: 20%;
 }
+@CHARSET "UTF-8";
+
+#overlay{ 
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10000;
+    width: 100%;
+    height:100%;
+    display: none;
+    background-color: #fff; 
+    opacity: 0.5;
+}
+.cv-spinner {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;  
+}
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px #ddd solid;
+    border-top: 4px #2e93e6 solid;
+    border-radius: 50%;
+    -webkit-animation: sp-anime 0.8s infinite linear;
+            animation: sp-anime 0.8s infinite linear;
+}
+@-webkit-keyframes sp-anime {
+    100% { 
+        transform: rotate(360deg); 
+    }
+}
+@keyframes sp-anime {
+    100% { 
+        transform: rotate(360deg); 
+    }
+}
 /*!
  * Ladda
  * http://lab.hakim.se/ladda

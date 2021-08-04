@@ -12,8 +12,6 @@ class OrgRegistrationApplicationService
 {
     public function create($form)
     {
-        $duplicate_errors = [];
-
         $exists_by_code = Repos\OrganizationRepository::existsByCode($form->organization_code);
 
         if($exists_by_code){

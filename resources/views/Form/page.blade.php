@@ -11,7 +11,7 @@
     <meta content="{{ csrf_token() }}" name="csrf-token">
 
     <link rel="stylesheet" href="css/common/adminlte/app.css">
-    <link rel="stylesheet" href="css/admin/app.css">
+    <link rel="stylesheet" href="css/form/app.css">
 
     @yield('css')
 </head>
@@ -41,7 +41,7 @@
     @yield('hiddens')
 
     <script src="{{ mix('js/form/app.js') }}"></script>
-    <script src="{{ mix('js/form/index.js') }}"></script>
+    <script src="js/common/util/async.js"></script>
 
     @yield('js')
 
