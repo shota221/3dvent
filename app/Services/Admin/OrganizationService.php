@@ -11,17 +11,22 @@ use App\Http\Forms\Admin as Form;
 
 class OrganizationService
 {
-    function getOrganizationData($form, $base_url)
+    function getOrganizationData($base_url, $form = null)
     {
         $items_per_page = config('view.items_per_page');
 
         $offset = 0;
 
-        if (isset($form->page)) $offset = ($form->page - 1) * $items_per_page;
+        $search_values = [];
 
-        $search_values = $this->buildOrganizationSearchValues($form);
+        if (!is_null($form)) {
 
-        $organizations = Repos\OrganizationRepository::findBySearchValuesAndOffsetAndLimit($offset,$items_per_page,$search_values);
+            if (isset($form->page)) $offset = ($form->page - 1) * $items_per_page;
+
+            $search_values = $this->buildOrganizationSearchValues($form);
+        }
+
+        $organizations = Repos\OrganizationRepository::findBySearchValuesAndOffsetAndLimit($offset, $items_per_page, $search_values);
 
         $total_count = Repos\OrganizationRepository::countBySearchValues($search_values);
 
@@ -60,6 +65,61 @@ class OrganizationService
             '組織登録',
             function () use ($organization) {
                 $organization->save();
+            }
+        );
+
+        return new Response\SuccessJsonResult;
+    }
+
+
+    function update($form)
+    {
+        $organization = Repos\OrganizationRepository::findOneById($form->id);
+
+        $isRegisteredOrganization = !is_null($organization);
+
+        if (!$isRegisteredOrganization) {
+            $form->addError('id', 'validation.id_not_found');
+            throw new Exceptions\InvalidFormException($form);
+        }
+
+        //組織コード重複チェック
+        $is_match_organization_code = $form->organization_code === $organization->code;
+                
+        $exists_by_code = !$is_match_organization_code && Repos\OrganizationRepository::existsByCode($form->organization_code);
+
+        if ($exists_by_code) {
+            $form->addError('organization_code', 'validation.duplicated_registration');
+        }
+
+        //メールアドレス重複チェック
+        $is_match_representative_email = $form->representative_email === $organization->representative_email;
+                
+        $exists_by_representative_email = !$is_match_representative_email && Repos\OrganizationRepository::existsByRepresentativeEmail($form->representative_email);
+        
+        if ($exists_by_representative_email) {
+            $form->addError('representative_email', 'validation.duplicated_registration');
+        }
+
+        if ($form->hasError()) {
+            throw new Exceptions\InvalidFormException($form);
+        }
+
+        $entity = Converter\OrganizationConverter::convertToUpdateEntity(
+            $organization,
+            $form->organization_name,
+            $form->organization_code,
+            $form->representative_name,
+            $form->representative_email,
+            $form->disabled_flg,
+            $form->patient_obs_approved_flg,
+            $form->edc_id
+        );
+
+        DBUtil::Transaction(
+            '組織編集',
+            function () use ($entity) {
+                $entity->save();
             }
         );
 

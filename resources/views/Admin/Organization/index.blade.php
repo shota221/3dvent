@@ -10,34 +10,7 @@
     JS
 ************************/ --}}
 @section('js')
-    <script>
-        //TODO: modal共通化
-        $('#show-register-modal').click(function(e) {
-            var registerModal = $('#modal-organization-create');
-            registerModal.modal();
-            var $btn = document.getElementById('async-organization-create');
-            console.log($btn);
-            $btn.addEventListener(
-                'click',
-                function(e) {
-                    e.preventDefault;
-
-                    var parameters = buildParameters(document.forms['organization-create'].elements);
-
-                    var successCallback = function(data) {
-                        registerModal.modal('hide');
-                    }
-
-                    executeAjax($btn, parameters, true, successCallback);
-                }
-            )
-        });
-
-        $('#modal-cancel').click(function() {
-            var registerModal = $('#modal-organization-create');
-            registerModal.modal('hide');
-        });
-    </script>
+    <script src="js/admin/organization/index.js"></script>
 @stop
 
 @section('hiddens')
@@ -80,4 +53,8 @@
             </div>
         </div>
     </div>
+@stop
+
+@section('modal')
+    @include('Admin.Organization.modal')
 @stop

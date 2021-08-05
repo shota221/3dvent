@@ -26,7 +26,7 @@
                 <div class="modal-footer">
                     <button class="btn btn-small-auto btn-primary" data-url="{{ $form['action'] }}"
                         data-method="{{ $form['method'] }}" id="async-{{ $form['name'] }}">@lang('messages.'.strtolower($form['method']))</button>
-                    <button class="btn btn-small-auto btn-default" id="modal-cancel">@lang('messages.back')</button>
+                    <button class="btn btn-small-auto btn-default modal-cancel">@lang('messages.back')</button>
                 </div>
             @endif
         </div>

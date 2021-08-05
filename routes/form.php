@@ -19,7 +19,7 @@
  */
 
 Route::group(['middleware' => ['routetype:form']], function () {
-    Route::get('/', 'OrgRegistrationApplicationController@show')->name('form.org_registration_application');
+    Route::get('/', 'OrganizationRegistrationController@index')->name('form.organization_registration');
 
-    Route::post('/', 'OrgRegistrationApplicationController@create')->name('form.org_registration_application.create');
+    Route::post('/', 'OrganizationRegistrationController@create')->name('form.organization_registration.create');
 });

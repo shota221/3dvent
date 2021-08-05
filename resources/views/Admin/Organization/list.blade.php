@@ -10,8 +10,16 @@
     </tr>
     {{-- TODO:組織名押下でeditモーダル表示 --}}
     @foreach ($organization_paginator as $organization)
-        <tr>
-            <td class="align-middle">{{ $organization->organization_name }}</td>
+        <tr data-id="{{ $organization->id }}" 
+            data-organization_name="{{ $organization->organization_name }}"
+            data-organization_code="{{ $organization->organization_code }}"
+            data-representative_name="{{ $organization->representative_name }}"
+            data-representative_email="{{ $organization->representative_email }}"
+            data-disabled_flg="{{ $organization->disabled_flg }}" 
+            data-edc_id="{{ $organization->edc_id }}"
+            data-patient_obs_approved_flg="{{ $organization->patient_obs_approved_flg }}">
+            <td class="align-middle"><a href="#" class="show-edit-modal">{{ $organization->organization_name }}</a>
+            </td>
             <td class="align-middle">{{ $organization->organization_code }}</td>
             <td class="align-middle">{{ $organization->representative_name }}</td>
             @if ($organization->edc_linked_flg)

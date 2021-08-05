@@ -4,69 +4,24 @@
     CSS
 ************************/ --}}
 @section('css')
-    <style>
-        #overlay {
-            position: fixed;
-            top: 0;
-            z-index: 100;
-            width: 100%;
-            height: 100%;
-            display: none;
-            background-color: #fff;
-            opacity: 0.80;
-        }
-
-        .cv-spinner {
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px #ddd solid;
-            border-top: 4px #2e93e6 solid;
-            border-radius: 50%;
-            animation: sp-anime 0.8s infinite linear;
-        }
-
-        @keyframes sp-anime {
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-    </style>
 @stop
 
 {{-- /***********************
     JS
     ************************/ --}}
 @section('js')
-    <script>
-        $('#async').click(function(e) {
-            e.preventDefault();
-
-            var $featureElement = $(this).get(0);
-
-            var parameters = buildParameters(document.forms['org_regist_form'].elements);
-
-            executeAjax($featureElement, parameters, true);
-        });
-    </script>
+    <script src="js/form/index.js"></script>
 @stop
 
 @section('title')
-    @lang('messages.form.org_registration_form')
+    @lang('messages.form.organization_registration_form')
 @stop
 
 @section('content')
 
     <div class="container-fluid">
         <div id="alert-message"></div>
-        <form id="form-content" name="org_regist_form">
+        <form id="form-content" name="organization_registration_form">
             @csrf
             <div class="card-body">
                 <p>
@@ -116,7 +71,8 @@
         </form>
         <div class="card-footer">
             <div class="form-group">
-                <button class="btn btn-small btn-success btn-block" id="async" data-url="{{ route('form.org_registration_application.create') }}"
+                <button class="btn btn-small btn-success btn-block" id="async"
+                    data-url="{{ route('form.organization_registration.create') }}"
                     data-method="POST">@lang('messages.form.send')</button>
             </div>
         </div>

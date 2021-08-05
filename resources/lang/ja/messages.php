@@ -27,7 +27,7 @@ return [
      * form
      */
     'form'=>[
-        'org_registration_form'=>'組織登録申請フォーム',
+        'organization_registration_form'=>'組織登録申請フォーム',
         'organization_name'=>'組織名',
         'representative_name'=>'代表者名',
         'representative_email'=>'代表者メールアドレス',

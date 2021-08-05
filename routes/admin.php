@@ -22,5 +22,5 @@ Route::group(['middleware' => ['routetype:admin']], function () {
     Route::get('/organization', 'OrganizationController@index')->name('admin.organization.index');
     Route::get('/organization/async', 'OrganizationController@asyncSearch')->name('admin.organization.async');
     Route::post('/organization', 'OrganizationController@asyncCreate')->name('admin.organization.create');
-    Route::put('/organization/{id}', 'OrganizationController@asyncUpdate')->name('admin.organization.update');
+    Route::put('/organization', 'OrganizationController@asyncUpdate')->name('admin.organization.update');
 });

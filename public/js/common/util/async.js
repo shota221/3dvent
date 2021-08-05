@@ -103,7 +103,13 @@ function buildParameters(elements) {
     var parameters = {};
 
     for (let element of elements) {
-        parameters[element.name] = element.value;
+        switch (element.type) {
+            case 'text':
+            case 'hidden':
+                parameters[element.name] = element.value;
+            case 'radio':
+                if(element.checked) parameters[element.name] = element.value;
+        }
     }
 
     return parameters;
@@ -114,7 +120,7 @@ function displayValidationErrorMessage(errors) {
         var key = error.key;
         var message = error.message.translated;
         var errorMessageElement = '<small class="text-danger error-message">' + message + '</small>'
-        $(errorMessageElement).insertAfter('#' + key);
+        $(errorMessageElement).insertAfter('input[name="' + key + '"]');
     });
 }
 

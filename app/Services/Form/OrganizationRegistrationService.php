@@ -8,7 +8,7 @@ use App\Services\Support\DBUtil;
 use App\Repositories as Repos;
 use App\Http\Response as Response;
 
-class OrgRegistrationApplicationService
+class OrganizationRegistrationService
 {
     public function create($form)
     {

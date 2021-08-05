@@ -4,6 +4,7 @@ namespace App\Http\Response\Admin;
 
 class OrganizationResult
 {
+    public $id;
     public $organization_name;
     public $organization_code;
     public $representative_name;

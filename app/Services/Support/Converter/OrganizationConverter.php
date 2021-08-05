@@ -40,6 +40,7 @@ class OrganizationConverter
     $representative_email,
     $status,
     $patient_obs_approved_flg,
+    $edc_id,
   ) {
 
     $entity->name = $name;
@@ -48,6 +49,7 @@ class OrganizationConverter
     $entity->representative_email = $representative_email;
     $entity->disabled_flg = $status;
     $entity->patient_obs_approved_flg = $patient_obs_approved_flg;
+    $entity->edcid = $edc_id;
 
     return $entity;
   }
@@ -69,6 +71,7 @@ class OrganizationConverter
   {
     $organization_result = new OrganizationResult;
 
+    $organization_result->id = $entity->id;
     $organization_result->organization_name = $entity->name;
     $organization_result->organization_code = $entity->code;
     $organization_result->representative_name = $entity->representative_name;
