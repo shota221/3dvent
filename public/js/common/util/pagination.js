@@ -1,6 +1,4 @@
-$(document).on('click', '.page-link', function(e) {
-    e.preventDefault();
-
+$('#paginated-list').on('click', '.page-link', function(e) {
     var $featureElement = $(this).get(0);
 
     var parameters = {};
@@ -9,5 +7,5 @@ $(document).on('click', '.page-link', function(e) {
         $('#paginated-list').html(paginated_list);
     }
 
-    executeAjax($featureElement, parameters, false, successCallback)
+    asyncExecuteAjax($featureElement, parameters, false, successCallback)
 });

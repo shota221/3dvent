@@ -53,11 +53,6 @@ class DateUtil
         return self::ZERO_DATETIME === $date;
     }
 
-    public static function datetimeStrToCarbon($str)
-    {
-        return self::createFromFormat(self::DATETIME_FORMAT, $str);
-    }
-
     public static function now()
     {
         return Carbon::now();

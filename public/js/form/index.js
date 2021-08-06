@@ -1,9 +1,9 @@
-$(document).on('click','#async',function(e) {
-    e.preventDefault();
-
+$('#async').on('click',function(e) {
     var $featureElement = $(this).get(0);
 
-    var parameters = buildParameters(document.forms['organization_registration_form'].elements);
+    var parameters = asyncBuildParameters($('form[name="organization_registration_form"]').get(0).elements);
 
-    executeAjax($featureElement, parameters, true);
+    asyncExecuteAjax($featureElement, parameters, true);
+
+    return false;
 });

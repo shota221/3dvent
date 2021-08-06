@@ -1,4 +1,4 @@
-function inputParameters($targetForm, dataset) {
+function formInputParameters($targetForm, dataset) {
     $targetForm[0].reset();
     $.each($targetForm.find('input'), function (i, elm) {
         switch (elm.type) {

@@ -43,9 +43,9 @@ class VentilatorValueBatchService
                             $interval = $ventilator_value->ventilator_value_scan_interval;
                         }
 
-                        $registered_at_next = DateUtil::datetimeStrToCarbon($ventilator_value->registered_at);
+                        $registered_at_next = DateUtil::parseToDatetime($ventilator_value->registered_at);
 
-                        $registered_at = DateUtil::datetimeStrToCarbon($current_value->registered_at);
+                        $registered_at = DateUtil::parseToDatetime($current_value->registered_at);
 
                         if ($registered_at->diffInMinutes($registered_at_next) >= $interval) {
                             $fix_ids[] = $current_value->id;
@@ -64,7 +64,7 @@ class VentilatorValueBatchService
             if (!is_null($ventilator_value->ventilator_value_scan_interval)) {
                 $interval = $ventilator_value->ventilator_value_scan_interval;
             }
-            if (DateUtil::datetimeStrToCarbon($ventilator_value->registered_at)->diffInMinutes($now) >= $interval) {
+            if (DateUtil::parseToDatetime($ventilator_value->registered_at)->diffInMinutes($now) >= $interval) {
                 $fix_ids[] = $ventilator_value->id;
                 $scanned_ids[] = $ventilator_value->id;
             }

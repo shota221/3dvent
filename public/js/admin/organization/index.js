@@ -2,19 +2,21 @@
 //register-modal
 var $registerModal = $('#modal-organization-create');
 
-$(document).on('click', '#show-register-modal', function (e) {
-    removeValidationErrorMessage()
-    $registerModal.modal();
-});
+$('#show-register-modal').on(
+    'click',
+    function (e) {
+        asyncRemoveValidationErrorMessage()
+
+        $registerModal.modal();
+
+        return false;
+    });
 
 //登録イベント
-$(document).on(
+$('#async-organization-create').on(
     'click',
-    '#async-organization-create',
     function (e) {
-        e.preventDefault;
-
-        var parameters = buildParameters(document.forms['organization-create'].elements);
+        var parameters = asyncBuildParameters($('form[name="organization-create"]').get(0).elements);
 
         var successCallback = function (data) {
             $registerModal.modal('hide');
@@ -22,39 +24,44 @@ $(document).on(
 
         var btn = document.getElementById('async-organization-create');
 
-        executeAjax(btn, parameters, true, successCallback);
-    }
-)
+        asyncExecuteAjax(btn, parameters, true, successCallback);
 
-$(document).on(
+        return false;
+    });
+
+$('button.modal-cancel').on(
     'click',
-    'button.modal-cancel',
     function (e) {
-        e.preventDefault;
-
         $(this).closest('.modal').modal('hide');
-    }
-);
+
+        return false;
+    });
 
 //edit-modal
 var $editModal = $('#modal-organization-update');
 
-$(document).on('click', '.show-edit-modal', function (e) {
-    var dataset = $(this).closest('tr').get(0).dataset;
-    $targetForm = $editModal.find('form[name="organization-update"]').eq(0);
-    removeValidationErrorMessage()
-    inputParameters($targetForm, dataset);
-    $editModal.modal();
-});
+$('#paginated-list').on(
+    'click',
+    '.show-edit-modal',
+    function (e) {
+        var dataset = $(this).closest('tr').get(0).dataset;
+
+        $targetForm = $editModal.find('form[name="organization-update"]').eq(0);
+
+        asyncRemoveValidationErrorMessage();
+
+        formInputParameters($targetForm, dataset);
+
+        $editModal.modal();
+
+        return false;
+    });
 
 //編集イベント
-$(document).on(
+$('#async-organization-update',).on(
     'click',
-    '#async-organization-update',
     function (e) {
-        e.preventDefault;
-
-        var parameters = buildParameters(document.forms['organization-update'].elements);
+        var parameters = asyncBuildParameters($('form[name="organization-update"]').get(0).elements);
 
         var successCallback = function (data) {
             $editModal.modal('hide');
@@ -62,6 +69,7 @@ $(document).on(
 
         var btn = document.getElementById('async-organization-update');
 
-        executeAjax(btn, parameters, true, successCallback);
-    }
-)
+        asyncExecuteAjax(btn, parameters, true, successCallback);
+
+        return false;
+    });

@@ -19,20 +19,20 @@ class OrganizationSearchForm extends BaseForm
     public $registered_at_to;
     public $page;
     public $http_query;
-    
+
     protected function validationRule()
     {
         return [
-            'organization_name' => 'nullable|'.Rule::VALUE_NAME,
-            'representative_name' => 'nullable|'.Rule::VALUE_NAME,
-            'organization_code' => 'nullable|'.Rule::VALUE_CODE,
-            'disabled_flg' => 'nullable|'.Rule::FLG_INTEGER,
-            'edc_linked_flg' => 'nullable|'.Rule::FLG_INTEGER,
-            'patient_obs_approved_flg' => 'nullable|'.Rule::FLG_INTEGER,
+            'organization_name' => 'nullable|' . Rule::VALUE_NAME,
+            'representative_name' => 'nullable|' . Rule::VALUE_NAME,
+            'organization_code' => 'nullable|' . Rule::VALUE_CODE,
+            'disabled_flg' => 'nullable|' . Rule::FLG_INTEGER,
+            'edc_linked_flg' => 'nullable|' . Rule::FLG_INTEGER,
+            'patient_obs_approved_flg' => 'nullable|' . Rule::FLG_INTEGER,
             'registered_at_from' => 'nullable|date',
             'registered_at_to' => 'nullable|date',
-            'page' => 'nullable|'.Rule::VALUE_POSITIVE_NON_ZERO,
-        ]; 
+            'page' => 'nullable|' . Rule::VALUE_POSITIVE_NON_ZERO,
+        ];
     }
 
     protected function bind($input)
@@ -43,25 +43,10 @@ class OrganizationSearchForm extends BaseForm
         $this->disabled_flg = isset($input['disabled_flg']) ? intval($input['disabled_flg']) : null;
         $this->edc_linked_flg = isset($input['edc_linked_flg']) ? intval($input['edc_linked_flg']) : null;
         $this->patient_obs_approved_flg = isset($input['patient_obs_approved_flg']) ? intval($input['patient_obs_approved_flg']) : null;
-        try {
-            $this->registered_at_from = isset($input['registered_at_from']) 
-                ? Support\DateUtil::parseToDate($input['registered_at_from']) 
-                : null;
-        } catch (Exceptions\DateUtilException $e) {
-            $this->addError('registered_at_from', 'validation.date');
-        }
-
-        try {
-            $this->registered_at_to = isset($input['registered_at_to']) 
-                ? Support\DateUtil::parseToDate($input['registered_at_to']) 
-                : null;
-        } catch (Exceptions\DateUtilException $e) {
-            $this->addError('registered_at_to', 'validation.date');
-        }
-
+        $this->registered_at_from = isset($input['registered_at_from']) ? Support\DateUtil::parseToDate($input['registered_at_from']) : null;
+        $this->registered_at_to = isset($input['registered_at_to']) ? Support\DateUtil::parseToDate($input['registered_at_to']) : null;
         $this->page = isset($input['page']) ? intval($input['page']) : null;
-
         unset($input['page']);
-        $this->http_query = isset($input) ? '?'.http_build_query($input) : '';
+        $this->http_query = isset($input) ? '?' . http_build_query($input) : '';
     }
 }

@@ -5,12 +5,6 @@
 // jQuery
 window.$ = window.jQuery = require('jquery');
 
-// lodash
-//window._ = require('lodash');
-
-// ie11 promise対応
-window.Promise = window.Promise || require('es6-promise-promise');
-
 // bootstrap
 require('bootstrap');
 
