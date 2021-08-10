@@ -212,6 +212,14 @@ return [
         'user_name' => 'ユーザー名',
         'ventilator_value_scan_interval' => '最終値決定時間',
         'vt_per_kg' => '理想体重1kgあたりの予測一回換気量',
+        'organization_name'=>'組織名',
+        'representative_name'=>'代表者名',
+        'representative_email'=>'メールアドレス',
+        'organization_code'=>'組織コード',
+        'user_name'=>'組織管理者ユーザー名',
+        'status'=>'ステータス',
+        'edc_id'=>'EDC施設ID',
+        'patient_observation_status'=>'患者観察研究ステータス',
     ],
 
 ];

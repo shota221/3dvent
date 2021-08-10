@@ -39,11 +39,15 @@ class VentilatorValueBatchService
 
                         $current_value = $ventilator_id_to_current_value_map[$ventilator_id];
 
-                        $registered_at_next = DateUtil::datetimeStrToCarbon($ventilator_value->registered_at);
+                        if (!is_null($ventilator_value->ventilator_value_scan_interval)) {
+                            $interval = $ventilator_value->ventilator_value_scan_interval;
+                        }
 
-                        $registered_at = DateUtil::datetimeStrToCarbon($current_value->registered_at);
+                        $registered_at_next = DateUtil::parseToDatetime($ventilator_value->registered_at);
 
-                        if ($registered_at->diffInHours($registered_at_next) >= $interval) {
+                        $registered_at = DateUtil::parseToDatetime($current_value->registered_at);
+
+                        if ($registered_at->diffInMinutes($registered_at_next) >= $interval) {
                             $fix_ids[] = $current_value->id;
                         }
 
@@ -57,7 +61,10 @@ class VentilatorValueBatchService
 
         //最新データに対してはfixed_flgが立つものに対してのみscanned_atを記録する。
         foreach ($ventilator_id_to_current_value_map as $ventilator_value) {
-            if (DateUtil::datetimeStrToCarbon($ventilator_value->registered_at)->diffInHours($now) >= $interval) {
+            if (!is_null($ventilator_value->ventilator_value_scan_interval)) {
+                $interval = $ventilator_value->ventilator_value_scan_interval;
+            }
+            if (DateUtil::parseToDatetime($ventilator_value->registered_at)->diffInMinutes($now) >= $interval) {
                 $fix_ids[] = $ventilator_value->id;
                 $scanned_ids[] = $ventilator_value->id;
             }

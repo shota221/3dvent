@@ -27,6 +27,8 @@ class BaseModel extends EloquentModel
 
     const
         BOOLEAN_TRUE = 1,
-        BOOLEAN_FALSE = 0
+        BOOLEAN_FALSE = 0,
+        DISABLED = 1,
+        ENABLED = 0
         ;
 }

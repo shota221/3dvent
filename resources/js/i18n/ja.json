@@ -1,11 +1,12 @@
 {
     "message": {
         "registered": "登録しました。",
+        "applied": "申請しました。",
 
         "registered_reload": "登録しました。登録内容を反映するためページをリロードします。",
 
         "reflected": "反映しました。登録ボタンをクリックするまでデータは登録されません。",
-
+        "updated": "更新しました。",
         "deleted": "削除しました。",
         "delete_confirm": "データの復帰はできません。削除を実行しますか。",
 
@@ -15,17 +16,14 @@
         "no_data": "データが存在しません。",
 
         "invalid_form_inputs": "入力値が不正です。",
-        
-        "dotpay_point_payment_success": "ドットペイポイント付与完了しました。",
-        "dotpay_point_payment_failed" : "ドットペイポイント付与に失敗しました。",
 
         "execute_search_to_csv_download":"CSV出力するためには検索を実行してください",
         "csv_download_faild": "CSVファイル作成に失敗しました。管理者にお問い合わせください。",
 
         "accept_password_reset_application": "パスワード再設定メールを送信しました。確認の上、手続きを行ってください。",
         "accept_password_reset": "パスワードを変更しました。ログインします。",
-
-        "internal_server_error":"エラーが発生しました。管理者にお問い合わせください。"
+        "timeout":"レスポンスタイムアウト。処理は完了している可能性があります。画面をリロードし、確認後再度実行してみてください。",
+        "internal_server_error":"エラーが発生しました。再度生じる場合は管理者まで報告をお願いします。"
     },
     "validate": {
         "length" : "{{max}}以下で入力してください。",
@@ -40,8 +38,6 @@
         "digits_less_than": "{{max}}より小さい数で入力してください",
         "decimal_digits_in_range" : "小数点以下{{digits}}桁までで入力してください",
         "duplicated" : "重複した登録です",
-        "probability_total_greater_than_100" : "確率合計値が100%を上回っています",
-        "point_limit": "ポイント上限が付与ポイント未満です",
         "unmatched": "入力値が一致していません",
         "over_upload_file_count_limit_at_once": "一度に処理できるファイル数は{{limit}}までです"
     }

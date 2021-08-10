@@ -145,7 +145,6 @@ compileToPublishResources('form', 'js');
 compileToPublishResources('org', 'js');
 compileToPublishResources('common/adminlte', 'js');
 
-
 /*******
  * SCSS
  *******/
@@ -154,7 +153,6 @@ compileToPublishResources('admin', 'scss');
 compileToPublishResources('form', 'scss');
 compileToPublishResources('org', 'scss');
 compileToPublishResources('common/adminlte', 'scss');
-
 
 /*******
  * CSS

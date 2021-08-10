@@ -16,13 +16,69 @@ class OrganizationRepository
         return !is_null($query) ? $query->count() : static::query()->count();
     }
 
-    public static function findOneById(int $organization_id)
+    public static function existsByCode(string $code)
     {
-        return static::query()->where('id', $organization_id)->first();
+        return static::query()->where('code', $code)->exists();
     }
 
-    public static function findOneByCode(string $organization_code)
+    public static function existsByRepresentativeEmail(string $representative_email)
     {
-        return static::query()->where('code', $organization_code)->first();
+        return static::query()->where('representative_email', $representative_email)->exists();
+    }
+
+
+    public static function findOneById(int $id)
+    {
+        return static::query()->where('id', $id)->first();
+    }
+
+    public static function findOneByCode(string $code)
+    {
+        return static::query()->where('code', $code)->first();
+    }
+
+    public static function findBySearchValuesAndOffsetAndLimit($offset, $limit, $search_values)
+    {
+        return self::createWhereClauseFromSearchValues(static::query(), $search_values)
+            ->limit($limit)
+            ->offset($offset)
+            ->get();
+    }
+
+    public static function countBySearchValues($search_values)
+    {
+        return self::createWhereClauseFromSearchValues(static::query(), $search_values)->count();
+    }
+
+    private static function createWhereClauseFromSearchValues($query, $search_values)
+    {
+        if(isset($search_values['organization_name'])){
+            $organization_name = $search_values['organization_name'];
+            $query->where('name','like',"%$organization_name%");
+        }
+        if(isset($search_values['representative_name'])){
+            $representative_name = $search_values['representative_name'];
+            $query->where('representative_name','like',"%$representative_name%");
+        }
+        if(isset($search_values['organization_code'])){
+            $query->where('code',$search_values['organization_code']);
+        }
+        if(isset($search_values['disabled_flg'])){
+            $query->where('disabled_flg',$search_values['disabled_flg']);
+        }
+        if(isset($search_values['edc_linked_flg'])){
+            $search_values['edc_linked_flg'] ? $query->whereNotNull('edcid') : $query->whereNull('edcid');
+        }
+        if(isset($search_values['patient_obs_approved_flg'])){
+            $query->where('patient_obs_approved_flg',$search_values['patient_obs_approved_flg']);
+        }
+        if(isset($search_values['registered_at_from'])){
+            $query->where('created_at','>=',$search_values['registered_at_from']);
+        }
+        if(isset($search_values['registered_at_to'])){
+            $query->where('created_at','<=',$search_values['registered_at_to']);
+        }
+
+        return $query;
     }
 }

@@ -19,6 +19,7 @@
  */
 
 Route::group(['middleware' => ['routetype:form']], function () {
-    //TODO:DELETE ME
-    Route::get('/test', 'TestController@index')->name('form.test');
+    Route::get('/', 'OrganizationRegistrationController@index')->name('form.organization_registration');
+
+    Route::post('/', 'OrganizationRegistrationController@create')->name('form.organization_registration.create');
 });

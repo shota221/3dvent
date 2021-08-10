@@ -18,6 +18,9 @@ require('jquery-notify-legacy/dist/notify'); // node_modules/{name}/dist内にjs
         info: function(message) {
             $.notify(message, { className: 'info', style: 'box', adjustScroll: true, displayTime: 5000 });
         },
+        success: function(message) {
+            $.notify(message, { className: 'success', style: 'box', adjustScroll: true, displayTime: 5000 });
+        },
         warn: function(message) {
             $.notify(message, { className: 'warn', style: 'box', sticky: false, adjustScroll: true, displayTime: 4000 });
         },
