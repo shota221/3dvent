@@ -57,6 +57,9 @@
 
         </div>
 
+        {{-- Spiner --}}
+        @include('common.adminlte.static.spiner')
+
         {{-- Footer --}}
         @include('common.adminlte.partials.footer')
 

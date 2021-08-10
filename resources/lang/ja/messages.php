@@ -68,6 +68,8 @@ return [
      * org
      */
     'org' => [
+        'organization_user_page'=>'組織ユーザーページ',
+        'organization_user'=>'組織ユーザー',
         'setting' => '設定',
         'common_setting' => '組織内共通設定',
         'ventilator_value_scan_interval' => '最終値決定時間（分）',

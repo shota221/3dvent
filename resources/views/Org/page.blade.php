@@ -5,12 +5,18 @@
     'nav_left_class'    => 'sidebar-dark-primary',
 ])
 
-@section('title', ' 組織ユーザーページ')
+@section('title')
+@lang('messages.org.organization_user_page')
+@stop
 
-@section('role', '組織ユーザー')
+@section('role')
+@lang('messages.org.organization_user')
+@stop
 
 @section('page_js')
     <script src="{{ mix('js/org/app.js') }}"></script>
+    <script src="js/common/util/form.js"></script>
+    <script src="js/common/util/async.js"></script>
     @yield('js')
 @stop
 
