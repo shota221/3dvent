@@ -19,6 +19,7 @@ class DateUtil
         DATE_FORMAT_JP          = 'Y年n月j日',
         MONTH_FORMAT_JP         = 'Y年n月',
         DATE_FORMAT_CHAR        = 'Ymd',
+        DATE_FORMAR_CHAR_SHORT  = 'ymd',
         TIME_FORMAT             = 'H:i:s',
         DATETIME_FORMAT         = 'Y-m-d H:i:s',
         DATETIME_MS_FORMAT      = 'Y-m-d H:i:s.u',

@@ -4,11 +4,15 @@ namespace App\Services\Support\Converter;
 
 use App\Http\Forms\Api as Form;
 use App\Http\Response as Response;
+use App\Http\Response\Api\VentilatorResult;
 use App\Models\Ventilator;
 use App\Models\VentilatorValue;
 use App\Models\Patient;
 use App\Services\Support\DateUtil;
+use App\Services\Support\Gs1Util;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class VentilatorConverter
 {
@@ -81,13 +85,15 @@ class VentilatorConverter
         return $res;
     }
 
-    public static function convertToVentilatorEntity($gs1_code, $serial_number, $qr_read_at, $latitude = null, $longitude = null, $city = null, $organization_id = null, $registered_user_id = null)
+    public static function convertToVentilatorEntity($gs1_code, $serial_number, $expiration_date, $qr_read_at, $latitude = null, $longitude = null, $city = null, $organization_id = null, $registered_user_id = null)
     {
         $entity = new Ventilator;
 
         $entity->gs1_code = $gs1_code;
 
         $entity->serial_number = $serial_number;
+
+        $entity->expiration_date = $expiration_date;
 
         if (!is_null($latitude) && !is_null($longitude)) {
             $entity->location = ['lat' => $latitude, 'lng' => $longitude];
@@ -105,4 +111,43 @@ class VentilatorConverter
 
         return $entity;
     }
+
+    
+  public static function convertToAdminPagenate(Collection $entities, $total_count, $items_per_page, $base_url)
+  {
+    $paginator = new LengthAwarePaginator(
+      self::convertToAdminVentilatorData($entities),
+      $total_count,
+      $items_per_page,
+      null,
+      ['path' => $base_url]
+    );
+
+    return $paginator;
+  }
+
+  public static function convertToAdminVentilatorResult(Ventilator $entity)
+  {
+    $ventilator_result = new VentilatorResult;
+
+    $ventilator_result->id = $entity->id;
+    $ventilator_result->gs1_code = $entity->gs1_code;
+    $ventilator_result->serial_number = $entity->serial_number;
+    $ventilator_result->organization_name = $entity->organization_name;
+    $ventilator_result->registered_user_name = $entity->registered_user_name;
+    $ventilator_result->expiration_date = Gs1Util::extractGs1Data($entity->gs1_code)->expiration_date ?? '';
+    $ventilator_result->start_using_at = $entity->start_using_at;
+    $ventilator_result->has_bug = !is_null($entity->bug_name);
+
+    return $ventilator_result;
+  }
+
+  private static function convertToAdminVentilatorData(Collection $entities)
+  {
+    return array_map(
+      function($entity){
+        return self::convertToAdminVentilatorResult($entity);
+      },$entities->all()
+    );
+  }
 }

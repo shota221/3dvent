@@ -56,5 +56,7 @@
 @stop
 
 @section('modal')
-    @include('Admin.Organization.modal')
+    @include('Admin.Organization.editModal')
+    @include('Admin.Organization.registerModal')
+    @include('Admin.Organization.usersListModal')
 @stop

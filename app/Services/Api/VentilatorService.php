@@ -3,6 +3,7 @@
 namespace App\Services\Api;
 
 use App\Exceptions;
+use App\Exceptions\HttpNotFoundException;
 use App\Http\Forms\Api\VentilatorShowForm;
 use App\Repositories as Repos;
 use App\Repositories\PatientRepository;
@@ -11,6 +12,7 @@ use App\Services\Support\Client\ReverseGeocodingClient;
 use App\Services\Support\Converter;
 use App\Services\Support\DBUtil;
 use App\Services\Support\DateUtil;
+use App\Services\Support\Gs1Util;
 use App\Services\Support\Logic as Logic;
 use App\Services\Support\OrganizationCheckUtil;
 use Illuminate\Validation\Rules\Exists;
@@ -70,13 +72,17 @@ class VentilatorService
             $organization_id = $user->organization_id;
         }
 
-        $serial_number = substr($form->gs1_code, -5);
+        $gs1_data = Gs1Util::extractGs1Data($form->gs1_code);
+
+        $serial_number = $gs1_data->serial_number ?? '';
+
+        $expiration_date = $gs1_data->expiration_date;
 
         if (!is_null($form->latitude) && !is_null($form->longitude)) {
             $city = (new Support\Client\ReverseGeocodingApiClient)->getReverseGeocodingData($form->latitude, $form->longitude, 13)->display_name;
         }
 
-        $entity = Converter\VentilatorConverter::convertToVentilatorEntity($form->gs1_code, $serial_number, DateUtil::toDatetimeStr(DateUtil::now()), $form->latitude, $form->longitude, $city, $organization_id, $registered_user_id);
+        $entity = Converter\VentilatorConverter::convertToVentilatorEntity($form->gs1_code, $serial_number, $expiration_date, DateUtil::toDatetimeStr(DateUtil::now()), $form->latitude, $form->longitude, $city, $organization_id, $registered_user_id);
 
         DBUtil::Transaction(
             '呼吸器情報登録',

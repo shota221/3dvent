@@ -41,6 +41,7 @@ class UserRepository
     {
         return static::query()->where('id',$id)->value('organization_id');
     }
+<<<<<<< HEAD
     
     public static function findOneWithOrganizationByAuthorityAndId(int $authority, int $id)
     {
@@ -123,5 +124,11 @@ class UserRepository
 
         return $query;
 
+=======
+
+    public static function findByOrganizationId(int $organization_id)
+    {
+        return static::query()->where('organization_id', $organization_id)->get();
+>>>>>>> c8549de... 呼吸器管理系
     }
 }

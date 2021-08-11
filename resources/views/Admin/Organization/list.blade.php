@@ -7,16 +7,14 @@
         <th>@lang('messages.admin.patient_observation')</th>
         <th>@lang('messages.admin.registered_at')</th>
         <th>@lang('messages.admin.status')</th>
+        <th>@lang('messages.admin.users_list')</th>
     </tr>
-    {{-- TODO:組織名押下でeditモーダル表示 --}}
     @foreach ($organization_paginator as $organization)
-        <tr data-id="{{ $organization->id }}" 
-            data-organization_name="{{ $organization->organization_name }}"
+        <tr data-id="{{ $organization->id }}" data-organization_name="{{ $organization->organization_name }}"
             data-organization_code="{{ $organization->organization_code }}"
             data-representative_name="{{ $organization->representative_name }}"
             data-representative_email="{{ $organization->representative_email }}"
-            data-disabled_flg="{{ $organization->disabled_flg }}" 
-            data-edc_id="{{ $organization->edc_id }}"
+            data-disabled_flg="{{ $organization->disabled_flg }}" data-edc_id="{{ $organization->edc_id }}"
             data-patient_obs_approved_flg="{{ $organization->patient_obs_approved_flg }}">
             <td class="align-middle"><a href="#" class="show-edit-modal">{{ $organization->organization_name }}</a>
             </td>
@@ -50,6 +48,7 @@
                     <div class="badge badge-secondary">@lang('messages.invalid')</div>
                 </td>
             @endif
+            <td class="align-middle"><a href="#" class="show-users-list-modal" data-url="{{route('admin.organization.users')}}" data-method="GET">@lang('messages.list')</a></td>
         </tr>
     @endforeach
 </table>

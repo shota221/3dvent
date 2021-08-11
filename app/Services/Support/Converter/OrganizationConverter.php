@@ -2,9 +2,10 @@
 
 namespace App\Services\Support\Converter;
 
-use App\Http\Response as Response;
 use App\Http\Response\Admin\OrganizationResult;
+use App\Http\Response\Admin\UserResult;
 use App\Models\Organization;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -94,6 +95,14 @@ class OrganizationConverter
     );
   }
 
+  public static function convertToUsersListElmEntity(User $entity)
+  {
+    $user_result = new UserResult;
 
-  
+    $user_result->name = $entity->name;
+    $user_result->authority = $entity->authority;
+    $user_result->disabled_flg = $entity->disabled_flg;
+
+    return $user_result;
+  }
 }

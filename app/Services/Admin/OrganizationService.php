@@ -3,11 +3,11 @@
 namespace App\Services\Admin;
 
 use App\Exceptions;
+use App\Http\Forms\Admin as Form;
+use App\Http\Response as Response;
+use App\Repositories as Repos;
 use App\Services\Support\Converter;
 use App\Services\Support\DBUtil;
-use App\Repositories as Repos;
-use App\Http\Response as Response;
-use App\Http\Forms\Admin as Form;
 
 class OrganizationService
 {
@@ -140,5 +140,17 @@ class OrganizationService
         if (isset($form->registered_at_to)) $search_values['registered_at_to'] = $form->registered_at_to;
 
         return $search_values;
+    }
+
+    function getUsersList(Form\OrganizationUsersForm $form)
+    {
+        $users = Repos\UserRepository::findByOrganizationId($form->id);
+
+        return array_map(
+            function($user){
+                return Converter\OrganizationConverter::convertToUsersListElmEntity($user);
+            },
+            $users->all()
+        );
     }
 }

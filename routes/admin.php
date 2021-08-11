@@ -19,8 +19,12 @@
  */
 
 Route::group(['middleware' => ['routetype:admin']], function () {
+    /**
+     * 組織管理
+     */
     Route::get('/organization', 'OrganizationController@index')->name('admin.organization.index');
     Route::get('/organization/async', 'OrganizationController@asyncSearch')->name('admin.organization.async');
+    Route::get('/organization/async/users', 'OrganizationController@asyncUsers')->name('admin.organization.users');
     Route::post('/organization', 'OrganizationController@asyncCreate')->name('admin.organization.create');
     Route::put('/organization', 'OrganizationController@asyncUpdate')->name('admin.organization.update');
 
@@ -55,6 +59,7 @@ Route::group(['middleware' => ['routetype:admin']], function () {
         'OrganizationAdminUserController@asyncDataOrganization'
     )->name('admin.org_admin_user.async.organization_data');
 
+<<<<<<< HEAD
     // 患者観察研究データ管理
     Route::get(
         '/patient_value', 
@@ -86,4 +91,14 @@ Route::group(['middleware' => ['routetype:admin']], function () {
         'PatientValueController@asyncDataOrganization'
     )->name('admin.patient_value.async.organization_data');
 
+=======
+    /**
+     * MicroVent管理
+     */
+    Route::get('/ventilator', 'VentilatorController@index')->name('admin.ventilator.index');
+    Route::get('/ventilator/async', 'VentilatorController@asyncSearch')->name('admin.ventilator.async');
+    // Route::post('/ventilator', 'VentilatorController@asyncCreate')->name('admin.ventilator.create');
+    // Route::put('/ventilator', 'VentilatorController@asyncUpdate')->name('admin.ventilator.update');
+    // Route::delete('/ventiltor','VentilatorController@asyncDelete')->name('admin.ventilator.delete');
+>>>>>>> fc20423... 呼吸器管理系
 });

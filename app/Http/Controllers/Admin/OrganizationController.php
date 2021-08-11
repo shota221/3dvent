@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Exceptions\InvalidFormException;
 use App\Http\Controllers\Controller;
-use App\Services\Admin as Service;
 use App\Http\Forms\Admin as Form;
+use App\Services\Admin as Service;
 use Illuminate\Http\Request;
 
 class OrganizationController extends Controller
@@ -49,5 +49,14 @@ class OrganizationController extends Controller
         if ($form->hasError()) throw new InvalidFormException($form);
 
         return $this->service->update($form);
+    }
+
+    function asyncUsers(Request $request)
+    {
+        $form = new Form\OrganizationUsersForm($request->all());
+
+        $users = $this->service->getUsersList($form);
+
+        return view('usersList', compact('users'));
     }
 }
