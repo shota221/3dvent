@@ -1,11 +1,14 @@
 $('#async-page-update').on(
     'click',
     function(e) {
-        var parameters = utilFormBuildParameters($('form[name="async-page-update"]').get(0).elements);
 
-        var element = $('#async-page-update').get(0);
+        var parameters = {};
+        parameters['vt_per_kg'] = $("#vt_per_kg").val();
+        parameters['ventilator_value_scan_interval'] = $('#ventilator_value_scan_interval').val();
 
-        utilAsyncExecuteAjax(element, parameters, true);
+        var $element = $('#async-page-update');
+
+        utilAsyncExecuteAjax($element, parameters, true);
 
         return false;
     }
