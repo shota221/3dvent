@@ -18,7 +18,7 @@ class OrganizationConverter
     $representative_email,
     $status = Organization::DISABLED,
     $patient_obs_approved_flg = Organization::PATIENT_OBS_UNAPPROVED,
-    $edc_id = null,
+    $edcid = null,
   ) {
     $entity = new Organization;
 
@@ -28,7 +28,7 @@ class OrganizationConverter
     $entity->representative_email = $representative_email;
     $entity->disabled_flg = $status;
     $entity->patient_obs_approved_flg = $patient_obs_approved_flg;
-    $entity->edcid = $edc_id;
+    $entity->edcid = $edcid;
 
     return $entity;
   }
@@ -41,7 +41,7 @@ class OrganizationConverter
     $representative_email,
     $status,
     $patient_obs_approved_flg,
-    $edc_id,
+    $edcid,
   ) {
 
     $entity->name = $name;
@@ -50,7 +50,7 @@ class OrganizationConverter
     $entity->representative_email = $representative_email;
     $entity->disabled_flg = $status;
     $entity->patient_obs_approved_flg = $patient_obs_approved_flg;
-    $entity->edcid = $edc_id;
+    $entity->edcid = $edcid;
 
     return $entity;
   }
@@ -78,7 +78,7 @@ class OrganizationConverter
     $organization_result->representative_name = $entity->representative_name;
     $organization_result->representative_email = $entity->representative_email;
     $organization_result->edc_linked_flg = $entity->edc_linked_flg;
-    $organization_result->edc_id = $entity->edcid;
+    $organization_result->edcid = $entity->edcid;
     $organization_result->patient_obs_approved_flg = $entity->patient_obs_approved_flg;
     $organization_result->registered_at = $entity->created_at;
     $organization_result->disabled_flg = $entity->disabled_flg;

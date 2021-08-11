@@ -223,7 +223,7 @@ return [
         'organization_code'=>'組織コード',
         'user_name'=>'組織管理者ユーザー名',
         'status'=>'ステータス',
-        'edc_id'=>'EDC施設ID',
+        'edcid'=>'EDC施設ID',
         'patient_observation_status'=>'患者観察研究ステータス',
         'code'=>'組織コード',
         'password_confirmation'=>'パスワード(確認用)',

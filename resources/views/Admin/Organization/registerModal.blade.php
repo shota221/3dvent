@@ -58,9 +58,9 @@
 
             {{-- EDC施設ID --}}
             <div class="form-group">
-                <label for="edc_id">@lang('messages.admin.edc_id')</label>
+                <label for="edcid">@lang('messages.admin.edcid')</label>
                 <div>
-                    <input class="form-control" type="text" name="edc_id">
+                    <input class="form-control" type="text" name="edcid">
                 </div>
             </div>
 

@@ -58,7 +58,7 @@ class OrganizationService
             $form->representative_email,
             $form->disabled_flg,
             $form->patient_obs_approved_flg,
-            $form->edc_id
+            $form->edcid
         );
 
         DBUtil::Transaction(
@@ -113,7 +113,7 @@ class OrganizationService
             $form->representative_email,
             $form->disabled_flg,
             $form->patient_obs_approved_flg,
-            $form->edc_id
+            $form->edcid
         );
 
         DBUtil::Transaction(

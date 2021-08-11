@@ -5,7 +5,7 @@ var $registerModal = $('#modal-organization-create');
 $('#show-register-modal').on(
     'click',
     function () {
-        asyncRemoveValidationErrorMessage()
+        utilFormRemoveValidationErrorMessage()
 
         $registerModal.modal();
 
@@ -16,15 +16,26 @@ $('#show-register-modal').on(
 $('#async-organization-create').on(
     'click',
     function () {
-        var parameters = asyncBuildParameters($('form[name="organization-create"]').get(0).elements);
+        //TODO:parameters格納
+        var parameters = {};
+
+        var $targetForm = $('form[name="organization-create"]');
+
+        parameters['organization_name'] = $targetForm.find('input[name="organization_name"]').val();
+        parameters['representative_name'] = $targetForm.find('input[name="representative_name"]').val();
+        parameters['representative_email'] = $targetForm.find('input[name="representative_email"]').val();
+        parameters['organization_code'] = $targetForm.find('input[name="organization_code"]').val();
+        parameters['disabled_flg'] = $targetForm.find('input[name="disabled_flg"]:checked').val();
+        parameters['edcid'] = $targetForm.find('input[name="edcid"]').val();
+        parameters['patient_obs_approved_flg'] = $targetForm.find('input[name="patient_obs_approved_flg"]:checked').val();
 
         var successCallback = function (data) {
             $registerModal.modal('hide');
         }
 
-        var btn = document.getElementById('async-organization-create');
+        var $btn = $('#async-organization-create');
 
-        asyncExecuteAjax(btn, parameters, true, successCallback);
+        utilAsyncExecuteAjax($btn, parameters, true, successCallback);
 
         return false;
     });
@@ -44,13 +55,13 @@ $('#paginated-list').on(
     'click',
     '.show-edit-modal',
     function () {
-        var dataset = $(this).closest('tr').get(0).dataset;
+        var dataset = $(this).closest('tr').data();
 
         $targetForm = $editModal.find('form[name="organization-update"]').eq(0);
 
-        asyncRemoveValidationErrorMessage();
+        utilFormRemoveValidationErrorMessage();
 
-        formInputParameters($targetForm, dataset);
+        utilFormInputParameters($targetForm, dataset);
 
         $editModal.modal();
 
@@ -61,15 +72,28 @@ $('#paginated-list').on(
 $('#async-organization-update',).on(
     'click',
     function () {
-        var parameters = asyncBuildParameters($('form[name="organization-update"]').get(0).elements);
+        //TODO:parameters格納
+        var parameters = {};
+
+        
+        var $targetForm = $('form[name="organization-update"]');
+
+        parameters['id'] = $targetForm.find('input[name="id"]').val();
+        parameters['organization_name'] = $targetForm.find('input[name="organization_name"]').val();
+        parameters['representative_name'] = $targetForm.find('input[name="representative_name"]').val();
+        parameters['representative_email'] = $targetForm.find('input[name="representative_email"]').val();
+        parameters['organization_code'] = $targetForm.find('input[name="organization_code"]').val();
+        parameters['disabled_flg'] = $targetForm.find('input[name="disabled_flg"]:checked').val();
+        parameters['edcid'] = $targetForm.find('input[name="edcid"]').val();
+        parameters['patient_obs_approved_flg'] = $targetForm.find('input[name="patient_obs_approved_flg"]:checked').val();
 
         var successCallback = function (data) {
             $editModal.modal('hide');
         }
 
-        var btn = document.getElementById('async-organization-update');
+        var $btn = $('#async-organization-update');
 
-        asyncExecuteAjax(btn, parameters, true, successCallback);
+        utilAsyncExecuteAjax($btn, parameters, true, successCallback);
 
         return false;
     });
@@ -81,7 +105,7 @@ $('#paginated-list').on(
     'click',
     '.show-users-list-modal',
     function () {
-        var id = $(this).closest('tr').get(0).dataset.id;
+        var id = $(this).closest('tr').data('id');
 
         var parameters = {};
 
@@ -92,9 +116,9 @@ $('#paginated-list').on(
             $usersListModal.modal();
         };
 
-        var featureElement = $(this).get(0);
+        var $featureElement = $(this);
 
-        asyncExecuteAjax(featureElement, parameters, false, successCallback);
+        utilAsyncExecuteAjax($featureElement, parameters, false, successCallback);
 
         return false;
     }
