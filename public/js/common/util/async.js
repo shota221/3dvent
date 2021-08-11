@@ -5,11 +5,11 @@
  * @param {Function} successCallback 通信成功時の処理を記述。
  * @param {boolean} withMessages 通信の結果をメッセージとしてユーザーに通知したい場合はtrue。
  */
-function utilAsyncExecuteAjax($featureElement, parameters = {}, withMessages = false, successCallback = function (data) { }) {
+ function utilAsyncExecuteAjax($featureElement, parameters = {}, withMessages = false, successCallback = function (data) { }) {
     console.log($featureElement);
     //data-{}の属性から抽出
-    var url = $featureElement.dataset.url;
-    var type = $featureElement.dataset.method;
+    var url = $featureElement.data('url');
+    var type = $featureElement.data('method');
 
     if (withMessages) {
         utilFormRemoveValidationErrorMessage();
@@ -28,8 +28,7 @@ function utilAsyncExecuteAjax($featureElement, parameters = {}, withMessages = f
     $.ajax({
         url: url,
         type: type,
-        contentType: "application/json",
-        data: JSON.stringify(parameters),
+        data: parameters,
         timeout: 120000,
         cache: false,
     }).done(function (data) {
@@ -75,10 +74,7 @@ function utilAsyncAlertMessage(message) {
 }
 
 function utilAsyncRemoveAlertMessage() {
-    var asyncAlertMessageElements = document.getElementsByClassName('alert');
-    if (asyncAlertMessageElements.length > 0) {
-        asyncAlertMessageElements[0].remove();
-    }
+    $('.alert').remove();
 }
 
 function utilAsyncBuildCompletionMessage(type) {
