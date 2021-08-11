@@ -3,7 +3,7 @@ $('#async-page-update').on(
     function(e) {
         var parameters = utilFormBuildParameters($('form[name="async-page-update"]').get(0).elements);
 
-        var element = document.getElementById('async-page-update');
+        var element = $('#async-page-update').get(0);
 
         utilAsyncExecuteAjax(element, parameters, true);
 

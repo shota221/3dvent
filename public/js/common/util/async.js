@@ -52,7 +52,7 @@ function utilAsyncExecuteAjax($featureElement, parameters = {}, withMessages = f
                 alert(i18n('message.internal_server_error'));
                 break;
             default:
-                console.log("alert(i18n('message.internal_server_error'))");
+                alert(i18n('message.internal_server_error'));
         }
     }).always(function () {
         utilAsyncHideIndicator();
