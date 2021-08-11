@@ -74,7 +74,7 @@ function utilAsyncAlertMessage(message) {
 }
 
 function utilAsyncRemoveAlertMessage() {
-    $('.alert').html();
+    $('.alert').remove();
 }
 
 function utilAsyncBuildCompletionMessage(type) {
