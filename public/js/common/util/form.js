@@ -23,10 +23,5 @@ function utilFormDisplayValidationErrorMessage(errors) {
 }
 
 function utilFormRemoveValidationErrorMessage() {
-    var $errorMessageElements = $('.error-message');
-    var length = $errorMessageElements.length;
-    for (var i = 0; i < length; i++) {
-        var $errorMessageElement = $errorMessageElements[i];
-        $errorMessageElement.remove();
-    }
+    $('.error-message').remove();
 }
