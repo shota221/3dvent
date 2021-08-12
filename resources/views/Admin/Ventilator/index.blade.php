@@ -28,17 +28,12 @@
                     <div class="col-sm-4">
                         <h4>@lang('messages.admin.ventilator_list')</h4>
                     </div>
-                    <div class="row">
-                        <div class="ml-3 mr-3">
-                            <button type="button" class="btn btn-primary"
-                                id="btn-csv-export">@lang('messages.admin.csv_export')</button>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="ml-3 mr-3">
-                            <button type="button" class="btn btn-primary"
-                                id="show-csv-import-modal">@lang('messages.admin.csv_import')</button>
-                        </div>
+                    <div class="col-sm-8 pull-right">
+                        <button type="button" class="btn btn-primary float-right"
+                            id="show-csv-import-modal">@lang('messages.admin.csv_import')</button>
+                        <button type="button" class="btn btn-success mr-1 float-right"
+                            id="btn-csv-export">@lang('messages.admin.csv_export')</button>
+
                     </div>
                 </div>
                 {{-- todo 検索機能 --}}

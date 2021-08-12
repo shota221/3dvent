@@ -51,6 +51,15 @@ class VentilatorController extends Controller
 
         return $response;
     }
+
+    function asyncBulkDelete(Request $request)
+    {
+        $form = new Form\VentilatorDeleteForm($request->all());
+
+        $reponse = $this->service->delete($form);
+
+        return $reponse;
+    }
     
     // function asyncBugs(Request $request)
     // {

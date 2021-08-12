@@ -7,6 +7,7 @@ use App\Models\Patient;
 use App\Models\User;
 use App\Models\Ventilator;
 use App\Models\VentilatorBug;
+use App\Services\Support\DateUtil;
 
 class VentilatorRepository
 {
@@ -39,6 +40,11 @@ class VentilatorRepository
     {
         $table = Ventilator::tableName();
         return static::query()->where('id', $id)->first();
+    }
+
+    public static function deleteByIds($ids)
+    {
+        return static::query()->whereIn('id',$ids)->update(['deleted_at' => DateUtil::now(), 'active' => null]);
     }
 
     public static function findOneByGs1Code($gs1_code)

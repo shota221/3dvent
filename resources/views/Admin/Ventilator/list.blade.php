@@ -1,7 +1,8 @@
 <table class="table table-striped">
     <tr>
         <th>
-            <div class="form-check"><input type="checkbox" class="form-check-input" id="bulk-check"></div>
+            <div class="form-check"><input type="checkbox" class="form-check-input position-static" id="bulk-check">
+            </div>
         </th>
         <th>@lang('messages.admin.ventilator_code')</th>
         <th>@lang('messages.admin.serial_number')</th>
@@ -19,10 +20,13 @@
             data-registered_user_name="{{ $ventilator->registered_user_name }}"
             data-expiration_date="{{ $ventilator->expiration_date }}"
             data-start_using_at="{{ $ventilator->start_using_at }}">
-            <td>
-                <div class="form-check"><input type="checkbox" class="form-check-input"></div>
+            <td class="align-middle">
+                <div class="form-check"><input type="checkbox" class="form-check-input item-check position-static">
+                </div>
             </td>
-            <td class="align-middle"><a href="#" class="show-edit-modal" data-url="{{route('admin.ventilator.patient',['id' => $ventilator->id])}}" data-method="GET">{{ $ventilator->gs1_code }}</a>
+            <td class="align-middle"><a href="#" class="show-edit-modal"
+                    data-url="{{ route('admin.ventilator.patient', ['id' => $ventilator->id]) }}"
+                    data-method="GET">{{ $ventilator->gs1_code }}</a>
             </td>
             <td class="align-middle">{{ $ventilator->serial_number }}</td>
             <td class="align-middle">{{ $ventilator->organization_name }}</td>
@@ -31,7 +35,8 @@
             <td class="align-middle">{{ $ventilator->start_using_at }}</td>
             @if ($ventilator->has_bug)
                 <td class="align-middle">
-                    <a href="#" class="show-ventilator-bug-list-modal" data-url="{{route('admin.ventilator.bugs')}}" data-method="GET">@lang('messages.admin.exists')</a>
+                    <a href="#" class="show-ventilator-bug-list-modal" data-url="{{ route('admin.ventilator.bugs') }}"
+                        data-method="GET">@lang('messages.admin.exists')</a>
                 </td>
             @else
                 <td class="align-middle">
@@ -42,4 +47,8 @@
         </tr>
     @endforeach
 </table>
+<div class="row">
+    <button type="button" class="btn btn-danger" data-url="{{ route('admin.ventilator.bulk_delete') }}"
+        data-method="delete" id="btn-bulk-delete">@lang('messages.admin.bulk_delete')</button>
+</div>
 <div class="mt-3">{{ $ventilator_paginator->links('components.pagination') }}</div>

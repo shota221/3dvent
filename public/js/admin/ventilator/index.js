@@ -39,12 +39,12 @@ $('#paginated-list').on(
 
         var parameters = {};
 
-        var successCallback = function(data) {
+        var successCallback = function (data) {
             patient_code = data.result.patient_code;
             $editModal.find('input[name="patient_code"]').val(patient_code);
         }
 
-        utilAsyncExecuteAjax($featureElement,parameters,false,successCallback);
+        utilAsyncExecuteAjax($featureElement, parameters, false, successCallback);
 
         $editModal.modal();
 
@@ -58,14 +58,14 @@ $('#async-ventilator-update',).on(
         //TODO:parameters格納
         var parameters = {};
 
-        
+
         var $targetForm = $('form[name="ventilator-update"]');
 
         parameters['id'] = $targetForm.find('input[name="id"]').val();
         parameters['start_using_at'] = $targetForm.find('input[name="start_using_at"]').val();
 
         var successCallback = function (data) {
-            $editModal.modal('hide');
+            location.reload();
         }
 
         var $btn = $('#async-ventilator-update');
@@ -100,3 +100,63 @@ $('#paginated-list').on(
         return false;
     }
 );
+
+/** 
+ * checkbox管理
+ */
+$('#paginated-list').on(
+    'click',
+    '.item-check',
+    function () {
+        var checkboxCount = $('.item-check').length;
+        var selectedCount = $('.item-check:checked').length;
+        if (checkboxCount === selectedCount) {
+            $('#bulk-check').prop('indeterminate', false).prop('checked', true);
+        } else if (selectedCount === 0) {
+            $('#bulk-check').prop('indeterminate', false).prop('checked', false);
+        } else {
+            $('#bulk-check').prop('indeterminate', true).prop('checked', true);
+        }
+    }
+).on(
+    'click',
+    '#bulk-check',
+    function () {
+        var checked = $(this).prop('checked');
+        $('.item-check').each(function () {
+            $(this).prop('checked', checked);
+        });
+    }
+);
+
+/**
+ * 一括削除
+ */
+$('#paginated-list').on(
+    'click',
+    '#btn-bulk-delete',
+    function () {
+        var selectedCount = $('.item-check:checked').length;
+
+        if (selectedCount > 0) {
+            var confirmed = confirm(i18n('message.delete_count_confirm', { count: selectedCount }));
+            if (confirmed) {
+                var $featureElement = $(this);
+
+                var parameters = { 'ids': [] }
+
+                $('.item-check:checked').closest('tr').each(function (i, elm) {
+                    parameters['ids'].push($(elm).data('id'));
+                });
+
+                var successCallback = function(data){
+                    location.reload();
+                }
+
+                utilAsyncExecuteAjax($featureElement,parameters,true,successCallback)
+            }
+        } else {
+            alert(i18n('message.object_unselected'));
+        }
+    }
+)

@@ -30,7 +30,7 @@ $('#async-organization-create').on(
         parameters['patient_obs_approved_flg'] = $targetForm.find('input[name="patient_obs_approved_flg"]:checked').val();
 
         var successCallback = function (data) {
-            $registerModal.modal('hide');
+            location.reload();
         }
 
         var $btn = $('#async-organization-create');
@@ -88,7 +88,7 @@ $('#async-organization-update',).on(
         parameters['patient_obs_approved_flg'] = $targetForm.find('input[name="patient_obs_approved_flg"]:checked').val();
 
         var successCallback = function (data) {
-            $editModal.modal('hide');
+            location.reload();
         }
 
         var $btn = $('#async-organization-update');

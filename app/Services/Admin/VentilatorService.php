@@ -7,7 +7,9 @@ use App\Http\Forms\Admin as Form;
 use App\Http\Response as Response;
 use App\Repositories as Repos;
 use App\Services\Support\Converter;
+use App\Services\Support\DateUtil;
 use App\Services\Support\DBUtil;
+use Illuminate\Support\Facades\Date;
 use Psy\Formatter\Formatter;
 
 class VentilatorService
@@ -45,12 +47,26 @@ class VentilatorService
     {
         $ventilator = Repos\VentilatorRepository::findOneById($form->id);
 
-        $entity = Converter\VentilatorConverter::convertToAdminVentilatorUpdateEntity($ventilator,$form->start_using_at);
+        $entity = Converter\VentilatorConverter::convertToAdminVentilatorUpdateEntity($ventilator, $form->start_using_at);
 
         DBUtil::Transaction(
             'MicroVent編集',
             function () use ($entity) {
                 $entity->save();
+            }
+        );
+
+        return new Response\SuccessJsonResult;
+    }
+
+    function delete(Form\VentilatorDeleteForm $form)
+    {
+        $ids = $form->ids;
+
+        DBUtil::Transaction(
+            'MicroVent削除',
+            function () use ($ids) {
+                Repos\VentilatorRepository::deleteByIds($ids);
             }
         );
 

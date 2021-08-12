@@ -59,7 +59,6 @@ Route::group(['middleware' => ['routetype:admin']], function () {
         'OrganizationAdminUserController@asyncDataOrganization'
     )->name('admin.org_admin_user.async.organization_data');
 
-<<<<<<< HEAD
     // 患者観察研究データ管理
     Route::get(
         '/patient_value', 
@@ -91,15 +90,4 @@ Route::group(['middleware' => ['routetype:admin']], function () {
         'PatientValueController@asyncDataOrganization'
     )->name('admin.patient_value.async.organization_data');
 
-=======
-    /**
-     * MicroVent管理
-     */
-    Route::get('/ventilator', 'VentilatorController@index')->name('admin.ventilator.index');
-    Route::get('/ventilator/async', 'VentilatorController@asyncSearch')->name('admin.ventilator.async');
-    Route::get('/ventilator/async/patient','VentilatorController@asyncPatient')->name('admin.ventilator.patient');
-    Route::get('/ventilator/async/bugs','VentilatorController@asyncBugs')->name('admin.ventilator.bugs');
-    Route::put('/ventilator', 'VentilatorController@asyncUpdate')->name('admin.ventilator.update');
-    // Route::delete('/ventiltor','VentilatorController@asyncDelete')->name('admin.ventilator.delete');
->>>>>>> fc20423... 呼吸器管理系
 });
