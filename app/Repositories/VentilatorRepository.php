@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Organization;
+use App\Models\Patient;
 use App\Models\User;
 use App\Models\Ventilator;
 use App\Models\VentilatorBug;
@@ -107,9 +108,35 @@ class VentilatorRepository
             ]);
     }
 
+    private static function leftJoinPatient($query = null)
+    {
+        $table = Ventilator::tableName();
+
+        $patient_table = Patient::tableName();
+
+        return (!is_null($query) ? $query : static::query())
+            ->leftJoin(
+                $patient_table,
+                function ($join) use ($table, $patient_table) {
+                    $join
+                        ->on($patient_table . '.id', '=', $table . '.patient_id');
+                }
+            )
+            ->addSelect([
+                $table . '.*',
+                $patient_table . '.patient_code AS patient_code'
+            ]);
+    }
+
     public static function getOrganizationIdById(int $id)
     {
         return static::query()->where('id', $id)->value('organization_id');
+    }
+
+    public static function getPatientCodeById(int $id)
+    {
+        $table = Ventilator::tableName();
+        return static::leftJoinPatient()->where($table.'.id',$id)->orderBy($table.'.created_at', 'DESC')->value('patient_code');
     }
 
     public static function findBySearchValuesAndOffsetAndLimit($offset, $limit, $search_values)

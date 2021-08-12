@@ -23,8 +23,7 @@ class VentilatorController extends Controller
         $base_url = $request->url();
         $ventilator_paginator = $this->service->getVentilatorData($base_url);
         $ventilator_paginator->withPath($base_url.'/async');
-        // return view('index', compact('ventilator_paginator'));
-        return var_dump($ventilator_paginator);
+        return view('index', compact('ventilator_paginator'));
     }
 
     function asyncSearch(Request $request)
@@ -35,21 +34,30 @@ class VentilatorController extends Controller
         return view('list', compact('ventilator_paginator'));
     }
 
-    function asyncCreate(Request $request)
-    {
-        // $form = new Form\VentilatorForm($request->all());
-
-        // if ($form->hasError()) throw new InvalidFormException($form);
-
-        // return $this->service->create($form);
-    }
-
     function asyncUpdate(Request $request)
     {
-        // $form = new Form\VentilatorUpdateForm($request->all());
+        $form = new Form\VentilatorUpdateForm($request->all());
 
-        // if ($form->hasError()) throw new InvalidFormException($form);
+        if ($form->hasError()) throw new InvalidFormException($form);
 
-        // return $this->service->update($form);
+        return $this->service->update($form);
     }
+
+    function asyncPatient(Request $request)
+    {
+        $form = new Form\VentilatorPatientForm($request->all());
+
+        $response = $this->service->getPatient($form);
+
+        return $response;
+    }
+    
+    // function asyncBugs(Request $request)
+    // {
+    //     $form = new Form\VentilatorBugsForm($request->all());
+
+    //     $bugs = $this->service->getBugsList($form);
+
+    //     return view('ventilatorBugList', compact('bugs'));
+    // }
 }

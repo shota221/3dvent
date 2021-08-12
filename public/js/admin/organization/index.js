@@ -99,11 +99,11 @@ $('#async-organization-update',).on(
     });
 
 //ユーザー一覧モーダル
-var $usersListModal = $('#modal-users-list');
+var $userListModal = $('#modal-user-list');
 
 $('#paginated-list').on(
     'click',
-    '.show-users-list-modal',
+    '.show-user-list-modal',
     function () {
         var id = $(this).closest('tr').data('id');
 
@@ -111,9 +111,9 @@ $('#paginated-list').on(
 
         parameters['id'] = id;
 
-        var successCallback = function (users_list) {
-            $('#users-list').html(users_list);
-            $usersListModal.modal();
+        var successCallback = function (user_list) {
+            $('#user-list').html(user_list);
+            $userListModal.modal();
         };
 
         var $featureElement = $(this);

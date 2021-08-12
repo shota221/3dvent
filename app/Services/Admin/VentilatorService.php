@@ -8,6 +8,7 @@ use App\Http\Response as Response;
 use App\Repositories as Repos;
 use App\Services\Support\Converter;
 use App\Services\Support\DBUtil;
+use Psy\Formatter\Formatter;
 
 class VentilatorService
 {
@@ -31,6 +32,29 @@ class VentilatorService
         $total_count = Repos\VentilatorRepository::countBySearchValues($search_values);
 
         return Converter\VentilatorConverter::convertToAdminPagenate($ventilators, $total_count, $items_per_page, $base_url);
+    }
+
+    function getPatient(Form\VentilatorPatientForm $form)
+    {
+        $patient_code = Repos\VentilatorRepository::getPatientCodeById($form->id);
+
+        return Converter\VentilatorConverter::convertToPatientResult($patient_code);
+    }
+
+    function update(Form\VentilatorUpdateForm $form)
+    {
+        $ventilator = Repos\VentilatorRepository::findOneById($form->id);
+
+        $entity = Converter\VentilatorConverter::convertToAdminVentilatorUpdateEntity($ventilator,$form->start_using_at);
+
+        DBUtil::Transaction(
+            'MicroVent編集',
+            function () use ($entity) {
+                $entity->save();
+            }
+        );
+
+        return new Response\SuccessJsonResult;
     }
 
     function buildVentilatorSearchValues(Form\VentilatorSearchForm $form)

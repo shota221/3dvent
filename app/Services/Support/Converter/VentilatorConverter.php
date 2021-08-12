@@ -16,103 +16,103 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class VentilatorConverter
 {
-    public static function convertToVentilatorResult($entity = null)
-    {
-        $res = new Response\Api\VentilatorResult;
+  public static function convertToVentilatorResult($entity = null)
+  {
+    $res = new Response\Api\VentilatorResult;
 
-        $isRegisteredVentilator = !is_null($entity);
+    $isRegisteredVentilator = !is_null($entity);
 
-        $res->is_registered = $isRegisteredVentilator;
+    $res->is_registered = $isRegisteredVentilator;
 
-        if ($isRegisteredVentilator) {
+    if ($isRegisteredVentilator) {
 
-            $res->organization_name = $entity->organization_name;
+      $res->organization_name = $entity->organization_name;
 
-            $res->organization_code = $entity->organization_code;
+      $res->organization_code = $entity->organization_code;
 
-            $res->ventilator_id = $entity->id;
+      $res->ventilator_id = $entity->id;
 
-            $res->patient_id = $entity->patient_id;
+      $res->patient_id = $entity->patient_id;
 
-            $res->serial_number = strval($entity->serial_number);
+      $res->serial_number = strval($entity->serial_number);
 
-            $res->start_using_at = $entity->start_using_at;
+      $res->start_using_at = $entity->start_using_at;
 
-            $from = DateUtil::parseToDatetime($entity->start_using_at);
+      $from = DateUtil::parseToDatetime($entity->start_using_at);
 
-            $to = DateUtil::hourLater($from,config('calc.default.recommended_period_hour'));
+      $to = DateUtil::hourLater($from, config('calc.default.recommended_period_hour'));
 
-            $res->is_recommended_period = DateUtil::isBetweenDateTimeToAnother(DateUtil::now(),$from,$to);
-        }
-
-        $res->units = config('units');
-
-        return $res;
+      $res->is_recommended_period = DateUtil::isBetweenDateTimeToAnother(DateUtil::now(), $from, $to);
     }
 
-    public static function convertToVentilatorRegistrationResult($entity)
-    {
-        $res = new Response\Api\VentilatorResult;
+    $res->units = config('units');
 
-        $res->ventilator_id = $entity->id;
+    return $res;
+  }
 
-        $res->organization_name = $entity->organization_name;
+  public static function convertToVentilatorRegistrationResult($entity)
+  {
+    $res = new Response\Api\VentilatorResult;
 
-        $res->organization_code = $entity->organization_code;
+    $res->ventilator_id = $entity->id;
 
-        $res->serial_number = strval($entity->serial_number);
+    $res->organization_name = $entity->organization_name;
 
-        return $res;
+    $res->organization_code = $entity->organization_code;
+
+    $res->serial_number = strval($entity->serial_number);
+
+    return $res;
+  }
+
+  public static function convertToVentilatorUpdateEntity($entity, $organization_id, $start_using_at = null)
+  {
+    $entity->organization_id = $organization_id;
+
+    if (!is_null($start_using_at)) {
+      $entity->start_using_at = $start_using_at;
     }
 
-    public static function convertToVentilatorUpdateEntity($entity, $organization_id, $start_using_at = null)
-    {
-        $entity->organization_id = $organization_id;
+    return $entity;
+  }
 
-        if (!is_null($start_using_at)) {
-            $entity->start_using_at = $start_using_at;
-        }
+  public static function convertToVentilatorUpdateResult($entity)
+  {
+    $res = new Response\Api\VentilatorResult;
 
-        return $entity;
+    $res->start_using_at = $entity->start_using_at;
+
+    return $res;
+  }
+
+  public static function convertToVentilatorEntity($gs1_code, $serial_number, $expiration_date, $qr_read_at, $latitude = null, $longitude = null, $city = null, $organization_id = null, $registered_user_id = null)
+  {
+    $entity = new Ventilator;
+
+    $entity->gs1_code = $gs1_code;
+
+    $entity->serial_number = $serial_number;
+
+    $entity->expiration_date = $expiration_date;
+
+    if (!is_null($latitude) && !is_null($longitude)) {
+      $entity->location = ['lat' => $latitude, 'lng' => $longitude];
     }
 
-    public static function convertToVentilatorUpdateResult($entity)
-    {
-        $res = new Response\Api\VentilatorResult;
+    $entity->city = $city;
 
-        $res->start_using_at = $entity->start_using_at;
+    $entity->organization_id = $organization_id;
 
-        return $res;
-    }
+    $entity->registered_user_id = $registered_user_id;
 
-    public static function convertToVentilatorEntity($gs1_code, $serial_number, $expiration_date, $qr_read_at, $latitude = null, $longitude = null, $city = null, $organization_id = null, $registered_user_id = null)
-    {
-        $entity = new Ventilator;
+    $entity->start_using_at = $qr_read_at;
 
-        $entity->gs1_code = $gs1_code;
+    $entity->qr_read_at = $qr_read_at;
 
-        $entity->serial_number = $serial_number;
+    return $entity;
+  }
 
-        $entity->expiration_date = $expiration_date;
 
-        if (!is_null($latitude) && !is_null($longitude)) {
-            $entity->location = ['lat' => $latitude, 'lng' => $longitude];
-        }
-
-        $entity->city = $city;
-
-        $entity->organization_id = $organization_id;
-
-        $entity->registered_user_id = $registered_user_id;
-
-        $entity->start_using_at = $qr_read_at;
-
-        $entity->qr_read_at = $qr_read_at;
-
-        return $entity;
-    }
-
-    
   public static function convertToAdminPagenate(Collection $entities, $total_count, $items_per_page, $base_url)
   {
     $paginator = new LengthAwarePaginator(
@@ -128,7 +128,7 @@ class VentilatorConverter
 
   public static function convertToAdminVentilatorResult(Ventilator $entity)
   {
-    $ventilator_result = new VentilatorResult;
+    $ventilator_result = new Response\Admin\VentilatorResult;
 
     $ventilator_result->id = $entity->id;
     $ventilator_result->gs1_code = $entity->gs1_code;
@@ -137,7 +137,7 @@ class VentilatorConverter
     $ventilator_result->registered_user_name = $entity->registered_user_name;
     $ventilator_result->expiration_date = Gs1Util::extractGs1Data($entity->gs1_code)->expiration_date ?? '';
     $ventilator_result->start_using_at = $entity->start_using_at;
-    $ventilator_result->has_bug = !is_null($entity->bug_name);
+    $ventilator_result->has_bug = !is_null($entity->has_bug);
 
     return $ventilator_result;
   }
@@ -145,9 +145,26 @@ class VentilatorConverter
   private static function convertToAdminVentilatorData(Collection $entities)
   {
     return array_map(
-      function($entity){
+      function ($entity) {
         return self::convertToAdminVentilatorResult($entity);
-      },$entities->all()
+      },
+      $entities->all()
     );
+  }
+
+  public static function convertToPatientResult($patient_code)
+  {
+    $patient_result = new Response\Admin\PatientResult;
+
+    $patient_result->patient_code = $patient_code;
+
+    return $patient_result;
+  }
+
+  public static function convertToAdminVentilatorUpdateEntity($entity, $start_using_at)
+  {
+    $entity->start_using_at = $start_using_at;
+
+    return $entity;
   }
 }

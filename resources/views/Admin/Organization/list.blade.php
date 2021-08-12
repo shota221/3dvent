@@ -7,7 +7,7 @@
         <th>@lang('messages.admin.patient_observation')</th>
         <th>@lang('messages.admin.registered_at')</th>
         <th>@lang('messages.admin.status')</th>
-        <th>@lang('messages.admin.users_list')</th>
+        <th>@lang('messages.admin.user_list')</th>
     </tr>
     @foreach ($organization_paginator as $organization)
         <tr data-id="{{ $organization->id }}" data-organization_name="{{ $organization->organization_name }}"
@@ -48,7 +48,7 @@
                     <div class="badge badge-secondary">@lang('messages.invalid')</div>
                 </td>
             @endif
-            <td class="align-middle"><a href="#" class="show-users-list-modal" data-url="{{route('admin.organization.users')}}" data-method="GET">@lang('messages.list')</a></td>
+            <td class="align-middle"><a href="#" class="show-user-list-modal" data-url="{{route('admin.organization.users')}}" data-method="GET">@lang('messages.list')</a></td>
         </tr>
     @endforeach
 </table>

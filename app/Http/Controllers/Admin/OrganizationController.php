@@ -57,6 +57,6 @@ class OrganizationController extends Controller
 
         $users = $this->service->getUsersList($form);
 
-        return view('usersList', compact('users'));
+        return view('userList', compact('users'));
     }
 }

@@ -1,7 +1,7 @@
     {{-- 編集 --}}
     @component('components.modal', [
         'id' => 'modal-organization-update',
-        'form' => ['method' => 'PUT', 'action' => route('admin.organization.create'), 'name' => 'organization-update'],
+        'form' => ['method' => 'PUT', 'action' => route('admin.organization.update'), 'name' => 'organization-update'],
         ])
         @slot('title')
             @lang('messages.admin.organization_edit')

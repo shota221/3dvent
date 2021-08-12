@@ -10,7 +10,7 @@
     JS
 ************************/ --}}
 @section('js')
-    <script src="js/admin/organization/index.js"></script>
+    <script src="js/admin/ventilator/index.js"></script>
 @stop
 
 @section('hiddens')
@@ -21,17 +21,23 @@
     <div class="container-fluid">
         <div class="card card-default color-pallete-box">
             <div class="card-header">
-                <h3>@lang('messages.admin.organization_management')</h3>
+                <h3>@lang('messages.admin.ventilator_management')</h3>
             </div>
             <div class="card-body">
                 <div class="row d-flex justify-content-between my-3">
                     <div class="col-sm-4">
-                        <h4>@lang('messages.admin.organization_list')</h4>
+                        <h4>@lang('messages.admin.ventilator_list')</h4>
                     </div>
                     <div class="row">
                         <div class="ml-3 mr-3">
                             <button type="button" class="btn btn-primary"
-                                id="show-register-modal">@lang('messages.register')</button>
+                                id="btn-csv-export">@lang('messages.admin.csv_export')</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="ml-3 mr-3">
+                            <button type="button" class="btn btn-primary"
+                                id="show-csv-import-modal">@lang('messages.admin.csv_import')</button>
                         </div>
                     </div>
                 </div>
@@ -41,14 +47,14 @@
                         <input type="search" class="form-control form-control-lg" placeholder="Type your keywords here"
                             value="Lorem ipsum">
                         <div class="input-group-append">
-                            <button type="search" class="btn btn-lg btn-default" id="search-organization">
+                            <button type="search" class="btn btn-lg btn-default" id="search-ventilator">
                                 <i class="fa fa-search"></i>
                             </button>
                         </div>
                     </div>
                 </div>
                 <div id="paginated-list">
-                    @include('Admin.Organization.list')
+                    @include('Admin.Ventilator.list')
                 </div>
             </div>
         </div>
@@ -56,7 +62,6 @@
 @stop
 
 @section('modal')
-    @include('Admin.Organization.editModal')
-    @include('Admin.Organization.registerModal')
-    @include('Admin.Organization.userListModal')
+    @include('Admin.Ventilator.editModal')
+    @include('Admin.Ventilator.ventilatorBugListModal')
 @stop

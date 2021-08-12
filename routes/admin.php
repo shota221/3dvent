@@ -97,8 +97,9 @@ Route::group(['middleware' => ['routetype:admin']], function () {
      */
     Route::get('/ventilator', 'VentilatorController@index')->name('admin.ventilator.index');
     Route::get('/ventilator/async', 'VentilatorController@asyncSearch')->name('admin.ventilator.async');
-    // Route::post('/ventilator', 'VentilatorController@asyncCreate')->name('admin.ventilator.create');
-    // Route::put('/ventilator', 'VentilatorController@asyncUpdate')->name('admin.ventilator.update');
+    Route::get('/ventilator/async/patient','VentilatorController@asyncPatient')->name('admin.ventilator.patient');
+    Route::get('/ventilator/async/bugs','VentilatorController@asyncBugs')->name('admin.ventilator.bugs');
+    Route::put('/ventilator', 'VentilatorController@asyncUpdate')->name('admin.ventilator.update');
     // Route::delete('/ventiltor','VentilatorController@asyncDelete')->name('admin.ventilator.delete');
 >>>>>>> fc20423... 呼吸器管理系
 });
