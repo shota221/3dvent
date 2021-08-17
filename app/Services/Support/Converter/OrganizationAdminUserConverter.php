@@ -49,7 +49,7 @@ class OrganizationAdminUserConverter
         return $entity;
     }
 
-    public static function convertToOrganizationAdminUserData($entity)
+    public static function convertToOrganizationAdminUserData(Models\User $entity)
     {
         $data = new Response\Admin\OrganizationAdminUserData;
 
@@ -59,7 +59,6 @@ class OrganizationAdminUserConverter
         $data->code = $entity->code;
         $data->organization_name = $entity->organization_name;
         $data->created_at = DateUtil::toDatetimeStr($entity->created_at);
-        $data->status = $entity->active() ? trans('messages.valid') : trans('messages.invalid');
         $data->disabled_flg = $entity->disabled_flg;
 
         return $data;

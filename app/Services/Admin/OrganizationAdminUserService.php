@@ -188,6 +188,7 @@ class OrganizationAdminUserService
         if (isset($form->name)) $search_values['name'] = $form->name;
         if (isset($form->registered_at_from)) $search_values['registered_at_from'] = $form->registered_at_from;
         if (isset($form->registered_at_to)) $search_values['registered_at_to'] = $form->registered_at_to;
+        if (isset($form->disabled_flg)) $search_values['disabled_flg'] = $form->disabled_flg;
 
         return $search_values;
     }

@@ -110,13 +110,16 @@ class UserRepository
         }
         if(isset($search_values['name'])){
             $name = $search_values['name'];
-            $query->where($table . '.name','like',"%$name%");
+            $query->where($table . '.name', 'like', "%$name%");
         }
         if(isset($search_values['registered_at_from'])){
-            $query->where($table . '.created_at','>=',$search_values['registered_at_from']);
+            $query->where($table . '.created_at', '>=', $search_values['registered_at_from']);
         }
         if(isset($search_values['registered_at_to'])){
-            $query->where($table . '.created_at','<=',$search_values['registered_at_to']);
+            $query->where($table . '.created_at', '<=', $search_values['registered_at_to']);
+        }
+        if (isset($search_values['disabled_flg'])) {
+            $query->whereIn($table . '.disabled_flg', $search_values['disabled_flg']);
         }
 
         return $query;

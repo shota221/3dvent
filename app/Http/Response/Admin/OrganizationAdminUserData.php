@@ -18,7 +18,5 @@ class OrganizationAdminUserData extends SuccessJsonResult
 
     public $created_at;
 
-    public $status;
-
     public $disabled_flg;
 }

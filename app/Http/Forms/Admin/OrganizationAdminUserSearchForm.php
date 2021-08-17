@@ -23,6 +23,7 @@ class OrganizationAdminUserSearchForm extends BaseForm
             'name'               => 'nullable|' . Rule::VALUE_NAME,
             'registered_at_from' => 'nullable|date',
             'registered_at_to'   => 'nullable|date',
+            'disabled_flg*'      => 'nullable|' . Rule::FLG_INTEGER,
             'page'               => 'nullable|' . Rule::VALUE_POSITIVE_NON_ZERO,
         ];
     }
@@ -33,21 +34,22 @@ class OrganizationAdminUserSearchForm extends BaseForm
         $this->name = isset($input['name']) ? strval($input['name']) : null;
 
         try {
-            $this->registerd_at_from = isset($input['registerd_at_from']) 
-            ? Support\DataUtil::parseToDate($input['registerd_at_from']) 
+            $this->registered_at_from = isset($input['registered_at_from']) 
+            ? Support\DateUtil::parseToDate($input['registered_at_from']) 
             : null;
         } catch (Exceptions\DateUtilException $e) {
             $this->addError('registered_at_from', 'validation.date');
         }
 
         try {
-            $this->registerd_at_to = isset($input['registerd_at_to']) 
-            ? Support\DataUtil::parseToDate($input['registerd_at_to']) 
+            $this->registered_at_to = isset($input['registered_at_to']) 
+            ? Support\DateUtil::parseToDate($input['registered_at_to']) 
             : null;
         } catch (Exceptions\DateUtilException $e) {
             $this->addError('registered_at_to', 'validation.date');
         }
 
+        $this->disabled_flg = isset($input['disabled_flg']) ? $input['disabled_flg'] : null;
         $this->page = isset($input['page']) ? intval($input['page']) : null;
         $this->http_query = isset($input) ? '?' . http_build_query($input) : '';
     }

@@ -21,12 +21,12 @@
         <td>{{ $organization_admin_user->organization_name }}</td>
         <td>{{ $organization_admin_user->created_at }}</td>
         <td>
-        @if ($organization_admin_user->status === trans('messages.valid'))
-        <div class="badge badge-primary">
+        @if (! $organization_admin_user->disabled_flg)
+        <div class="badge badge-primary">@lang('messages.valid')
         @else
-        <div class="badge badge-secondary">
+        <div class="badge badge-secondary">@lang('messages.invalid')
         @endif
-        {{ $organization_admin_user->status }}</div></td>
+        </div></td>
     </tr>
     @endforeach
 </table>
