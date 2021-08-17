@@ -62,7 +62,7 @@ return [
         'organization_management'=>'組織管理',
         'organization_list'=>'組織一覧',
         'organization_create'=>'組織登録',
-        'organization_edit'=>'組織編集'
+        'organization_edit'=>'組織編集',
     ],
     /**
      * org

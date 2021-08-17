@@ -23,4 +23,12 @@ Route::group(['middleware' => ['routetype:admin']], function () {
     Route::get('/organization/async', 'OrganizationController@asyncSearch')->name('admin.organization.async');
     Route::post('/organization', 'OrganizationController@asyncCreate')->name('admin.organization.create');
     Route::put('/organization', 'OrganizationController@asyncUpdate')->name('admin.organization.update');
+
+    //　組織管理者ユーザー管理
+    Route::get('/org_admin_user', 'OrganizationAdminUserController@index')->name('admin.org_admin_user.index');
+    Route::post('/org_admin_user', 'OrganizationAdminUserController@asyncCreate')->name('admin.org_admin_user.create');
+    Route::put('/org_admin_user', 'OrganizationAdminUserController@asyncUpdate')->name('admin.org_admin_user.update');
+    Route::get('/org_admin_user/search', 'OrganizationAdminUserController@asyncSearch')->name('admin.org_admin_user.search');
+    Route::get('/org_admin_user/edit', 'OrganizationAdminUserController@asyncEdit')->name('admin.org_admin_user.edit');
+
 });
