@@ -25,19 +25,8 @@ $('#paginated-list').on(
         var successCallback = function (data) {
 
             $form = $('#edit-modal').find('form[name="update"]').eq(0);
-            $form[0].reset();
 
-            $.each($form.find('input'), function(index, element) {
-                switch (element.type) {
-                    case 'text':
-                    case 'hidden':
-                        $(element).attr('value', data['result'][element.name]);
-                        break;
-                    case 'radio':
-                        $(element).attr('checked', data['result'][element.name] === parseInt(element.value));
-                        break;
-                }
-            });
+            utilFormInputParameters($form, data['result']);
             
             $('#edit-modal').modal();
         }
