@@ -68,7 +68,7 @@ class OrganizationAdminUserConverter
         \Illuminate\Database\Eloquent\Collection $entities,
         int $total_count,
         int $item_per_page,
-        string $base_url)
+        string $path)
     {
         $organization_admin_users = array_map(
             function($entity) {
@@ -82,7 +82,7 @@ class OrganizationAdminUserConverter
             $total_count,
             $item_per_page,
             null,
-            ['path' => $base_url]
+            ['path' => $path]
         );
 
         return $paginator;

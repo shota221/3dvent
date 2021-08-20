@@ -19,8 +19,8 @@ class OrganizationAdminUserController extends Controller
 
     public function index(Request $request)
     {
-        $base_url = $request->path();
-        $organization_admin_users = $this->service->getPaginatedOrganizationAdminUserData($base_url);
+        $path = $request->path();
+        $organization_admin_users = $this->service->getPaginatedOrganizationAdminUserData($path);
         $organization_admin_users->withPath(route('admin.org_admin_user.search'));
       
         return view('index', compact('organization_admin_users'));
@@ -39,8 +39,8 @@ class OrganizationAdminUserController extends Controller
 
         if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
 
-        $base_url = $request->path();
-        $organization_admin_users = $this->service->getPaginatedOrganizationAdminUserData($base_url, $form);
+        $path = $request->path();
+        $organization_admin_users = $this->service->getPaginatedOrganizationAdminUserData($path, $form);
 
         return view('list', compact('organization_admin_users'));
     }

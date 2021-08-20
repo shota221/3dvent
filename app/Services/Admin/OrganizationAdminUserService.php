@@ -15,12 +15,12 @@ class OrganizationAdminUserService
     /**
      * 組織管理者アカウント一覧取得(ページネーション)
      *
-     * @param string $base_url
+     * @param string $path
      * @param Form\OrganizationAdminUserSearchForm $form 
      * @return [type]
      */
     public function getPaginatedOrganizationAdminUserData(
-        string $base_url, 
+        string $path, 
         Form\OrganizationAdminUserSearchForm $form = null)
     {
         $limit = config('view.items_per_page');
@@ -53,7 +53,7 @@ class OrganizationAdminUserService
             $organization_admin_users,
             $total_count,
             $item_per_page,
-            $base_url.$http_query
+            $path.$http_query
         );
 
     }
