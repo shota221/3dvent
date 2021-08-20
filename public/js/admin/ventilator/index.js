@@ -102,7 +102,7 @@ $('#paginated-list').on(
 );
 
 /** 
- * checkbox管理
+ * checkbox管理(gmail風にunchecked,indeterminate,checkedの三段階)
  */
 $('#paginated-list').on(
     'click',
@@ -149,14 +149,77 @@ $('#paginated-list').on(
                     parameters['ids'].push($(elm).data('id'));
                 });
 
-                var successCallback = function(data){
+                var successCallback = function (data) {
                     location.reload();
                 }
 
-                utilAsyncExecuteAjax($featureElement,parameters,true,successCallback)
+                utilAsyncExecuteAjax($featureElement, parameters, true, successCallback)
             }
         } else {
             alert(i18n('message.object_unselected'));
         }
     }
 )
+
+/**
+ * CSVエクスポート
+ */
+$('#btn-csv-export').on(
+    'click',
+    function () {
+        var selectedCount = $('.item-check:checked').length;
+
+        if (selectedCount > 0) {
+            var $form = $(this).closest('form');
+
+            $('.item-check:checked').closest('tr').each(function (i, elm) {
+                // ids.push($(elm).data('id'));
+                $('<input>').attr({
+                    'type': 'hidden',
+                    'name': 'ids[]',
+                    'value': $(elm).data('id')
+                }).appendTo($form);
+            });
+        } else {
+            alert(i18n('message.object_unselected'));
+            return false;
+        }
+    }
+)
+
+/**
+ * CSVインポート
+ */
+//import-modal
+$('#show-import-modal').on(
+    'click',
+    function () {
+        var $importModal = $('#modal-ventilator-import');
+
+        $importModal.modal();
+        return false;
+    });
+
+//importイベント
+$('#async-ventilator-import').on(
+    'click',
+    function () {
+        var $targetForm = $('form[name="ventilator-import"]');
+
+        var parameters = new FormData($targetForm[0]);
+
+        var successCallback = function (data) {
+            location.reload();
+        }
+
+        var $btn = $('#async-ventilator-import');
+
+        var optionalSettings = {
+            processData: false,
+            contentType: false
+        }
+
+        utilAsyncExecuteAjax($btn, parameters, true, successCallback, optionalSettings);
+
+        return false;
+    });

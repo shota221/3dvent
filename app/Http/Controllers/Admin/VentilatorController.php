@@ -20,9 +20,9 @@ class VentilatorController extends Controller
 
     function index(Request $request)
     {
-        $base_url = $request->url();
+        $base_url = $request->path();
         $ventilator_paginator = $this->service->getVentilatorData($base_url);
-        $ventilator_paginator->withPath($base_url.'/async');
+        $ventilator_paginator->withPath(route('admin.ventilator.async'));
         return view('index', compact('ventilator_paginator'));
     }
 
@@ -60,13 +60,34 @@ class VentilatorController extends Controller
 
         return $reponse;
     }
-    
-    // function asyncBugs(Request $request)
-    // {
-    //     $form = new Form\VentilatorBugsForm($request->all());
 
-    //     $bugs = $this->service->getBugsList($form);
+    function asyncBugs(Request $request)
+    {
+        $form = new Form\VentilatorBugsForm($request->all());
 
-    //     return view('ventilatorBugList', compact('bugs'));
-    // }
+        $bugs = $this->service->getBugsList($form);
+
+        return view('ventilatorBugList', compact('bugs'));
+    }
+
+    function exportCsv(Request $request)
+    {
+        $form = new Form\VentilatorCsvExportForm($request->all());
+
+        return response()->streamDownload(
+            function () use ($form) {
+                $this->service->createVentilatorCsv($form);
+            },
+            config('ventilator_csv.filename')
+        );
+    }
+
+    function importCsv(Request $request)
+    {
+        $form = new Form\VentilatorCsvImportForm($request->all());
+
+        if ($form->hasError()) throw new InvalidFormException($form);
+
+        return 1;
+    }
 }

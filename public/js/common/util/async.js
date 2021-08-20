@@ -4,9 +4,9 @@
  * @param {Object} parameters リクエストパラメータ
  * @param {Function} successCallback 通信成功時の処理を記述。
  * @param {boolean} withMessages 通信の結果をメッセージとしてユーザーに通知したい場合はtrue。
+ * @param {Object} extraSettings その他ajax設定。
  */
- function utilAsyncExecuteAjax($featureElement, parameters = {}, withMessages = false, successCallback = function (data) { }) {
-    console.log($featureElement);
+ function utilAsyncExecuteAjax($featureElement, parameters = {}, withMessages = false, successCallback = function (data) { }, extraSettings = {}) {
     //data-{}の属性から抽出
     var url = $featureElement.data('url');
     var type = $featureElement.data('method');
@@ -25,13 +25,15 @@
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
     });
 
-    $.ajax({
+    var ajaxSettings = Object.assign({
         url: url,
         type: type,
         data: parameters,
         timeout: 120000,
         cache: false,
-    }).done(function (data) {
+    },extraSettings);
+
+    $.ajax(ajaxSettings).done(function (data) {
         if (withMessages) {
             utilAsyncAlertMessage(message)
         }

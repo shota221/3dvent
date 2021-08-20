@@ -8,6 +8,7 @@ use App\Http\Response\Api\VentilatorResult;
 use App\Models\Ventilator;
 use App\Models\VentilatorValue;
 use App\Models\Patient;
+use App\Models\VentilatorBug;
 use App\Services\Support\DateUtil;
 use App\Services\Support\Gs1Util;
 use Carbon\Carbon;
@@ -166,5 +167,17 @@ class VentilatorConverter
     $entity->start_using_at = $start_using_at;
 
     return $entity;
+  }
+
+  public static function convertToBugsListElmEntity(VentilatorBug $entity)
+  {
+    $bug_result = new Response\Admin\VentilatorBugResult;
+
+    $bug_result->bug_name = $entity->bug_name;
+    $bug_result->request_improvement = $entity->request_improvement;
+    $bug_result->registered_at = $entity->registered_at;
+    $bug_result->registered_user_name = $entity->registered_user_name;
+    
+    return $bug_result;
   }
 }

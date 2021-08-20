@@ -7,13 +7,16 @@ use App\Http\Forms\Admin as Form;
 use App\Http\Response as Response;
 use App\Repositories as Repos;
 use App\Services\Support\Converter;
+use App\Services\Support\CryptUtil;
 use App\Services\Support\DateUtil;
 use App\Services\Support\DBUtil;
-use Illuminate\Support\Facades\Date;
-use Psy\Formatter\Formatter;
+use App\Services\Support\Logic\CsvLogic;
+use Illuminate\Database\Eloquent\Collection;
 
 class VentilatorService
 {
+    use CsvLogic;
+
     function getVentilatorData($base_url, $form = null)
     {
         $items_per_page = config('view.items_per_page');
@@ -33,7 +36,9 @@ class VentilatorService
 
         $total_count = Repos\VentilatorRepository::countBySearchValues($search_values);
 
-        return Converter\VentilatorConverter::convertToAdminPagenate($ventilators, $total_count, $items_per_page, $base_url);
+        $url = !is_null($form) ? $base_url . $form->http_query : $base_url;
+
+        return Converter\VentilatorConverter::convertToAdminPagenate($ventilators, $total_count, $items_per_page, $url);
     }
 
     function getPatient(Form\VentilatorPatientForm $form)
@@ -87,5 +92,66 @@ class VentilatorService
         if (isset($form->has_bug)) $search_values['has_bug'] = $form->has_bug;
 
         return $search_values;
+    }
+
+    function getBugsList(Form\VentilatorBugsForm $form)
+    {
+        $bugs = Repos\VentilatorBugRepository::findByVentilatorId($form->id);
+
+        return array_map(
+            function ($user) {
+                return Converter\VentilatorConverter::convertToBugsListElmEntity($user);
+            },
+            $bugs->all()
+        );
+    }
+
+    function createVentilatorCsv(Form\VentilatorCsvExportForm $form)
+    {
+        $query = Repos\VentilatorRepository::queryForCreateVentialtorCsvByids($form->ids);
+
+        $filename = config('ventilator_csv.filename');
+
+        $header = config('ventilator_csv.header');
+
+        $this->createSearchDataCsv(
+            $filename,
+            array_values($header),
+            function (Collection $entities){
+                return array_map(
+                    function ($entity) {
+                        return $this->buildVentilatorCsvRow($entity);
+                    },
+                    $entities->all()
+                );
+            },
+            $query,
+        );
+    }
+
+    function buildVentilatorCsvRow($entity)
+    {
+        $row = [];
+
+        $header = config('ventilator_csv.header');
+        
+        foreach($header as $key=>$val){
+            switch($key){
+                case 'patient_exists':
+                    $row[$key] = intval(!is_null($entity->patient_id));
+                    break;
+                case 'patient_hash':
+                    $row[$key] = !is_null($entity->patient_id) ? CryptUtil::createUniqueToken($entity->patient_id) : null;
+                    break;
+                case 'patient_value_exists':
+                    $row[$key] = intval(!is_null($entity->patient_value_id));
+                    break;
+                case 'ventilator_value_exists':
+                    $row[$key] = intval(!is_null($entity->ventilator_value_id));
+                    break;
+                default: $row[$key] = $entity->$key;
+            }
+        }
+        return $row;
     }
 }

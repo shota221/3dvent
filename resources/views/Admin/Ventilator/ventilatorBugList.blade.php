@@ -8,7 +8,7 @@
     @if (isset($bugs))
         @foreach ($bugs as $bug)
             <tr>
-                <td class="align-middle">{{ $bug->name }}</td>
+                <td class="align-middle">{{ $bug->bug_name }}</td>
                 <td class="align-middle">{{ $bug->request_improvement }}</td>
                 <td class="align-middle">{{ $bug->registered_user_name }}</td>
                 <td class="align-middle">{{ $bug->registered_at }}</td>

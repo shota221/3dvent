@@ -4,9 +4,11 @@ namespace App\Repositories;
 
 use App\Models\Organization;
 use App\Models\Patient;
+use App\Models\PatientValue;
 use App\Models\User;
 use App\Models\Ventilator;
 use App\Models\VentilatorBug;
+use App\Models\VentilatorValue;
 use App\Services\Support\DateUtil;
 
 class VentilatorRepository
@@ -44,7 +46,7 @@ class VentilatorRepository
 
     public static function deleteByIds($ids)
     {
-        return static::query()->whereIn('id',$ids)->update(['deleted_at' => DateUtil::now(), 'active' => null]);
+        return static::query()->whereIn('id', $ids)->update(['deleted_at' => DateUtil::now(), 'active' => null]);
     }
 
     public static function findOneByGs1Code($gs1_code)
@@ -142,7 +144,7 @@ class VentilatorRepository
     public static function getPatientCodeById(int $id)
     {
         $table = Ventilator::tableName();
-        return static::leftJoinPatient()->where($table.'.id',$id)->orderBy($table.'.created_at', 'DESC')->value('patient_code');
+        return static::leftJoinPatient()->where($table . '.id', $id)->orderBy($table . '.created_at', 'DESC')->value('patient_code');
     }
 
     public static function findBySearchValuesAndOffsetAndLimit($offset, $limit, $search_values)
@@ -190,5 +192,61 @@ class VentilatorRepository
         }
 
         return $query;
+    }
+
+    private static function joinPatientAndPatientValueAndVentilatorValue($query = null)
+    {
+        $table = Ventilator::tableName();
+
+        $patient_table = Patient::tableName();
+
+        $ventilator_value_table = VentilatorValue::tableName();
+
+        $patient_value_table = PatientValue::tableName();
+
+        return (!is_null($query) ? $query : static::query())
+            ->leftjoin(
+                $patient_table,
+                function ($join) use ($table, $patient_table) {
+                    $join
+                        ->on($patient_table . '.id', '=', $table . '.patient_id');
+                }
+            )
+            ->leftjoin(
+                $patient_value_table,
+                function ($join) use ($patient_table, $patient_value_table) {
+                    $join
+                        ->on($patient_value_table . '.patient_id', '=', $patient_table . '.id');
+                }
+            )
+            ->leftjoin(
+                $ventilator_value_table,
+                function ($join) use ($table, $ventilator_value_table) {
+                    $join
+                        ->on($ventilator_value_table . '.ventilator_id', '=', $table . '.id');
+                }
+            )->addSelect([
+                $table . '.*',
+                $patient_table.'.*',
+                $patient_value_table.'.*',
+                $ventilator_value_table.'.*',
+                $patient_table. '.id AS patient_id',
+                $patient_value_table. '.id AS patient_value_id',
+                $ventilator_value_table. '.id AS ventilator_value_id',
+                $patient_table . '.height AS patient_height',
+                $patient_table . '.weight AS patient_weight',
+                $patient_table . '.gender AS patient_gender',
+                $ventilator_value_table . '.height AS height',
+                $ventilator_value_table . '.weight AS weight',
+                $ventilator_value_table . '.gender AS gender',
+                $patient_value_table . '.registered_at AS patient_value_registered_at',
+                $ventilator_value_table . '.registered_at AS ventilator_value_registered_at',
+            ]);
+    }
+
+    public static function queryForCreateVentialtorCsvByids($ids)
+    {
+        $table = Ventilator::tableName();
+        return static::joinPatientAndPatientValueAndVentilatorValue()->whereIn($table . '.id', $ids);
     }
 }

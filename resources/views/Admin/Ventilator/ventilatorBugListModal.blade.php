@@ -1,4 +1,4 @@
-    {{-- ユーザー一覧 --}}
+    {{-- バグ一覧 --}}
     @component('components.modal', [
         'id' => 'modal-ventilator-bug-list',
         ])
@@ -7,7 +7,7 @@
         @endslot
 
         @slot('content')
-        <div id="ventilator-list">
+        <div id="ventilator-bug-list">
             @include('Admin.Ventilator.ventilatorBugList')
         </div>
         @endslot

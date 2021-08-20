@@ -30,10 +30,11 @@
                     </div>
                     <div class="col-sm-8 pull-right">
                         <button type="button" class="btn btn-primary float-right"
-                            id="show-csv-import-modal">@lang('messages.admin.csv_import')</button>
-                        <button type="button" class="btn btn-success mr-1 float-right"
-                            id="btn-csv-export">@lang('messages.admin.csv_export')</button>
-
+                            id="show-import-modal">@lang('messages.admin.csv_import')</button>
+                        <form id="csv-export" method="get" action="{{ route('admin.ventilator.export_csv') }}">
+                            <button type="submit" class="btn btn-success mr-1 float-right"
+                                id="btn-csv-export">@lang('messages.admin.csv_export')</button>
+                        </form>
                     </div>
                 </div>
                 {{-- todo 検索機能 --}}
@@ -58,5 +59,6 @@
 
 @section('modal')
     @include('Admin.Ventilator.editModal')
+    @include('Admin.Ventilator.importModal')
     @include('Admin.Ventilator.ventilatorBugListModal')
 @stop
