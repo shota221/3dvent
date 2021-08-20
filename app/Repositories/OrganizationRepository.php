@@ -45,6 +45,11 @@ class OrganizationRepository
             ->get();
     }
 
+    public static function findAll()
+    {
+        return static::query()->get();
+    }
+
     public static function countBySearchValues($search_values)
     {
         return self::createWhereClauseFromSearchValues(static::query(), $search_values)->count();
@@ -52,30 +57,30 @@ class OrganizationRepository
 
     private static function createWhereClauseFromSearchValues($query, $search_values)
     {
-        if(isset($search_values['organization_name'])){
+        if (isset($search_values['organization_name'])) {
             $organization_name = $search_values['organization_name'];
             $query->where('name','like',"%$organization_name%");
         }
-        if(isset($search_values['representative_name'])){
+        if (isset($search_values['representative_name'])) {
             $representative_name = $search_values['representative_name'];
             $query->where('representative_name','like',"%$representative_name%");
         }
-        if(isset($search_values['organization_code'])){
+        if (isset($search_values['organization_code'])) {
             $query->where('code',$search_values['organization_code']);
         }
-        if(isset($search_values['disabled_flg'])){
+        if (isset($search_values['disabled_flg'])) {
             $query->where('disabled_flg',$search_values['disabled_flg']);
         }
-        if(isset($search_values['edc_linked_flg'])){
+        if (isset($search_values['edc_linked_flg'])) {
             $search_values['edc_linked_flg'] ? $query->whereNotNull('edcid') : $query->whereNull('edcid');
         }
-        if(isset($search_values['patient_obs_approved_flg'])){
+        if (isset($search_values['patient_obs_approved_flg'])) {
             $query->where('patient_obs_approved_flg',$search_values['patient_obs_approved_flg']);
         }
-        if(isset($search_values['registered_at_from'])){
+        if (isset($search_values['registered_at_from'])) {
             $query->where('created_at','>=',$search_values['registered_at_from']);
         }
-        if(isset($search_values['registered_at_to'])){
+        if (isset($search_values['registered_at_to'])) {
             $query->where('created_at','<=',$search_values['registered_at_to']);
         }
 

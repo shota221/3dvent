@@ -19,11 +19,18 @@ class OrganizationAdminUserController extends Controller
 
     public function index(Request $request)
     {
-        $base_url = $request->url();
+        $base_url = $request->path();
         $organization_admin_users = $this->service->getPaginatedOrganizationAdminUserData($base_url);
-        $organization_admin_users->withPath($base_url.'/search');
+        $organization_admin_users->withPath(route('admin.org_admin_user.search'));
       
         return view('index', compact('organization_admin_users'));
+    }
+
+    public function asyncDataOrganization()
+    {
+        $response = $this->service->getOrganizationData();
+
+        return $response;
     }
 
     public function asyncSearch(Request $request)
@@ -32,7 +39,7 @@ class OrganizationAdminUserController extends Controller
 
         if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
 
-        $base_url = $request->url();
+        $base_url = $request->path();
         $organization_admin_users = $this->service->getPaginatedOrganizationAdminUserData($base_url, $form);
 
         return view('list', compact('organization_admin_users'));

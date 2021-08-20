@@ -5,14 +5,14 @@
 // jQuery
 window.$ = window.jQuery = require('jquery');
 
-// ie11 promise対応
-window.Promise = window.Promise || require('es6-promise-promise');
-
 // bootstrap
 require('bootstrap');
 
 // icheck
 require('icheck');
+
+// select2
+require('select2');
 
 // admin LTE
 require('admin-lte');

@@ -87,4 +87,26 @@ class OrganizationAdminUserConverter
 
         return $paginator;
     }
+
+    public static function convertToOrganizationSearchListData(\Illuminate\Database\Eloquent\Collection $entities)
+    {
+        $organizations = array_map(
+            function($entity) {
+                return self::convertToOrganizationData($entity);
+            }
+            ,$entities->all()
+        );
+
+        return $organizations;
+    }
+    
+    private static function convertToOrganizationData(Models\Organization $entity)
+    {
+        $data = new Response\Admin\OrganizationData();
+
+        $data->id = $entity->id;
+        $data->name = $entity->name;
+
+        return $data;
+    }
 }

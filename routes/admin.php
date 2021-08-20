@@ -30,5 +30,6 @@ Route::group(['middleware' => ['routetype:admin']], function () {
     Route::put('/org_admin_user', 'OrganizationAdminUserController@asyncUpdate')->name('admin.org_admin_user.update');
     Route::get('/org_admin_user/search', 'OrganizationAdminUserController@asyncSearch')->name('admin.org_admin_user.search');
     Route::get('/org_admin_user/edit', 'OrganizationAdminUserController@asyncEdit')->name('admin.org_admin_user.edit');
+    Route::get('/org_admin_user/async/organization_data', 'OrganizationAdminUserController@asyncDataOrganization')->name('admin.org_admin_user.async.organization_data');
 
 });

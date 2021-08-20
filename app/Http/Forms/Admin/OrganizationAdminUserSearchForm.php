@@ -13,8 +13,8 @@ class OrganizationAdminUserSearchForm extends BaseForm
     public $name;
     public $registerd_at_from;
     public $registerd_at_to;
+    public $disabled_flg;
     public $page;
-    public $http_query;
 
     protected function validationRule()
     {
@@ -38,19 +38,18 @@ class OrganizationAdminUserSearchForm extends BaseForm
             ? Support\DateUtil::parseToDate($input['registered_at_from']) 
             : null;
         } catch (Exceptions\DateUtilException $e) {
-            $this->addError('registered_at_from', 'validation.date');
+            throw new \Exception($e);
         }
 
         try {
             $this->registered_at_to = isset($input['registered_at_to']) 
             ? Support\DateUtil::parseToDate($input['registered_at_to']) 
             : null;
-        } catch (Exceptions\DateUtilException $e) {
-            $this->addError('registered_at_to', 'validation.date');
+        } catch (\Exception $e) {
+            throw new \Exception($e);
         }
 
         $this->disabled_flg = isset($input['disabled_flg']) ? $input['disabled_flg'] : null;
         $this->page = isset($input['page']) ? intval($input['page']) : null;
-        $this->http_query = isset($input) ? '?' . http_build_query($input) : '';
     }
 }

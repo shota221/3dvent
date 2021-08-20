@@ -28,10 +28,12 @@ class OrganizationAdminUserService
         $offset = 0;
 
         $search_values = [];
+        $http_query = '';
 
         if (! is_null($form)) {
             if (isset($form->page)) $offset = ($form->page - 1) * $limit;
             $search_values = $this->buildOrganizationAdminUserSearchValues($form);
+            $http_query = '?' . http_build_query($search_values);
         }
 
         // TODO 権限周り決定後修正
@@ -51,7 +53,7 @@ class OrganizationAdminUserService
             $organization_admin_users,
             $total_count,
             $item_per_page,
-            $base_url
+            $base_url.$http_query
         );
 
     }
@@ -178,6 +180,18 @@ class OrganizationAdminUserService
         );
 
         return new Response\SuccessJsonResult;
+    }
+
+    /**
+     * 組織一覧を取得
+     *
+     * @return [type]
+     */
+    public function getOrganizationData()
+    {
+        $organizations = Repos\OrganizationRepository::findAll();
+
+        return Converter\OrganizationAdminUserConverter::convertToOrganizationSearchListData($organizations);
     }
 
     private function buildOrganizationAdminUserSearchValues(Form\OrganizationAdminUserSearchForm $form)
