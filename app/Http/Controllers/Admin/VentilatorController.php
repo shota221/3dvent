@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Exceptions\InvalidFormException;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Support\CsvLoader;
 use App\Http\Forms\Admin as Form;
 use App\Services\Admin as Service;
 use App\Services\Support\Gs1Util;
@@ -11,6 +12,8 @@ use Illuminate\Http\Request;
 
 class VentilatorController extends Controller
 {
+    use CsvLoader;
+
     private $service;
 
     function __construct()
@@ -88,6 +91,17 @@ class VentilatorController extends Controller
 
         if ($form->hasError()) throw new InvalidFormException($form);
 
-        return 1;
+        $attrs = array_keys(config('ventilator_csv.header'));
+        
+        $forms = $this->extractArray(
+            $request->file('csv_file')->path(),
+            $attrs,
+            function (array $inner_input) {
+                return new Form\VentilatorCsvForm($inner_input);
+            },
+            function (Form\VentilatorCsvForm $inner_form) {
+                return $inner_form;
+            }
+        );
     }
 }

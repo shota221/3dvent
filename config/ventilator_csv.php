@@ -3,6 +3,7 @@
 return [
     'filename' => 'ventilators_data.csv',
     'header' => [
+        'ventilator_id' => 'MicroVentID',
         'gs1_code' => 'MicroVentコード',
         'serial_number' => 'シリアルナンバー',
         'city' => '最寄りの都市',
@@ -10,7 +11,7 @@ return [
         'expiration_date' => '有効期限',
         'start_using_at' => '使用開始日時',
         'patient_exists' => '患者データ有無',
-        'patient_hash' => '患者ハッシュ値', //同一ファイル内でのある患者の同一性を担保。patient_codeがnullの場合にも
+        'patient_id' => '患者ID', //同一ファイル内でのある患者の同一性を担保。patient_codeがnullの場合にも
         'patient_code' => '患者コード',
         'patient_height' => '身長',
         'patient_weight' => '体重',

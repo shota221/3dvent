@@ -230,6 +230,7 @@ class VentilatorRepository
                 $patient_table.'.*',
                 $patient_value_table.'.*',
                 $ventilator_value_table.'.*',
+                $table. '.id AS ventilator_id',
                 $patient_table. '.id AS patient_id',
                 $patient_value_table. '.id AS patient_value_id',
                 $ventilator_value_table. '.id AS ventilator_value_id',

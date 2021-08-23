@@ -48,4 +48,12 @@ class ValidationRule
     {
         return 'regex:#^(?!.*' . $string . ').*$#';
     }
+
+    /**
+     * $i以上$j以下の整数
+     */
+    public static function intRange(int $i, int $j)
+    {
+        return  'integer|min:'.$i.'|max:'.$j;
+    }
 }

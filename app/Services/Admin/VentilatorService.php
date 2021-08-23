@@ -140,9 +140,6 @@ class VentilatorService
                 case 'patient_exists':
                     $row[$key] = intval(!is_null($entity->patient_id));
                     break;
-                case 'patient_hash':
-                    $row[$key] = !is_null($entity->patient_id) ? CryptUtil::createUniqueToken($entity->patient_id) : null;
-                    break;
                 case 'patient_value_exists':
                     $row[$key] = intval(!is_null($entity->patient_value_id));
                     break;
