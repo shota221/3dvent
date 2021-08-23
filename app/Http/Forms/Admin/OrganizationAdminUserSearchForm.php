@@ -24,6 +24,7 @@ class OrganizationAdminUserSearchForm extends BaseForm
             'registered_at_from' => 'nullable|date',
             'registered_at_to'   => 'nullable|date',
             'disabled_flg*'      => 'nullable|' . Rule::VALUE_POSITIVE_NON_ZERO,
+            'page'               => 'nullable|' . Rule::VALUE_POSITIVE_NON_ZERO,
         ];
     }
 
