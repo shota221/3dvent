@@ -22,7 +22,7 @@ JS
     <div id = "alert-message"></div>
     <div class="card card-default color-pallete-box">
         <div class="card-header">
-            <h3>組織管理者アカウント管理</h3>
+            <h3>@lang('messages.organization_admin_user_management')</h3>
         </div>
         <div class="card-body">
             <h6>絞込検索</h6>
@@ -31,7 +31,7 @@ JS
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="form-group" data-url="{{ route('admin.org_admin_user.async.organization_data') }}" data-method="GET" id="async-organization-data" >
-                                <label>組織名</label>
+                                <label>@lang('messages.organization_name')</label>
                                 <select class="form-control form-control-sm select" name="organization_name" id="select2-organization-name">
                                     <option></option>
                                 </select>
@@ -39,13 +39,13 @@ JS
                         </div>
                         <div class="col-sm-4">
                             <div class="form-group">
-                                <label>ユーザー名</label>
+                                <label>@lang('messages.user_name')</label>
                                 <input type="text" class="form-control form-control-sm" name="name">
                             </div>
                         </div>
                         <div class="col-sm-4">
                             <div class="form-group">
-                                <label>登録日</label>
+                                <label>@lang('messages.registered_date')</label>
                                 <div class="row">
                                     <div class="col-sm-5">
                                         <input type="date" class="form-control form-control-sm" name="registered_at_from">
@@ -59,15 +59,15 @@ JS
                         </div>
                         <div class="col-sm-4">
                             <div class="form-group">
-                                <label>ステータス</label>
+                                <label>@lang('messages.status')</label>
                                 <div>
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input form-control-sm" type="checkbox" name="disabled_flg" value="0" checked>
-                                        <label class="form-check-label">有効</label>
+                                        <label class="form-check-label">@lang('messages.valid')</label>
                                     </div>
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input form-control-sm" type="checkbox" name="disabled_flg" value="1"  checked>
-                                        <label class="form-check-label">無効</label>
+                                        <label class="form-check-label">@lang('messages.invalid')</label>
                                     </div>
                                 </div>
                             </div>
@@ -76,15 +76,15 @@ JS
                 </form>
                 <div class="btn-toolbar">
                     <div class="btn-group">
-                        <button class="btn btn-default btn-sm" id="clear-search-form">検索条件をクリア</button>
+                        <button class="btn btn-default btn-sm" id="clear-search-form">@lang('messages.clear_search_form')</button>
                     </div>
                     <div class="btn-group ml-auto">
-                        <button class="btn btn-secondary btn-sm" data-url="{{ route('admin.org_admin_user.search') }}" data-method="GET" id="async-search">検索</button>
+                        <button class="btn btn-secondary btn-sm" data-url="{{ route('admin.org_admin_user.search') }}" data-method="GET" id="async-search">@lang('messages.search')</button>
                     </div>
                 </div>
             </div>
             <div class="row d-flex justify-content-between my-3">
-                <h4>組織管理者アカウント一覧</h4>
+                <h4>@lang('messages.organization_admin_user_list')</h4>
                 <button type="button" id="show-register-modal" class="btn btn-primary btn-sm mr-2">@lang('messages.register')</button>
             </div>
             <div id="paginated-list">

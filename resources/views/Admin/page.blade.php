@@ -6,11 +6,11 @@
 ])
 
 @section('title')
-    @lang('messages.admin.project_administrator_page')
+    @lang('messages.project_administrator_page')
 @stop
 
 @section('role')
-    @lang('messages.admin.project_administrator')
+    @lang('messages.project_administrator')
 @stop
 
 @section('page_js')

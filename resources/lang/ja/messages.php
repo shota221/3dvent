@@ -1,80 +1,144 @@
 <?php
 
 return [
-    /**
-     * 共通
-     */
-    'valid' => '有効',
-    'invalid' => '無効',
-    'register' => '新規登録',
-    'is_required_item' => ' は必須項目です。',
-    'send' => '送信する',
-    'created' => '登録しました。',
-    'updated' => '更新しました。',
-    'deleted' => '削除しました。',
-    'sent' => '送信しました。',
-    'invalid_input' =>'入力に誤りがあります。',
+    // a
+    'affiliation_organization' => '所属組織',
+    'applied' => '申請しました',
+    'approved' => '承認済',
+    // b
+    'back' => '戻る',
+    'bulk_delete' => '選択項目を削除',
+    // c
+    'change_login_password' => 'ログインパスワード変更',
+    'change_password' => 'パスワードを変更する',
+    'clear_search_form' => '検索条件をクリア',
+    'common_setting' => '組織内共通設定',
     'create' => '登録',
-    'post' => '登録',
-    'update' => '更新',
-    'put' => '更新',
+    'created' => '登録しました。',
+    'csv_export' => '選択項目をエクスポート',
+    'csv_file' => 'CSVファイル選択',
+    'csv_import' => 'CSVインポート',
+    // d
     'delete' => '削除',
-    'back' =>'戻る',
+    'deleted' => '削除しました。',
+    'detail' => '詳細',
+    'discontinuation_at' => '使用中止日時',
+    // e
+    'edcid' => 'EDC施設ID(EDC連携する場合は入力してください。)',
+    'edc_link' => 'EDC連携',
+    'edit_profile' => 'プロフィール編集',
+    'email' => 'メールアドレス',
+    'exists' => '有',
+    'expiration_date' => '有効期限',
+    // f
+    // g
+    // h
+    'hospital_name' => '病院名',
+    // i
+    'import' => 'インポート',
+    'invalid' => '無効',
+    'invalid_input' => '入力に誤りがあります。',
+    'is_required_item' => ' は必須項目です。',
+    // j
+    // k
+    // l
+    'linked' => '連携済',
+    'list' => '一覧',
+    // m
+    // n
+    'national_name' => '国名',
+    'none' => '無',
+    // o
+    'opt_out' => 'オプトアウト',
+    'organization_admin_user_management' => '組織管理者アカウント管理',
+    'organization_admin_user_create' => '組織管理者アカウント登録',
+    'organization_admin_user_edit' => '組織管理者アカウント編集',
+    'organization_admin_user_list' => '組織管理者アカウント一覧',
+    'organization_code' => '組織コード',
+    'organization_code_annotation' => '(組織ログイン時利用)',
+    'organization_code_form' => '希望する組織コード',
+    'organization_create' => '組織登録',
+    'organization_edit' => '組織編集',
+    'organization_list' => '組織一覧',
+    'organization_management' => '組織管理',
+    'organization_name' => '組織名',
+    'organization_registration_form' => '組織登録申請フォーム',
+    'organization_user' => '組織ユーザー',
+    'organization_user_page' => '組織ユーザーページ',
+    'other_disease_name_1' => 'その他疾患名1',
+    'other_disease_name_2' => 'その他疾患名2',
+    'outcome' => '使用中止時の転帰',
+    // p
+    'password' => 'パスワード(組織ログイン時利用)',
+    'password_confirmation' => 'パスワード(確認用)',
+    'password_placeholder' => '半角英数字8文字以上',
+    'patient_age' => '患者年齢',
+    'patient_code' => '患者番号',
+    'patient_observation' => '患者観察研究',
+    'patient_observation_status' => '患者観察研究ステータス',
+    'project_administrator' => 'プロジェクト運営者',
+    'project_administrator_page' => 'プロジェクト運営者ページ',
+    'post' => '登録',
+    'put' => '更新',
+    // q
+    // r
+    'register' => '新規登録',
+    'registered_at' => '登録日時',
+    'registered_date' => '登録日',
+    'registered_user_name' => '登録者',
+    'representative_email' => '代表者メールアドレス',
+    'representative_name' => '代表者名',
+    'request_improvement' => '改善要望',
+    // s
+    'search' => '検索',
+    'send' => '送信する',
+    'sent' => '送信しました。',
+    'serial_number' => 'シリアル番号',
+    'setting' => '設定',
+    'start_using_at' => '使用開始日時',
+    'status' => 'ステータス',
+    // t
+    'target_organization_name' => '対象組織名',
+    'treatment' => '使用中止後の呼吸不全治療',
+    // u
+    'unapproved' => '未承認',
+    'unlinked' => '未連携',
+    'used_place' => '使用場所',
+    'user_authority' => '権限',
+    'user_list' => 'ユーザー一覧',
+    'user_name' => 'ユーザー名',
+    'update' => '更新',
+    'updated' => '更新しました。',
+    'updated_at' => '更新日時',
+    'updated_user_name' => '更新者',
+    // v
+    'valid' => '有効',
+    'ventilator_bug' => '不具合',
+    'ventilator_adverse_event_flg' => '機器に関する有害事象',
+    'ventilator_adverse_event_contents' => '機器に関する有害事象の内容',
+    'ventilator_bug_list' => '不具合一覧',
+    'ventilator_bug_name' => '不具合名',
+    'ventilator_code' => 'MicroVent®コード',
+    'ventilator_disease_name' => 'MicroVent®を使用した原因病名',
+    'ventilator_edit' => 'MicroVent®編集',
+    'ventilator_import' => 'CSVインポート',
+    'ventilator_list' => 'MicroVent®一覧',
+    'ventilator_management' => 'MicroVent®管理',
+    'ventilator_value_list' => '機器観察研究データ一覧',
+    'ventilator_value_scan_interval' => '最終値決定時間（分）',
+    'vt_per_kg' => '理想体重1kgあたりの予測一回換気量（ml/kg）',
+    // w
+    // x
+    // y
+    // z
+    
 
 
 
-    /**
-     * form
-     */
-    'form'=>[
-        'organization_registration_form'=>'組織登録申請フォーム',
-        'organization_name'=>'組織名',
-        'representative_name'=>'代表者名',
-        'representative_email'=>'代表者メールアドレス',
-        'organization_code'=>'希望する組織コード(組織ログイン時利用)',
-        'send' => '送信する',
-        'applied' => '申請しました'
-    ],
-    /**
-     * admin
-     */
-    'admin'=>[
-        'project_administrator_page'=>'プロジェクト運営者ページ',
-        'project_administrator'=>'プロジェクト運営者',
-        'organization_name'=>'組織名',
-        'representative_name'=>'代表者名',
-        'representative_email'=>'代表者メールアドレス',
-        'organization_code'=>'組織コード(組織ログイン時利用)',
-        'user_name'=>'組織管理者ユーザー名(組織ログイン時利用)',
-        'password'=>'パスワード(組織ログイン時利用)',
-        'password_confirmation'=>'パスワード(確認用)',
-        'status'=>'ステータス',
-        'edc_link'=>'EDC連携',
-        'edc_id'=>'EDC施設ID(EDC連携する場合は入力してください。)',
-        'patient_observation'=>'患者観察研究',
-        'patient_observation_status'=>'患者観察研究ステータス',
-        'approved'=>'承認済',
-        'unapproved'=>'未承認',
-        'linked'=>'連携済',
-        'unlinked'=>'未連携',
-        'registered_at'=>'登録日時',
-        'status'=>'ステータス',
-        'organization_management'=>'組織管理',
-        'organization_list'=>'組織一覧',
-        'organization_create'=>'組織登録',
-        'organization_edit'=>'組織編集',
-    ],
-    /**
-     * org
-     */
-    'org' => [
-        'common_setting' => '組織内共通設定',
-        'organization_user'=>'組織ユーザー',
-        'organization_user_page'=>'組織ユーザーページ',
-        'setting' => '設定',
-        'ventilator_value_scan_interval' => '最終値決定時間（分）',
-        'vt_per_kg' => '理想体重1kgあたりの予測一回換気量（ml/kg）', 
-    ],
+
+
+    
+
 ];
 
     

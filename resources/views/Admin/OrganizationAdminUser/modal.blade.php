@@ -5,13 +5,13 @@
     'name' => 'create'],
     ])
     @slot('title')
-        組織管理者アカウント登録
+        @lang('messages.organization_admin_user_create')
     @endslot
 
     @slot('content')
         {{--組織コード--}}
         <div class="form-group">
-            <label for="code">組織コード<span class="required"></span></label>
+            <label for="code">@lang('messages.organization_code')<span class="required"></span></label>
             <div>
                 <input type="text" class="form-control" name="code" required>
             </div>
@@ -19,7 +19,7 @@
 
         {{--ユーザー名--}}
         <div class="form-group">
-            <label for="name">ユーザー名<span class="required"></span></label>
+            <label for="name">@lang('messages.user_name')<span class="required"></span></label>
             <div>
                 <input type="text" class="form-control" name="name" required>
             </div>
@@ -27,7 +27,7 @@
         
         {{--メールアドレス--}}
         <div class="form-group">
-            <label for="email">メールアドレス<span class="required"></span></label>
+            <label for="email">@lang('messages.email')<span class="required"></span></label>
             <div>
                 <input type="text" class="form-control" name="email" required>
             </div>
@@ -35,7 +35,7 @@
 
         {{-- ステータス --}}
         <div class="form-group">
-            <label class="d-block">@lang('messages.admin.status')<span class="required"></span></label>
+            <label class="d-block">@lang('messages.status')<span class="required"></span></label>
             <div class="form-check form-check-inline">
                 <label class="form-check-label">
                     <input class="form-check-input" type="radio" name="disabled_flg" value="0"
@@ -52,15 +52,15 @@
         
         {{--パスワード--}}
         <div class="form-group">
-            <label for="password">パスワード<span class="required"></span></label>
+            <label for="password">@lang('messages.password')<span class="required"></span></label>
             <div>
-                <input type="password" class="form-control" name="password" placeholder="半角英数字8文字以上" required>
+                <input type="password" class="form-control" name="password" placeholder="@lang('messages.password_placeholder')" required>
             </div>
         </div>
         
         {{--パスワード(確認用)--}}
         <div class="form-group">
-            <label for="password_confirmation">パスワード(確認用)<span class="required"></span></label>
+            <label for="password_confirmation">@lang('messages.password_confirmation')<span class="required"></span></label>
             <div>
                 <input type="password" class="form-control" name="password_confirmation" required>
             </div>
@@ -75,14 +75,14 @@
     'name' => 'update'],
     ])
     @slot('title')
-        組織管理者アカウント編集
+        @lang('messages.organization_admin_user_edit')
     @endslot
 
     @slot('content')
         <input type="hidden" name="id">
         {{--組織コード--}}
         <div class="form-group">
-            <label for="code">組織コード</span></label>
+            <label for="code">@lang('messages.organization_code')</span></label>
             <div>
                 <input type="text" class="form-control" name="code" readonly>
             </div>
@@ -90,7 +90,7 @@
 
         {{--ユーザー名--}}
         <div class="form-group">
-            <label for="name">ユーザー名<span class="required"></span></label>
+            <label for="name">@lang('messages.user_name')<span class="required"></span></label>
             <div>
                 <input type="text" class="form-control" name="name" required>
             </div>
@@ -98,7 +98,7 @@
         
         {{--メールアドレス--}}
         <div class="form-group">
-            <label for="email">メールアドレス<span class="required"></span></label>
+            <label for="email">@lang('messages.email')<span class="required"></span></label>
             <div>
                 <input type="text" class="form-control" name="email" required>
             </div>
@@ -106,7 +106,7 @@
 
         {{-- ステータス --}}
         <div class="form-group">
-            <label class="d-block">@lang('messages.admin.status')<span class="required"></span></label>
+            <label class="d-block">@lang('messages.status')<span class="required"></span></label>
             <div class="form-check form-check-inline">
                 <label class="form-check-label"><input class="form-check-input" type="radio" name="disabled_flg" value="0" required>@lang('messages.valid')</label>
             </div>
@@ -117,24 +117,24 @@
 
         {{--パスワード変更--}}
         <div class="form-group">
-            <label class="d-block">ログインパスワード変更</label>
+            <label class="d-block">@lang('messages.change_login_password')</label>
             <div class="form-check form-check-inline">
-                <label class="form-check-label"><input class="form-check-input" type="checkbox" name="password_changed" id="password-changed" value="1">パスワードを変更する</label>
+                <label class="form-check-label"><input class="form-check-input" type="checkbox" name="password_changed" id="password-changed" value="1">@lang('messages.change_password')</label>
             </div>
         </div>
         
         <div class="password-change-inputs collapse">
             {{--パスワード--}}
             <div class="form-group">
-                <label for="password">パスワード<span class="required"></span></label>
+                <label for="password">@lang('messages.password')<span class="required"></span></label>
                 <div>
-                    <input type="password" class="form-control" name="password" placeholder="半角英数字8文字以上" required>
+                    <input type="password" class="form-control" name="password" placeholder="@lang('messages.password_placeholder')" required>
                 </div>
             </div>
             
             {{--パスワード(確認用)--}}
             <div class="form-group">
-                <label for="password_confirmation">パスワード(確認用)<span class="required"></span></label>
+                <label for="password_confirmation">@lang('messages.password_confirmation')<span class="required"></span></label>
                 <div>
                     <input type="password" class="form-control" name="password_confirmation" required>
                 </div>

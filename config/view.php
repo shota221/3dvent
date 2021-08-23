@@ -34,6 +34,6 @@ return [
     ),
 
     //ページネーション件数
-    'items_per_page' => 50,
+    'items_per_page' => 3,
 
 ];

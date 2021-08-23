@@ -37,7 +37,7 @@ class OrganizationAdminUserSearchForm extends BaseForm
             $this->registered_at_from = isset($input['registered_at_from']) 
             ? Support\DateUtil::parseToDate($input['registered_at_from']) 
             : null;
-        } catch (Exceptions\DateUtilException $e) {
+        } catch (\Exception $e) {
             throw new \Exception($e);
         }
 

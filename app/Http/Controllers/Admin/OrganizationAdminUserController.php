@@ -21,7 +21,7 @@ class OrganizationAdminUserController extends Controller
     {
         $path = $request->path();
         $organization_admin_users = $this->service->getPaginatedOrganizationAdminUserData($path);
-        $organization_admin_users->withPath(route('admin.org_admin_user.search'));
+        $organization_admin_users->withPath(route('admin.org_admin_user.search', [], false));
       
         return view('index', compact('organization_admin_users'));
     }

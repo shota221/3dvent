@@ -1,9 +1,9 @@
 <table class="table table-striped">
     <tr>
-        <th>ユーザー名</th>
-        <th>組織名</th>
-        <th>登録日時</th>
-        <th>ステータス</th>
+        <th>@lang('messages.user_name')</th>
+        <th>@lang('messages.organization_name')</th>
+        <th>@lang('messages.registered_at')</th>
+        <th>@lang('messages.status')</th>
     </tr>
     @foreach ($organization_admin_users as $organization_admin_user)
     <tr>
