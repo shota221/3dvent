@@ -49,10 +49,8 @@ $('button.modal-cancel').on(
     }
 );
 
-asyncOrganizationData();
-
-// select2 async data organization
-function asyncOrganizationData() {
+// async organization data
+(function () {
     var parameters = {};
 
     var $element = $('#async-organization-data');
@@ -74,8 +72,8 @@ function asyncOrganizationData() {
         });
     }
 
-    utilAsyncExecuteAjax($element, parameters, false, successCallback)
-}
+    utilAsyncExecuteAjax($element, parameters, false, successCallback);
+}(utilAsyncExecuteAjax));
 
 // async-search
 $('#async-search').on(
