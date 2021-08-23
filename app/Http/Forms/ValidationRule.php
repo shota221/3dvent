@@ -26,7 +26,7 @@ class ValidationRule
 
         PASSWORD          = 'string|min:8|max:32',
 
-        EMAIL               = 'string|max:120|email',
+        EMAIL               = 'string|max:100|email',
 
         VALUE_BOOLEAN   = 'boolean',
 

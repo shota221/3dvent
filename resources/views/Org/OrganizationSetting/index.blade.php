@@ -22,19 +22,19 @@ JS
         <div id = "alert-message"></div>
         <div class="card card-default color-palette-box">
             <div class="card-header">
-                <h3>@lang('messages.org.setting')</h3>
+                <h3>@lang('messages.setting')</h3>
             </div>
             <div class="card-body">
                 <form id="setting-form" name="async-page-update">
                     <div>
                         <p class="font-weight-bold">
-                            @lang('messages.org.common_setting')
+                            @lang('messages.common_setting')
                         </p>
                         <p class="font-weight-bold">
                             <span class="required"></span>&nbsp;@lang('messages.is_required_item')
                         </p>
                         <div class="form-group">
-                            <label for="ventilator_value_scan_interval">@lang('messages.org.ventilator_value_scan_interval')<span class="required"></span></label>
+                            <label for="ventilator_value_scan_interval">@lang('messages.ventilator_value_scan_interval')<span class="required"></span></label>
                             <input 
                                 class="form-control" 
                                 type="text" 
@@ -43,7 +43,7 @@ JS
                             >
                         </div>
                         <div class="form-group">
-                            <label for="vt_per_kg">@lang('messages.org.vt_per_kg')<span class="required"></span></label>
+                            <label for="vt_per_kg">@lang('messages.vt_per_kg')<span class="required"></span></label>
                             <input 
                                 class="form-control" 
                                 type="text" 

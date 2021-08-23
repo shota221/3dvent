@@ -6,11 +6,11 @@
 ])
 
 @section('title')
-@lang('messages.org.organization_user_page')
+@lang('messages.organization_user_page')
 @stop
 
 @section('role')
-@lang('messages.org.organization_user')
+@lang('messages.organization_user')
 @stop
 
 @section('page_js')

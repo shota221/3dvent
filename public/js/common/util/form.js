@@ -1,13 +1,14 @@
 function utilFormInputParameters($targetForm, dataset) {
     $targetForm[0].reset();
     $.each($targetForm.find('input'), function (i, elm) {
-        switch (elm.type) {
+        $elm = $(elm);
+        switch ($elm.attr('type')) {
             case 'text':
             case 'hidden':
-                $(elm).attr('value', dataset[elm.name]);
+                $(elm).val(dataset[$elm.attr('name')]);
                 break;
             case 'radio':
-                $(elm).attr('checked', dataset[elm.name] === elm.value);
+                $(elm).prop('checked', +dataset[$elm.attr('name')] === +$elm.val());
                 break;
         }
     });

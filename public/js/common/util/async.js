@@ -12,8 +12,8 @@
     var type = $featureElement.data('method');
 
     if (withMessages) {
-        utilFormRemoveValidationErrorMessage();
         utilAsyncRemoveAlertMessage();
+        utilFormRemoveValidationErrorMessage();
         message = utilAsyncBuildCompletionMessage(type)
     }
 

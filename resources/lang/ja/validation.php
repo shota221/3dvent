@@ -125,6 +125,7 @@ return [
     'duplicated_email_registration' => 'すでに登録されているメールアドレスです。別のメールアドレスを利用してください。',
     'duplicated_registration' => 'すでに登録されています。',
     'id_not_found'=>'削除されているか、存在しないIDです。',
+    'code_not_found'=>'削除されているか、存在しない組織コードです。',
     'account_not_found'=>'削除されているか、存在しないアカウント名です。',
     'appkey_not_found'=>'存在しないアプリキーです。',
     'appkey_required'=>'アプリキーは必須です。',
@@ -140,6 +141,9 @@ return [
     'auth_token_expired' => 'トークン有効期限切れ',
     'user_token_required' => 'ユーザートークンは必須です。',
     'organization_mismatch' => '組織情報が一致しません。',
+    'required_password' => 'パスワードは必須です。',
+    'required_password_confirmation' => 'パスワード(確認用)は必須です。',
+    'password_confirmed' => 'パスワードを確認用と一致させてください。',
 
     /*
     |--------------------------------------------------------------------------
@@ -220,6 +224,8 @@ return [
         'status'=>'ステータス',
         'edc_id'=>'EDC施設ID',
         'patient_observation_status'=>'患者観察研究ステータス',
+        'code'=>'組織コード',
+        'password_confirmation'=>'パスワード(確認用)',
     ],
 
 ];

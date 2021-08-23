@@ -14,7 +14,6 @@ class OrganizationSettingService
     /**
      * 組織設定取得
      *
-     * @param integer $organization_id
      * @return [type]
      */
     public function getOrganizationSettingData()

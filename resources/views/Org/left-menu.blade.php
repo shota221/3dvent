@@ -2,7 +2,7 @@
 <a href="{{url('aggregate')}}" class="nav-link active">
   <i class="nav-icon fas fa-table"></i>
   <p>
-    設定
+  @lang('messages.setting')
   </p>
   </a>
 </li>

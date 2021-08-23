@@ -50,8 +50,7 @@ class User extends Authenticatable
 
     public function active()
     {
-        // TODO disableflgを読む
-        return true;
+        return ! boolval($this->disaled_flg);
     }
 
     public static function tableName()

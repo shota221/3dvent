@@ -25,7 +25,7 @@
         <span 
           class="btn btn-sm btn-success edit-profile ladda-button" 
           data-style="zoom-in">
-          <span class="glyphicon glyphicon-pencil"></span>&nbsp;プロフィール編集
+          <span class="glyphicon glyphicon-pencil"></span>&nbsp;@lang('messages.edit_profile')
         </span>
       </p>
       <div class="pull-left">

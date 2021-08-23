@@ -2,7 +2,7 @@
 
 namespace App\Services\Support\Converter;
 
-use App\Http\Forms\Org as Form;;
+use App\Http\Forms\Org as Form;
 use App\Http\Response as Response;
 use App\Models;
 
@@ -28,4 +28,5 @@ class OrganizationSettingConverter
 
         return $entity;
     }
+    
 }
