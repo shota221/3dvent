@@ -82,6 +82,7 @@ return [
     'put' => '更新',
     // q
     // r
+    'refined_search' => '絞込検索',
     'register' => '新規登録',
     'registered_at' => '登録日時',
     'registered_date' => '登録日',

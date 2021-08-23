@@ -25,7 +25,7 @@ JS
             <h3>@lang('messages.organization_admin_user_management')</h3>
         </div>
         <div class="card-body">
-            <h6>絞込検索</h6>
+            <h6>@lang('messages.refined_search')</h6>
             <div class="post">
                 <form id="async-search-form">
                     <div class="row">
