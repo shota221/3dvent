@@ -37,6 +37,11 @@ class UserRepository
         return static::query()->where('authority', $authority)->where('id', $id)->first();
     }
 
+    public static function findAllByOrganizationId(int $organization_id)
+    {
+        return static::query()->where('organization_id', $organization_id)->get();
+    }
+
     
     public static function getOrganizationIdById(int $id)
     {
