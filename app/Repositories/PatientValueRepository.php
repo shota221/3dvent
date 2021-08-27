@@ -26,10 +26,14 @@ class PatientValueRepository
 
     public static function findOneWithPatientAndOrganizationById(int $id)
     {
-        $table = PatientValue::tableName();
         $query = self::joinPatientAndOrganization(static::query());
+        $query->addSelect([
+            'patient_values.*',
+            'patients.patient_code',
+            'organizations.name AS organization_name',
+        ]);
         
-        return $query->where($table . '.id', $id)->first();
+        return $query->where('patient_values.id', $id)->first();
     }
 
     public static function findWithPatientAndUserAndOrganizationBySearchValuesAndLimitAndOffsetOrderByCreatedAt(
@@ -37,90 +41,76 @@ class PatientValueRepository
         int $limit,
         int $offset)
     {
-        return self::queryBySearchValuesOrderByCreatedAt($search_values)
+        $query = self::queryBySearchValues($search_values);
+        $query->addSelect([
+            'patient_values.*',
+            'patients.patient_code',
+            'organizations.name AS organization_name',
+            'users.name AS registered_user_name',
+        ]);
+
+        return $query
             ->limit($limit)
             ->offset($offset)
+            ->orderBy('created_at', 'DESC')
             ->get();
     }
 
     public static function countBySearchValues(array $search_values)
     {
         $query = static::query();
-        $query = self::joinPatientAndUserAndOrganization($query);
+        $query = self::joinPatientAndOrganization($query);
+        $query = self::joinUser($query);
         $query = self::createWhereClauseFromSearchValues($query, $search_values);
 
         return $query->count();
     }
 
-    private static function queryBySearchValuesOrderByCreatedAt(array $search_values)
+    private static function queryBySearchValues(array $search_values)
     {
-        $query = self::joinPatientAndUserAndOrganization(static::query());
+        $query = self::joinPatientAndOrganization(static::query());
+        $query = self::joinUser($query);
         return self::createWhereClauseFromSearchValues(
             $query,
-            $search_values)->orderBy('created_at', 'DESC');
+            $search_values);
     }
 
-    private static function joinPatientAndUserAndOrganization($query)
+    private static function joinUser($query)
     {
-        $table = PatientValue::tableName();
-        $patient_table = Patient::tableName();
-        $user_table = User::tableName();
-        $organization_table = Organization::tableName();
-
-        $query->join($patient_table, $table . '.patient_id', '=', $patient_table . '.id');
-        $query->join($user_table, $table . '.patient_obs_user_id', '=', $user_table . '.id');
-        $query->join($organization_table, $patient_table . '.organization_id', '=', $organization_table . '.id');
-
-        $query->addSelect([
-            $table . '.*',
-            $patient_table . '.patient_code',
-            $organization_table . '.name AS organization_name',
-            $user_table . '.name AS registered_user_name',
-        ]);
+        $query->join('users', 'patient_values.patient_obs_user_id', '=', 'users.id');
 
         return $query;
     }
 
     private static function joinPatientAndOrganization($query)
     {
-        $table = PatientValue::tableName();
-        $patient_table = Patient::tableName();
-        $organization_table = Organization::tableName();
-
-        $query->join($patient_table, $table . '.patient_id', '=', $patient_table . '.id');
-        $query->join($organization_table, $patient_table . '.organization_id', '=', $organization_table . '.id');
-
-        $query->addSelect([
-            $table . '.*',
-            $patient_table . '.patient_code',
-            $organization_table . '.name AS organization_name',
-        ]);
+        $query->join('patients', 'patient_values.patient_id', '=', 'patients.id');
+        $query->join('organizations', 'patients' . '.organization_id', '=', 'organizations.id');
 
         return $query;
     }
 
     private static function createWhereClauseFromSearchValues($query, array $search_values)
     {
-        $table = PatientValue::tableName();
-        $patient_table = Patient::tableName();
-        $user_table = User::tableName();
-        $organization_table = Organization::tableName();
-
         if (isset($search_values['organization_name'])) {
-            $query->where($organization_table . '.name', $search_values['organization_name']);
+            $query->where('organizations.name', $search_values['organization_name']);
+            
+            // 患者番号、登録者は組織名の絞込があった場合のみwhere句追加。
+            if (isset($search_values['patient_code'])) {
+                $patient_code = $search_values['patient_code'];
+                $query->where('patients.patient_code', 'like', "%$patient_code%");
+            }
+            if (isset($search_values['registered_user_name'])) {
+                $query->where('users.name', $search_values['registered_user_name']);
+            }
         }
-        if (isset($search_values['patient_code'])) {
-            $patient_code = $search_values['patient_code'];
-            $query->where($patient_table . '.patient_code', 'like', "%$patient_code%");
-        }
-        if (isset($search_values['registered_user_name'])) {
-            $query->where($user_table . '.name', $search_values['registered_user_name']);
-        }
+
         if (isset($search_values['registered_at_from'])){
-            $query->where($table . '.registered_at', '>=', $search_values['registered_at_from']);
+            $query->where('patient_values.registered_at', '>=', $search_values['registered_at_from']);
         }
+
         if (isset($search_values['registered_at_to'])){
-            $query->where($table . '.registered_at', '<=', $search_values['registered_at_to']);
+            $query->where('patient_values.registered_at', '<=', $search_values['registered_at_to']);
         }
 
         return $query;

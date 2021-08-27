@@ -1,10 +1,25 @@
+const
+    $asyncOrganizationData = $('#async-organization-data'),
+    $asyncRegisteredUserData = $('#async-registered-user-data'),
+    $asyncSearch = $('#async-search'),
+    $searchForm = $('#async-search-form'),
+    $searchFormAllInput = $('#async-search-form').find('input'),
+    $searchFormPatientCodeInput = $('#async-search-form').find('[name=patient_code]'),
+    $searchFormRegisteredAtFromInput = $('#async-search-form').find('[name=registered_at_from]'),    $searchFormRegisteredAtToInput = $('#async-search-form').find('[name=registered_at_to]'),
+    $cancelModal = $('button.modal-cancel'),
+    $clearSearchForm = $('#clear-search-form'),
+    $editModal = $('#edit-modal'),
+    $paginatedList = $('#paginated-list'),
+    $patientCode = $('#patient_code'),
+    $select2OrganizationName = $('#select2-organization-name'),
+    $select2RegisteredUserName = $('#select2-registered-user-name');
+
 // show edit modal
-$('#paginated-list').on(
+$paginatedList.on(
     'click',
     '.show-edit-modal',
     function (e) {
         
-        $('.password-change-inputs').addClass('collapse');
         utilFormRemoveValidationErrorMessage()
         
         var parameters = {};
@@ -12,11 +27,11 @@ $('#paginated-list').on(
         
         var successCallback = function (data) {
 
-            $form = $('#edit-modal').find('form[name="update"]').eq(0);
+            $form = $editModal.find('form[name="update"]').eq(0);
 
             utilFormInputParameters($form, data['result']);
             
-            $('#edit-modal').modal();
+            $editModal.modal();
         }
 
         var $element = $(this);
@@ -28,7 +43,7 @@ $('#paginated-list').on(
 )
 
 // hide modal
-$('button.modal-cancel').on(
+$cancelModal.on(
     'click',
     function (e) {
         $(this).closest('.modal').modal('hide');
@@ -37,11 +52,14 @@ $('button.modal-cancel').on(
     }
 );
 
-// async organization data
-(function () {
+// build select2(organization registered_user)
+function buildSelect2() {
+
+    $select2RegisteredUserName.select2();
+
     var parameters = {};
 
-    var $element = $('#async-organization-data');
+    var $element = $asyncOrganizationData;
 
     var successCallback = function (data) {
         var organizations = [];
@@ -53,7 +71,7 @@ $('button.modal-cancel').on(
             organizations.push(organization);
         })
 
-        $('#select2-organization-name').select2({
+        $select2OrganizationName.select2({
             data: organizations,
             placeholder: '',
             allowClear: true
@@ -61,33 +79,28 @@ $('button.modal-cancel').on(
     }
 
     utilAsyncExecuteAjax($element, parameters, false, successCallback);
-}(utilAsyncExecuteAjax));
-
-// set registered-user-name select2   
-(function() {
-    $('#select2-registered-user-name').select2();
-}());
+}
 
 // set registered_user select2 and change patient_code property  
-$('#select2-organization-name').on(
+$select2OrganizationName.on(
     'change',
     function(e) {
 
-        $('#select2-registered-user-name').val(null).trigger('change');
-        $('#select2-registered-user-name').find('option:not(:first)').remove();
-        $('#select2-registered-user-name').prop('disabled', false);
-        $('#patient_code').prop('disabled', false);
+        $select2RegisteredUserName.val(null).trigger('change');
+        $select2RegisteredUserName.find('option:not(:first)').remove();
+        $select2RegisteredUserName.prop('disabled', false);
+        $patientCode.prop('disabled', false);
         
-        if ($('#select2-organization-name').val() === '') {
-            $('#select2-registered-user-name').prop('disabled', true);
-            $('#patient_code').prop('disabled', true);
+        if ($select2OrganizationName.val() === '') {
+            $select2RegisteredUserName.prop('disabled', true);
+            $patientCode.prop('disabled', true);
             return;
         }
 
-        $element = $('#async-registered-user-data');
+        $element = $asyncRegisteredUserData;
         
         var parameters = {};
-        var $form = $('#async-search-form');
+        var $form = $searchForm;
 
         parameters['organization_id'] = $form.find('[name=organization_name] option:selected').val();
         
@@ -101,7 +114,7 @@ $('#select2-organization-name').on(
                 registered_users.push(registered_user);
             })
     
-            $('#select2-registered-user-name').select2({
+            $select2RegisteredUserName.select2({
                 data: registered_users,
                 placeholder: '',
                 allowClear: true
@@ -113,14 +126,14 @@ $('#select2-organization-name').on(
 )
 
 // async-search
-$('#async-search').on(
+$asyncSearch.on(
     'click',
     function(e) {
-        var $form = $('#async-search-form');
+        var $form = $searchForm;
         var parameters = buildSearchParameters($form);
 
         var successCallback = function (paginated_list) {
-            $('#paginated-list').html(paginated_list);
+            $paginatedList.html(paginated_list);
         }
 
         var $element = $(this);
@@ -132,13 +145,12 @@ $('#async-search').on(
 )
 
 // clear search form
-$('#clear-search-form').on(
+$clearSearchForm.on(
     'click',
     function (e) {
-        var $form = $('#async-search-form');
-        $form.find('input').val('');
-        $('#select2-registered-user-name').val(null).trigger('change');
-        $('#select2-organization-name').val(null).trigger('change');
+        $searchFormAllInput.val('');
+        $select2RegisteredUserName.val(null).trigger('change');
+        $select2OrganizationName.val(null).trigger('change');
     }
 )
 
@@ -147,23 +159,26 @@ function buildSearchParameters($form) {
     var parameters = {};
 
     parameters['organization_name'] = $form.find('[name=organization_name] option:selected').text();
-    parameters['patient_code'] = $form.find('[name=patient_code]').val();
+    parameters['patient_code'] = $searchFormPatientCodeInput.val();
     parameters['registered_user_name'] = $form.find('[name=registered_user_name] option:selected').text();
-    parameters['registered_at_from'] = $form.find('[name=registered_at_from]').val();
-    parameters['registered_at_to'] = $form.find('[name=registered_at_to]').val();
+    parameters['registered_at_from'] = $searchFormRegisteredAtFromInput.val();
+    parameters['registered_at_to'] = $searchFormRegisteredAtToInput.val();
 
     return parameters;
 }
 
 // pagination
-$('#paginated-list').on('click', '.page-link', function(e) {
+$paginatedList.on('click', '.page-link', function(e) {
     var $featureElement = $(this);
     
     var parameters = {};
 
     var successCallback = function(paginated_list) {
-        $('#paginated-list').html(paginated_list);
+        $paginatedList.html(paginated_list);
     }
 
     utilAsyncExecuteAjax($featureElement, parameters, false, successCallback)
 });
+
+
+buildSelect2()
