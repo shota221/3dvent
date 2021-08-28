@@ -9,9 +9,6 @@ use App\Services\Support\Converter;
 use App\Services\Support\DateUtil;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-
-use Illuminate\Support\Facades\Log;
-
 class PatientValueConverter
 {
     public static function convertToPaginatedPatientValueData(

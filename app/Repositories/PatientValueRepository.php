@@ -85,7 +85,7 @@ class PatientValueRepository
     private static function joinPatientAndOrganization($query)
     {
         $query->join('patients', 'patient_values.patient_id', '=', 'patients.id');
-        $query->join('organizations', 'patients' . '.organization_id', '=', 'organizations.id');
+        $query->join('organizations', 'patients.organization_id', '=', 'organizations.id');
 
         return $query;
     }
