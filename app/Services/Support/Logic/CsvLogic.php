@@ -11,6 +11,8 @@ use App\Services\Support\Converter;
 use stdClass;
 use Validator;
 
+use function Psy\debug;
+
 trait CsvLogic
 {
     private function replacelFToCrlf(array $row)
@@ -21,6 +23,11 @@ trait CsvLogic
     private function utf8ToSjis(array $row)
     {
         return mb_convert_encoding(array_values($row), 'SJIS-win', 'UTF-8');
+    }
+
+    private function sjisToUtf8(array $row)
+    {
+        return mb_convert_encoding(array_values($row), 'UTF-8', 'SJIS');
     }
 
     //CSVフォーマット作成
@@ -189,7 +196,7 @@ trait CsvLogic
             $file->next();
 
             if (!is_null($header)) {
-                $firstRow = $file->current();
+                $firstRow = $this->sjisToUtf8($file->current());
 
                 if (!empty(array_diff($header, $firstRow))) {
                     throw new Exceptions\LogicException('ヘッダ行がマッチしないため読み込みをキャンセルします。header=' . var_export($firstRow, true));
@@ -202,7 +209,7 @@ trait CsvLogic
             }
 
             while ($file->valid()) {
-                $row = $file->current();
+                $row = $this->sjisToUtf8($file->current());
 
                 // 行バリーデーション
                 $validation = Validator::make($row, $validationRule);
@@ -249,6 +256,143 @@ trait CsvLogic
             \Log::info('処理完了行数(ヘッダ行含む)=' . $finishedRowCount);
 
             return $finishedRowCount;
+        } catch (Exceptions\LogicException $e) {
+            $message = 'processCsv CSV処理に失敗しました。 previous message=' . $e->getMessage();
+
+            throw new Exceptions\CsvLogicException($message, $fileUrl, $finishedRowCount, $e);
+        } finally {
+            $file = null;
+
+            \Log::debug('END MEMORY=' . memory_get_usage(FALSE));
+        }
+    }
+
+    /** 
+     * CSV処理(先にすべてバリデーションする場合)
+     * 
+     * ClosureのExceptionはキャッチしていない
+     *
+     * @param  string      $fileUrl           [description]
+     * @param  array|null  $header            [description]
+     * @param  array       $validationRule    [0 => 'required|string', 1 => 'required|numeric'] 列値のバリデーション
+     * @param  \Closure    $procedureFunction [description]
+     * @param  int|integer $chunkSize         [description]
+     * @return [type]                         [description]
+     */
+    public function processCsvAfterValidateAll(
+        string $fileUrl,
+        array $mapAttributeToHeader,
+        array $mapAttributeToValidationRule,
+        \Closure $procedureFunction,
+        int $chunkSize = 5000
+    ) {
+        \Log::info('CSV読み込み処理を実行します。fileUrl=' . $fileUrl);
+
+        \Log::debug('START MEMORY=' . memory_get_usage(FALSE));
+
+        $file = null;
+
+        // バリデエラー行
+        $errorRows = [];
+
+        // 処理完了行数
+        $finishedRowCount = 0;
+
+        try {
+            try {
+                // ファイルの読み込み throwable RuntimeException
+                $file = new \SplFileObject($fileUrl);
+
+                $file->setFlags(
+                    \SplFileObject::READ_CSV |           // CSV 列として行を読み込む
+                        \SplFileObject::READ_AHEAD |       // 先読み/巻き戻しで読み出す。
+                        \SplFileObject::SKIP_EMPTY |         // 空行は読み飛ばす
+                        \SplFileObject::DROP_NEW_LINE    // 行末の改行を読み飛ばす
+                );
+            } catch (\Exception $e) {
+                throw new Exceptions\LogicException('ファイル読み込みに失敗');
+            }
+
+            $file->next();
+
+            if (!is_null($mapAttributeToHeader)) {
+                $firstRow = $this->sjisToUtf8($file->current());
+
+                if (!empty(array_diff(array_values($mapAttributeToHeader), $firstRow))) {
+                    throw new Exceptions\InvalidCsvException('validation.csv_header_error');
+                }
+
+                // 処理済み件数に追加
+                $finishedRowCount = $finishedRowCount + 1;
+
+                $file->next();
+            }
+
+            while ($file->valid()) {
+                $row = $this->sjisToUtf8($file->current());
+
+                $mapAttributeToRow = [];
+
+                foreach (array_keys($mapAttributeToHeader) as $key => $attr) {
+                    $mapAttributeToRow[$attr] = $row[$key];
+                }
+
+                // 行バリーデーション
+                $validation = Validator::make($mapAttributeToRow, $mapAttributeToValidationRule);
+
+                if ($validation->fails()) {
+                    $errors = [];
+                    $errorRows[] = $file->key();
+                }
+
+                $file->next();
+            }
+
+            if (!empty($errorRows)) {
+                $row_nums = implode(',', $errorRows);
+                throw new Exceptions\InvalidCsvException('validation.csv_row_error', compact('row_nums'));
+            } else {
+                $file->rewind();
+
+                if (!is_null($mapAttributeToHeader)) $file->next();
+
+                while ($file->valid()) {
+                    $row = $this->sjisToUtf8($file->current());
+
+                    $mapAttributeToRow = [];
+
+                    foreach (array_keys($mapAttributeToHeader) as $key => $attr) {
+                        $mapAttributeToRow[$attr] = $row[$key];
+                    }
+
+                    $rows[] = $mapAttributeToRow;
+
+                    if (count($rows) === $chunkSize) {
+                        // 一旦処理 処理完了行数更新
+                        $procedureFunction($rows);
+
+                        // 処理済み件数に追加
+                        $finishedRowCount = $finishedRowCount + $chunkSize;
+
+                        $rows = [];
+                    }
+
+                    $file->next();
+                }
+
+                // 残りを処理
+                if (!empty($rows)) {
+                    // throws Exceptions\LogicException
+                    $procedureFunction($rows);
+
+                    // 処理済み件数に追加
+                    $finishedRowCount = $finishedRowCount + count($rows);
+                }
+
+                \Log::info('処理完了行数(ヘッダ行含む)=' . $finishedRowCount);
+
+                return $finishedRowCount;
+            }
         } catch (Exceptions\LogicException $e) {
             $message = 'processCsv CSV処理に失敗しました。 previous message=' . $e->getMessage();
 

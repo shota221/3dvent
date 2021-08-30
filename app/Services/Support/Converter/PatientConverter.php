@@ -245,4 +245,15 @@ class PatientConverter
 
     return $res;
   }
+
+  public static function convertToImportedPatientEntity($entity, $organization_id, $height, $weight, $gender, $patient_code)
+  {
+    $entity->organization_id = $organization_id;
+    $entity->height = $height;
+    $entity->weight = $weight;
+    $entity->gender = $gender;
+    $entity->patient_code = $patient_code;
+
+    return $entity;
+  }
 }

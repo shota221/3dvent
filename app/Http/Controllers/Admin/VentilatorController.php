@@ -12,8 +12,6 @@ use Illuminate\Http\Request;
 
 class VentilatorController extends Controller
 {
-    use CsvLoader;
-
     private $service;
 
     function __construct()
@@ -25,7 +23,7 @@ class VentilatorController extends Controller
     {
         $base_url = $request->path();
         $ventilator_paginator = $this->service->getVentilatorData($base_url);
-        $ventilator_paginator->withPath(route('admin.ventilator.async'));
+        $ventilator_paginator->withPath(route('admin.ventilator.async'),[],false);
         return view('index', compact('ventilator_paginator'));
     }
 
@@ -91,17 +89,10 @@ class VentilatorController extends Controller
 
         if ($form->hasError()) throw new InvalidFormException($form);
 
-        $attrs = array_keys(config('ventilator_csv.header'));
-        
-        $forms = $this->extractArray(
-            $request->file('csv_file')->path(),
-            $attrs,
-            function (array $inner_input) {
-                return new Form\VentilatorCsvForm($inner_input);
-            },
-            function (Form\VentilatorCsvForm $inner_form) {
-                return $inner_form;
-            }
-        );
+        $file_url = $request->file('csv_file')->path();
+
+        $response = $this->service->create($form,$file_url);
+
+        return $response;
     }
 }

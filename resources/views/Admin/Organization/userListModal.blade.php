@@ -3,7 +3,7 @@
         'id' => 'modal-user-list',
         ])
         @slot('title')
-            @lang('messages.admin.user_list')
+            @lang('messages.user_list')
         @endslot
 
         @slot('content')

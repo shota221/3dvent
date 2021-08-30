@@ -209,17 +209,17 @@ $('#async-ventilator-import').on(
         var parameters = new FormData($targetForm[0]);
 
         var successCallback = function (data) {
-            location.reload();
+            console.log(data);
         }
 
         var $btn = $('#async-ventilator-import');
 
-        var optionalSettings = {
+        var extraSettings = {
             processData: false,
             contentType: false
         }
 
-        utilAsyncExecuteAjax($btn, parameters, true, successCallback, optionalSettings);
+        utilAsyncExecuteAjax($btn, parameters, true, successCallback, extraSettings);
 
         return false;
     });

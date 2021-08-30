@@ -4,14 +4,14 @@
         'form' => ['method' => 'PUT', 'action' => route('admin.organization.update'), 'name' => 'organization-update'],
         ])
         @slot('title')
-            @lang('messages.admin.organization_edit')
+            @lang('messages.organization_edit')
         @endslot
 
         @slot('content')
             {{-- 組織名 --}}
             <input type="hidden" name="id">
             <div class="form-group">
-                <label for="organization_name">@lang('messages.admin.organization_name')<span class="required"></span></label>
+                <label for="organization_name">@lang('messages.organization_name')<span class="required"></span></label>
                 <div>
                     <input class="form-control" type="text" name="organization_name" required>
                 </div>
@@ -19,7 +19,7 @@
 
             {{-- 代表者名 --}}
             <div class="form-group">
-                <label for="representative_name">@lang('messages.admin.representative_name')<span
+                <label for="representative_name">@lang('messages.representative_name')<span
                         class="required"></span></label>
                 <div>
                     <input class="form-control" type="text" name="representative_name" required>
@@ -28,7 +28,7 @@
 
             {{-- 代表者メールアドレス --}}
             <div class="form-group">
-                <label for="representative_email">@lang('messages.admin.representative_email')<span
+                <label for="representative_email">@lang('messages.representative_email')<span
                         class="required"></span></label>
                 <div>
                     <input class="form-control" type="text" name="representative_email" required>
@@ -37,7 +37,7 @@
 
             {{-- 組織コード --}}
             <div class="form-group">
-                <label for="organization_code">@lang('messages.admin.organization_code')<span class="required"></span></label>
+                <label for="organization_code">@lang('messages.organization_code')<span class="required"></span></label>
                 <div>
                     <input class="form-control" type="text" name="organization_code" required>
                 </div>
@@ -45,7 +45,7 @@
 
             {{-- ステータス --}}
             <div class="form-group">
-                <label class="d-block">@lang('messages.admin.status')<span class="required"></span></label>
+                <label class="d-block">@lang('messages.status')<span class="required"></span></label>
 
                 <div class="form-check form-check-inline">
                     <label class="form-check-label"><input class="form-check-input" type="radio" name="disabled_flg" value="0"
@@ -59,7 +59,7 @@
 
             {{-- EDC施設ID --}}
             <div class="form-group">
-                <label for="edcid">@lang('messages.admin.edcid')</label>
+                <label for="edcid">@lang('messages.edcid')</label>
                 <div>
                     <input class="form-control" type="text" name="edcid">
                 </div>
@@ -67,15 +67,15 @@
 
             {{-- 患者観察研究承認ステータス --}}
             <div class="form-group">
-                <label class="d-block">@lang('messages.admin.patient_observation_status')<span class="required"></span></label>
+                <label class="d-block">@lang('messages.patient_observation_status')<span class="required"></span></label>
 
                 <div class="form-check form-check-inline">
                     <label class="form-check-label"><input class="form-check-input" type="radio" name="patient_obs_approved_flg"
-                            value="1" required>@lang('messages.admin.approved')</label>
+                            value="1" required>@lang('messages.approved')</label>
                 </div>
                 <div class="form-check form-check-inline">
                     <label class="form-check-label"><input class="form-check-input" type="radio" name="patient_obs_approved_flg"
-                            value="0">@lang('messages.admin.unapproved')</label>
+                            value="0">@lang('messages.unapproved')</label>
                 </div>
             </div>
         @endslot

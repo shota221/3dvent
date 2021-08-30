@@ -51,89 +51,54 @@ class VentilatorRepository
 
     public static function findOneByGs1Code($gs1_code)
     {
-        $table = Ventilator::tableName();
-        return static::leftJoinOrganization()->where('gs1_code', $gs1_code)->orderBy($table . '.created_at', 'DESC')->first();
+        return static::leftJoinOrganization()
+            ->addSelect([
+                'ventilators.*',
+                'organizations.name AS organization_name',
+                'organizations.code AS organization_code'
+            ])
+            ->where('gs1_code', $gs1_code)
+            ->orderBy('ventilators.created_at', 'DESC')
+            ->first();
     }
 
     private static function leftJoinOrganization($query = null)
     {
-        $table = Ventilator::tableName();
-
-        $organization_table = Organization::tableName();
-
         return (!is_null($query) ? $query : static::query())
-            ->leftJoin(
-                $organization_table,
-                function ($join) use ($table, $organization_table) {
-                    $join
-                        ->on($organization_table . '.id', '=', $table . '.organization_id');
-                }
-            )
-            ->addSelect([
-                $table . '.*',
-                $organization_table . '.name AS organization_name',
-                $organization_table . '.code AS organization_code'
-            ]);
+            ->leftJoin('organizations', 'organizations.id', '=', 'ventilators.organization_id');
     }
 
     private static function leftJoinUser($query = null)
     {
-        $table = Ventilator::tableName();
-
-        $user_table = User::tableName();
-
         return (!is_null($query) ? $query : static::query())
             ->leftJoin(
-                $user_table,
-                function ($join) use ($table, $user_table) {
-                    $join
-                        ->on($user_table . '.id', '=', $table . '.registered_user_id');
-                }
-            )
-            ->addSelect([
-                $table . '.*',
-                $user_table . '.name AS registered_user_name',
-            ]);
+                'users',
+                'users.id',
+                '=',
+                'ventilators.registered_user_id'
+            );
     }
 
     private static function leftJoinVentilatorBug($query = null)
     {
-        $table = Ventilator::tableName();
-
-        $ventilator_bug_table = VentilatorBug::tableName();
-
         return (!is_null($query) ? $query : static::query())
             ->leftJoin(
-                $ventilator_bug_table,
-                function ($join) use ($table, $ventilator_bug_table) {
-                    $join
-                        ->on($ventilator_bug_table . '.ventilator_id', '=', $table . '.id');
-                }
-            )
-            ->addSelect([
-                $table . '.*',
-                $ventilator_bug_table . '.ventilator_id AS has_bug',
-            ]);
+                'ventilator_bugs',
+                'ventilator_bugs.ventilator_id',
+                '=',
+                'ventilators.id'
+            );
     }
 
     private static function leftJoinPatient($query = null)
     {
-        $table = Ventilator::tableName();
-
-        $patient_table = Patient::tableName();
-
         return (!is_null($query) ? $query : static::query())
             ->leftJoin(
-                $patient_table,
-                function ($join) use ($table, $patient_table) {
-                    $join
-                        ->on($patient_table . '.id', '=', $table . '.patient_id');
-                }
-            )
-            ->addSelect([
-                $table . '.*',
-                $patient_table . '.patient_code AS patient_code'
-            ]);
+                'patients',
+                'patients.id',
+                '=',
+                'ventilators.patient_id'
+            );
     }
 
     public static function getOrganizationIdById(int $id)
@@ -143,13 +108,29 @@ class VentilatorRepository
 
     public static function getPatientCodeById(int $id)
     {
-        $table = Ventilator::tableName();
-        return static::leftJoinPatient()->where($table . '.id', $id)->orderBy($table . '.created_at', 'DESC')->value('patient_code');
+        return static::leftJoinPatient()
+        ->addSelect([
+            'ventilators.*',
+            'patients.patient_code AS patient_code'            
+        ])
+        ->where('ventilators.id', $id)
+        ->orderBy('ventilators.created_at', 'DESC')
+        ->value('patient_code');
     }
 
     public static function findBySearchValuesAndOffsetAndLimit($offset, $limit, $search_values)
     {
-        return self::createWhereClauseFromSearchValues(static::leftJoinVentilatorBug(static::leftJoinUser(static::leftJoinOrganization())), $search_values)
+        $query = static::leftJoinOrganization();
+        $query = static::leftJoinUser($query);
+        $query = static::leftJoinVentilatorBug($query);
+
+        return self::createWhereClauseFromSearchValues($query, $search_values)
+            ->addSelect([
+                'ventilators.*',
+                'organizations.name AS organization_name',
+                'users.name AS registered_user_name',
+                'ventilator_bugs.ventilator_id AS has_bug'
+            ])
             ->distinct()
             ->limit($limit)
             ->offset($offset)
@@ -194,60 +175,69 @@ class VentilatorRepository
         return $query;
     }
 
-    private static function joinPatientAndPatientValueAndVentilatorValue($query = null)
+    private static function leftjoinVentilatorValue($query = null)
     {
-        $table = Ventilator::tableName();
-
-        $patient_table = Patient::tableName();
-
-        $ventilator_value_table = VentilatorValue::tableName();
-
-        $patient_value_table = PatientValue::tableName();
-
         return (!is_null($query) ? $query : static::query())
+        ->leftJoin(
+            'ventilator_values',
+            'ventilator_values.ventilator_id',
+            '=',
+            'ventilators.id'
+        );
+    }
+
+    private static function joinPatientAndPatientValue($query = null)
+    {
+         return static::leftJoinPatient($query)
             ->leftjoin(
-                $patient_table,
-                function ($join) use ($table, $patient_table) {
-                    $join
-                        ->on($patient_table . '.id', '=', $table . '.patient_id');
-                }
-            )
-            ->leftjoin(
-                $patient_value_table,
-                function ($join) use ($patient_table, $patient_value_table) {
-                    $join
-                        ->on($patient_value_table . '.patient_id', '=', $patient_table . '.id');
-                }
-            )
-            ->leftjoin(
-                $ventilator_value_table,
-                function ($join) use ($table, $ventilator_value_table) {
-                    $join
-                        ->on($ventilator_value_table . '.ventilator_id', '=', $table . '.id');
-                }
-            )->addSelect([
-                $table . '.*',
-                $patient_table.'.*',
-                $patient_value_table.'.*',
-                $ventilator_value_table.'.*',
-                $table. '.id AS ventilator_id',
-                $patient_table. '.id AS patient_id',
-                $patient_value_table. '.id AS patient_value_id',
-                $ventilator_value_table. '.id AS ventilator_value_id',
-                $patient_table . '.height AS patient_height',
-                $patient_table . '.weight AS patient_weight',
-                $patient_table . '.gender AS patient_gender',
-                $ventilator_value_table . '.height AS height',
-                $ventilator_value_table . '.weight AS weight',
-                $ventilator_value_table . '.gender AS gender',
-                $patient_value_table . '.registered_at AS patient_value_registered_at',
-                $ventilator_value_table . '.registered_at AS ventilator_value_registered_at',
-            ]);
+                'patient_values','patient_values.patient_id', '=', 'patients.id'
+            );
     }
 
     public static function queryForCreateVentialtorCsvByids($ids)
     {
+        $query = static::leftjoinVentilatorValue();
+        $query = static::joinPatientAndPatientValue($query);
+        return $query
+        ->addSelect([
+            'ventilators.*',
+            'patients.*',
+            'patient_values.*',
+            'ventilator_values.*',
+            'ventilators.id AS ventilator_id',
+            'patients.id AS patient_id',
+            'patient_values.id AS patient_value_id',
+            'ventilator_values.id AS ventilator_value_id',
+            'patients.height AS patient_height',
+            'patients.weight AS patient_weight',
+            'patients.gender AS patient_gender',
+            'ventilator_values.height AS height',
+            'ventilator_values.weight AS weight',
+            'ventilator_values.gender AS gender',
+            'patient_values.registered_at AS patient_value_registered_at',
+            'ventilator_values.registered_at AS ventilator_value_registered_at',
+        ])
+        ->whereIn('ventilators.id', $ids);
+    }
+
+    public static function updateBulkForPatientId(
+        array $ventilator_ids,
+        array $ventilator_patient_ids
+    ) {
         $table = Ventilator::tableName();
-        return static::joinPatientAndPatientValueAndVentilatorValue()->whereIn($table . '.id', $ids);
+
+        //動的パラメータ置換用placeholder ?,?,?,...
+        $placeholder = substr(str_repeat(',?', count($ventilator_ids)), 1);
+
+        $query = <<< EOM
+            UPDATE
+                {$table}
+            SET
+                patient_id = ELT(FIELD(id,{$placeholder}),{$placeholder})
+            WHERE
+                id IN ({$placeholder})
+        EOM;
+
+        \DB::update($query, array_merge($ventilator_ids, $ventilator_patient_ids, $ventilator_ids));
     }
 }

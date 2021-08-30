@@ -19,10 +19,70 @@ class PatientValueRepository
     {
         return static::query()->where('id', $id)->first();
     }
-    
+
     public static function findOneByPatientId($patient_id)
     {
-        return static::query()->where('patient_id', $patient_id)->orderBy('registered_at','DESC')->first();
+        return static::query()->where('patient_id', $patient_id)->orderBy('registered_at', 'DESC')->first();
+    }
+
+    public static function insertBulk(
+        array $patient_id_arr,
+        array $registered_at_arr,
+        array $opt_out_flg_arr,
+        array $age_arr,
+        array $vent_disease_name_arr,
+        array $other_disease_name_1_arr,
+        array $other_disease_name_2_arr,
+        array $used_place_arr,
+        array $hospital_arr,
+        array $national_arr,
+        array $discontinuation_at_arr,
+        array $outcome_arr,
+        array $treatment_arr,
+        array $adverse_event_flg_arr,
+        array $adverse_event_contents_arr,
+        $user_id
+    ) {
+        $table = PatientValue::tableName();
+
+        $count = count($patient_id_arr);
+
+        $placeholder = substr(str_repeat(',(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', $count), 1);
+
+        $records = [];
+
+        for ($i = 0; $i < $count; $i++) {
+            $record = [
+                $patient_id_arr[$i],
+                $registered_at_arr[$i],
+                $opt_out_flg_arr[$i],
+                $age_arr[$i],
+                $vent_disease_name_arr[$i],
+                $other_disease_name_1_arr[$i],
+                $other_disease_name_2_arr[$i],
+                $used_place_arr[$i],
+                $hospital_arr[$i],
+                $national_arr[$i],
+                $discontinuation_at_arr[$i],
+                $outcome_arr[$i],
+                $treatment_arr[$i],
+                $adverse_event_flg_arr[$i],
+                $adverse_event_contents_arr[$i],
+                $user_id
+            ];
+
+            $records = array_merge($records, $record);
+        }
+
+        $query = <<<EOM
+            INSERT INTO
+                {$table}
+                (patient_id,registered_at,opt_out_flg,age,vent_disease_name,other_disease_name_1,other_disease_name_2,used_place,hospital,national,discontinuation_at,outcome,treatment,adverse_event_flg,adverse_event_contents,patient_obs_user_id)
+            VALUES
+                {$placeholder}
+        EOM;
+
+        \DB::insert($query, $records);
     }
 
     public static function getOrganizationIdsWithPatientByIds(array $ids) {

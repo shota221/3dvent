@@ -1,13 +1,13 @@
 <table class="table table-striped">
     <tr>
-        <th>@lang('messages.admin.organization_name')</th>
-        <th>@lang('messages.admin.organization_code')</th>
-        <th>@lang('messages.admin.representative_name')</th>
-        <th>@lang('messages.admin.edc_link')</th>
-        <th>@lang('messages.admin.patient_observation')</th>
-        <th>@lang('messages.admin.registered_at')</th>
-        <th>@lang('messages.admin.status')</th>
-        <th>@lang('messages.admin.user_list')</th>
+        <th>@lang('messages.organization_name')</th>
+        <th>@lang('messages.organization_code')</th>
+        <th>@lang('messages.representative_name')</th>
+        <th>@lang('messages.edc_link')</th>
+        <th>@lang('messages.patient_observation')</th>
+        <th>@lang('messages.registered_at')</th>
+        <th>@lang('messages.status')</th>
+        <th>@lang('messages.user_list')</th>
     </tr>
     @foreach ($organization_paginator as $organization)
         <tr data-id="{{ $organization->id }}" data-organization_name="{{ $organization->organization_name }}"
@@ -22,20 +22,20 @@
             <td class="align-middle">{{ $organization->representative_name }}</td>
             @if ($organization->edc_linked_flg)
                 <td>
-                    <div class="badge badge-primary">@lang('messages.admin.linked')</div>
+                    <div class="badge badge-primary">@lang('messages.linked')</div>
                 </td>
             @else
                 <td>
-                    <div class="badge badge-secondary">@lang('messages.admin.unlinked')</div>
+                    <div class="badge badge-secondary">@lang('messages.unlinked')</div>
                 </td>
             @endif
             @if ($organization->patient_obs_approved_flg)
                 <td>
-                    <div class="badge badge-primary">@lang('messages.admin.approved')</div>
+                    <div class="badge badge-primary">@lang('messages.approved')</div>
                 </td>
             @else
                 <td>
-                    <div class="badge badge-secondary">@lang('messages.admin.unapproved')</div>
+                    <div class="badge badge-secondary">@lang('messages.unapproved')</div>
                 </td>
             @endif
             <td class="align-middle">{{ $organization->registered_at }}</td>

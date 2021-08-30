@@ -180,4 +180,18 @@ class VentilatorConverter
     
     return $bug_result;
   }
+
+  public static function convertToImportedVentilatorEntity($entity,$organization_id,$registered_user_id,$gs1_code,$serial_number,$city,$qr_read_at,$expiration_date,$start_using_at)
+  {
+    $entity->organization_id = $organization_id;
+    $entity->registered_user_id = $registered_user_id;
+    $entity->gs1_code = $gs1_code;
+    $entity->serial_number = $serial_number;
+    $entity->city = $city;
+    $entity->qr_read_at = $qr_read_at;
+    $entity->expiration_date = $expiration_date;
+    $entity->start_using_at = $start_using_at;
+
+    return $entity;
+  }
 }

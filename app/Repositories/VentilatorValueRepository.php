@@ -153,4 +153,94 @@ class VentilatorValueRepository
             ->whereIn('id', $scanned_ids)
             ->update(['ventilator_value_scanned_at' => $scanned_at]);
     }
+
+    public static function insertBulk(
+        array $ventilator_id_arr,
+        array $appkey_id_arr,
+        array $registered_at_arr,
+        array $height_arr,
+        array $weight_arr,
+        array $gender_arr,
+        array $ideal_weight_arr,
+        array $airway_pressure_arr,
+        array $total_flow_arr,
+        array $air_flow_arr,
+        array $o2_flow_arr,
+        array $rr_arr,
+        array $expiratory_time_arr,
+        array $inspiratory_time_arr,
+        array $vt_per_kg_arr,
+        array $predicted_vt_arr,
+        array $estimated_vt_arr,
+        array $estimated_mv_arr,
+        array $estimated_peep_arr,
+        array $fio2_arr,
+        array $status_use_arr,
+        array $status_use_other_arr,
+        array $spo2_arr,
+        array $etco2_arr,
+        array $pao2_arr,
+        array $paco2_arr,
+        array $fixed_flg_arr,
+        array $fixed_at_arr,
+        array $confirmed_flg_arr,
+        array $confirmed_at_arr,
+        $user_id
+    ) {
+        $table = VentilatorValue::tableName();
+
+        $count = count($ventilator_id_arr);
+
+        $placeholder = substr(str_repeat(',(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', $count), 1);
+
+        $records = [];
+
+        for ($i = 0; $i < $count; $i++) {
+            $record = [
+                $ventilator_id_arr[$i],
+                $appkey_id_arr[$i],
+                $registered_at_arr[$i],
+                $height_arr[$i],
+                $weight_arr[$i],
+                $gender_arr[$i],
+                $ideal_weight_arr[$i],
+                $airway_pressure_arr[$i],
+                $total_flow_arr[$i],
+                $air_flow_arr[$i],
+                $o2_flow_arr[$i],
+                $rr_arr[$i],
+                $expiratory_time_arr[$i],
+                $inspiratory_time_arr[$i],
+                $vt_per_kg_arr[$i],
+                $predicted_vt_arr[$i],
+                $estimated_vt_arr[$i],
+                $estimated_mv_arr[$i],
+                $estimated_peep_arr[$i],
+                $fio2_arr[$i],
+                $status_use_arr[$i],
+                $status_use_other_arr[$i],
+                $spo2_arr[$i],
+                $etco2_arr[$i],
+                $pao2_arr[$i],
+                $paco2_arr[$i],
+                $fixed_flg_arr[$i],
+                $fixed_at_arr[$i],
+                $confirmed_flg_arr[$i],
+                $confirmed_at_arr[$i],
+                $user_id
+            ];
+
+            $records = array_merge($records, $record);
+        }
+
+        $query = <<<EOM
+            INSERT INTO
+                {$table}
+                (ventilator_id,appkey_id,registered_at,height,weight,gender,ideal_weight,airway_pressure,total_flow,air_flow,o2_flow,rr,expiratory_time,inspiratory_time,vt_per_kg,predicted_vt,estimated_vt,estimated_mv,estimated_peep,fio2,status_use,status_use_other,spo2,etco2,pao2,paco2,fixed_flg,fixed_at,confirmed_flg,confirmed_at,registered_user_id)
+            VALUES
+                {$placeholder}
+        EOM;
+
+        \DB::insert($query, $records);
+    }
 }

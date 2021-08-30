@@ -3,7 +3,7 @@
         'id' => 'modal-ventilator-bug-list',
         ])
         @slot('title')
-            @lang('messages.admin.ventilator_bug_list')
+            @lang('messages.ventilator_bug_list')
         @endslot
 
         @slot('content')

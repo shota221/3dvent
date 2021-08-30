@@ -4,14 +4,14 @@
             <div class="form-check"><input type="checkbox" class="form-check-input position-static" id="bulk-check">
             </div>
         </th>
-        <th>@lang('messages.admin.ventilator_code')</th>
-        <th>@lang('messages.admin.serial_number')</th>
-        <th>@lang('messages.admin.affiliation_organization')</th>
-        <th>@lang('messages.admin.registered_user_name')</th>
-        <th>@lang('messages.admin.expiration_date')</th>
-        <th>@lang('messages.admin.registered_at')</th>
-        <th>@lang('messages.admin.ventilator_bug')</th>
-        <th>@lang('messages.admin.ventilator_value_list')</th>
+        <th>@lang('messages.ventilator_code')</th>
+        <th>@lang('messages.serial_number')</th>
+        <th>@lang('messages.affiliation_organization')</th>
+        <th>@lang('messages.registered_user_name')</th>
+        <th>@lang('messages.expiration_date')</th>
+        <th>@lang('messages.registered_at')</th>
+        <th>@lang('messages.ventilator_bug')</th>
+        <th>@lang('messages.ventilator_value_list')</th>
     </tr>
     @foreach ($ventilator_paginator as $ventilator)
         <tr data-id="{{ $ventilator->id }}" data-serial_number="{{ $ventilator->serial_number }}"
@@ -36,11 +36,11 @@
             @if ($ventilator->has_bug)
                 <td class="align-middle">
                     <a href="#" class="show-ventilator-bug-list-modal" data-url="{{ route('admin.ventilator.bugs') }}"
-                        data-method="GET">@lang('messages.admin.exists')</a>
+                        data-method="GET">@lang('messages.exists')</a>
                 </td>
             @else
                 <td class="align-middle">
-                    @lang('messages.admin.none')
+                    @lang('messages.none')
                 </td>
             @endif
             <td class="align-middle"><a href="#">@lang('messages.detail')</a></td>
@@ -49,6 +49,6 @@
 </table>
 <div class="row">
     <button type="button" class="btn btn-danger" data-url="{{ route('admin.ventilator.bulk_delete') }}"
-        data-method="delete" id="btn-bulk-delete">@lang('messages.admin.bulk_delete')</button>
+        data-method="delete" id="btn-bulk-delete">@lang('messages.bulk_delete')</button>
 </div>
 <div class="mt-3">{{ $ventilator_paginator->links('components.pagination') }}</div>

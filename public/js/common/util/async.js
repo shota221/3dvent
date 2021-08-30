@@ -25,7 +25,7 @@
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
     });
 
-    var ajaxSettings = Object.assign({
+    var ajaxSettings = $.extend({
         url: url,
         type: type,
         data: parameters,

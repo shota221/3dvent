@@ -21,12 +21,12 @@
     <div class="container-fluid">
         <div class="card card-default color-pallete-box">
             <div class="card-header">
-                <h3>@lang('messages.admin.organization_management')</h3>
+                <h3>@lang('messages.organization_management')</h3>
             </div>
             <div class="card-body">
                 <div class="row d-flex justify-content-between my-3">
                     <div class="col-sm-4">
-                        <h4>@lang('messages.admin.organization_list')</h4>
+                        <h4>@lang('messages.organization_list')</h4>
                     </div>
                     <div class="row">
                         <div class="ml-3 mr-3">

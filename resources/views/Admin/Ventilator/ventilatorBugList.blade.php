@@ -1,9 +1,9 @@
 <table class="table table-striped">
     <tr>
-        <th>@lang('messages.admin.ventilator_bug_name')</th>
-        <th>@lang('messages.admin.request_improvement')</th>
-        <th>@lang('messages.admin.registered_user_name')</th>
-        <th>@lang('messages.admin.registered_at')</th>
+        <th>@lang('messages.ventilator_bug_name')</th>
+        <th>@lang('messages.request_improvement')</th>
+        <th>@lang('messages.registered_user_name')</th>
+        <th>@lang('messages.registered_at')</th>
     </tr>
     @if (isset($bugs))
         @foreach ($bugs as $bug)

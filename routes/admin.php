@@ -59,7 +59,6 @@ Route::group(['middleware' => ['routetype:admin']], function () {
         'OrganizationAdminUserController@asyncDataOrganization'
     )->name('admin.org_admin_user.async.organization_data');
 
-<<<<<<< HEAD
     // 患者観察研究データ管理
     Route::get(
         '/patient_value', 
@@ -91,7 +90,6 @@ Route::group(['middleware' => ['routetype:admin']], function () {
         'PatientValueController@asyncDataOrganization'
     )->name('admin.patient_value.async.organization_data');
 
-=======
     /**
      * MicroVent管理
      */
@@ -103,5 +101,4 @@ Route::group(['middleware' => ['routetype:admin']], function () {
     Route::post('/ventilator/csv','VentilatorController@importCsv')->name('admin.ventilator.import_csv');
     Route::put('/ventilator', 'VentilatorController@asyncUpdate')->name('admin.ventilator.update');
     Route::delete('/ventilator','VentilatorController@asyncBulkDelete')->name('admin.ventilator.bulk_delete');
->>>>>>> e007398... エクスポート機能実装
 });

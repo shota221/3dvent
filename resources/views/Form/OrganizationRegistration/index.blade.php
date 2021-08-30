@@ -14,7 +14,7 @@
 @stop
 
 @section('title')
-    @lang('messages.form.organization_registration_form')
+    @lang('messages.organization_registration_form')
 @stop
 
 @section('content')
@@ -30,7 +30,7 @@
 
                 {{-- 組織名 --}}
                 <div class="form-group">
-                    <label for="organization_name">@lang('messages.form.organization_name')<span
+                    <label for="organization_name">@lang('messages.organization_name')<span
                             class="required"></span></label>
                     <div>
                         <input class="form-control" type="text" name="organization_name" id="organization_name"
@@ -40,7 +40,7 @@
 
                 {{-- 代表者名 --}}
                 <div class="form-group">
-                    <label for="representative_name">@lang('messages.form.representative_name')<span
+                    <label for="representative_name">@lang('messages.representative_name')<span
                             class="required"></span></label>
                     <div>
                         <input class="form-control" type="text" name="representative_name" id="representative_name"
@@ -50,7 +50,7 @@
 
                 {{-- 代表者メールアドレス --}}
                 <div class="form-group">
-                    <label for="representative_email">@lang('messages.form.representative_email')<span
+                    <label for="representative_email">@lang('messages.representative_email')<span
                             class="required"></span></label>
                     <div>
                         <input class="form-control" type="text" name="representative_email" id="representative_email"
@@ -60,7 +60,7 @@
 
                 {{-- 組織コード --}}
                 <div class="form-group">
-                    <label for="organization_code">@lang('messages.form.organization_code')<span
+                    <label for="organization_code">@lang('messages.organization_code')@lang('messages.organization_code_annotation')<span
                             class="required"></span></label>
                     <div>
                         <input class="form-control" type="text" name="organization_code" id="organization_code"
@@ -73,7 +73,7 @@
             <div class="form-group">
                 <button class="btn btn-small btn-success btn-block" id="async"
                     data-url="{{ route('form.organization_registration.create') }}"
-                    data-method="POST">@lang('messages.form.send')</button>
+                    data-method="POST">@lang('messages.send')</button>
             </div>
         </div>
     </div>

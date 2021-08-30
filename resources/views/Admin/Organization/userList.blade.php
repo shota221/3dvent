@@ -1,8 +1,8 @@
 <table class="table table-striped">
     <tr>
-        <th>@lang('messages.admin.user_name')</th>
-        <th>@lang('messages.admin.user_authority')</th>
-        <th>@lang('messages.admin.status')</th>
+        <th>@lang('messages.user_name')</th>
+        <th>@lang('messages.user_authority')</th>
+        <th>@lang('messages.status')</th>
     </tr>
     @if (isset($users))
         @foreach ($users as $user)
