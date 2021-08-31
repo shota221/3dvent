@@ -4,6 +4,7 @@
         'form' => ['method' => 'PUT', 'action' => route('admin.ventilator.update'), 'name' => 'ventilator-update'],
         ])
         @slot('title')
+            {{-- MicroVent編集 --}}
             @lang('messages.ventilator_edit')
         @endslot
 

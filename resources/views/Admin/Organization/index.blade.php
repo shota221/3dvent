@@ -21,15 +21,18 @@
     <div class="container-fluid">
         <div class="card card-default color-pallete-box">
             <div class="card-header">
+                {{-- 組織管理 --}}
                 <h3>@lang('messages.organization_management')</h3>
             </div>
             <div class="card-body">
                 <div class="row d-flex justify-content-between my-3">
                     <div class="col-sm-4">
+                        {{-- 組織一覧 --}}
                         <h4>@lang('messages.organization_list')</h4>
                     </div>
                     <div class="row">
                         <div class="ml-3 mr-3">
+                            {{-- 新規登録 --}}
                             <button type="button" class="btn btn-primary"
                                 id="show-register-modal">@lang('messages.register')</button>
                         </div>

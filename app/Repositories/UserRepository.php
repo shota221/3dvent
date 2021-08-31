@@ -39,10 +39,9 @@ class UserRepository
     
     public static function getOrganizationIdById(int $id)
     {
-        return static::query()->where('id',$id)->value('organization_id');
+        return static::query()->where('id', $id)->value('organization_id');
     }
-<<<<<<< HEAD
-    
+
     public static function findOneWithOrganizationByAuthorityAndId(int $authority, int $id)
     {
         $table = User::tableName();
@@ -53,9 +52,9 @@ class UserRepository
     public static function findWithOrganizationByAuthorityAndSearchValuesAndLimitAndOffsetOrderByCreatedAt(
         int $authority,
         array $search_values,
-        int $limit, 
-        int $offset )
-    {
+        int $limit,
+        int $offset
+    ) {
         return self::queryByAuthorityAndSeachValuesOrderByCreatedAt($authority, $search_values)
             ->limit($limit)
             ->offset($offset)
@@ -66,18 +65,20 @@ class UserRepository
     {
         $query = self::joinOrganization(static::query());
         return static::createWhereClauseFromAuthorityAndSearchValues(
-            $query, 
-            $authority, 
-            $search_values)->count();
+            $query,
+            $authority,
+            $search_values
+        )->count();
     }
 
     private static function queryByAuthorityAndSeachValuesOrderByCreatedAt(int $authority, array $search_values)
     {
         $query = self::joinOrganization(static::query());
         return self::createWhereClauseFromAuthorityAndSearchValues(
-            $query, 
-            $authority, 
-            $search_values)->orderBy('created_at', 'DESC');
+            $query,
+            $authority,
+            $search_values
+        )->orderBy('created_at', 'DESC');
     }
 
     private static function joinOrganization($query)
@@ -85,7 +86,7 @@ class UserRepository
         $table = User::tableName();
         $organization_table = Organization::tableName();
 
-        $query->join($organization_table, $table . '.organization_id', '=' , $organization_table . '.id');
+        $query->join($organization_table, $table . '.organization_id', '=', $organization_table . '.id');
         $query->addSelect([
             $table . '.*',
             $organization_table . '.name AS organization_name',
@@ -96,26 +97,26 @@ class UserRepository
     }
 
     private static function createWhereClauseFromAuthorityAndSearchValues(
-        $query, 
-        int $authority, 
-        array $search_values)
-    {
+        $query,
+        int $authority,
+        array $search_values
+    ) {
         $table = User::tableName();
         $organization_table = Organization::tableName();
 
         $query->where($table . '.authority', $authority);
 
-        if(isset($search_values['organization_name'])){
+        if (isset($search_values['organization_name'])) {
             $query->where($organization_table . '.name', $search_values['organization_name']);
         }
-        if(isset($search_values['name'])){
+        if (isset($search_values['name'])) {
             $name = $search_values['name'];
             $query->where($table . '.name', 'like', "%$name%");
         }
-        if(isset($search_values['registered_at_from'])){
+        if (isset($search_values['registered_at_from'])) {
             $query->where($table . '.created_at', '>=', $search_values['registered_at_from']);
         }
-        if(isset($search_values['registered_at_to'])){
+        if (isset($search_values['registered_at_to'])) {
             $query->where($table . '.created_at', '<=', $search_values['registered_at_to']);
         }
         if (isset($search_values['disabled_flg'])) {
@@ -123,12 +124,10 @@ class UserRepository
         }
 
         return $query;
-
-=======
+    }
 
     public static function findByOrganizationId(int $organization_id)
     {
         return static::query()->where('organization_id', $organization_id)->get();
->>>>>>> c8549de... 呼吸器管理系
     }
 }

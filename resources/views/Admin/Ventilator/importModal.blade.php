@@ -1,18 +1,20 @@
-    {{-- 編集 --}}
     @component('components.modal', [
         'id' => 'modal-ventilator-import',
         'form' => ['method' => 'POST', 'action' => route('admin.ventilator.import_csv'), 'name' => 'ventilator-import'],
         ])
         @slot('title')
+            {{-- インポート --}}
             @lang('messages.ventilator_import')
         @endslot
 
         @slot('content')
-            {{-- 対象組織名 TODO:select2 --}}
-            <div class="form-group">
+            {{-- 対象組織名 --}}
+            <div class="form-group" data-url="{{ route('admin.org_admin_user.async.organization_data') }}" data-method="GET" id="async-organization-data">
                 <label for="organization_id">@lang('messages.target_organization_name')<span class="required"></span></label>
                 <div>
-                    <input class="form-control" type="text" name="organization_id">
+                    <select class="form-control form-control-sm select" name="organization_id" id="select2-organization-name">
+                        <option></option>
+                    </select>
                 </div>
             </div>
             {{-- CSVファイル選択 --}}

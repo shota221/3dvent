@@ -43,7 +43,7 @@
                 </div>
             </div>
 
-            {{-- ステータス --}}
+            {{-- ステータス 有効/無効 --}}
             <div class="form-group">
                 <label class="d-block">@lang('messages.status')<span class="required"></span></label>
 
@@ -65,7 +65,7 @@
                 </div>
             </div>
 
-            {{-- 患者観察研究承認ステータス --}}
+            {{-- 患者観察研究承認ステータス 承認済/未承認--}}
             <div class="form-group">
                 <label class="d-block">@lang('messages.patient_observation_status')<span class="required"></span></label>
 

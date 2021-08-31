@@ -4,6 +4,7 @@
         'form' => ['method' => 'POST', 'action' => route('admin.organization.create'), 'name' => 'organization-create'],
         ])
         @slot('title')
+            {{-- 組織登録 --}}
             @lang('messages.organization_create')
         @endslot
 
@@ -18,8 +19,7 @@
 
             {{-- 代表者名 --}}
             <div class="form-group">
-                <label for="representative_name">@lang('messages.representative_name')<span
-                        class="required"></span></label>
+                <label for="representative_name">@lang('messages.representative_name')<span class="required"></span></label>
                 <div>
                     <input class="form-control" type="text" name="representative_name" required>
                 </div>
@@ -27,8 +27,7 @@
 
             {{-- 代表者メールアドレス --}}
             <div class="form-group">
-                <label for="representative_email">@lang('messages.representative_email')<span
-                        class="required"></span></label>
+                <label for="representative_email">@lang('messages.representative_email')<span class="required"></span></label>
                 <div>
                     <input class="form-control" type="text" name="representative_email" required>
                 </div>
@@ -42,7 +41,7 @@
                 </div>
             </div>
 
-            {{-- ステータス --}}
+            {{-- ステータス 有効/無効 --}}
             <div class="form-group">
                 <label class="d-block">@lang('messages.status')<span class="required"></span></label>
 
@@ -64,7 +63,7 @@
                 </div>
             </div>
 
-            {{-- 患者観察研究承認ステータス --}}
+            {{-- 患者観察研究承認ステータス 承認済/未承認 --}}
             <div class="form-group">
                 <label class="d-block">@lang('messages.patient_observation_status')<span class="required"></span></label>
 

@@ -1,8 +1,18 @@
-//TODO: modal共通化
-//register-modal
-var $registerModal = $('#modal-ventilator-create');
+const
+    $editModal = $('#modal-ventilator-update'),
+    $registerModal = $('#modal-ventilator-create'),
+    $showRegisterModalBtn = $('#show-register-modal'),
+    $modalCancelBtn = $('button.modal-cancel'),
+    $paginatedList = $('#paginated-list'),
+    $ventilatorUpdateBtn = $('#async-ventilator-update'),
+    $ventilatorBugListModal = $('#modal-ventilator-bug-list'),
+    $importModal = $('#modal-ventilator-import'),
+    $showImportModalBtn = $('#show-import-modal'),
+    $importCsvBtn = $('#async-ventilator-import'),
+    $exportCsvBtn = $('#btn-csv-export');
 
-$('#show-register-modal').on(
+
+$showRegisterModalBtn.on(
     'click',
     function () {
         utilFormRemoveValidationErrorMessage()
@@ -12,7 +22,7 @@ $('#show-register-modal').on(
         return false;
     });
 
-$('button.modal-cancel').on(
+$modalCancelBtn.on(
     'click',
     function () {
         $(this).closest('.modal').modal('hide');
@@ -21,9 +31,9 @@ $('button.modal-cancel').on(
     });
 
 //edit-modal
-var $editModal = $('#modal-ventilator-update');
 
-$('#paginated-list').on(
+
+$paginatedList.on(
     'click',
     '.show-edit-modal',
     function () {
@@ -52,10 +62,9 @@ $('#paginated-list').on(
     });
 
 //編集イベント
-$('#async-ventilator-update',).on(
+$ventilatorUpdateBtn.on(
     'click',
     function () {
-        //TODO:parameters格納
         var parameters = {};
 
 
@@ -65,20 +74,26 @@ $('#async-ventilator-update',).on(
         parameters['start_using_at'] = $targetForm.find('input[name="start_using_at"]').val();
 
         var successCallback = function (data) {
-            location.reload();
+            var $featureElement = $('.page-item' + '.active').children('button');
+
+            var parameters = {};
+
+            var successCallback = function (paginated_list) {
+                $paginatedList.html(paginated_list);
+            }
+
+            utilAsyncExecuteAjax($featureElement, parameters, false, successCallback);
+
+            $editModal.modal('hide');
         }
 
-        var $btn = $('#async-ventilator-update');
-
-        utilAsyncExecuteAjax($btn, parameters, true, successCallback);
+        utilAsyncExecuteAjax($ventilatorUpdateBtn, parameters, true, successCallback);
 
         return false;
     });
 
 //バグ一覧モーダル
-var $ventilatorBugListModal = $('#modal-ventilator-bug-list');
-
-$('#paginated-list').on(
+$paginatedList.on(
     'click',
     '.show-ventilator-bug-list-modal',
     function () {
@@ -104,7 +119,7 @@ $('#paginated-list').on(
 /** 
  * checkbox管理(gmail風にunchecked,indeterminate,checkedの三段階)
  */
-$('#paginated-list').on(
+$paginatedList.on(
     'click',
     '.item-check',
     function () {
@@ -132,7 +147,7 @@ $('#paginated-list').on(
 /**
  * 一括削除
  */
-$('#paginated-list').on(
+$paginatedList.on(
     'click',
     '#btn-bulk-delete',
     function () {
@@ -150,7 +165,15 @@ $('#paginated-list').on(
                 });
 
                 var successCallback = function (data) {
-                    location.reload();
+                    var $featureElement = $('.page-item' + '.active').children('button');
+
+                    var parameters = {};
+
+                    var successCallback = function (paginated_list) {
+                        $paginatedList.html(paginated_list);
+                    }
+
+                    utilAsyncExecuteAjax($featureElement, parameters, false, successCallback);
                 }
 
                 utilAsyncExecuteAjax($featureElement, parameters, true, successCallback)
@@ -164,7 +187,7 @@ $('#paginated-list').on(
 /**
  * CSVエクスポート
  */
-$('#btn-csv-export').on(
+$exportCsvBtn.on(
     'click',
     function () {
         var selectedCount = $('.item-check:checked').length;
@@ -173,7 +196,6 @@ $('#btn-csv-export').on(
             var $form = $(this).closest('form');
 
             $('.item-check:checked').closest('tr').each(function (i, elm) {
-                // ids.push($(elm).data('id'));
                 $('<input>').attr({
                     'type': 'hidden',
                     'name': 'ids[]',
@@ -191,17 +213,16 @@ $('#btn-csv-export').on(
  * CSVインポート
  */
 //import-modal
-$('#show-import-modal').on(
+$showImportModalBtn.on(
     'click',
     function () {
-        var $importModal = $('#modal-ventilator-import');
-
         $importModal.modal();
+        buildSelect2();
         return false;
     });
 
 //importイベント
-$('#async-ventilator-import').on(
+$importCsvBtn.on(
     'click',
     function () {
         var $targetForm = $('form[name="ventilator-import"]');
@@ -209,17 +230,70 @@ $('#async-ventilator-import').on(
         var parameters = new FormData($targetForm[0]);
 
         var successCallback = function (data) {
-            console.log(data);
-        }
+            var $featureElement = $('.page-item' + '.active').children('button');
 
-        var $btn = $('#async-ventilator-import');
+            var parameters = {};
+
+            var successCallback = function (paginated_list) {
+                $paginatedList.html(paginated_list);
+            }
+
+            utilAsyncExecuteAjax($featureElement, parameters, false, successCallback);
+
+            $importModal.modal('hide');
+        }
 
         var extraSettings = {
             processData: false,
             contentType: false
         }
 
-        utilAsyncExecuteAjax($btn, parameters, true, successCallback, extraSettings);
+        utilAsyncExecuteAjax($importCsvBtn, parameters, true, successCallback, extraSettings);
 
         return false;
     });
+
+// build select2(organization)
+function buildSelect2() {
+
+    var parameters = {};
+
+    var $element = $('#async-organization-data');
+
+    console.log($element.data('url'));
+    console.log('test');
+
+    var successCallback = function (data) {
+        var organizations = [];
+
+        var $select2OrganizationName = $('#select2-organization-name');
+
+        data.forEach(function (datum) {
+            var organization = {};
+            organization['id'] = datum['id'];
+            organization['text'] = datum['name'];
+            organizations.push(organization);
+        });
+
+        $select2OrganizationName.select2({
+            data: organizations,
+            placeholder: '',
+            allowClear: true
+        });
+    }
+
+    utilAsyncExecuteAjax($element, parameters, false, successCallback);
+}
+
+// ページネーション
+$paginatedList.on('click', '.page-link', function (e) {
+    var $featureElement = $(this);
+
+    var parameters = {};
+
+    var successCallback = function (paginated_list) {
+        $paginatedList.html(paginated_list);
+    }
+
+    utilAsyncExecuteAjax($featureElement, parameters, false, successCallback);
+});

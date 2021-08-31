@@ -1,12 +1,20 @@
 <table class="table table-striped">
     <tr>
+        {{-- 組織名 --}}
         <th>@lang('messages.organization_name')</th>
+        {{-- 組織コード --}}
         <th>@lang('messages.organization_code')</th>
+        {{-- 代表者名 --}}
         <th>@lang('messages.representative_name')</th>
+        {{-- EDC連携 --}}
         <th>@lang('messages.edc_link')</th>
+        {{-- 患者観察研究ステータス --}}
         <th>@lang('messages.patient_observation')</th>
+        {{-- 登録日時 --}}
         <th>@lang('messages.registered_at')</th>
+        {{-- ステータス --}}
         <th>@lang('messages.status')</th>
+        {{-- ユーザー一覧 --}}
         <th>@lang('messages.user_list')</th>
     </tr>
     @foreach ($organization_paginator as $organization)
