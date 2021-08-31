@@ -5,7 +5,7 @@ namespace App\Services\Support\Converter;
 use App\Http\Forms\Api as Form;
 use App\Http\Response as Response;
 use App\Models;
-use App\Services\Support\Converter;
+use App\Services\Support\Converter\NameConverter;
 use App\Services\Support\DateUtil;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -51,14 +51,14 @@ class PatientValueConverter
         $data->other_disease_name_1 = $entity->other_disease_name_1;
         $data->other_disease_name_2 = $entity->other_disease_name_2;
         $data->used_place = $entity->used_place;
-        $data->used_place_name = Converter\SelectedNameConverter::convertToUsedPlaceName($entity->used_place);
+        $data->used_place_name = NameConverter\PatientValueConverter::convertToUsedPlaceName($entity->used_place);
         $data->hospital = $entity->hospital;
         $data->national = $entity->national;
         $data->discontinuation_at = $entity->discontinuation_at;
         $data->outcome = $entity->outcome;
-        $data->outcome_name = Converter\SelectedNameConverter::convertToOutcomeName($entity->outcome);
+        $data->outcome_name = NameConverter\PatientValueConverter::convertToOutcomeName($entity->outcome);
         $data->treatment = $entity->treatment;
-        $data->treatment_name = Converter\SelectedNameConverter::convertToTreatmentName($entity->treatment);
+        $data->treatment_name = NameConverter\PatientValueConverter::convertToTreatmentName($entity->treatment);
         $data->adverse_event_flg = $entity->adverse_event_flg;
         $data->adverse_event_contents = $entity->adverse_event_contents;
 
