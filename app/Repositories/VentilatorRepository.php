@@ -109,22 +109,26 @@ class VentilatorRepository
     public static function getPatientCodeById(int $id)
     {
         return static::leftJoinPatient()
-        ->addSelect([
-            'ventilators.*',
-            'patients.patient_code AS patient_code'            
-        ])
-        ->where('ventilators.id', $id)
-        ->orderBy('ventilators.created_at', 'DESC')
-        ->value('patient_code');
+            ->addSelect([
+                'ventilators.*',
+                'patients.patient_code AS patient_code'
+            ])
+            ->where('ventilators.id', $id)
+            ->orderBy('ventilators.created_at', 'DESC')
+            ->value('patient_code');
+    }
+
+    private static function queryBySearchValues(array $search_values)
+    {
+        $query = self::leftJoinOrganization();
+        $query = self::leftJoinUser($query);
+        $query = self::leftJoinVentilatorBug($query);
+        return self::createWhereClauseFromSearchValues($query, $search_values);
     }
 
     public static function findBySearchValuesAndOffsetAndLimit($offset, $limit, $search_values)
     {
-        $query = static::leftJoinOrganization();
-        $query = static::leftJoinUser($query);
-        $query = static::leftJoinVentilatorBug($query);
-
-        return self::createWhereClauseFromSearchValues($query, $search_values)
+        return self::queryBySearchValues($search_values)
             ->addSelect([
                 'ventilators.*',
                 'organizations.name AS organization_name',
@@ -139,37 +143,33 @@ class VentilatorRepository
 
     public static function countBySearchValues($search_values)
     {
-        return self::createWhereClauseFromSearchValues(static::query(), $search_values)->count();
+        return self::queryBySearchValues($search_values)->count();
     }
 
     private static function createWhereClauseFromSearchValues($query, $search_values)
     {
         if (isset($search_values['serial_number'])) {
             $serial_number = $search_values['serial_number'];
-            $query->where('name', $serial_number);
+            $query->where('ventilators.serial_number', $serial_number);
         }
-        if (isset($search_values['organization_name'])) {
-            $organization_name = $search_values['organization_name'];
-            $query->where('organization_name', 'like', "%$organization_name%");
-        }
-        if (isset($search_values['registered_user_name'])) {
-            $registered_user_name = $search_values['registered_user_name'];
-            $query->where('registered_user_name', 'like', "%$registered_user_name%");
+        if (isset($search_values['organization_id'])) {
+            $organization_id = $search_values['organization_id'];
+            $query->where('ventilators.organization_id', $organization_id);
         }
         if (isset($search_values['expiration_date_from'])) {
-            $query->where('expiration_date', '>=', $search_values['expiration_date_from']);
+            $query->where('ventilators.expiration_date', '>=', $search_values['expiration_date_from']);
         }
         if (isset($search_values['expiration_date_to'])) {
-            $query->where('expiration_date', '<=', $search_values['expiration_date_to']);
+            $query->where('ventilators.expiration_date', '<=', $search_values['expiration_date_to']);
         }
         if (isset($search_values['start_using_at_from'])) {
-            $query->where('start_using_at', '>=', $search_values['start_using_at_from']);
+            $query->where('ventilators.start_using_at', '>=', $search_values['start_using_at_from']);
         }
         if (isset($search_values['start_using_at_to'])) {
-            $query->where('start_using_at', '<=', $search_values['start_using_at_to']);
+            $query->where('ventilators.start_using_at', '<=', $search_values['start_using_at_to']);
         }
-        if (isset($search_values['has_bug'])) {
-            $search_values['has_bug'] ? $query->whereNotNull('has_bug') : $query->whereNull('has_bug');
+        if (isset($search_values['has_bug']) && count($search_values['has_bug']) === 1) {
+            $search_values['has_bug'][0] ? $query->whereNotNull('ventilator_bugs.ventilator_id') : $query->whereNull('ventilator_bugs.ventilator_id');
         }
 
         return $query;
@@ -178,19 +178,22 @@ class VentilatorRepository
     private static function leftjoinVentilatorValue($query = null)
     {
         return (!is_null($query) ? $query : static::query())
-        ->leftJoin(
-            'ventilator_values',
-            'ventilator_values.ventilator_id',
-            '=',
-            'ventilators.id'
-        );
+            ->leftJoin(
+                'ventilator_values',
+                'ventilator_values.ventilator_id',
+                '=',
+                'ventilators.id'
+            );
     }
 
     private static function joinPatientAndPatientValue($query = null)
     {
-         return static::leftJoinPatient($query)
+        return static::leftJoinPatient($query)
             ->leftjoin(
-                'patient_values','patient_values.patient_id', '=', 'patients.id'
+                'patient_values',
+                'patient_values.patient_id',
+                '=',
+                'patients.id'
             );
     }
 
@@ -199,25 +202,25 @@ class VentilatorRepository
         $query = static::leftjoinVentilatorValue();
         $query = static::joinPatientAndPatientValue($query);
         return $query
-        ->addSelect([
-            'ventilators.*',
-            'patients.*',
-            'patient_values.*',
-            'ventilator_values.*',
-            'ventilators.id AS ventilator_id',
-            'patients.id AS patient_id',
-            'patient_values.id AS patient_value_id',
-            'ventilator_values.id AS ventilator_value_id',
-            'patients.height AS patient_height',
-            'patients.weight AS patient_weight',
-            'patients.gender AS patient_gender',
-            'ventilator_values.height AS height',
-            'ventilator_values.weight AS weight',
-            'ventilator_values.gender AS gender',
-            'patient_values.registered_at AS patient_value_registered_at',
-            'ventilator_values.registered_at AS ventilator_value_registered_at',
-        ])
-        ->whereIn('ventilators.id', $ids);
+            ->addSelect([
+                'ventilators.*',
+                'patients.*',
+                'patient_values.*',
+                'ventilator_values.*',
+                'ventilators.id AS ventilator_id',
+                'patients.id AS patient_id',
+                'patient_values.id AS patient_value_id',
+                'ventilator_values.id AS ventilator_value_id',
+                'patients.height AS patient_height',
+                'patients.weight AS patient_weight',
+                'patients.gender AS patient_gender',
+                'ventilator_values.height AS height',
+                'ventilator_values.weight AS weight',
+                'ventilator_values.gender AS gender',
+                'patient_values.registered_at AS patient_value_registered_at',
+                'ventilator_values.registered_at AS ventilator_value_registered_at',
+            ])
+            ->whereIn('ventilators.id', $ids);
     }
 
     public static function updateBulkForPatientId(

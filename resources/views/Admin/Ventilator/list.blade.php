@@ -4,13 +4,21 @@
             <div class="form-check"><input type="checkbox" class="form-check-input position-static" id="bulk-check">
             </div>
         </th>
+        {{-- Microventコード --}}
         <th>@lang('messages.ventilator_code')</th>
+        {{-- シリアルナンバー --}}
         <th>@lang('messages.serial_number')</th>
+        {{-- 所属組織 --}}
         <th>@lang('messages.affiliation_organization')</th>
+        {{-- 登録者名 --}}
         <th>@lang('messages.registered_user_name')</th>
+        {{-- 有効期限 --}}
         <th>@lang('messages.expiration_date')</th>
-        <th>@lang('messages.registered_at')</th>
+        {{-- 使用開始日時 --}}
+        <th>@lang('messages.start_using_at')</th>
+        {{-- 不具合 --}}
         <th>@lang('messages.ventilator_bug')</th>
+        {{-- 詳細 --}}
         <th>@lang('messages.ventilator_value_list')</th>
     </tr>
     @foreach ($ventilator_paginator as $ventilator)

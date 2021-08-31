@@ -12,7 +12,7 @@
             <div class="form-group" data-url="{{ route('admin.org_admin_user.async.organization_data') }}" data-method="GET" id="async-organization-data">
                 <label for="organization_id">@lang('messages.target_organization_name')<span class="required"></span></label>
                 <div>
-                    <select class="form-control form-control-sm select" name="organization_id" id="select2-organization-name">
+                    <select class="form-control form-control-sm select" name="organization_id">
                         <option></option>
                     </select>
                 </div>

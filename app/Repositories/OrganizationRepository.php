@@ -69,13 +69,14 @@ class OrganizationRepository
             $query->where('code',$search_values['organization_code']);
         }
         if (isset($search_values['disabled_flg'])) {
-            $query->where('disabled_flg',$search_values['disabled_flg']);
+            $query->whereIn('disabled_flg',$search_values['disabled_flg']);
         }
-        if (isset($search_values['edc_linked_flg'])) {
-            $search_values['edc_linked_flg'] ? $query->whereNotNull('edcid') : $query->whereNull('edcid');
+        if (isset($search_values['edc_linked_flg']) && count($search_values['edc_linked_flg'])===1) {
+            \Log::debug($search_values['edc_linked_flg']);
+            $search_values['edc_linked_flg'][0] ? $query->whereNotNull('edcid') : $query->whereNull('edcid');
         }
         if (isset($search_values['patient_obs_approved_flg'])) {
-            $query->where('patient_obs_approved_flg',$search_values['patient_obs_approved_flg']);
+            $query->whereIn('patient_obs_approved_flg',$search_values['patient_obs_approved_flg']);
         }
         if (isset($search_values['registered_at_from'])) {
             $query->where('created_at','>=',$search_values['registered_at_from']);

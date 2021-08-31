@@ -17,4 +17,8 @@
             data-method="get" id="async-search">@lang('messages.search')</button>
         </div>
     </div>
+<<<<<<< HEAD
 </div>
+=======
+</div>
+>>>>>>> c84f601... 検索機能実装

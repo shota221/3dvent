@@ -21,17 +21,20 @@ class VentilatorController extends Controller
 
     function index(Request $request)
     {
-        $base_url = $request->path();
-        $ventilator_paginator = $this->service->getVentilatorData($base_url);
-        $ventilator_paginator->withPath(route('admin.ventilator.async'),[],false);
+        $path = $request->path();
+        $ventilator_paginator = $this->service->getVentilatorData($path);
+        $ventilator_paginator->withPath(route('admin.ventilator.async'), [], false);
         return view('index', compact('ventilator_paginator'));
     }
 
     function asyncSearch(Request $request)
     {
         $form = new Form\VentilatorSearchForm($request->all());
-        $base_url = $request->url();
-        $ventilator_paginator = $this->service->getVentilatorData($base_url, $form);
+
+        if ($form->hasError()) throw new InvalidFormException($form);
+
+        $path = $request->path();
+        $ventilator_paginator = $this->service->getVentilatorData($path, $form);
         return view('list', compact('ventilator_paginator'));
     }
 
@@ -91,7 +94,7 @@ class VentilatorController extends Controller
 
         $file_url = $request->file('csv_file')->path();
 
-        $response = $this->service->create($form,$file_url);
+        $response = $this->service->create($form, $file_url);
 
         return $response;
     }

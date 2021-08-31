@@ -21,28 +21,28 @@ class VentilatorService
 {
     use CsvLogic;
 
-    function getVentilatorData($base_url, $form = null)
+    function getVentilatorData($path, $form = null)
     {
         $items_per_page = config('view.items_per_page');
 
         $offset = 0;
 
         $search_values = [];
+        $http_query = '';
 
         if (!is_null($form)) {
 
             if (isset($form->page)) $offset = ($form->page - 1) * $items_per_page;
 
             $search_values = $this->buildVentilatorSearchValues($form);
+            $http_query = '?' . http_build_query($search_values);
         }
 
         $ventilators = Repos\VentilatorRepository::findBySearchValuesAndOffsetAndLimit($offset, $items_per_page, $search_values);
 
         $total_count = Repos\VentilatorRepository::countBySearchValues($search_values);
 
-        $url = !is_null($form) ? $base_url . $form->http_query : $base_url;
-
-        return Converter\VentilatorConverter::convertToAdminPagenate($ventilators, $total_count, $items_per_page, $url);
+        return Converter\VentilatorConverter::convertToAdminPagenate($ventilators, $total_count, $items_per_page, $path . $http_query);
     }
 
     function getPatient(Form\VentilatorPatientForm $form)
@@ -139,7 +139,9 @@ class VentilatorService
                             $serial_number = strval($row['serial_number']);
                             $city = isset($row['city']) ? strval($row['city']) : null;
                             $qr_read_at = DateUtil::parseToDatetime($row['qr_read_at']);
-                            $expiration_date = isset($row['expiration_date']) ? DateUtil::parseToDate($row['expiration_date']) : null;
+                            \Log::debug($row['expiration_date']);
+                            $expiration_date = !empty($row['expiration_date']) ? DateUtil::parseToDate($row['expiration_date']) : null;
+                            \Log::debug($row['ventilator_id'] . ' ' . $expiration_date);
                             $start_using_at = DateUtil::parseToDatetime($row['start_using_at']);
 
                             //save予約
@@ -450,7 +452,7 @@ class VentilatorService
         $search_values = [];
 
         if (isset($form->serial_number)) $search_values['serial_number'] = $form->serial_number;
-        if (isset($form->organization_name)) $search_values['organization_name'] = $form->organization_name;
+        if (isset($form->organization_id)) $search_values['organization_id'] = $form->organization_id;
         if (isset($form->registered_user_name)) $search_values['registered_user_name'] = $form->registered_user_name;
         if (isset($form->expiration_date_from)) $search_values['expiration_date_from'] = $form->expiration_date_from;
         if (isset($form->expiration_date_to)) $search_values['expiration_date_to'] = $form->expiration_date_to;

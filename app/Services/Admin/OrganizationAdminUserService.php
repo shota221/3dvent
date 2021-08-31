@@ -110,7 +110,7 @@ class OrganizationAdminUserService
 
         if (is_null($organization_admin_user)) {
             $form->addError('id', 'validation.id_not_found');
-            throw new Exeptions\InvalidFormException($form);
+            throw new Exceptions\InvalidFormException($form);
         }
 
         // TODO 認証回り作成後修正

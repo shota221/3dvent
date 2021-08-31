@@ -11,26 +11,28 @@ use App\Services\Support\DBUtil;
 
 class OrganizationService
 {
-    function getOrganizationData($base_url, $form = null)
+    function getOrganizationData($path, $form = null)
     {
         $items_per_page = config('view.items_per_page');
 
         $offset = 0;
 
         $search_values = [];
+        $http_query = '';
 
         if (!is_null($form)) {
 
             if (isset($form->page)) $offset = ($form->page - 1) * $items_per_page;
 
             $search_values = $this->buildOrganizationSearchValues($form);
+            $http_query = '?' . http_build_query($search_values);
         }
 
         $organizations = Repos\OrganizationRepository::findBySearchValuesAndOffsetAndLimit($offset, $items_per_page, $search_values);
 
         $total_count = Repos\OrganizationRepository::countBySearchValues($search_values);
 
-        return Converter\OrganizationConverter::convertToPagenate($organizations, $total_count, $items_per_page, $base_url);
+        return Converter\OrganizationConverter::convertToPagenate($organizations, $total_count, $items_per_page, $path . $http_query);
     }
 
     function create($form)
@@ -85,7 +87,7 @@ class OrganizationService
 
         //組織コード重複チェック
         $is_match_organization_code = $form->organization_code === $organization->code;
-                
+
         $exists_by_code = !$is_match_organization_code && Repos\OrganizationRepository::existsByCode($form->organization_code);
 
         if ($exists_by_code) {
@@ -94,9 +96,9 @@ class OrganizationService
 
         //メールアドレス重複チェック
         $is_match_representative_email = $form->representative_email === $organization->representative_email;
-                
+
         $exists_by_representative_email = !$is_match_representative_email && Repos\OrganizationRepository::existsByRepresentativeEmail($form->representative_email);
-        
+
         if ($exists_by_representative_email) {
             $form->addError('representative_email', 'validation.duplicated_registration');
         }
@@ -147,7 +149,7 @@ class OrganizationService
         $users = Repos\UserRepository::findByOrganizationId($form->id);
 
         return array_map(
-            function($user){
+            function ($user) {
                 return Converter\OrganizationConverter::convertToUsersListElmEntity($user);
             },
             $users->all()

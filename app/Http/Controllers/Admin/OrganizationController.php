@@ -19,17 +19,22 @@ class OrganizationController extends Controller
 
     function index(Request $request)
     {
-        $base_url = $request->url();
-        $organization_paginator = $this->service->getOrganizationData($base_url);
-        $organization_paginator->withPath($base_url.'/async');
+        $path = $request->path();
+        $organization_paginator = $this->service->getOrganizationData($path);
+        $organization_paginator->withPath(route('admin.organization.async',[],false));
+        
         return view('index', compact('organization_paginator'));
     }
 
     function asyncSearch(Request $request)
     {
         $form = new Form\OrganizationSearchForm($request->all());
-        $base_url = $request->url();
-        $organization_paginator = $this->service->getOrganizationData($base_url, $form);
+
+        if ($form->hasError()) throw new InvalidFormException($form);
+
+        $path = $request->path();
+        $organization_paginator = $this->service->getOrganizationData($path, $form);
+
         return view('list', compact('organization_paginator'));
     }
 

@@ -49,7 +49,7 @@ class OrganizationAdminUserController extends Controller
     {
         $form = new Form\OrganizationAdminUserDetailForm($request->all());
 
-        if ($form->hasError()) throw new Exeptions\InvalidFormException($form);
+        if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
         
         return $this->service->getOneOrganizationAdminUserData($form);
     }

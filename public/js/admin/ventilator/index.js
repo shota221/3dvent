@@ -9,7 +9,12 @@ const
     $importModal = $('#modal-ventilator-import'),
     $showImportModalBtn = $('#show-import-modal'),
     $importCsvBtn = $('#async-ventilator-import'),
-    $exportCsvBtn = $('#btn-csv-export');
+    $exportCsvBtn = $('#btn-csv-export'),
+    $searchForm = $('#async-search-form'),
+    $searchBtn = $('#async-search'),
+    $clearSearchFormBtn = $('#clear-search-form'),
+    $select2OrganizationName = $('#search-organization-name')
+    ;
 
 
 $showRegisterModalBtn.on(
@@ -216,8 +221,9 @@ $exportCsvBtn.on(
 $showImportModalBtn.on(
     'click',
     function () {
+        // buildSelect2();
+
         $importModal.modal();
-        buildSelect2();
         return false;
     });
 
@@ -260,13 +266,10 @@ function buildSelect2() {
 
     var $element = $('#async-organization-data');
 
-    console.log($element.data('url'));
-    console.log('test');
-
     var successCallback = function (data) {
         var organizations = [];
 
-        var $select2OrganizationName = $('#select2-organization-name');
+        var $select2OrganizationName = $('select[name="organization_id"]');
 
         data.forEach(function (datum) {
             var organization = {};
@@ -278,7 +281,8 @@ function buildSelect2() {
         $select2OrganizationName.select2({
             data: organizations,
             placeholder: '',
-            allowClear: true
+            allowClear: true,
+            width: '100%'
         });
     }
 
@@ -297,3 +301,51 @@ $paginatedList.on('click', '.page-link', function (e) {
 
     utilAsyncExecuteAjax($featureElement, parameters, false, successCallback);
 });
+
+// async-search
+$searchBtn.on(
+    'click',
+    function (e) {
+        var $form = $searchForm;
+        var parameters = buildSearchParameters($form);
+
+        var successCallback = function (paginated_list) {
+            $paginatedList.html(paginated_list);
+        }
+
+        var $element = $(this);
+
+        utilAsyncExecuteAjax($element, parameters, false, successCallback);
+
+        return false;
+    }
+)
+
+// clear search form
+$clearSearchFormBtn.on(
+    'click',
+    function (e) {
+        $searchForm[0].reset();
+        $select2OrganizationName.val(null).trigger('change');
+    }
+)
+
+// build search parameters
+function buildSearchParameters($form) {
+    var parameters = {};
+
+    parameters['organization_id'] = $form.find('select[name="organization_id"] option:selected').val();
+    parameters['start_using_at_from'] = $form.find('input[name="start_using_at_from"]').val();
+    parameters['start_using_at_to'] = $form.find('input[name="start_using_at_to"]').val();
+    parameters['expiration_date_from'] = $form.find('input[name="expiration_date_from"]').val();
+    parameters['expiration_date_to'] = $form.find('input[name="expiration_date_to"]').val();
+    parameters['serial_number'] = $form.find('input[name="serial_number"]').val();
+    parameters['has_bug'] = [];
+    $form.find('input[name="has_bug"]:checked').each(function (i, elm) {
+        parameters['has_bug'].push($(elm).val());
+    });
+
+    return parameters;
+}
+
+buildSelect2();

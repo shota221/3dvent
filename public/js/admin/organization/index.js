@@ -1,8 +1,17 @@
-//TODO: modal共通化
-//register-modal
-var $registerModal = $('#modal-organization-create');
+const
+    $registerModal = $('#modal-organization-create'),
+    $showRegisterModalBtn = $('#show-register-modal'),
+    $organizationCreateBtn = $('#async-organization-create'),
+    $modalCancelBtn = $('button.modal-cancel'),
+    $editModal = $('#modal-organization-update'),
+    $paginatedList = $('#paginated-list'),
+    $organizationUpdateBtn = $('#async-organization-update'),
+    $searchForm = $('#async-search-form'),
+    $searchBtn = $('#async-search'),
+    $clearSearchFormBtn = $('#clear-search-form')
+    ;
 
-$('#show-register-modal').on(
+$showRegisterModalBtn.on(
     'click',
     function () {
         utilFormRemoveValidationErrorMessage()
@@ -13,10 +22,9 @@ $('#show-register-modal').on(
     });
 
 //登録イベント
-$('#async-organization-create').on(
+$organizationCreateBtn.on(
     'click',
     function () {
-        //TODO:parameters格納
         var parameters = {};
 
         var $targetForm = $('form[name="organization-create"]');
@@ -30,17 +38,25 @@ $('#async-organization-create').on(
         parameters['patient_obs_approved_flg'] = $targetForm.find('input[name="patient_obs_approved_flg"]:checked').val();
 
         var successCallback = function (data) {
-            location.reload();
+            var $featureElement = $('.page-item' + '.active').children('button');
+
+            var parameters = {};
+
+            var successCallback = function (paginated_list) {
+                $paginatedList.html(paginated_list);
+            }
+
+            utilAsyncExecuteAjax($featureElement, parameters, false, successCallback);
+
+            $registerModal.modal('hide');
         }
 
-        var $btn = $('#async-organization-create');
-
-        utilAsyncExecuteAjax($btn, parameters, true, successCallback);
+        utilAsyncExecuteAjax($organizationCreateBtn, parameters, true, successCallback);
 
         return false;
     });
 
-$('button.modal-cancel').on(
+$modalCancelBtn.on(
     'click',
     function () {
         $(this).closest('.modal').modal('hide');
@@ -48,10 +64,7 @@ $('button.modal-cancel').on(
         return false;
     });
 
-//edit-modal
-var $editModal = $('#modal-organization-update');
-
-$('#paginated-list').on(
+$paginatedList.on(
     'click',
     '.show-edit-modal',
     function () {
@@ -69,13 +82,13 @@ $('#paginated-list').on(
     });
 
 //編集イベント
-$('#async-organization-update',).on(
+$organizationUpdateBtn.on(
     'click',
     function () {
         //TODO:parameters格納
         var parameters = {};
 
-        
+
         var $targetForm = $('form[name="organization-update"]');
 
         parameters['id'] = $targetForm.find('input[name="id"]').val();
@@ -88,12 +101,20 @@ $('#async-organization-update',).on(
         parameters['patient_obs_approved_flg'] = $targetForm.find('input[name="patient_obs_approved_flg"]:checked').val();
 
         var successCallback = function (data) {
-            location.reload();
+            var $featureElement = $('.page-item' + '.active').children('button');
+
+            var parameters = {};
+
+            var successCallback = function (paginated_list) {
+                $paginatedList.html(paginated_list);
+            }
+
+            utilAsyncExecuteAjax($featureElement, parameters, false, successCallback);
+
+            $editModal.modal('hide');
         }
 
-        var $btn = $('#async-organization-update');
-
-        utilAsyncExecuteAjax($btn, parameters, true, successCallback);
+        utilAsyncExecuteAjax($organizationUpdateBtn, parameters, true, successCallback);
 
         return false;
     });
@@ -101,7 +122,7 @@ $('#async-organization-update',).on(
 //ユーザー一覧モーダル
 var $userListModal = $('#modal-user-list');
 
-$('#paginated-list').on(
+$paginatedList.on(
     'click',
     '.show-user-list-modal',
     function () {
@@ -126,14 +147,67 @@ $('#paginated-list').on(
 
 //ページネーション
 // pagination
-$('#paginated-list').on('click', '.page-link', function(e) {
+$paginatedList.on('click', '.page-link', function (e) {
     var $featureElement = $(this);
 
     var parameters = {};
 
-    var successCallback = function(paginated_list) {
-        $('#paginated-list').html(paginated_list);
+    var successCallback = function (paginated_list) {
+        $paginatedList.html(paginated_list);
     }
 
     utilAsyncExecuteAjax($featureElement, parameters, false, successCallback)
 });
+
+// async-search
+$searchBtn.on(
+    'click',
+    function (e) {
+        var $form = $searchForm;
+        var parameters = buildSearchParameters($form);
+
+        var successCallback = function (paginated_list) {
+            $paginatedList.html(paginated_list);
+        }
+
+        var $element = $(this);
+
+        utilAsyncExecuteAjax($element, parameters, false, successCallback);
+
+        return false;
+    }
+)
+
+// clear search form
+$clearSearchFormBtn.on(
+    'click',
+    function (e) {
+        $searchForm[0].reset();
+    }
+)
+
+// build search parameters
+function buildSearchParameters($form) {
+    console.log('test');
+    var parameters = {};
+
+    parameters['organization_code'] = $form.find('input[name="organization_code"]').val();
+    parameters['organization_name'] = $form.find('input[name="organization_name"]').val();
+    parameters['representative_name'] = $form.find('input[name="representative_name"]').val();
+    parameters['registered_at_from'] = $form.find('input[name="registered_at_from"]').val();
+    parameters['registered_at_to'] = $form.find('input[name="registered_at_to"]').val();
+    parameters['edc_linked_flg'] = [];
+    $form.find('input[name="edc_linked_flg"]:checked').each(function (i, elm) {
+        parameters['edc_linked_flg'].push($(elm).val());
+    });
+    parameters['patient_obs_approved_flg'] = [];
+    $form.find('input[name="patient_obs_approved_flg"]:checked').each(function (i, elm) {
+        parameters['patient_obs_approved_flg'].push($(elm).val());
+    });
+    parameters['disabled_flg'] = [];
+    $form.find('input[name="disabled_flg"]:checked').each(function (i, elm) {
+        parameters['disabled_flg'].push($(elm).val());
+    });
+
+    return parameters;
+}

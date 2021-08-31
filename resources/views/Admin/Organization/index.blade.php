@@ -38,18 +38,7 @@
                         </div>
                     </div>
                 </div>
-                {{-- todo 検索機能 --}}
-                <div class="form-group">
-                    <div class="input-group input-group-lg">
-                        <input type="search" class="form-control form-control-lg" placeholder="Type your keywords here"
-                            value="Lorem ipsum">
-                        <div class="input-group-append">
-                            <button type="search" class="btn btn-lg btn-default" id="search-organization">
-                                <i class="fa fa-search"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                @include('Admin.Organization.searchForm')
                 <div id="paginated-list">
                     @include('Admin.Organization.list')
                 </div>
