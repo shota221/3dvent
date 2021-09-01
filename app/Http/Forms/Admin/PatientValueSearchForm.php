@@ -19,12 +19,12 @@ class PatientValueSearchForm extends BaseForm
     protected function validationRule()
     {
         return [
-            'organization_id'    => 'nullable|' . Rule::VALUE_POSITIVE_NON_ZERO,
-            'patient_code'       => 'nullable|' . Rule::VALUE_NAME,
+            'organization_id'      => 'nullable|' . Rule::VALUE_POSITIVE_NON_ZERO,
+            'patient_code'         => 'nullable|' . Rule::VALUE_NAME,
             'registered_user_name' => 'nullable|' . Rule::VALUE_NAME,
-            'registered_at_from' => 'nullable|date',
-            'registered_at_to'   => 'nullable|date',
-            'page'               => 'nullable|' . Rule::VALUE_POSITIVE_NON_ZERO,
+            'registered_at_from'   => 'nullable|date',
+            'registered_at_to'     => 'nullable|date',
+            'page'                 => 'nullable|' . Rule::VALUE_POSITIVE_NON_ZERO,
         ];
     }
 
