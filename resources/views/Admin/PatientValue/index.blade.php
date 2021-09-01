@@ -57,11 +57,9 @@ JS
                         
                         {{--登録者--}}
                         <div class="col-sm-4">
-                            <div class="form-group" data-url="{{ route('admin.patient_value.async.registered_user_data') }}" data-method="GET" id="async-registered-user-data">
+                            <div class="form-group">
                                 <label>@lang('messages.registered_user_name')</label>
-                                <select class="form-control form-control-sm select" name="registered_user_name" id="select2-registered-user-name" disabled>
-                                    <option></option>
-                                </select>
+                                <input type="text" class="form-control form-control-sm" name="registered_user_name" id="registered_user_name">
                             </div>
                         </div>
 

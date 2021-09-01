@@ -1,6 +1,5 @@
 const
     $asyncOrganizationData = $('#async-organization-data'),
-    $asyncRegisteredUserData = $('#async-registered-user-data'),
     $asyncSearch = $('#async-search'),
     $searchForm = $('#async-search-form'),
     $searchFormAllInput = $('#async-search-form').find('input'),
@@ -8,7 +7,7 @@ const
     $searchFormPatientCodeInput = $('#async-search-form').find('[name=patient_code]'),
     $searchFormRegisteredAtFromInput = $('#async-search-form').find('[name=registered_at_from]'),    
     $searchFormRegisteredAtToInput = $('#async-search-form').find('[name=registered_at_to]'),
-    $searchFormRegisteredUserInput = $('#async-search-form').find('[name=registered_user_name]'),
+    $searchFormRegisteredUserNameInput = $('#async-search-form').find('[name=registered_user_name]'),
     $cancelModal = $('button.modal-cancel'),
     $clearSearchForm = $('#clear-search-form'),
     $editModal = $('#edit-modal'),
@@ -55,10 +54,8 @@ $cancelModal.on(
     }
 );
 
-// build select2(organization registered_user)
+// build select2(organization)
 function buildSelect2() {
-
-    $select2RegisteredUserName.select2();
 
     var parameters = {};
 
@@ -84,47 +81,17 @@ function buildSelect2() {
     utilAsyncExecuteAjax($element, parameters, false, successCallback);
 }
 
-// set registered_user select2 and change patient_code property  
+// change patient_code property  
 $select2OrganizationName.on(
     'change',
     function(e) {
 
-        $select2RegisteredUserName.val(null).trigger('change');
-        $select2RegisteredUserName.find('option:not(:first)').remove();
-        $select2RegisteredUserName.prop('disabled', false);
         $patientCode.prop('disabled', false);
         
         if ($select2OrganizationName.val() === '') {
-            $select2RegisteredUserName.prop('disabled', true);
             $patientCode.prop('disabled', true);
             return;
         }
-
-        $element = $asyncRegisteredUserData;
-        
-        var parameters = {};
-        var $form = $searchForm;
-
-        parameters['organization_id'] = $searchFormOrganizationInput.val();
-        
-        var successCallback = function (data) {
-            var registered_users = [];
-    
-            data.forEach(function (datum) {
-                var registered_user = {};
-                registered_user['id'] = datum['id']; 
-                registered_user['text'] = datum['name'];
-                registered_users.push(registered_user);
-            })
-    
-            $select2RegisteredUserName.select2({
-                data: registered_users,
-                placeholder: '',
-                allowClear: true
-            });
-        }
-
-        utilAsyncExecuteAjax($element, parameters, false, successCallback);
     }
 )
 
@@ -152,18 +119,17 @@ $clearSearchForm.on(
     'click',
     function (e) {
         $searchFormAllInput.val('');
-        $select2RegisteredUserName.val(null).trigger('change');
         $select2OrganizationName.val(null).trigger('change');
     }
 )
 
 // build search parameters
-function buildSearchParameters($form) {
+function buildSearchParameters() {
     var parameters = {};
 
     parameters['organization_id'] = $searchFormOrganizationInput.val();
     parameters['patient_code'] = $searchFormPatientCodeInput.val();
-    parameters['registered_user_name'] = $searchFormRegisteredUserInput.val();
+    parameters['registered_user_name'] = $searchFormRegisteredUserNameInput.val();
     parameters['registered_at_from'] = $searchFormRegisteredAtFromInput.val();
     parameters['registered_at_to'] = $searchFormRegisteredAtToInput.val();
 

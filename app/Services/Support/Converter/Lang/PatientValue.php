@@ -1,11 +1,11 @@
 <?php 
 
-namespace App\Services\Support\Converter\NameConverter;
+namespace App\Services\Support\Converter\Lang;
 
 use App\Http\Response as Response;
 use App\Models;
 
-class PatientValueConverter
+class PatientValue
 {
     public static function convertToUsedPlaceName(int $used_place = null)
     {

@@ -38,6 +38,5 @@ Route::group(['middleware' => ['routetype:admin']], function () {
     Route::get('/patient_value/edit', 'PatientValueController@asyncEdit')->name('admin.patient_value.edit');
     Route::get('/patient_value/search', 'PatientValueController@asyncSearch')->name('admin.patient_value.search');
     Route::get('/patient_value/async/organization_data', 'PatientValueController@asyncDataOrganization')->name('admin.patient_value.async.organization_data');
-    Route::get('/patient_value/async/registered_user_data', 'PatientValueController@asyncDataRegisteredUser')->name('admin.patient_value.async.registered_user_data');
 
 });

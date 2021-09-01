@@ -11,7 +11,7 @@ class PatientValueSearchForm extends BaseForm
 {
     public $organization_id;
     public $patient_code;
-    public $registered_user_id;
+    public $registered_user_name;
     public $registered_at_from;
     public $registered_at_to;
     public $page;
@@ -21,7 +21,7 @@ class PatientValueSearchForm extends BaseForm
         return [
             'organization_id'    => 'nullable|' . Rule::VALUE_POSITIVE_NON_ZERO,
             'patient_code'       => 'nullable|' . Rule::VALUE_NAME,
-            'registered_user_id' => 'nullable|' . Rule::VALUE_POSITIVE_NON_ZERO,
+            'registered_user_name' => 'nullable|' . Rule::VALUE_NAME,
             'registered_at_from' => 'nullable|date',
             'registered_at_to'   => 'nullable|date',
             'page'               => 'nullable|' . Rule::VALUE_POSITIVE_NON_ZERO,
@@ -32,7 +32,7 @@ class PatientValueSearchForm extends BaseForm
     {
         $this->organization_id = isset($input['organization_id']) ? intval($input['organization_id']) : null;
         $this->patient_code = isset($input['patient_code']) ? strval($input['patient_code']) : null;
-        $this->registered_user_id = isset($input['registered_user_id']) ? intval($input['registered_user_id']) : null;
+        $this->registered_user_name = isset($input['registered_user_name']) ? strval($input['registered_user_name']) : null;
 
         $this->registered_at_from = isset($input['registered_at_from']) 
         ? Support\DateUtil::parseToDate($input['registered_at_from']) 

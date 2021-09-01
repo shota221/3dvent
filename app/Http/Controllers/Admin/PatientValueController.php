@@ -58,15 +58,4 @@ class PatientValueController extends Controller
 
         return $response;
     }
-
-    public function asyncDataRegisteredUser(Request $request)
-    {
-        $form = new Form\RegisteredUserSearchForm($request->all());
-
-        if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
-
-        $response = $this->service->getRegisteredUserData($form);
-
-        return $response;
-    }
 }

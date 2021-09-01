@@ -55,7 +55,7 @@ class PatientValueRepository
             ->orderBy('created_at', 'DESC')
             ->get();
     }
-
+    
     public static function countBySearchValues(array $search_values)
     {
         $query = static::query();
@@ -95,14 +95,16 @@ class PatientValueRepository
         if (isset($search_values['organization_id'])) {
             $query->where('organizations.id', $search_values['organization_id']);
             
-            // 患者番号、登録者は組織名の絞込があった場合のみwhere句追加。
+            // 患者番号は組織名の絞込があった場合のみwhere句追加。
             if (isset($search_values['patient_code'])) {
                 $patient_code = $search_values['patient_code'];
                 $query->where('patients.patient_code', 'like', "%$patient_code%");
             }
-            if (isset($search_values['registered_user_id'])) {
-                $query->where('patient_values.patient_obs_user_id', $search_values['registered_user_id']);
-            }
+        }
+
+        if (isset($search_values['registered_user_name'])) {
+            $registered_user_name = $search_values['registered_user_name'];
+            $query->where('users.name', 'like', "%$registered_user_name%");
         }
 
         if (isset($search_values['registered_at_from'])){
