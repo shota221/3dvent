@@ -32,7 +32,7 @@ class PatientValueSearchForm extends BaseForm
     {
         $this->organization_id = isset($input['organization_id']) ? intval($input['organization_id']) : null;
         $this->patient_code = isset($input['patient_code']) ? strval($input['patient_code']) : null;
-        $this->registered_user_id = isset($input['registered_user_name']) ? strval($input['registered_user_name']) : null;
+        $this->registered_user_id = isset($input['registered_user_id']) ? intval($input['registered_user_id']) : null;
 
         $this->registered_at_from = isset($input['registered_at_from']) 
         ? Support\DateUtil::parseToDate($input['registered_at_from']) 
