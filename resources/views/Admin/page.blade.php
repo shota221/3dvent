@@ -17,7 +17,6 @@
     <script src="{{ mix('js/admin/app.js') }}"></script>
     <script src="js/common/util/async.js"></script>
     <script src="js/common/util/form.js"></script>
-    <script src="js/common/util/pagination.js"></script>
     @yield('js')
 @stop
 

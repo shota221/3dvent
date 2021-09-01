@@ -3,6 +3,7 @@
 return [
     // a
     'affiliation_organization' => '所属組織',
+    'ambulance' => '救急車+周囲',
     'applied' => '申請しました',
     'approved' => '承認済',
     // b
@@ -19,15 +20,20 @@ return [
     'csv_file' => 'CSVファイル選択',
     'csv_import' => 'CSVインポート',
     // d
+    'death' => '死亡',
     'delete' => '削除',
     'deleted' => '削除しました。',
     'detail' => '詳細',
+    'deterioration' => '悪化',
     'discontinuation_at' => '使用中止日時',
     // e
+    'ecmo' => 'ECMO',
     'edcid' => 'EDC施設ID(EDC連携する場合は入力してください。)',
     'edc_link' => 'EDC連携',
+    'edit' => '編集',
     'edit_profile' => 'プロフィール編集',
     'email' => 'メールアドレス',
+    'emergency_room' => '救命救急室',
     'exists' => '有',
     'expiration_date' => '有効期限',
     // f
@@ -35,7 +41,10 @@ return [
     // h
     'hospital_name' => '病院名',
     // i
+    'icu' => 'ICU',
+    'immutable' => '不変',
     'import' => 'インポート',
+    'improvement' => '改善',
     'invalid' => '無効',
     'invalid_input' => '入力に誤りがあります。',
     'is_required_item' => ' は必須項目です。',
@@ -45,10 +54,14 @@ return [
     'linked' => '連携済',
     'list' => '一覧',
     // m
+    'mri' => 'MRI室',
     // n
     'national_name' => '国名',
     'none' => '無',
+    'non_icu' => 'ICU以外の病室',
+    'nppv' => 'NPPVに変更',
     // o
+    'operating_room' => '手術室',
     'opt_out' => 'オプトアウト',
     'organization_admin_user_management' => '組織管理者アカウント管理',
     'organization_admin_user_create' => '組織管理者アカウント登録',
@@ -65,9 +78,14 @@ return [
     'organization_registration_form' => '組織登録申請フォーム',
     'organization_user' => '組織ユーザー',
     'organization_user_page' => '組織ユーザーページ',
+    'other' => 'その他',
     'other_disease_name_1' => 'その他疾患名1',
     'other_disease_name_2' => 'その他疾患名2',
+    'other_laboratories' => 'その他の検査室',
+    'other_places' => 'その他の場所',
+    'other_ventilator' => '他の人工呼吸器に変更',
     'outcome' => '使用中止時の転帰',
+    'oxygen_only' => '酸素投与のみ',
     // p
     'password' => 'パスワード(組織ログイン時利用)',
     'password_confirmation' => 'パスワード(確認用)',
@@ -76,10 +94,13 @@ return [
     'patient_code' => '患者番号',
     'patient_observation' => '患者観察研究',
     'patient_observation_status' => '患者観察研究ステータス',
+    'patient_value_management' => '患者観察研究データ管理',
+    'patient_value_edit' => '患者観察研究データ編集',
+    'patient_value_list' => '患者観察研究データ一覧',
     'project_administrator' => 'プロジェクト運営者',
     'project_administrator_page' => 'プロジェクト運営者ページ',
     'post' => '登録',
-    'put' => '更新',
+    'put' => '登録',
     // q
     // r
     'refined_search' => '絞込検索',
@@ -132,14 +153,6 @@ return [
     // x
     // y
     // z
-    
-
-
-
-
-
-    
-
 ];
 
     
