@@ -11,7 +11,8 @@
                     <div class="form-group">
                         <label for="organization_id">@lang('messages.organization_name')</label>
                         <div>
-                            <select class="form-control form-control-sm select" name="organization_id" id="search-organization-name">
+                            <select class="form-control form-control-sm select" name="organization_id"
+                                id="search-organization-name">
                                 <option></option>
                             </select>
                         </div>
@@ -23,6 +24,14 @@
                     <div class="form-group">
                         <label>@lang('messages.serial_number')</label>
                         <input type="text" class="form-control form-control-sm" name="serial_number" id="serial_number">
+                    </div>
+                </div>
+
+                {{-- 登録者名 --}}
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label>@lang('messages.registered_user_name')</label>
+                        <input type="text" class="form-control form-control-sm" name="registered_user_name" id="registered_user_name">
                     </div>
                 </div>
 

@@ -340,6 +340,7 @@ function buildSearchParameters($form) {
     parameters['expiration_date_from'] = $form.find('input[name="expiration_date_from"]').val();
     parameters['expiration_date_to'] = $form.find('input[name="expiration_date_to"]').val();
     parameters['serial_number'] = $form.find('input[name="serial_number"]').val();
+    parameters['registered_user_name'] = $form.find('input[name="registered_user_name"]').val();
     parameters['has_bug'] = [];
     $form.find('input[name="has_bug"]:checked').each(function (i, elm) {
         parameters['has_bug'].push($(elm).val());

@@ -138,6 +138,7 @@ class VentilatorRepository
             ->distinct()
             ->limit($limit)
             ->offset($offset)
+            ->orderBy('created_at', 'DESC')
             ->get();
     }
 
@@ -155,6 +156,10 @@ class VentilatorRepository
         if (isset($search_values['organization_id'])) {
             $organization_id = $search_values['organization_id'];
             $query->where('ventilators.organization_id', $organization_id);
+        }
+        if (isset($search_values['registered_user_name'])) {
+            $registered_users_name = $search_values['registered_user_name'];
+            $query->where('users.name', 'like', "%$registered_users_name%");
         }
         if (isset($search_values['expiration_date_from'])) {
             $query->where('ventilators.expiration_date', '>=', $search_values['expiration_date_from']);

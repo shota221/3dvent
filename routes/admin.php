@@ -101,4 +101,15 @@ Route::group(['middleware' => ['routetype:admin']], function () {
     Route::post('/ventilator/csv','VentilatorController@importCsv')->name('admin.ventilator.import_csv');
     Route::put('/ventilator', 'VentilatorController@asyncUpdate')->name('admin.ventilator.update');
     Route::delete('/ventilator','VentilatorController@asyncBulkDelete')->name('admin.ventilator.bulk_delete');
+
+    /**
+     * 機器観察研究データ
+     */
+    // Route::get('/ventilator_value', 'VentilatorValueController@index')->name('admin.ventilator_value.index');
+    // Route::get('/ventilator_value/edit', 'VentilatorValueController@asyncEdit')->name('admin.ventilator_value.edit');
+    // Route::get('/ventilator_value/search', 'VentilatorValueController@asyncSearch')->name('admin.ventilator_value.search');
+    // Route::get('/ventilator_value/async/organization_data', 'VentilatorValueController@asyncDataOrganization')->name('admin.ventilator_value.async.organization_data');
+    // Route::get('/ventilator_value/async/registered_user_data', 'VentilatorValueController@asyncDataRegisteredUser')->name('admin.ventilator_value.async.registered_user_data');
+    // Route::put('/ventilator_value', 'VentilatorValueController@asyncUpdate')->name('admin.ventilator_value.update');
+    // Route::delete('/ventilator_value','VentilatorValueController@asyncBulkDelete')->name('admin.ventilator_value.bulk_delete');
 });
