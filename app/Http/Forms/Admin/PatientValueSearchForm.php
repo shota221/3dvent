@@ -9,9 +9,9 @@ use App\Services\Support;
 
 class PatientValueSearchForm extends BaseForm
 {
-    public $organization_name;
+    public $organization_id;
     public $patient_code;
-    public $registered_user_name;
+    public $registered_user_id;
     public $registered_at_from;
     public $registered_at_to;
     public $page;
@@ -19,20 +19,20 @@ class PatientValueSearchForm extends BaseForm
     protected function validationRule()
     {
         return [
-            'organization_name'    => 'nullable|' . Rule::VALUE_NAME,
-            'patient_code'         => 'nullable|' . Rule::VALUE_NAME,
-            'registered_user_name' => 'nullable|' . Rule::VALUE_NAME,
-            'registered_at_from'   => 'nullable|date',
-            'registered_at_to'     => 'nullable|date',
-            'page'                 => 'nullable|' . Rule::VALUE_POSITIVE_NON_ZERO,
+            'organization_id'    => 'nullable|' . Rule::VALUE_POSITIVE_NON_ZERO,
+            'patient_code'       => 'nullable|' . Rule::VALUE_NAME,
+            'registered_user_id' => 'nullable|' . Rule::VALUE_POSITIVE_NON_ZERO,
+            'registered_at_from' => 'nullable|date',
+            'registered_at_to'   => 'nullable|date',
+            'page'               => 'nullable|' . Rule::VALUE_POSITIVE_NON_ZERO,
         ];
     }
 
     protected function bind($input)
     {
-        $this->organization_name = isset($input['organization_name']) ? strval($input['organization_name']) : null;
+        $this->organization_id = isset($input['organization_id']) ? intval($input['organization_id']) : null;
         $this->patient_code = isset($input['patient_code']) ? strval($input['patient_code']) : null;
-        $this->registered_user_name = isset($input['registered_user_name']) ? strval($input['registered_user_name']) : null;
+        $this->registered_user_id = isset($input['registered_user_name']) ? strval($input['registered_user_name']) : null;
 
         $this->registered_at_from = isset($input['registered_at_from']) 
         ? Support\DateUtil::parseToDate($input['registered_at_from']) 

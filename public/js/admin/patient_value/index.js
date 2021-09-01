@@ -4,9 +4,11 @@ const
     $asyncSearch = $('#async-search'),
     $searchForm = $('#async-search-form'),
     $searchFormAllInput = $('#async-search-form').find('input'),
+    $searchFormOrganizationInput = $('#async-search-form').find('[name=organization_name]'),
     $searchFormPatientCodeInput = $('#async-search-form').find('[name=patient_code]'),
     $searchFormRegisteredAtFromInput = $('#async-search-form').find('[name=registered_at_from]'),    
     $searchFormRegisteredAtToInput = $('#async-search-form').find('[name=registered_at_to]'),
+    $searchFormRegisteredUserInput = $('#async-search-form').find('[name=registered_user_name]'),
     $cancelModal = $('button.modal-cancel'),
     $clearSearchForm = $('#clear-search-form'),
     $editModal = $('#edit-modal'),
@@ -103,7 +105,7 @@ $select2OrganizationName.on(
         var parameters = {};
         var $form = $searchForm;
 
-        parameters['organization_id'] = $form.find('[name=organization_name] option:selected').val();
+        parameters['organization_id'] = $searchFormOrganizationInput.val();
         
         var successCallback = function (data) {
             var registered_users = [];
@@ -159,9 +161,9 @@ $clearSearchForm.on(
 function buildSearchParameters($form) {
     var parameters = {};
 
-    parameters['organization_name'] = $form.find('[name=organization_name] option:selected').text();
+    parameters['organization_id'] = $searchFormOrganizationInput.val();
     parameters['patient_code'] = $searchFormPatientCodeInput.val();
-    parameters['registered_user_name'] = $form.find('[name=registered_user_name] option:selected').text();
+    parameters['registered_user_name'] = $searchFormRegisteredUserInput.val();
     parameters['registered_at_from'] = $searchFormRegisteredAtFromInput.val();
     parameters['registered_at_to'] = $searchFormRegisteredAtToInput.val();
 

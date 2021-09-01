@@ -92,16 +92,16 @@ class PatientValueRepository
 
     private static function createWhereClauseFromSearchValues($query, array $search_values)
     {
-        if (isset($search_values['organization_name'])) {
-            $query->where('organizations.name', $search_values['organization_name']);
+        if (isset($search_values['organization_id'])) {
+            $query->where('organizations.id', $search_values['organization_id']);
             
             // 患者番号、登録者は組織名の絞込があった場合のみwhere句追加。
             if (isset($search_values['patient_code'])) {
                 $patient_code = $search_values['patient_code'];
                 $query->where('patients.patient_code', 'like', "%$patient_code%");
             }
-            if (isset($search_values['registered_user_name'])) {
-                $query->where('users.name', $search_values['registered_user_name']);
+            if (isset($search_values['registered_user_id'])) {
+                $query->where('patient_values.patient_obs_user_id', $search_values['registered_user_id']);
             }
         }
 

@@ -98,9 +98,9 @@ class PatientValueService
     private function buildPatientValueSearchValues(Form\PatientValueSearchForm $form)
     {
         $search_values = [];
-        if (isset($form->organization_name)) $search_values['organization_name'] = $form->organization_name;
+        if (isset($form->organization_id)) $search_values['organization_id'] = $form->organization_id;
         if (isset($form->patient_code)) $search_values['patient_code'] = $form->patient_code;
-        if (isset($form->registered_user_name)) $search_values['registered_user_name'] = $form->registered_user_name;
+        if (isset($form->registered_user_id)) $search_values['registered_user_id'] = $form->registered_user_id;
         if (isset($form->registered_at_from)) $search_values['registered_at_from'] = $form->registered_at_from;
         if (isset($form->registered_at_to)) $search_values['registered_at_to'] = $form->registered_at_to;
 
