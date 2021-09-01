@@ -9,7 +9,7 @@
 
         @slot('content')
             {{-- 対象組織名 --}}
-            <div class="form-group" data-url="{{ route('admin.org_admin_user.async.organization_data') }}" data-method="GET" id="async-organization-data">
+            <div class="form-group" data-url="{{ route('admin.organization.search_list') }}" data-method="GET" id="async-organization-data">
                 <label for="organization_id">@lang('messages.target_organization_name')<span class="required"></span></label>
                 <div>
                     <select class="form-control form-control-sm select" name="organization_id">

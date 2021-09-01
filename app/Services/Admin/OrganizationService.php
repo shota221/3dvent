@@ -155,4 +155,16 @@ class OrganizationService
             $users->all()
         );
     }
+
+    /**
+     * 組織一覧を取得
+     *
+     * @return [type]
+     */
+    public function getSearchList()
+    {
+        $organizations = Repos\OrganizationRepository::findAll();
+
+        return Converter\OrganizationConverter::convertToOrganizationSearchList($organizations);
+    }
 }

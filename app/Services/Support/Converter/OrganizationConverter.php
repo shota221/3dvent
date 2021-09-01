@@ -2,6 +2,7 @@
 
 namespace App\Services\Support\Converter;
 
+use App\Http\Response\Admin\OrganizationData;
 use App\Http\Response\Admin\OrganizationResult;
 use App\Http\Response\Admin\UserResult;
 use App\Models\Organization;
@@ -104,5 +105,27 @@ class OrganizationConverter
     $user_result->disabled_flg = $entity->disabled_flg;
 
     return $user_result;
+  }
+  
+  public static function convertToOrganizationSearchList(\Illuminate\Database\Eloquent\Collection $entities)
+  {
+      $organizations = array_map(
+          function($entity) {
+              return self::convertToOrganizationSearchListElm($entity);
+          }
+          ,$entities->all()
+      );
+
+      return $organizations;
+  }
+
+  private static function convertToOrganizationSearchListElm(Organization $entity)
+  {
+      $data = new OrganizationData();
+
+      $data->id = $entity->id;
+      $data->name = $entity->name;
+
+      return $data;
   }
 }

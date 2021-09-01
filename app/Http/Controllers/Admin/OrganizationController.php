@@ -64,4 +64,11 @@ class OrganizationController extends Controller
 
         return view('userList', compact('users'));
     }
+
+    function asyncSearchList()
+    {
+        $response = $this->service->getSearchList();
+
+        return $response;
+    }
 }

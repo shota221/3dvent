@@ -24,6 +24,7 @@ Route::group(['middleware' => ['routetype:admin']], function () {
      */
     Route::get('/organization', 'OrganizationController@index')->name('admin.organization.index');
     Route::get('/organization/async', 'OrganizationController@asyncSearch')->name('admin.organization.async');
+    Route::get('/organization/async/search_list', 'OrganizationController@asyncSearchList')->name('admin.organization.search_list');
     Route::get('/organization/async/users', 'OrganizationController@asyncUsers')->name('admin.organization.users');
     Route::post('/organization', 'OrganizationController@asyncCreate')->name('admin.organization.create');
     Route::put('/organization', 'OrganizationController@asyncUpdate')->name('admin.organization.update');
@@ -105,11 +106,9 @@ Route::group(['middleware' => ['routetype:admin']], function () {
     /**
      * 機器観察研究データ
      */
-    // Route::get('/ventilator_value', 'VentilatorValueController@index')->name('admin.ventilator_value.index');
-    // Route::get('/ventilator_value/edit', 'VentilatorValueController@asyncEdit')->name('admin.ventilator_value.edit');
-    // Route::get('/ventilator_value/search', 'VentilatorValueController@asyncSearch')->name('admin.ventilator_value.search');
-    // Route::get('/ventilator_value/async/organization_data', 'VentilatorValueController@asyncDataOrganization')->name('admin.ventilator_value.async.organization_data');
-    // Route::get('/ventilator_value/async/registered_user_data', 'VentilatorValueController@asyncDataRegisteredUser')->name('admin.ventilator_value.async.registered_user_data');
-    // Route::put('/ventilator_value', 'VentilatorValueController@asyncUpdate')->name('admin.ventilator_value.update');
-    // Route::delete('/ventilator_value','VentilatorValueController@asyncBulkDelete')->name('admin.ventilator_value.bulk_delete');
+    Route::get('/ventilator_value', 'VentilatorValueController@index')->name('admin.ventilator_value.index');
+    Route::get('/ventilator_value/edit', 'VentilatorValueController@asyncEdit')->name('admin.ventilator_value.edit');
+    Route::get('/ventilator_value/search', 'VentilatorValueController@asyncSearch')->name('admin.ventilator_value.search');
+    Route::put('/ventilator_value', 'VentilatorValueController@asyncUpdate')->name('admin.ventilator_value.update');
+    Route::delete('/ventilator_value','VentilatorValueController@asyncBulkDelete')->name('admin.ventilator_value.bulk_delete');
 });
