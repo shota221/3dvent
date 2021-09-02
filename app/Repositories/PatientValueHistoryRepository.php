@@ -34,6 +34,28 @@ class PatientValueHistoryRepository
         return $query->get();
     }
 
+    public static function insertBulk(array $patient_value_ids, int $operated_user_id, string $operation)
+    {
+        $placeholder = substr(str_repeat(',(?,?,?)', count($patient_value_ids)), 1);
+
+        $records = [];
+
+        foreach ($patient_value_ids as $patient_value_id) {
+            $record = [$patient_value_id, $operated_user_id, $operation];
+
+            $records = array_merge($records, $record);
+        }
+
+        $query = <<< EOM
+            INSERT INTO patient_value_histories
+                (patient_value_id, operated_user_id, operation)
+            VALUES
+                {$placeholder}
+        EOM;
+
+        \DB::insert($query, $records);
+    }
+
     private static function createLimitOffsetClause($query, int $limit, int $offset)
     {
         $query->limit($limit)->offset($offset);

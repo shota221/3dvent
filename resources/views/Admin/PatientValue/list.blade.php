@@ -63,10 +63,10 @@
         <th>@lang('messages.edit')</th>
     </tr>
     @foreach ($patient_values as $patient_value)
-    <tr>
+    <tr data-id="{{ $patient_value->id }}">
         <td>
             <div class="form-check">
-                <input type="checkbox" class="form-check-input position-static">
+                <input type="checkbox" class="form-check-input item-check position-static">
             </div>
         </td>
         <td>{{ $patient_value->patient_code }}</td>
@@ -123,6 +123,6 @@
 
 {{--選択項目を削除--}}
 <div>
-    <button type="btn" class="btn btn-danger btn-sm" data-url=""
+    <button type="btn" class="btn btn-danger btn-sm" data-url="{{ route('admin.patient_value.logical_delete') }}"
         data-method="delete" id="btn-bulk-delete">@lang('messages.bulk_delete')</button>
 </div>

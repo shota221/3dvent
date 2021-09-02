@@ -6,6 +6,7 @@ use App\Models\Organization;
 use App\Models\Patient;
 use App\Models\PatientValue;
 use App\Models\User;
+use App\Services\Support;
 
 class PatientValueRepository
 {
@@ -55,6 +56,11 @@ class PatientValueRepository
             ->offset($offset)
             ->orderBy('created_at', 'DESC')
             ->get();
+    }
+
+    public static function logicalDeleteByIds(array $ids)
+    {
+        return  static::query()->whereIn('id', $ids)->update(['deleted_at' => Support\DateUtil::now()]);
     }
     
     public static function countBySearchValues(array $search_values)

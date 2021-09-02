@@ -2,6 +2,7 @@ const
     $asyncOrganizationData = $('#async-organization-data'),
     $asyncRegisteredUserData = $('#async-registered-user-data'),
     $asyncSearch = $('#async-search'),
+    $bulkCheck = $('#bulk-check'),
     $searchForm = $('#async-search-form'),
     $searchFormAllInput = $('#async-search-form').find('input'),
     $searchFormOrganizationInput = $('#async-search-form').find('[name=organization_name]'),
@@ -186,6 +187,75 @@ $clearSearchForm.on(
     function (e) {
         $searchFormAllInput.val('');
         $select2OrganizationName.val(null).trigger('change');
+    }
+)
+
+// checkbox管理
+$paginatedList
+.on(
+    'click',
+    '.item-check',
+    function () {
+        var checkboxCount = $('.item-check').length;
+        var selectedCount = $('.item-check:checked').length;
+
+        if (checkboxCount === selectedCount) {
+            $bulkCheck.prop('indeterminate', false).prop('checked', true);
+        } else if (selectedCount === 0) {
+            $bulkCheck.prop('indeterminate', false).prop('checked', false);
+        } else {
+            $bulkCheck.prop('indeterminate', true).prop('checked', true);
+        }
+    }
+).on(
+    'click',
+    '#bulk-check',
+    function () {
+        var isChecked = $(this).prop('checked');
+        $('.item-check').each(function () {
+            $(this).prop('checked', isChecked);
+        });
+    }
+);
+
+// bulk delete
+$paginatedList.on(
+    'click',
+    '#btn-bulk-delete',
+    function () {
+        var selectedCount = $('.item-check:checked').length;
+
+        if (selectedCount > 0) {
+            var isConfirmed = confirm(i18n('message.delete_count_confirm', { count: selectedCount}));
+
+            if (isConfirmed) {
+                var $element = $(this);
+                var parameters = { 'ids': [] }
+
+                $('.item-check:checked').closest('tr').each(function (i, elm) {
+                    parameters['ids'].push($(elm).data('id'));
+                });
+
+                var successCallback = function (data) {
+                    var $element = $('.page-item' + '.active').children('button');
+            
+                    if (! $element.length) {
+                        $element = $asyncSearch;
+                    } 
+        
+                    var $form = $searchForm;
+                    var parameters = buildSearchParameters($form);
+                    var successCallback = function(pagineted_list) {
+                        $paginatedList.html(pagineted_list);
+                    } 
+
+                    utilAsyncExecuteAjax($element, parameters, false, successCallback);
+                }
+                utilAsyncExecuteAjax($element, parameters, true, successCallback);
+            }
+        } else {
+            alert(i18n('message.object_unselected'));
+        }
     }
 )
 

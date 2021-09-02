@@ -55,6 +55,15 @@ class PatientValueController extends Controller
         
         return $this->service->update($form);
     }
+
+    public function asyncLogicalDelete(Request $request)
+    {
+        $form = new Form\PatientValueLogicalDeleteForm($request->all());
+
+        if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
+
+        return $this->service->logicalDelete($form);
+    }
     
     public function asyncDataOrganization()
     {

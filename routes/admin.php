@@ -35,6 +35,7 @@ Route::group(['middleware' => ['routetype:admin']], function () {
     // 患者観察研究データ管理
     Route::get('/patient_value', 'PatientValueController@index')->name('admin.patient_value.index');
     Route::put('/patient_value', 'PatientValueController@asyncUpdate')->name('admin.patient_value.update');
+    Route::delete('/patient_value', 'PatientValueController@asyncLogicalDelete')->name('admin.patient_value.logical_delete');
     Route::get('/patient_value/edit', 'PatientValueController@asyncEdit')->name('admin.patient_value.edit');
     Route::get('/patient_value/search', 'PatientValueController@asyncSearch')->name('admin.patient_value.search');
     Route::get('/patient_value/async/organization_data', 'PatientValueController@asyncDataOrganization')->name('admin.patient_value.async.organization_data');

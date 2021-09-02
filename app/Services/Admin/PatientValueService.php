@@ -11,8 +11,6 @@ use App\Services\Support\Converter;
 use App\Services\Support\DateUtil;
 use App\Services\Support\DBUtil;
 
-use Illuminate\Support\Facades\Log;
-
 class PatientValueService
 {
     /**
@@ -86,6 +84,12 @@ class PatientValueService
         return Converter\PatientValueConverter::convertToOrganizationSearchListData($organizations);
     }
 
+    /**
+     * 患者観察研究データ編集
+     *
+     * @param Form\PatientValueUpdateForm $form
+     * @return type
+     */ 
     public function update(Form\PatientValueUpdateForm $form)
     {
         // 患者コード重複確認用患者データ格納用
@@ -172,6 +176,34 @@ class PatientValueService
         return new Response\SuccessJsonResult;
     }
 
+    /**
+     * 患者観察研究データ論理削除
+     *
+     * @param Form\PatientValueLogicalDeleteForm $form
+     * @return type
+     */
+    public function logicalDelete(Form\PatientValueLogicalDeleteForm $form)
+    {
+        $ids = $form->ids;
+        // TODO 認証回り修正後実装
+        $operated_user_id = 1;
+
+        DBUtil::Transaction(
+            '患者観察研究データ論理削除、 ヒストリーテーブル登録',
+            function () use ($ids, $operated_user_id) {
+                // 論理削除
+                Repos\PatientValueRepository::logicalDeleteByIds($ids);
+
+                // ヒストリーテーブル登録
+                Repos\PatientValueHistoryRepository::insertBulk(
+                    $ids,
+                    $operated_user_id,
+                    Models\HistoryBaseModel::DELETE);
+            }
+        );
+
+        return new Response\SuccessJsonResult;
+    }
 
     private function buildPatientValueSearchValues(Form\PatientValueSearchForm $form)
     {
