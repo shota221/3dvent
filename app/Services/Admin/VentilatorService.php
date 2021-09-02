@@ -131,7 +131,7 @@ class VentilatorService
                     foreach ($rows as $row) {
                         //呼吸器データ移行用準備
                         //現在行のventilatorが登録またはsave対象となっているかどうか。
-                        if (!key_exists($row['ventilator_id'], $map_org_patient_id_to_new) && !key_exists($row['ventilator_id'], $map_org_ventilator_id_to_ventilators)) {
+                        if (!key_exists($row['ventilator_id'], $map_org_ventilator_id_to_new) && !key_exists($row['ventilator_id'], $map_org_ventilator_id_to_ventilators)) {
                             $ventilator_copy = Repos\VentilatorRepository::findOneById($row['ventilator_id'])->replicate();
 
                             if ($organization_id === $ventilator_copy->organization_id) {
@@ -157,7 +157,7 @@ class VentilatorService
 
                             $patient_copy = Repos\PatientRepository::findOneById($row['patient_id'])->replicate();
 
-                            if ($organization_id === $patient_copy->patient_id) {
+                            if ($organization_id === $patient_copy->organization_id) {
                                 //インポート先の組織に登録済みの場合はスキップ
                                 continue;
                             }
@@ -543,7 +543,7 @@ class VentilatorService
 
         $header = config('ventilator_csv.header');
 
-        foreach ($header as $key => $val) {
+        foreach (array_keys($header) as $key) {
             switch ($key) {
                 case 'patient_exists':
                     $row[$key] = intval(!is_null($entity->patient_id));

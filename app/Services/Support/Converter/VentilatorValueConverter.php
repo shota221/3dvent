@@ -192,12 +192,6 @@ class VentilatorValueConverter
 
         $entity->registered_user_id = $user_id;
 
-        //TODO:delete me（実運用前テスト用）//
-        $entity->fixed_flg = 1;
-        $entity->confirmed_flg = 1;
-        ////////////////////////////////////
-
-
         return $entity;
     }
 

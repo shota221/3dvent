@@ -98,7 +98,7 @@ trait CsvLogic
         array $header,
         \Closure $convertFunction,
         \Illuminate\Database\Eloquent\Builder $searchQuery,
-        int $chunkSize = 500,
+        int $chunkSize = 5000,
         string $path_to_save = null
     ) {
         \Log::info('CSV作成を実行します。filename=' . $filename);
@@ -118,11 +118,11 @@ trait CsvLogic
             // if (! $stream = fopen($fileUrl, 'w')) throw new Exceptions\LogicException('ファイルオープンに失敗');
 
             // 2MB以上はファイル生成以下はメモリに展開
-            if (!$stream = fopen($path_to_save, 'w')) throw new Exceptions\CsvLogicException('php://tempファイル生成オープンに失敗');
+            if (!$stream = fopen($path_to_save, 'w')) throw new Exceptions\CsvLogicException($path_to_save . 'ファイル生成オープンに失敗');
 
             if (!fputcsv($stream, $this->utf8ToSjis($header))) throw new Exceptions\CsvLogicException('ファイル書き込み(ヘッダ行)に失敗');
 
-            $searchQuery->chunk($chunkSize, function ($entities) use ($stream, $convertFunction) {
+            $searchQuery->chunk($chunkSize, function ($entities) use ($stream, $convertFunction, $chunkSize, &$finishedRowCount) {
                 // throws Exceptions\LogicException;
                 $rows = $convertFunction($entities);
 
@@ -341,7 +341,6 @@ trait CsvLogic
                 $validation = Validator::make($mapAttributeToRow, $mapAttributeToValidationRule);
 
                 if ($validation->fails()) {
-                    $errors = [];
                     $errorRows[] = $file->key();
                 }
 
@@ -391,7 +390,7 @@ trait CsvLogic
 
                 \Log::info('処理完了行数(ヘッダ行含む)=' . $finishedRowCount);
 
-                return $finishedRowCount;
+                return;
             }
         } catch (Exceptions\LogicException $e) {
             $message = 'processCsv CSV処理に失敗しました。 previous message=' . $e->getMessage();
