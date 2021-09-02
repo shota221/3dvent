@@ -63,10 +63,10 @@
         <th>@lang('messages.edit')</th>
     </tr>
     @foreach ($patient_values as $patient_value)
-    <tr data-id="{{ $patient_value->id }}">
+    <tr>
         <td>
             <div class="form-check">
-                <input type="checkbox" class="form-check-input item-check position-static">
+                <input type="checkbox" class="form-check-input item-check position-static" value="{{ $patient_value->id }}">
             </div>
         </td>
         <td>{{ $patient_value->patient_code }}</td>

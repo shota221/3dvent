@@ -232,8 +232,8 @@ $paginatedList.on(
                 var $element = $(this);
                 var parameters = { 'ids': [] }
 
-                $('.item-check:checked').closest('tr').each(function (i, elm) {
-                    parameters['ids'].push($(elm).data('id'));
+                $('.item-check:checked').each(function (i, elm) {
+                    parameters['ids'].push($(elm).val());
                 });
 
                 var successCallback = function (data) {
