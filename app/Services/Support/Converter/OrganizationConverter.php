@@ -19,7 +19,7 @@ class OrganizationConverter
     $representative_email,
     $status = Organization::DISABLED,
     $patient_obs_approved_flg = Organization::PATIENT_OBS_UNAPPROVED,
-    $edcid = null,
+    $edcid = null
   ) {
     $entity = new Organization;
 
@@ -42,7 +42,7 @@ class OrganizationConverter
     $representative_email,
     $status,
     $patient_obs_approved_flg,
-    $edcid,
+    $edcid
   ) {
 
     $entity->name = $name;
@@ -96,7 +96,7 @@ class OrganizationConverter
     );
   }
 
-  public static function convertToUsersListElmEntity(User $entity)
+  private static function convertToUsersListElm(User $entity)
   {
     $user_result = new UserResult;
 
@@ -106,8 +106,17 @@ class OrganizationConverter
 
     return $user_result;
   }
+
+  public static function convertToUsersList(Collection $entities)
+  {
+    return array_map(
+      function($entity){
+        return self::convertToUsersListElm($entity);
+      },$entities->all()
+    );
+  }
   
-  public static function convertToOrganizationSearchList(\Illuminate\Database\Eloquent\Collection $entities)
+  public static function convertToOrganizationSearchList(Collection $entities)
   {
       $organizations = array_map(
           function($entity) {

@@ -17,7 +17,7 @@ class OrganizationController extends Controller
         $this->service = new Service\OrganizationService;
     }
 
-    function index(Request $request)
+    public function index(Request $request)
     {
         $path = $request->path();
         $organization_paginator = $this->service->getOrganizationData($path);
@@ -26,7 +26,7 @@ class OrganizationController extends Controller
         return view('index', compact('organization_paginator'));
     }
 
-    function asyncSearch(Request $request)
+    public function asyncSearch(Request $request)
     {
         $form = new Form\OrganizationSearchForm($request->all());
 
@@ -38,7 +38,7 @@ class OrganizationController extends Controller
         return view('list', compact('organization_paginator'));
     }
 
-    function asyncCreate(Request $request)
+    public function asyncCreate(Request $request)
     {
         $form = new Form\OrganizationForm($request->all());
 
@@ -47,7 +47,7 @@ class OrganizationController extends Controller
         return $this->service->create($form);
     }
 
-    function asyncUpdate(Request $request)
+    public function asyncUpdate(Request $request)
     {
         $form = new Form\OrganizationUpdateForm($request->all());
 
@@ -56,16 +56,18 @@ class OrganizationController extends Controller
         return $this->service->update($form);
     }
 
-    function asyncUsers(Request $request)
+    public function asyncUsers(Request $request)
     {
         $form = new Form\OrganizationUsersForm($request->all());
+
+        if ($form->hasError()) throw new InvalidFormException($form);
 
         $users = $this->service->getUsersList($form);
 
         return view('userList', compact('users'));
     }
 
-    function asyncSearchList()
+    public function asyncSearchList()
     {
         $response = $this->service->getSearchList();
 

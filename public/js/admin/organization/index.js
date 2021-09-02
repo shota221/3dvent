@@ -5,10 +5,12 @@ const
     $modalCancelBtn = $('button.modal-cancel'),
     $editModal = $('#modal-organization-update'),
     $paginatedList = $('#paginated-list'),
+    $userList = $('#user-list'),
     $organizationUpdateBtn = $('#async-organization-update'),
     $searchForm = $('#async-search-form'),
     $searchBtn = $('#async-search'),
-    $clearSearchFormBtn = $('#clear-search-form')
+    $clearSearchFormBtn = $('#clear-search-form'),
+    $userListModal = $('#modal-user-list')
     ;
 
 $showRegisterModalBtn.on(
@@ -41,6 +43,11 @@ $organizationCreateBtn.on(
             var $featureElement = $('.page-item' + '.active').children('button');
 
             var parameters = {};
+
+            if (!$featureElement.length) {
+                $featureElement = $searchBtn;
+                parameters = buildSearchParameters($searchForm);
+            }
 
             var successCallback = function (paginated_list) {
                 $paginatedList.html(paginated_list);
@@ -85,9 +92,7 @@ $paginatedList.on(
 $organizationUpdateBtn.on(
     'click',
     function () {
-        //TODO:parameters格納
         var parameters = {};
-
 
         var $targetForm = $('form[name="organization-update"]');
 
@@ -105,6 +110,11 @@ $organizationUpdateBtn.on(
 
             var parameters = {};
 
+            if (!$featureElement.length) {
+                $featureElement = $searchBtn;
+                parameters = buildSearchParameters($searchForm);
+            }
+
             var successCallback = function (paginated_list) {
                 $paginatedList.html(paginated_list);
             }
@@ -119,9 +129,6 @@ $organizationUpdateBtn.on(
         return false;
     });
 
-//ユーザー一覧モーダル
-var $userListModal = $('#modal-user-list');
-
 $paginatedList.on(
     'click',
     '.show-user-list-modal',
@@ -133,7 +140,7 @@ $paginatedList.on(
         parameters['id'] = id;
 
         var successCallback = function (user_list) {
-            $('#user-list').html(user_list);
+            $userList.html(user_list);
             $userListModal.modal();
         };
 

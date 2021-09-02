@@ -44,7 +44,7 @@ class VentilatorRepository
         return static::query()->where('id', $id)->first();
     }
 
-    public static function deleteByIds($ids)
+    public static function logicalDeleteByIds($ids)
     {
         return static::query()->whereIn('id', $ids)->update(['deleted_at' => DateUtil::now(), 'active' => null]);
     }
@@ -133,12 +133,18 @@ class VentilatorRepository
                 'ventilators.*',
                 'organizations.name AS organization_name',
                 'users.name AS registered_user_name',
-                'ventilator_bugs.ventilator_id AS has_bug'
+                \DB::raw(
+                    '(
+                        CASE WHEN ventilator_bugs.ventilator_id IS NULL THEN 0
+                        ELSE 1 END 
+                    ) as has_bug'
+                )
             ])
             ->distinct()
             ->limit($limit)
             ->offset($offset)
             ->orderBy('created_at', 'DESC')
+            ->orderBy('gs1_code', 'ASC')
             ->get();
     }
 

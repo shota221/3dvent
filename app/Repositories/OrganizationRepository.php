@@ -43,6 +43,7 @@ class OrganizationRepository
             ->limit($limit)
             ->offset($offset)
             ->orderBy('created_at', 'DESC')
+            ->orderBy('code','ASC')
             ->get();
     }
 

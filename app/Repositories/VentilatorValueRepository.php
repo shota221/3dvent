@@ -243,4 +243,9 @@ class VentilatorValueRepository
 
         \DB::insert($query, $records);
     }
+
+    public static function listIdByVentilatorIds(array $ventilator_ids)
+    {
+        return static::query()->whereIn('ventilator_id', $ventilator_ids)->pluck('id');
+    }
 }

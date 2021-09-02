@@ -148,12 +148,7 @@ class OrganizationService
     {
         $users = Repos\UserRepository::findByOrganizationId($form->id);
 
-        return array_map(
-            function ($user) {
-                return Converter\OrganizationConverter::convertToUsersListElmEntity($user);
-            },
-            $users->all()
-        );
+        return Converter\OrganizationConverter::convertToUsersList($users);
     }
 
     /**

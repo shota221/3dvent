@@ -21,7 +21,7 @@ class PatientValueHistoryRepository
         $query = self::joinUserAndOrgazation($query);
         $query = self::createWhereClauseFromSearchValues($query, $search_values);
 
-        return $query->count();    
+        return $query->count();
     }
 
     public static function findBySeachValuesAndLimitOffsetOrderByPatientValueRegisteredAtAscAndCreatedAtAsc(array $search_values, int $limit, int $offset)
@@ -68,10 +68,10 @@ class PatientValueHistoryRepository
 
         $organization_table = Organization::tableName();
 
-        $patient_value_table = PatientValue::tableName();    
-        
+        $patient_value_table = PatientValue::tableName();
+
         $query->where($organization_table . '.edcid', $search_values['edcid']);
-        
+
         $query->where($organization_table . '.patient_obs_approved_flg', $search_values['patient_obs_approved_flg']);
 
         if (isset($search_values['datetime_from'])) {
@@ -89,13 +89,13 @@ class PatientValueHistoryRepository
     private static function createWhereClauseFromSearchValues($query, array $search_values)
     {
         $table = PatientValueHistory::tableName();
-        
+
         $organization_table = Organization::tableName();
-        
+
         $query->where($organization_table . '.edcid', $search_values['edcid']);
-        
+
         $query->where($organization_table . '.patient_obs_approved_flg', $search_values['patient_obs_approved_flg']);
-        
+
         if (isset($search_values['datetime_from'])) {
             $query->where($table . '.created_at', '>=', $search_values['datetime_from']);
         }
@@ -112,16 +112,15 @@ class PatientValueHistoryRepository
     private static function joinUserAndOrgazation($query)
     {
         $table = PatientValueHistory::tableName();
-        
+
         $user_table = User::tableName();
 
         $organization_table = Organization::tableName();
 
-        $query->join($user_table, $table . '.operated_user_id', '=' , $user_table . '.id');
-        $query->join($organization_table, $user_table . '.organization_id', '=' , $organization_table . '.id');
+        $query->join($user_table, $table . '.operated_user_id', '=', $user_table . '.id');
+        $query->join($organization_table, $user_table . '.organization_id', '=', $organization_table . '.id');
 
         return $query;
-
     }
 
     private static function joinPatientValueAndPatientAndOrganization($query)
@@ -129,14 +128,14 @@ class PatientValueHistoryRepository
         $table = PatientValueHistory::tableName();
 
         $patient_value_table = PatientValue::tableName();
-        
+
         $patient_table = Patient::tableName();
-        
+
         $organization_table = Organization::tableName();
-        
-        $query->join($patient_value_table, $table . '.patient_value_id', '=' , $patient_value_table . '.id');
-        $query->join($patient_table, $patient_value_table . '.patient_id', '=' , $patient_table . '.id');
-        $query->join($organization_table, $patient_table . '.organization_id', '=' , $organization_table . '.id');
+
+        $query->join($patient_value_table, $table . '.patient_value_id', '=', $patient_value_table . '.id');
+        $query->join($patient_table, $patient_value_table . '.patient_id', '=', $patient_table . '.id');
+        $query->join($organization_table, $patient_table . '.organization_id', '=', $organization_table . '.id');
 
         $query->addSelect([
             $table . '.*',
@@ -149,6 +148,32 @@ class PatientValueHistoryRepository
         return $query;
     }
 
+    public static function insertBulk(array $patient_value_ids, $operated_user_id, $operation)
+    {
+        $count = count($patient_value_ids);
 
-    
+        $placeholder = substr(str_repeat(',(?,?,?)', $count), 1);
+
+        $records = [];
+
+        for ($i = 0; $i < $count; $i++) {
+            $record = [
+                $patient_value_ids[$i],
+                $operated_user_id,
+                $operation
+            ];
+
+            $records = array_merge($records, $record);
+        }
+
+        $query = <<<EOM
+            INSERT INTO 
+                patient_value_histories
+                (patient_value_id,operated_user_id,operation)
+            VALUES
+                {$placeholder}
+        EOM;
+
+        \DB::insert($query, $records);
+    }
 }

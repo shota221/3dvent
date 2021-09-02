@@ -196,4 +196,9 @@ class PatientValueRepository
 
         return $query;
     }
+
+    public static function listIdByPatientIds(array $patient_ids)
+    {
+        return static::query()->whereIn('patient_id',$patient_ids)->pluck('id');
+    }
 }

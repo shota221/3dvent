@@ -19,7 +19,7 @@ class VentilatorController extends Controller
         $this->service = new Service\VentilatorService;
     }
 
-    function index(Request $request)
+    public function index(Request $request)
     {
         $path = $request->path();
         $ventilator_paginator = $this->service->getVentilatorData($path);
@@ -27,7 +27,7 @@ class VentilatorController extends Controller
         return view('index', compact('ventilator_paginator'));
     }
 
-    function asyncSearch(Request $request)
+    public function asyncSearch(Request $request)
     {
         $form = new Form\VentilatorSearchForm($request->all());
 
@@ -38,7 +38,7 @@ class VentilatorController extends Controller
         return view('list', compact('ventilator_paginator'));
     }
 
-    function asyncUpdate(Request $request)
+    public function asyncUpdate(Request $request)
     {
         $form = new Form\VentilatorUpdateForm($request->all());
 
@@ -47,7 +47,7 @@ class VentilatorController extends Controller
         return $this->service->update($form);
     }
 
-    function asyncPatient(Request $request)
+    public function asyncPatient(Request $request)
     {
         $form = new Form\VentilatorPatientForm($request->all());
 
@@ -56,7 +56,7 @@ class VentilatorController extends Controller
         return $response;
     }
 
-    function asyncBulkDelete(Request $request)
+    public function asyncBulkDelete(Request $request)
     {
         $form = new Form\VentilatorDeleteForm($request->all());
 
@@ -65,7 +65,7 @@ class VentilatorController extends Controller
         return $reponse;
     }
 
-    function asyncBugs(Request $request)
+    public function asyncBugs(Request $request)
     {
         $form = new Form\VentilatorBugsForm($request->all());
 
@@ -74,7 +74,7 @@ class VentilatorController extends Controller
         return view('ventilatorBugList', compact('bugs'));
     }
 
-    function exportCsv(Request $request)
+    public function exportCsv(Request $request)
     {
         $form = new Form\VentilatorCsvExportForm($request->all());
 
@@ -86,7 +86,7 @@ class VentilatorController extends Controller
         );
     }
 
-    function importCsv(Request $request)
+    public function importCsv(Request $request)
     {
         $form = new Form\VentilatorCsvImportForm($request->all());
 

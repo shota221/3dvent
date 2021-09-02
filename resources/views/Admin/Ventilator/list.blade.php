@@ -29,7 +29,7 @@
             data-expiration_date="{{ $ventilator->expiration_date }}"
             data-start_using_at="{{ $ventilator->start_using_at }}">
             <td class="align-middle">
-                <div class="form-check"><input type="checkbox" class="form-check-input item-check position-static">
+                <div class="form-check"><input type="checkbox" class="form-check-input item-check position-static" value={{ $ventilator->id }}>
                 </div>
             </td>
             <td class="align-middle"><a href="#" class="show-edit-modal"

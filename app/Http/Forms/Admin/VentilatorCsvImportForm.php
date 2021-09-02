@@ -21,6 +21,6 @@ class VentilatorCsvImportForm extends BaseForm
 
     protected function bind($input)
     {
-        $this->organization_id = $input['organization_id'];
+        $this->organization_id = intval($input['organization_id']);
     }
 }

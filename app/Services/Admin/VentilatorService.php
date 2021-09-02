@@ -7,6 +7,7 @@ use App\Exceptions\InvalidCsvException;
 use App\Exceptions\InvalidFormException;
 use App\Http\Forms\Admin as Form;
 use App\Http\Response as Response;
+use App\Models\HistoryBaseModel;
 use App\Models\Patient;
 use App\Repositories as Repos;
 use App\Services\Support\Converter;
@@ -59,7 +60,10 @@ class VentilatorService
         $map_org_ventilator_id_to_new = [];
         //新たに挿入されたpatient_idともともとのpatient_idのマッピング
         $map_org_patient_id_to_new = [];
-
+        //新たに挿入されたventilator_value列。chunkをまたいで同じventilator_idのventilator_valueが挿入されたときのhistoriesの重複対策。
+        $saved_ventilator_value_id = [];
+        //新たに挿入されたpatient_value列。historiesの重複対策。
+        $saved_patient_value_id = [];
 
         //TODO:認証済みユーザーのid取得
         $registered_user_id = 1;
@@ -69,7 +73,7 @@ class VentilatorService
                 $file_url,
                 config('ventilator_csv.header'),
                 config('ventilator_csv.validation_rule'),
-                function ($rows) use ($organization_id, $registered_user_id, &$map_org_ventilator_id_to_new, &$map_org_patient_id_to_new, $form) {
+                function ($rows) use ($organization_id, $registered_user_id, &$map_org_ventilator_id_to_new, &$map_org_patient_id_to_new, &$saved_ventilator_value_id, &$saved_patient_value_id, $form) {
                     //save対象のventilator列
                     $map_org_ventilator_id_to_ventilators = [];
                     //save対象のpatient列
@@ -288,6 +292,8 @@ class VentilatorService
                             $registered_user_id,
                             &$map_org_ventilator_id_to_new,
                             &$map_org_patient_id_to_new,
+                            &$saved_ventilator_value_id,
+                            &$saved_patient_value_id,
                         ) {
                             $update_target_ventilator_id = [];
                             $update_target_ventilator_patient_id = [];
@@ -296,8 +302,6 @@ class VentilatorService
                                 //insertするventilatorごとの新旧idの紐付けを行いたいので個別saveとする。
                                 foreach ($map_org_ventilator_id_to_ventilators as $org_ventilator_id => $ventilator) {
                                     $ventilator->save();
-
-
 
                                     //patient insert後に対応ventialtor.patient_idをbulk update
                                     if (!is_null($ventilator->patient_id)) {
@@ -333,6 +337,7 @@ class VentilatorService
                                 );
                             }
 
+                            //patient_valueバルクインサート
                             if (!empty($insert_target_org_patient_id)) {
                                 $insert_target_patient_id = array_map(
                                     function ($org_patient_id) use ($map_org_patient_id_to_new) {
@@ -360,8 +365,27 @@ class VentilatorService
                                     $insert_target_adverse_event_contents,
                                     $registered_user_id
                                 );
+
+                                //patient_value_historiesバルクインサート
+                                //現在のchunkで新たに挿入されたpatient_valueのpatient_id列=$insert_target_patient_idでpatient_value_idをselect(これらpatient_idは必ずこのインポートで挿入されたものである)
+                                //$saved_patient_value_idに含まれていないものを抽出→バルクインサート
+                                //$saved_patient_value_idを更新
+                                $chunk_saved_patient_value_id = Repos\PatientValueRepository::listIdByPatientIds($insert_target_patient_id)->toArray();
+                                $chunk_saved_patient_value_id = array_diff($chunk_saved_patient_value_id, $saved_patient_value_id);
+
+                                Repos\PatientValueHistoryRepository::insertBulk(
+                                    $chunk_saved_patient_value_id,
+                                    $registered_user_id,
+                                    HistoryBaseModel::CREATE
+                                );
+
+                                $saved_patient_value_id = array_merge($saved_patient_value_id, $chunk_saved_patient_value_id);
                             }
 
+
+
+
+                            //ventilator_valueバルクインサート
                             if (!empty($insert_target_org_ventilator_id)) {
                                 $insert_target_ventilator_id = array_map(
                                     function ($org_ventilator_id) use ($map_org_ventilator_id_to_new) {
@@ -403,6 +427,21 @@ class VentilatorService
                                     $insert_target_confirmed_at,
                                     $registered_user_id
                                 );
+
+                                //ventilator_value_historiesバルクインサート
+                                //現在のchunkで新たに挿入されたventilator_valueのventilator_id列=$insert_target_ventilator_idでventilator_value_idをselect(これらventilator_idは必ずこのインポートで挿入されたものである)
+                                //$saved_ventilator_value_idに含まれていないものを抽出→バルクインサート
+                                //$saved_ventialtor_value_idを更新
+                                $chunk_saved_ventilator_value_id = Repos\VentilatorValueRepository::listIdByVentilatorIds($insert_target_ventilator_id)->toArray();
+                                $chunk_saved_ventilator_value_id = array_diff($chunk_saved_ventilator_value_id, $saved_ventilator_value_id);
+
+                                Repos\VentilatorValueHistoryRepository::insertBulk(
+                                    $chunk_saved_ventilator_value_id,
+                                    $registered_user_id,
+                                    HistoryBaseModel::CREATE
+                                );
+
+                                $saved_ventilator_value_id = array_merge($saved_ventilator_value_id, $chunk_saved_ventilator_value_id);
                             }
                         }
                     );
@@ -440,7 +479,7 @@ class VentilatorService
         DBUtil::Transaction(
             'MicroVent削除',
             function () use ($ids) {
-                Repos\VentilatorRepository::deleteByIds($ids);
+                Repos\VentilatorRepository::logicalDeleteByIds($ids);
             }
         );
 

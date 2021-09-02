@@ -13,7 +13,8 @@ const
     $searchForm = $('#async-search-form'),
     $searchBtn = $('#async-search'),
     $clearSearchFormBtn = $('#clear-search-form'),
-    $select2OrganizationName = $('#search-organization-name')
+    $select2OrganizationName = $('#search-organization-name'),
+    $ventilatorBugList = $('#ventilator-bug-list')
     ;
 
 
@@ -72,7 +73,6 @@ $ventilatorUpdateBtn.on(
     function () {
         var parameters = {};
 
-
         var $targetForm = $('form[name="ventilator-update"]');
 
         parameters['id'] = $targetForm.find('input[name="id"]').val();
@@ -82,6 +82,11 @@ $ventilatorUpdateBtn.on(
             var $featureElement = $('.page-item' + '.active').children('button');
 
             var parameters = {};
+
+            if (!$featureElement.length) {
+                $featureElement = $searchBtn;
+                parameters = buildSearchParameters($searchForm);
+            }
 
             var successCallback = function (paginated_list) {
                 $paginatedList.html(paginated_list);
@@ -109,7 +114,7 @@ $paginatedList.on(
         parameters['id'] = id;
 
         var successCallback = function (ventilator_bug_list) {
-            $('#ventilator-bug-list').html(ventilator_bug_list);
+            $ventilatorBugList.html(ventilator_bug_list);
             $ventilatorBugListModal.modal();
         };
 
@@ -165,14 +170,19 @@ $paginatedList.on(
 
                 var parameters = { 'ids': [] }
 
-                $('.item-check:checked').closest('tr').each(function (i, elm) {
-                    parameters['ids'].push($(elm).data('id'));
+                $('.item-check:checked').each(function (i, elm) {
+                    parameters['ids'].push($(elm).val());
                 });
 
                 var successCallback = function (data) {
                     var $featureElement = $('.page-item' + '.active').children('button');
 
                     var parameters = {};
+
+                    if (!$featureElement.length) {
+                        $featureElement = $searchBtn;
+                        parameters = buildSearchParameters($searchForm);
+                    }
 
                     var successCallback = function (paginated_list) {
                         $paginatedList.html(paginated_list);
@@ -200,11 +210,14 @@ $exportCsvBtn.on(
         if (selectedCount > 0) {
             var $form = $(this).closest('form');
 
-            $('.item-check:checked').closest('tr').each(function (i, elm) {
-                $('<input>').attr({
-                    'type': 'hidden',
-                    'name': 'ids[]',
-                    'value': $(elm).data('id')
+            $form.find('input').remove();
+
+            console.log($form.html());
+            $('.item-check:checked').each(function (i, elm) {
+                $("<input>", {
+                    type: "hidden",
+                    name: "ids[]",
+                    value: $(elm).val()
                 }).appendTo($form);
             });
         } else {
@@ -239,6 +252,11 @@ $importCsvBtn.on(
             var $featureElement = $('.page-item' + '.active').children('button');
 
             var parameters = {};
+
+            if (!$featureElement.length) {
+                $featureElement = $searchBtn;
+                parameters = buildSearchParameters($searchForm);
+            }
 
             var successCallback = function (paginated_list) {
                 $paginatedList.html(paginated_list);
