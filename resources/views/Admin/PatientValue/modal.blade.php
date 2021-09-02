@@ -10,6 +10,7 @@
 
     @slot('content')
         <input type="hidden" name="id">
+        <input type="hidden" name="organization_id">
         {{--患者番号--}}
         <div class="form-group">
             <label for="patient_code">@lang('messages.patient_code')</label>

@@ -1,5 +1,6 @@
 const
     $asyncOrganizationData = $('#async-organization-data'),
+    $asyncRegisteredUserData = $('#async-registered-user-data'),
     $asyncSearch = $('#async-search'),
     $searchForm = $('#async-search-form'),
     $searchFormAllInput = $('#async-search-form').find('input'),
@@ -11,6 +12,22 @@ const
     $cancelModal = $('button.modal-cancel'),
     $clearSearchForm = $('#clear-search-form'),
     $editModal = $('#edit-modal'),
+    $editModalAdverseEventContentsInput = $('#edit-modal').find('[name=adverse_event_contents]'),
+    $editModalAdverseEventFlgInput = $('#edit-modal').find('[name=adverse_event_flg]'),
+    $editModalAgeInput = $('#edit-modal').find('[name=age]'),
+    $editModalDiscontinuationAtInput = $('#edit-modal').find('[name=discontinuation_at]'),
+    $editModalHospitalInput = $('#edit-modal').find('[name=hospital]'),
+    $editModalIdInput = $('#edit-modal').find('[name=id]'),
+    $editModalNationalInput = $('#edit-modal').find('[name=national]'),
+    $editModalOptOutFlgInput = $('#edit-modal').find('[name=opt_out_flg]'),
+    $editModalOrganizationIdInput = $('#edit-modal').find('[name=organization_id]'),
+    $editModalOtherDiseaseName1Input = $('#edit-modal').find('[name=other_disease_name_1]'),
+    $editModalOtherDiseaseName2Input = $('#edit-modal').find('[name=other_disease_name_2]'),
+    $editModalOutcomeInput = $('#edit-modal').find('[name=outcome]'),
+    $editModalPatientCodeInput = $('#edit-modal').find('[name=patient_code]'),
+    $editModalTreatmentInput = $('#edit-modal').find('[name=treatment]'),
+    $editModalUsedPlaceInput = $('#edit-modal').find('[name=used_place]'),
+    $editModalVentDiseaseNameInput = $('#edit-modal').find('[name=vent_disease_name]'),
     $paginatedList = $('#paginated-list'),
     $patientCode = $('#patient_code'),
     $select2OrganizationName = $('#select2-organization-name'),
@@ -28,7 +45,7 @@ $paginatedList.on(
         parameters['id'] = $(this).data('id');
         
         var successCallback = function (data) {
-
+    
             $form = $editModal.find('form[name="update"]').eq(0);
 
             utilFormInputParameters($form, data['result']);
@@ -109,6 +126,55 @@ $asyncSearch.on(
         var $element = $(this);
 
         utilAsyncExecuteAjax($element, parameters, false, successCallback);
+
+        return false;
+    }
+)
+
+// async-update
+$('#async-update').on(
+    'click',
+    function(e) {
+
+        var parameters = {};
+        parameters['id'] = $editModalIdInput.val();
+        parameters['organization_id'] = $editModalOrganizationIdInput.val();
+        parameters['patient_code'] = $editModalPatientCodeInput.val();
+        parameters['opt_out_flg'] = $editModalOptOutFlgInput.val();
+        parameters['age'] = $editModalAgeInput.val();
+        parameters['vent_disease_name'] = $editModalVentDiseaseNameInput.val();
+        parameters['other_disease_name_1'] = $editModalOtherDiseaseName1Input.val();
+        parameters['other_disease_name_2'] = $editModalOtherDiseaseName2Input.val();
+        parameters['used_place'] =$editModalUsedPlaceInput.val();
+        parameters['hospital'] = $editModalHospitalInput.val();
+        parameters['national'] = $editModalNationalInput.val();
+        parameters['discontinuation_at'] = $editModalDiscontinuationAtInput.val();
+        parameters['outcome'] = $editModalOutcomeInput.val();
+        parameters['treatment'] = $editModalTreatmentInput.val();
+        parameters['adverse_event_flg'] = $editModalAdverseEventFlgInput.val();
+        parameters['adverse_event_contents'] = $editModalAdverseEventContentsInput.val();
+        
+        var successCallback = function (data) {
+        var $element = $('.page-item' + '.active').children('button');
+
+            if (! $element.length) {
+                $element = $asyncSearch;
+            } 
+
+            var $form = $searchForm;
+            var parameters = buildSearchParameters($form);
+            
+            var successCallback = function(pagineted_list) {
+                $paginatedList.html(pagineted_list);
+            } 
+            utilAsyncExecuteAjax($element, parameters, false, successCallback);
+          
+            $editModal.modal('hide');
+        }
+
+        var $element = $(this);
+        
+        utilAsyncExecuteAjax($element, parameters, true, successCallback);
 
         return false;
     }

@@ -31,6 +31,7 @@ class PatientValueRepository
             'patient_values.*',
             'patients.patient_code',
             'organizations.name AS organization_name',
+            'organizations.id AS organization_id',
         ]);
         
         return $query->where('patient_values.id', $id)->first();

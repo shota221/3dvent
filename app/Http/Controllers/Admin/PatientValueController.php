@@ -49,7 +49,11 @@ class PatientValueController extends Controller
 
     public function asyncUpdate(Request $request)
     {
+        $form = new Form\PatientValueUpdateForm($request->all());
 
+        if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
+        
+        return $this->service->update($form);
     }
     
     public function asyncDataOrganization()

@@ -16,6 +16,14 @@ class PatientRepository
         return static::query()->where('id', $patient_id)->first();
     }
 
+    public static function findOneByOrganizationIdAndPatientCode(int $organization_id, string $patient_code)
+    {
+        return static::query()
+            ->where('organization_id', $organization_id)
+            ->where('patient_code', $patient_code)
+            ->first();
+    }
+
     public static function existsByPatientCodeAndOrganizationId($patient_code, $organization_id)
     {
         return static::query()

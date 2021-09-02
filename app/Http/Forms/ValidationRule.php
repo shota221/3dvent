@@ -30,7 +30,14 @@ class ValidationRule
 
         VALUE_BOOLEAN   = 'boolean',
 
-        FLG_INTEGER = 'integer|min:0|max:1';
+        FLG_INTEGER = 'integer|min:0|max:1',
+
+        USED_PLACE_INTEGER = 'integer|min:1|max:8', // 使用場所 
+
+        OUTCOME_INTEGER = 'integer|min:1|max:4', //　使用中止時の転帰
+
+        TREATMENT_INTEGER = 'integer|min:1|max:6'; // 使用中止後の呼吸不全治療
+
 
     /**
      * ある文字列が含まれない正規表現を返す

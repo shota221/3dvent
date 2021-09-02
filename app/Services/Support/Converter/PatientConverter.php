@@ -245,4 +245,13 @@ class PatientConverter
 
     return $res;
   }
+
+  public static function convertToPatientCodeUpdateEntity(
+    Patient $entity,
+    string $patient_code = null
+  ) {
+    $entity->patient_code = $patient_code;
+
+    return $entity;
+  }
 }
