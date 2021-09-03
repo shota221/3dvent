@@ -54,13 +54,13 @@ class PatientValueUpdateForm extends BaseForm
         $this->organization_id = intval($input['organization_id']);
         $this->patient_code = isset($input['patient_code']) ? strval($input['patient_code']) : null;
         $this->opt_out_flg = isset($input['opt_out_flg']) ? intval($input['opt_out_flg']) : null;
-        $this->age = isset($input['age']) ? strval($input['age']) : null;
-        $this->vent_disease_name = isset($input['vent_disease_name']) ? strval($input['vent_disease_name']) : null;
-        $this->other_disease_name_1 = isset($input['other_disease_name_1']) ? strval($input['other_disease_name_1']) : null;
-        $this->other_disease_name_2 = isset($input['other_disease_name_2']) ? strval($input['other_disease_name_2']) : null;
+        $this->age = isset($input['age']) ? strval($input['age']) : '';
+        $this->vent_disease_name = isset($input['vent_disease_name']) ? strval($input['vent_disease_name']) : '';
+        $this->other_disease_name_1 = isset($input['other_disease_name_1']) ? strval($input['other_disease_name_1']) : '';
+        $this->other_disease_name_2 = isset($input['other_disease_name_2']) ? strval($input['other_disease_name_2']) : '';
         $this->used_place = isset($input['used_place']) ? intval($input['used_place']) : null;
-        $this->hospital = isset($input['hospital']) ? strval($input['hospital']) : null;
-        $this->national = isset($input['national']) ? strval($input['national']) : null;
+        $this->hospital = isset($input['hospital']) ? strval($input['hospital']) : '';
+        $this->national = isset($input['national']) ? strval($input['national']) : '';
         
         $this->discontinuation_at = isset($input['discontinuation_at']) 
         ? Support\DateUtil::parseToDateTime($input['discontinuation_at']) 
@@ -69,6 +69,6 @@ class PatientValueUpdateForm extends BaseForm
         $this->outcome = isset($input['outcome']) ? intval($input['outcome']) : null;
         $this->treatment = isset($input['treatment']) ? intval($input['treatment']) : null;
         $this->adverse_event_flg = isset($input['adverse_event_flg']) ? intval($input['adverse_event_flg']) : null;
-        $this->adverse_event_contents = isset($input['adverse_event_contents']) ? strval($input['adverse_event_contents']) : null;   
+        $this->adverse_event_contents = isset($input['adverse_event_contents']) ? strval($input['adverse_event_contents']) : '';   
     }
 }

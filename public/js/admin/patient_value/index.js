@@ -14,13 +14,11 @@ const
     $clearSearchForm = $('#clear-search-form'),
     $editModal = $('#edit-modal'),
     $editModalAdverseEventContentsInput = $('#edit-modal').find('[name=adverse_event_contents]'),
-    $editModalAdverseEventFlgInput = $('#edit-modal').find('[name=adverse_event_flg]'),
     $editModalAgeInput = $('#edit-modal').find('[name=age]'),
     $editModalDiscontinuationAtInput = $('#edit-modal').find('[name=discontinuation_at]'),
     $editModalHospitalInput = $('#edit-modal').find('[name=hospital]'),
     $editModalIdInput = $('#edit-modal').find('[name=id]'),
     $editModalNationalInput = $('#edit-modal').find('[name=national]'),
-    $editModalOptOutFlgInput = $('#edit-modal').find('[name=opt_out_flg]'),
     $editModalOrganizationIdInput = $('#edit-modal').find('[name=organization_id]'),
     $editModalOtherDiseaseName1Input = $('#edit-modal').find('[name=other_disease_name_1]'),
     $editModalOtherDiseaseName2Input = $('#edit-modal').find('[name=other_disease_name_2]'),
@@ -33,7 +31,7 @@ const
     $patientCode = $('#patient_code'),
     $select2OrganizationName = $('#select2-organization-name'),
     $select2RegisteredUserName = $('#select2-registered-user-name');
-
+    
 // show edit modal
 $paginatedList.on(
     'click',
@@ -141,7 +139,7 @@ $('#async-update').on(
         parameters['id'] = $editModalIdInput.val();
         parameters['organization_id'] = $editModalOrganizationIdInput.val();
         parameters['patient_code'] = $editModalPatientCodeInput.val();
-        parameters['opt_out_flg'] = $editModalOptOutFlgInput.val();
+        parameters['opt_out_flg'] = $editModal.find('[name=opt_out_flg]:checked').val();
         parameters['age'] = $editModalAgeInput.val();
         parameters['vent_disease_name'] = $editModalVentDiseaseNameInput.val();
         parameters['other_disease_name_1'] = $editModalOtherDiseaseName1Input.val();
@@ -152,7 +150,7 @@ $('#async-update').on(
         parameters['discontinuation_at'] = $editModalDiscontinuationAtInput.val();
         parameters['outcome'] = $editModalOutcomeInput.val();
         parameters['treatment'] = $editModalTreatmentInput.val();
-        parameters['adverse_event_flg'] = $editModalAdverseEventFlgInput.val();
+        parameters['adverse_event_flg'] = $editModal.find('[name=adverse_event_flg]:checked').val();
         parameters['adverse_event_contents'] = $editModalAdverseEventContentsInput.val();
         
         var successCallback = function (data) {

@@ -114,33 +114,14 @@ class PatientValueService
             throw new Exceptions\InvalidFormException($form);
         }
 
-        $patient = Repos\PatientRepository::findOneById($old_patient_value->patient_id);
-        $patient_entity = Converter\PatientConverter::convertToPatientCodeUpdateEntity($patient, $form->patient_code);
-
-        // 編集元データの複製
-        $old_patient_value_copy = $old_patient_value->replicate();
+        $patient_entity = Repos\PatientRepository::findOneById($old_patient_value->patient_id);
+        $patient_entity->patient_code =  $form->patient_code;
 
         // TODO 認証機能実装後修正
         $user_id = 1;
 
         // 編集後データ作成
-        $new_patient_value = Converter\PatientConverter::convertToPatientValueUpdateEntity(
-            $old_patient_value_copy,
-            $user_id,
-            $form->opt_out_flg,
-            $form->age,
-            $form->vent_disease_name,
-            $form->other_disease_name_1,
-            $form->other_disease_name_2,
-            $form->used_place,
-            $form->hospital,
-            $form->national,
-            $form->discontinuation_at,
-            $form->outcome,
-            $form->treatment,
-            $form->adverse_event_flg,
-            $form->adverse_event_contents
-        );
+        $new_patient_value = $this->buildNewPatientValue($old_patient_value, $form, $user_id);
 
         // 編集元データにdeleted_atを記録
         $old_patient_value->deleted_at = DateUtil::toDateTimeStr(DateUtil::now());
@@ -185,6 +166,12 @@ class PatientValueService
     public function logicalDelete(Form\PatientValueLogicalDeleteForm $form)
     {
         $ids = $form->ids;
+
+        // ページネーションで表示する件数より多い場合は例外処理
+        if (count($ids) > config('view.items_per_page')) {
+            throw new Exceptions\InvalidException('validation.excessive_number_of_registrations');
+        }
+
         // TODO 認証回り修正後実装
         $operated_user_id = 1;
 
@@ -215,5 +202,40 @@ class PatientValueService
         if (isset($form->registered_at_to)) $search_values['registered_at_to'] = $form->registered_at_to;
 
         return $search_values;
+    }
+
+    private function buildNewPatientValue(
+        Models\PatientValue $entity, 
+        Form\PatientValueUpdateForm $form, 
+        int $patient_obs_user_id)
+    {
+        // 編集元データの複製
+        $new_patient_value = $entity->replicate();
+
+        // 編集後データ作成
+        $new_patient_value->patient_obs_user_id = $patient_obs_user_id;
+
+        if (! is_null($form->opt_out_flg)) {
+            $new_patient_value->opt_out_flg = $form->opt_out_flg;
+        }
+
+        $new_patient_value->age = $form->age;
+        $new_patient_value->vent_disease_name = $form->vent_disease_name;
+        $new_patient_value->other_disease_name_1 = $form->other_disease_name_1;
+        $new_patient_value->other_disease_name_2 = $form->other_disease_name_2;
+        $new_patient_value->used_place = $form->used_place;
+        $new_patient_value->hospital = $form->hospital;
+        $new_patient_value->national = $form->national;
+        $new_patient_value->discontinuation_at = $form->discontinuation_at;
+        $new_patient_value->outcome = $form->outcome;
+        $new_patient_value->treatment = $form->treatment;
+        
+        if (! is_null($form->adverse_event_flg)) {
+            $new_patient_value->adverse_event_flg = $form->adverse_event_flg;
+        }
+        
+        $new_patient_value->adverse_event_contents = $form->adverse_event_contents;
+
+        return $new_patient_value;
     }
 }
