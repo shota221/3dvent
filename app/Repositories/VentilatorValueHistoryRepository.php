@@ -32,12 +32,13 @@ class VentilatorValueHistoryRepository
         $query = self::createLimitOffsetClause($query, $limit, $offset);
 
         return $query->get();
+        
     }
 
     private static function createLimitOffsetClause($query, int $limit, int $offset)
     {
         $query->limit($limit)->offset($offset);
-
+   
         return $query;
     }
 
@@ -47,10 +48,10 @@ class VentilatorValueHistoryRepository
 
         $organization_table = Organization::tableName();
 
-        $ventilator_value_table = VentilatorValue::tableName();
-
+        $ventilator_value_table = VentilatorValue::tableName();    
+        
         $query->where($organization_table . '.edcid', $search_values['edcid']);
-
+        
         $query->where($ventilator_value_table . '.confirmed_flg', $search_values['confirmed_flg']);
 
         if (isset($search_values['datetime_from'])) {
@@ -67,13 +68,13 @@ class VentilatorValueHistoryRepository
     private static function createWhereClauseFromSearchValues($query, array $search_values)
     {
         $table = VentilatorValueHistory::tableName();
-
+       
         $ventilator_value_table = VentilatorValue::tableName();
-
+        
         $organization_table = Organization::tableName();
 
         $query->where($organization_table . '.edcid', $search_values['edcid']);
-
+        
         $query->where($ventilator_value_table . '.confirmed_flg', $search_values['confirmed_flg']);
 
         if (isset($search_values['datetime_from'])) {
@@ -84,7 +85,7 @@ class VentilatorValueHistoryRepository
             $query->where($table . '.created_at', '<', $search_values['datetime_to']);
         }
 
-
+        
         return $query;
     }
 
@@ -93,16 +94,17 @@ class VentilatorValueHistoryRepository
         $table = VentilatorValueHistory::tableName();
 
         $ventilator_value_table = VentilatorValue::tableName();
-
+        
         $ventilator_table = Ventilator::tableName();
 
         $organization_table = Organization::tableName();
 
-        $query->join($ventilator_value_table, $table . '.ventilator_value_id', '=', $ventilator_value_table . '.id');
-        $query->join($ventilator_table, $ventilator_value_table . '.ventilator_id', '=', $ventilator_table . '.id');
-        $query->join($organization_table, $ventilator_table . '.organization_id', '=', $organization_table . '.id');
+        $query->join($ventilator_value_table, $table . '.ventilator_value_id', '=' , $ventilator_value_table . '.id');
+        $query->join($ventilator_table, $ventilator_value_table . '.ventilator_id', '=' , $ventilator_table . '.id');
+        $query->join($organization_table, $ventilator_table . '.organization_id', '=' , $organization_table . '.id');
 
         return $query;
+
     }
 
     private static function joinVentilatorValueAndVentilatorAndUserAndOrganization($query)
@@ -110,19 +112,19 @@ class VentilatorValueHistoryRepository
         $table = VentilatorValueHistory::tableName();
 
         $ventilator_value_table = VentilatorValue::tableName();
-
+        
         $ventilator_table = Ventilator::tableName();
 
         $user_table = User::tableName();
 
         $organization_table = Organization::tableName();
-
-        $query->join($ventilator_value_table, $table . '.ventilator_value_id', '=', $ventilator_value_table . '.id');
-        $query->join($ventilator_table, $ventilator_value_table . '.ventilator_id', '=', $ventilator_table . '.id');
+        
+        $query->join($ventilator_value_table, $table . '.ventilator_value_id', '=' , $ventilator_value_table . '.id');
+        $query->join($ventilator_table, $ventilator_value_table . '.ventilator_id', '=' , $ventilator_table . '.id');
         // ventilator_valueは未ログインユーザーが登録する場合もあるためleftjoin
-        $query->leftjoin($user_table, $ventilator_value_table . '.registered_user_id', '=', $user_table . '.id');
-        $query->join($organization_table, $ventilator_table . '.organization_id', '=', $organization_table . '.id');
-
+        $query->leftjoin($user_table, $ventilator_value_table . '.registered_user_id', '=' , $user_table . '.id');
+        $query->join($organization_table, $ventilator_table . '.organization_id', '=' , $organization_table . '.id');
+        
         $query->addSelect([
             $table . '.*',
             $ventilator_value_table . '.*',

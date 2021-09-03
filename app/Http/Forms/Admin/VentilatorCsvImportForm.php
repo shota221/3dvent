@@ -15,7 +15,7 @@ class VentilatorCsvImportForm extends BaseForm
     {
         return [
             'organization_id' => 'required|'.Rule::VALUE_POSITIVE_NON_ZERO,
-            'csv_file' => 'required|max:1024|mimes:csv,txt'
+            'csv_file' => 'required|max:1024'
         ];
     }
 

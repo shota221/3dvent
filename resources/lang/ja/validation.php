@@ -125,6 +125,7 @@ return [
     'appkey_not_found' => '存在しないアプリキーです。',
     'appkey_required' => 'アプリキーは必須です。',
     'auth_token_expired' => 'トークン有効期限切れ',
+    'csv_required' => 'csv形式のみ有効です',
     'csv_header_error' => '1行目の項目名に誤りがあります。エクスポートCSVの項目名に合わせてください。',
     'csv_row_error' => ':row_nums行目の入力に誤りがあります。',
     'duplicated_email_registration' => 'すでに登録されているメールアドレスです。別のメールアドレスを利用してください。',

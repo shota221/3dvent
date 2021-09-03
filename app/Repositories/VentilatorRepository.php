@@ -129,16 +129,11 @@ class VentilatorRepository
     public static function findBySearchValuesAndOffsetAndLimit($offset, $limit, $search_values)
     {
         return self::queryBySearchValues($search_values)
-            ->addSelect([
+            ->select([
                 'ventilators.*',
                 'organizations.name AS organization_name',
                 'users.name AS registered_user_name',
-                \DB::raw(
-                    '(
-                        CASE WHEN ventilator_bugs.ventilator_id IS NULL THEN 0
-                        ELSE 1 END 
-                    ) as has_bug'
-                )
+                'ventilator_bugs.ventilator_id AS bug_ventialtor_id' 
             ])
             ->distinct()
             ->limit($limit)

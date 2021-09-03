@@ -92,9 +92,9 @@ class VentilatorController extends Controller
 
         if ($form->hasError()) throw new InvalidFormException($form);
 
-        $file_url = $request->file('csv_file')->path();
+        $file = $request->file('csv_file');
 
-        $response = $this->service->create($form, $file_url);
+        $response = $this->service->create($form, $file);
 
         return $response;
     }
