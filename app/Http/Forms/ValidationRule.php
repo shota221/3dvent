@@ -36,10 +36,7 @@ class ValidationRule
 
         OUTCOME_INTEGER = 'integer|min:1|max:4', //　使用中止時の転帰
 
-        TREATMENT_INTEGER = 'integer|min:1|max:6', // 使用中止後の呼吸不全治療
-
-        MAX_NUM_Of_DELETIONS = 'max:50'; // 一括削除最大件数
-
+        TREATMENT_INTEGER = 'integer|min:1|max:6'; // 使用中止後の呼吸不全治療
 
     /**
      * ある文字列が含まれない正規表現を返す

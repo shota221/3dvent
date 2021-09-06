@@ -13,7 +13,7 @@ class PatientValueLogicalDeleteForm extends BaseForm
     protected function validationRule()
     {
         return [
-            'ids'    => 'required|array|' . Rule::MAX_NUM_Of_DELETIONS,
+            'ids'    => 'required|array|',
             'ids.* ' => 'required|' . Rule::VALUE_POSITIVE_NON_ZERO,
         ];
     }
