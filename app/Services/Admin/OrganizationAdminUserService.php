@@ -109,7 +109,7 @@ class OrganizationAdminUserService
         $organization_admin_user = Repos\UserRepository::findOneByAuthorityAndId($authority, $form->id);
 
         if (is_null($organization_admin_user)) {
-            $form->addError('id', 'validation.id_not_fount');
+            $form->addError('id', 'validation.id_not_found');
             throw new Exeptions\InvalidFormException($form);
         }
 

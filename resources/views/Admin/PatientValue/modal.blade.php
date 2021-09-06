@@ -10,6 +10,7 @@
 
     @slot('content')
         <input type="hidden" name="id">
+        <input type="hidden" name="organization_id">
         {{--患者番号--}}
         <div class="form-group">
             <label for="patient_code">@lang('messages.patient_code')</label>
@@ -105,7 +106,7 @@
         <div class="form-group">
             <label for="discontinuation_at">@lang('messages.discontinuation_at')</label>
             <div>
-                <input type="text" class="form-control" name="discontinuation_at">
+                <input type="text" class="form-control datetime" name="discontinuation_at">
             </div>
         </div>
 

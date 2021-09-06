@@ -144,6 +144,7 @@ return [
     'required_password' => 'パスワードは必須です。',
     'required_password_confirmation' => 'パスワード(確認用)は必須です。',
     'password_confirmed' => 'パスワードを確認用と一致させてください。',
+    'excessive_number_of_registrations' => '登録数が超過しています。',
 
     /*
     |--------------------------------------------------------------------------

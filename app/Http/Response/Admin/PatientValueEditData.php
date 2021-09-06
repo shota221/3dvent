@@ -8,6 +8,8 @@ class PatientValueEditData extends SuccessJsonResult
 {
     public $id;
 
+    public $organization_id;
+
     public $patient_code;
     
     public $organization_name;

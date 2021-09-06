@@ -70,6 +70,7 @@ class PatientValueConverter
         $data = new Response\Admin\PatientValueEditData;
 
         $data->id = $entity->id;
+        $data->organization_id = $entity->organization_id;
         $data->patient_code = $entity->patient_code;
         $data->organization_name = $entity->organization_name;
         $data->opt_out_flg = $entity->opt_out_flg;
