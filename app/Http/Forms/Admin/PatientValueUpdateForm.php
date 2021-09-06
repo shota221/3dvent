@@ -40,7 +40,7 @@ class PatientValueUpdateForm extends BaseForm
             'used_place'             => 'nullable|'.Rule::USED_PLACE_INTEGER,
             'hospital'               => 'nullable|'.Rule::VALUE_STRING,
             'national'               => 'nullable|'.Rule::VALUE_STRING,
-            'discontinuation_at'     => 'nullable|date_format:Y-m-d H:i:s',
+            'discontinuation_at'     => 'nullable|date',
             'outcome'                => 'nullable|'.Rule::OUTCOME_INTEGER,
             'treatment'              => 'nullable|'.Rule::TREATMENT_INTEGER,
             'adverse_event_flg'      => 'nullable|'.Rule::FLG_INTEGER,

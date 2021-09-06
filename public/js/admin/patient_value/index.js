@@ -284,4 +284,14 @@ $paginatedList.on('click', '.page-link', function(e) {
 });
 
 
+$('input.form-control.datetime').datetimepicker({
+    step:5,
+    format:'Y-m-d H:i:00'
+})  
+
+$('input.form-control.date').datetimepicker({
+    timepicker:false,
+    format:'Y-m-d'
+})  
+
 buildSelect2()

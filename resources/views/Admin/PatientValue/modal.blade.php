@@ -106,7 +106,7 @@
         <div class="form-group">
             <label for="discontinuation_at">@lang('messages.discontinuation_at')</label>
             <div>
-                <input type="text" class="form-control" name="discontinuation_at">
+                <input type="text" class="form-control datetime" name="discontinuation_at">
             </div>
         </div>
 
