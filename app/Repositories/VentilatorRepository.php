@@ -133,7 +133,7 @@ class VentilatorRepository
                 'ventilators.*',
                 'organizations.name AS organization_name',
                 'users.name AS registered_user_name',
-                'ventilator_bugs.ventilator_id AS bug_ventialtor_id' 
+                'ventilator_bugs.ventilator_id AS bug_ventialtor_id'
             ])
             ->distinct()
             ->limit($limit)
@@ -208,7 +208,7 @@ class VentilatorRepository
         $query = static::leftjoinVentilatorValue();
         $query = static::joinPatientAndPatientValue($query);
         return $query
-            ->addSelect([
+            ->select(
                 'ventilators.*',
                 'patients.*',
                 'patient_values.*',
@@ -225,7 +225,7 @@ class VentilatorRepository
                 'ventilator_values.gender AS gender',
                 'patient_values.registered_at AS patient_value_registered_at',
                 'ventilator_values.registered_at AS ventilator_value_registered_at',
-            ])
+            )
             ->whereIn('ventilators.id', $ids);
     }
 

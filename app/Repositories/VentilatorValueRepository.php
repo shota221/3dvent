@@ -84,8 +84,11 @@ class VentilatorValueRepository
 
     public static function findBySeachValuesAndLimitOffsetOrderByRegisteredAtDesc(array $search_values, $limit = null, $offset = null)
     {
+        $query =  self::createWhereClauseFromSearchValuesOrderByRegisteredAtDesc(static::leftJoinUsers(), $search_values)
+            ->select('ventilator_values.*', 'users.name AS registered_user_name');
+
         return self::createLimitOffsetClause(
-            self::createWhereClauseFromSearchValuesOrderByRegisteredAtDesc(static::leftJoinUser(), $search_values),
+            $query,
             $limit,
             $offset
         )->get();
@@ -113,24 +116,15 @@ class VentilatorValueRepository
         return $query;
     }
 
-    private static function leftJoinUser($query = null)
+    private static function leftJoinUsers($query = null)
     {
-        $table = VentilatorValue::tableName();
-
-        $user_table = User::tableName();
-
         return (!is_null($query) ? $query : static::query())
             ->leftJoin(
-                $user_table,
-                function ($join) use ($table, $user_table) {
-                    $join
-                        ->on($user_table . '.id', '=', $table . '.registered_user_id');
-                }
-            )
-            ->addSelect([
-                $table . '.*',
-                $user_table . '.name AS registered_user_name',
-            ]);
+                'users',
+                'ventilator_values.registered_user_id',
+                '=',
+                'users.id'
+            );
     }
 
     public static function queryByScannedAtIsNullOrderByRegisteredAtASC()
@@ -247,5 +241,85 @@ class VentilatorValueRepository
     public static function listIdByVentilatorIds(array $ventilator_ids)
     {
         return static::query()->whereIn('ventilator_id', $ventilator_ids)->pluck('id');
+    }
+
+    public static function searchWithUsersAndVentilatorsAndPatientsAndOrganizations(array $search_values, $limit, $offset)
+    {
+        $query = self::queryBySearchValues($search_values)
+            ->select(
+                'ventilator_values.*',
+                'ventilators.gs1_code AS gs1_code',
+                'patients.patient_code AS patient_code',
+                'organizations.name AS organization_name',
+                'users.name AS registered_user_name'
+            );
+
+        return self::createLimitOffsetClause($query, $limit, $offset)
+            ->orderBy('ventilator_values.created_at', 'DESC')
+            ->get();
+    }
+
+    public static function countBySearchValues(array $search_values)
+    {
+        return self::queryBySearchValues($search_values)->count();
+    }
+
+    private static function queryBySearchValues(array $search_values)
+    {
+        $query = self::joinVentilatorsAndPatientsAndOrganizations();
+        $query = self::leftJoinUsers($query);
+        return self::createWhereClauseFromSearchValues($query, $search_values);
+    }
+
+    private static function joinVentilatorsAndPatientsAndOrganizations($query = null)
+    {
+        return self::joinVentilators($query)
+            ->leftJoin(
+                'patients',
+                'ventilators.patient_id',
+                '=',
+                'patients.id'
+            )->leftJoin(
+                'organizations',
+                'ventilators.organization_id',
+                '=',
+                'organizations.id'
+            );
+    }
+
+    private static function joinVentilators($query = null)
+    {
+        return (!is_null($query) ? $query : static::query())
+            ->join(
+                'ventilators',
+                'ventilator_values.ventilator_id',
+                '=',
+                'ventilators.id'
+            );
+    }
+
+    private static function createWhereClauseFromSearchValues($query, $search_values)
+    {
+        if (isset($search_values['gs1_code'])) $query->where('ventilators.gs1_code', $search_values['gs1_code']);
+
+        if (isset($search_values['organization_id'])) $query->where('organizations.id', $search_values['organization_id']);
+
+        if (isset($search_values['patient_code'])) $query->where('patients.patient_code', $search_values['patient_code']);
+
+        if (isset($search_values['registered_user_name'])) $query->where('users.name', $search_values['registered_user_name']);
+
+        if (isset($search_values['registered_at_from'])) {
+            $query->where('ventilator_values.registered_at', '>=', $search_values['registered_at_from']);
+        }
+
+        if (isset($search_values['registered_at_to'])) {
+            $query->where('ventilator_values.registered_at', '<=', $search_values['registered_at_to']);
+        }
+
+        if (isset($search_values['fixed_flg'])) $query->where('fixed_flg', $search_values['fixed_flg']);
+
+        if (isset($search_values['confirmed_flg'])) $query->whereIn('confirmed_flg', $search_values['confirmed_flg']);
+
+        return $query;
     }
 }
