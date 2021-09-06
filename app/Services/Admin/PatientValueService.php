@@ -167,11 +167,6 @@ class PatientValueService
     {
         $ids = $form->ids;
 
-        // ページネーションで表示する件数より多い場合は例外処理
-        if (count($ids) > config('view.items_per_page')) {
-            throw new Exceptions\InvalidException('validation.excessive_number_of_registrations');
-        }
-
         // TODO 認証回り修正後実装
         $operated_user_id = 1;
 
