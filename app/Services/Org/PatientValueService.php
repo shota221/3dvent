@@ -78,6 +78,12 @@ class PatientValueService
         return Converter\PatientValueConverter::convertToPatientValueEditData($patient_value);
     }
 
+    /**
+     * 患者観察研究データ編集
+     *
+     * @param Form\PatientValueUpdateForm $form
+     * @return type
+     */
     public function update(Form\PatientValueUpdateForm $form)
     {
         // 患者コード重複確認用患者データ格納用
@@ -171,6 +177,12 @@ class PatientValueService
         return new Response\SuccessJsonResult;
     }
 
+    /**
+     * 患者観察研究データ論理削除
+     *
+     * @param Form\PatientValueLogicalDeleteForm $form
+     * @return type
+     */
     public function logicalDelete(Form\PatientValueLogicalDeleteForm $form)
     {
         $ids = $form->ids;
