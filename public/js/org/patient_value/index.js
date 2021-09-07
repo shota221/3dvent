@@ -1,8 +1,4 @@
-const { isEmptyObject } = require("jquery");
-
 const
-    $asyncOrganizationData = $('#async-organization-data'),
-    $asyncRegisteredUserData = $('#async-registered-user-data'),
     $asyncUpdate = $('#async-update'),
     $asyncSearch = $('#async-search'),
     $bulkCheck = $('#bulk-check'),
@@ -15,7 +11,6 @@ const
     $editModalHospitalInput = $('#edit-modal').find('[name=hospital]'),
     $editModalIdInput = $('#edit-modal').find('[name=id]'),
     $editModalNationalInput = $('#edit-modal').find('[name=national]'),
-    $editModalOrganizationIdInput = $('#edit-modal').find('[name=organization_id]'),
     $editModalOtherDiseaseName1Input = $('#edit-modal').find('[name=other_disease_name_1]'),
     $editModalOtherDiseaseName2Input = $('#edit-modal').find('[name=other_disease_name_2]'),
     $editModalOutcomeInput = $('#edit-modal').find('[name=outcome]'),
@@ -29,13 +24,10 @@ const
     $patientCode = $('#patient_code'),
     $searchForm = $('#async-search-form'),
     $searchFormAllInput = $('#async-search-form').find('input'),
-    $searchFormOrganizationInput = $('#async-search-form').find('[name=organization_name]'),
     $searchFormPatientCodeInput = $('#async-search-form').find('[name=patient_code]'),
     $searchFormRegisteredAtFromInput = $('#async-search-form').find('[name=registered_at_from]'),    
     $searchFormRegisteredAtToInput = $('#async-search-form').find('[name=registered_at_to]'),
-    $searchFormRegisteredUserNameInput = $('#async-search-form').find('[name=registered_user_name]'),
-    $select2OrganizationName = $('#select2-organization-name'),
-    $select2RegisteredUserName = $('#select2-registered-user-name');
+    $searchFormRegisteredUserNameInput = $('#async-search-form').find('[name=registered_user_name]');
     
 // show edit modal
 $paginatedList.on(
@@ -181,6 +173,46 @@ $paginatedList
     }
 );
 
+// bulk delete
+$paginatedList.on(
+    'click',
+    '#btn-bulk-delete',
+    function () {
+        var selectedCount = $('.item-check:checked').length;
+
+        if (selectedCount > 0) {
+            var isConfirmed = confirm(i18n('message.delete_count_confirm', { count: selectedCount}));
+
+            if (isConfirmed) {
+                var $element = $(this);
+                var parameters = { 'ids': [] }
+
+                $('.item-check:checked').each(function (i, elm) {
+                    parameters['ids'].push($(elm).val());
+                });
+
+                var successCallback = function (data) {
+                    var $element = $('.page-item' + '.active').children('button');
+            
+                    if (! $element.length) {
+                        $element = $asyncSearch;
+                    } 
+        
+                    var $form = $searchForm;
+                    var parameters = buildSearchParameters($form);
+                    var successCallback = function(pagineted_list) {
+                        $paginatedList.html(pagineted_list);
+                    } 
+
+                    utilAsyncExecuteAjax($element, parameters, false, successCallback);
+                }
+                utilAsyncExecuteAjax($element, parameters, true, successCallback);
+            }
+        } else {
+            alert(i18n('message.object_unselected'));
+        }
+    }
+)
 // build search parameters
 function buildSearchParameters() {
     var parameters = {};
@@ -207,7 +239,7 @@ $paginatedList.on('click', '.page-link', function(e) {
 });
 
 // datetimepicker
-$datepicker.datetimepicker({
+$datetimepicker.datetimepicker({
     step:5,
     format:'Y-m-d H:i:00'
 }) 

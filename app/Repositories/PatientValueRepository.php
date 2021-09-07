@@ -25,6 +25,11 @@ class PatientValueRepository
         return static::query()->where('patient_id', $patient_id)->orderBy('registered_at','DESC')->first();
     }
 
+    public static function getOrganizationIdsWithPatientByIds(array $ids) {
+        $query = self::joinPatient(static::query());
+        return $query->whereIn('patient_values.id', $ids)->pluck('patients.organization_id');
+    }
+
     public static function findOneWithPatientAndOrganizationById(int $id)
     {
         $query = self::joinPatientAndOrganization(static::query());
@@ -85,6 +90,13 @@ class PatientValueRepository
     private static function joinUser($query)
     {
         $query->join('users', 'patient_values.patient_obs_user_id', '=', 'users.id');
+
+        return $query;
+    }
+
+    private static function joinPatient($query)
+    {
+        $query->join('patients', 'patient_values.patient_id', '=', 'patients.id');
 
         return $query;
     }
