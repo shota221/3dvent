@@ -35,6 +35,8 @@ class PatientValueService
             $http_query = '?' . http_build_query($search_values);
         }
 
+        $search_values['organization_id'] = 1; // TODO　認証機能実装後修正
+
         $patient_values = Repos\PatientValueRepository::findWithPatientAndUserAndOrganizationBySearchValuesAndLimitAndOffsetOrderByCreatedAt(
             $search_values,
             $limit,
@@ -232,7 +234,7 @@ class PatientValueService
     private function buildPatientValueSearchValues(Form\PatientValueSearchForm $form)
     {
         $search_values = [];
-        $search_values['organization_id'] = 1; // TODO　認証機能実装後修正
+
         if (isset($form->patient_code)) $search_values['patient_code'] = $form->patient_code;
         if (isset($form->registered_user_name)) $search_values['registered_user_name'] = $form->registered_user_name;
         if (isset($form->registered_at_from)) $search_values['registered_at_from'] = $form->registered_at_from;
