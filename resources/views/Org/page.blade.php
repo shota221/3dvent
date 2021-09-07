@@ -26,4 +26,11 @@
     @yield('css')
 @stop
 
+@section('page_modal')
+    @yield('modal')
+
+@stop
+
+@section('page_hidden')
+@stop
 

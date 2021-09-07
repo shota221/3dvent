@@ -55,7 +55,7 @@ class PatientValueService
     }
 
     /**
-     * 組織管理者アカウント取得
+     *  患者観察研究データ取得
      *
      * @param Form\PatientValueEditForm $form
      * @return type
