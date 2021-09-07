@@ -24,9 +24,9 @@ Route::group(['middleware' => ['routetype:org']], function() {
     Route::put('/setting','OrganizationSettingController@asyncUpdate')->name('org.setting.update');
 
     // 患者観察研究データ管理
-    Route::get('patient_value', 'PatientValueController@index')->name('org.patient_value.index');
-    Route::put('patient_value', 'PatientValueController@asyncUpdate')->name('org.patient_value.update');
-    Route::delete('patient_value', 'PatientValueController@asyncLogicalDelete')->name('org.patient_value.logical_delete');
-    Route::get('patient_value/edit', 'PatientValueController@asyncEdit')->name('org.patient_value.edit');
-    Route::get('patient_value/search', 'PatientValueController@asyncSearch')->name('org.patient_value.search');
+    Route::get('/patient_value', 'PatientValueController@index')->name('org.patient_value.index');
+    Route::put('/patient_value', 'PatientValueController@asyncUpdate')->name('org.patient_value.update');
+    Route::delete('/patient_value', 'PatientValueController@asyncLogicalDelete')->name('org.patient_value.logical_delete');
+    Route::get('/patient_value/edit', 'PatientValueController@asyncEdit')->name('org.patient_value.edit');
+    Route::get('/patient_value/search', 'PatientValueController@asyncSearch')->name('org.patient_value.search');
 });
