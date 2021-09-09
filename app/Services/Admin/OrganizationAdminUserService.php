@@ -61,10 +61,10 @@ class OrganizationAdminUserService
     /**
      * 組織管理者アカウント取得
      *
-     * @param Form\OrganizationAdminUserEditForm $form
+     * @param Form\OrganizationAdminUserDetailForm $form
      * @return [type]
      */
-    public function getOneOrganizationAdminUserData(Form\OrganizationAdminUserEditForm $form)
+    public function getOneOrganizationAdminUserData(Form\OrganizationAdminUserDetailForm $form)
     {
         // TODO 権限周り決定後修正
         $authority = 1;

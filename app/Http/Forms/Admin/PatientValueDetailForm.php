@@ -7,14 +7,14 @@ use App\Http\Forms\BaseForm;
 use App\Http\Forms\ValidationRule as Rule;
 use App\Services\Support;
 
-class OrganizationAdminUserEditForm extends BaseForm
+class PatientValueDetailForm extends BaseForm
 {
     public $id;
-    
+
     protected function validationRule()
     {
         return [
-            'id' => 'required|' .Rule::VALUE_POSITIVE_NON_ZERO,
+            'id' => 'required|' . Rule::VALUE_POSITIVE_NON_ZERO,
         ];
     }
 

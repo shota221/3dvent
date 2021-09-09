@@ -4,7 +4,7 @@ namespace App\Http\Response\Admin;
 
 use App\Http\Response\SuccessJsonResult;
 
-class PatientValueEditData extends SuccessJsonResult 
+class PatientValueDetailData extends SuccessJsonResult 
 {
     public $id;
 

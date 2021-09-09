@@ -57,10 +57,10 @@ class PatientValueService
     /**
      * 患者観察研究データ取得
      *
-     * @param Form\PatientValueEditForm $form
+     * @param Form\PatientValueDetailForm $form
      * @return type
      */
-    public function getOnePatientValueData(Form\PatientValueEditForm $form)
+    public function getOnePatientValueData(Form\PatientValueDetailForm $form)
     {
         $patient_value = Repos\PatientValueRepository::findOneWithPatientAndOrganizationById($form->id);
 
@@ -77,7 +77,7 @@ class PatientValueService
             throw new Exceptions\InvalidFormException($form);
         }
 
-        return Converter\PatientValueConverter::convertToPatientValueEditData($patient_value);
+        return Converter\PatientValueConverter::convertToPatientValueDetailData($patient_value);
     }
 
     /**

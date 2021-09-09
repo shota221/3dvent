@@ -65,9 +65,9 @@ class PatientValueConverter
         return $data;
     }
 
-    public static function convertToPatientValueEditData(Models\PatientValue $entity)
+    public static function convertToPatientValueDetailData(Models\PatientValue $entity)
     {
-        $data = new Response\Admin\PatientValueEditData;
+        $data = new Response\Admin\PatientValueDetailData;
 
         $data->id = $entity->id;
         $data->organization_id = $entity->organization_id;
