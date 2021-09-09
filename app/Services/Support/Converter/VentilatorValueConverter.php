@@ -305,8 +305,7 @@ class VentilatorValueConverter
     public static function convertToAdminVentilatorValueResult(VentilatorValue $entity)
     {
         $ventilator_value_result = new Response\Admin\VentilatorValueResult;
-
-        //TODO:選択肢変換
+        
         $ventilator_value_result->id = $entity->id;
         $ventilator_value_result->patient_code = $entity->patient_code;
         $ventilator_value_result->gs1_code = $entity->gs1_code;
@@ -318,7 +317,7 @@ class VentilatorValueConverter
         $ventilator_value_result->confirmed_flg = $entity->confirmed_flg;
         $ventilator_value_result->height = $entity->height;
         $ventilator_value_result->weight = $entity->weight;
-        $ventilator_value_result->gender = $entity->gender;
+        $ventilator_value_result->gender = Lang\VentilatorValue::convertToGenderName($entity->gender);
         $ventilator_value_result->airway_pressure = $entity->airway_pressure;
         $ventilator_value_result->air_flow = $entity->air_flow;
         $ventilator_value_result->o2_flow = $entity->o2_flow;
@@ -327,7 +326,7 @@ class VentilatorValueConverter
         $ventilator_value_result->estimated_vt = $entity->estimated_vt;
         $ventilator_value_result->estimated_mv = $entity->estimated_mv;
         $ventilator_value_result->estimated_peep = $entity->estimated_peep;
-        $ventilator_value_result->status_use = $entity->status_use;
+        $ventilator_value_result->status_use = Lang\VentilatorValue::convertToStatusUseName($entity->status_use);
         $ventilator_value_result->status_use_other = $entity->status_use_other;
         $ventilator_value_result->spo2 = $entity->spo2;
         $ventilator_value_result->etco2 = $entity->etco2;

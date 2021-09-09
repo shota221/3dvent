@@ -287,8 +287,6 @@ function buildSelect2() {
     var successCallback = function (data) {
         var organizations = [];
 
-        var $select2OrganizationName = $('select[name="organization_id"]');
-
         data.forEach(function (datum) {
             var organization = {};
             organization['id'] = datum['id'];

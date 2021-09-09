@@ -60,8 +60,8 @@
                         value={{ $ventilator_value->id }}>
                 </div>
             </td>
-            <td class="align-middle">{{ $ventilator_value->patient_code }}</td>
             <td class="align-middle">{{ $ventilator_value->gs1_code }}</td>
+            <td class="align-middle">{{ $ventilator_value->patient_code }}</td>
             <td class="align-middle">{{ $ventilator_value->organization_name }}</td>
             <td class="align-middle">{{ $ventilator_value->registered_user_name }}</td>
             <td class="align-middle">{{ $ventilator_value->registered_at }}</td>

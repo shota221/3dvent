@@ -46,9 +46,11 @@ return [
     'expiration_date' => '有効期限',
     'expiratory_time' => '呼気時間',
     // f
+    'female' => '女性',
     'fio2' => 'FIO₂',
     'fixed_value' => '最終設定値',
     // g
+    'gender' => '性別',
     // h
     'height' => '身長',
     'hospital_name' => '病院名',
@@ -58,6 +60,7 @@ return [
     'immutable' => '不変',
     'import' => 'インポート',
     'improvement' => '改善',
+    'inspection_procedure' => '検査処置',
     'inspiratory_time' => '吸気時間',
     'invalid' => '無効',
     'invalid_input' => '入力に誤りがあります。',
@@ -68,6 +71,7 @@ return [
     'linked' => '連携済',
     'list' => '一覧',
     // m
+    'male' => '男性',
     'mri' => 'MRI室',
     // n
     'national_name' => '国名',
@@ -129,6 +133,7 @@ return [
     'representative_email' => '代表者メールアドレス',
     'representative_name' => '代表者名',
     'request_improvement' => '改善要望',
+    'respiratory_failure' => '呼吸不全',
     'rr' => '呼吸回数',
     // s
     'search' => '検索',
@@ -142,6 +147,7 @@ return [
     'status' => 'ステータス',
     'status_use' => '使用状況',
     'status_use_other' => 'その他使用状況',
+    'surgery' => '手術',
     // t
     'target_organization_name' => '対象組織名',
     'total_flow' => '供給気量',

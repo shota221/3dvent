@@ -300,13 +300,20 @@ class VentilatorValueRepository
 
     private static function createWhereClauseFromSearchValues($query, $search_values)
     {
-        if (isset($search_values['gs1_code'])) $query->where('ventilators.gs1_code', $search_values['gs1_code']);
+        if (isset($search_values['organization_id'])) {
+            $query->where('organizations.id', $search_values['organization_id']);
+            if (isset($search_values['gs1_code'])) $query->where('ventilators.gs1_code', $search_values['gs1_code']);
 
-        if (isset($search_values['organization_id'])) $query->where('organizations.id', $search_values['organization_id']);
+            if (isset($search_values['patient_code'])) {
+                $patient_code = $search_values['patient_code'];
+                $query->where('patients.patient_code', 'like', "%$patient_code%");
+            }
+        }
 
-        if (isset($search_values['patient_code'])) $query->where('patients.patient_code', $search_values['patient_code']);
-
-        if (isset($search_values['registered_user_name'])) $query->where('users.name', $search_values['registered_user_name']);
+        if (isset($search_values['registered_user_name'])) {
+            $registered_user_name = $search_values['registered_user_name'];
+            $query->where('users.name', 'like', "%$registered_user_name%");
+        }
 
         if (isset($search_values['registered_at_from'])) {
             $query->where('ventilator_values.registered_at', '>=', $search_values['registered_at_from']);
