@@ -109,7 +109,7 @@
                 href="#" 
                 class="show-edit-modal" 
                 data-id="{{ $patient_value->id }}" 
-                data-url="{{ route('admin.patient_value.edit') }}" 
+                data-url="{{ route('admin.patient_value.detail') }}" 
                 data-method="GET"
             >
                 @lang('messages.edit')

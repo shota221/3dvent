@@ -25,19 +25,65 @@ Route::group(['middleware' => ['routetype:admin']], function () {
     Route::put('/organization', 'OrganizationController@asyncUpdate')->name('admin.organization.update');
 
     //　組織管理者ユーザー管理
-    Route::get('/org_admin_user', 'OrganizationAdminUserController@index')->name('admin.org_admin_user.index');
-    Route::post('/org_admin_user', 'OrganizationAdminUserController@asyncCreate')->name('admin.org_admin_user.create');
-    Route::put('/org_admin_user', 'OrganizationAdminUserController@asyncUpdate')->name('admin.org_admin_user.update');
-    Route::get('/org_admin_user/search', 'OrganizationAdminUserController@asyncSearch')->name('admin.org_admin_user.search');
-    Route::get('/org_admin_user/edit', 'OrganizationAdminUserController@asyncEdit')->name('admin.org_admin_user.edit');
-    Route::get('/org_admin_user/async/organization_data', 'OrganizationAdminUserController@asyncDataOrganization')->name('admin.org_admin_user.async.organization_data');
+    Route::get(
+        '/org_admin_user', 
+        'OrganizationAdminUserController@index'
+    )->name('admin.org_admin_user.index');
+    
+    Route::post(
+        '/org_admin_user', 
+        'OrganizationAdminUserController@asyncCreate'
+    )->name('admin.org_admin_user.create');
+    
+    Route::put(
+        '/org_admin_user', 
+        'OrganizationAdminUserController@asyncUpdate'
+    )->name('admin.org_admin_user.update');
+    
+    Route::get(
+        '/org_admin_user/search', 
+        'OrganizationAdminUserController@asyncSearch'
+    )->name('admin.org_admin_user.search');
+    
+    Route::get(
+        '/org_admin_user/detail', 
+        'OrganizationAdminUserController@asyncDetail'
+    )->name('admin.org_admin_user.detail');
+    
+    Route::get(
+        '/org_admin_user/async/organization_data', 
+        'OrganizationAdminUserController@asyncDataOrganization'
+    )->name('admin.org_admin_user.async.organization_data');
 
     // 患者観察研究データ管理
-    Route::get('/patient_value', 'PatientValueController@index')->name('admin.patient_value.index');
-    Route::put('/patient_value', 'PatientValueController@asyncUpdate')->name('admin.patient_value.update');
-    Route::delete('/patient_value', 'PatientValueController@asyncLogicalDelete')->name('admin.patient_value.logical_delete');
-    Route::get('/patient_value/edit', 'PatientValueController@asyncEdit')->name('admin.patient_value.edit');
-    Route::get('/patient_value/search', 'PatientValueController@asyncSearch')->name('admin.patient_value.search');
-    Route::get('/patient_value/async/organization_data', 'PatientValueController@asyncDataOrganization')->name('admin.patient_value.async.organization_data');
+    Route::get(
+        '/patient_value', 
+        'PatientValueController@index'
+    )->name('admin.patient_value.index');
+    
+    Route::put(
+        '/patient_value', 
+        'PatientValueController@asyncUpdate'
+    )->name('admin.patient_value.update');
+    
+    Route::delete(
+        '/patient_value', 
+        'PatientValueController@asyncLogicalDelete'
+    )->name('admin.patient_value.logical_delete');
+    
+    Route::get(
+        '/patient_value/detail', 
+        'PatientValueController@asyncDetail'
+    )->name('admin.patient_value.detail');
+    
+    Route::get(
+        '/patient_value/search', 
+        'PatientValueController@asyncSearch'
+    )->name('admin.patient_value.search');
+    
+    Route::get(
+        '/patient_value/async/organization_data', 
+        'PatientValueController@asyncDataOrganization'
+    )->name('admin.patient_value.async.organization_data');
 
 });

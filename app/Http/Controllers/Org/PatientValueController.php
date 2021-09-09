@@ -38,9 +38,9 @@ class PatientValueController extends Controller
         return view('list', compact('patient_values'));
     }
     
-    public function asyncEdit(Request $request)
+    public function asyncDetail(Request $request)
     {
-        $form = new Form\PatientValueEditForm($request->all());
+        $form = new Form\PatientValueDetailForm($request->all());
 
         if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
 

@@ -7,7 +7,7 @@ use App\Http\Forms\BaseForm;
 use App\Http\Forms\ValidationRule as Rule;
 use App\Services\Support;
 
-class PatientValueEditForm extends BaseForm
+class PatientValueDetailForm extends BaseForm
 {
     public $id;
 
