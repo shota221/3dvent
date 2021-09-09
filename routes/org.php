@@ -55,4 +55,35 @@ Route::group(['middleware' => ['routetype:org']], function() {
         '/patient_value/search', 
         'PatientValueController@asyncSearch'
     )->name('org.patient_value.search');
+
+    //　ユーザー管理
+    Route::get(
+        '/user', 
+        'UserController@index'
+    )->name('org.user.index');
+    
+    Route::get(
+        '/user/search', 
+        'UserController@asyncSearch'
+    )->name('org.user.search');
+
+    Route::get(
+        '/user/detail', 
+        'UserController@asyncDetail'
+    )->name('org.user.detail');
+    
+    Route::put(
+        '/user', 
+        'UserController@asyncUpdate'
+        )->name('org.user.update');
+        
+    Route::post(
+        '/user', 
+        'UserController@asyncCreate'
+    )->name('org.user.create');
+    
+    Route::delete(
+        '/user', 
+        'UserController@asyncLogicalDelete'
+    )->name('org.user.logical_delete');
 });

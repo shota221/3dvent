@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Http\Forms\Admin;
+namespace App\Http\Forms\Org;
 
 use App\Exceptions;
 use App\Http\Forms\BaseForm;
 use App\Http\Forms\ValidationRule as Rule;
 use App\Services\Support;
 
-class OrganizationAdminUserUpdateForm extends BaseForm
+class UserUpdateForm extends BaseForm
 {
     public $id;
-    public $code;
     public $name;
     public $email;
+    public $authority;
     public $disabled_flg;
     public $password_changed;
     public $password;
@@ -22,9 +22,10 @@ class OrganizationAdminUserUpdateForm extends BaseForm
     {
         return [
             'id'                    => 'required|' . Rule::VALUE_POSITIVE_INTEGER,
-            'code'                  => 'required|' . Rule::VALUE_NAME,
             'name'                  => 'required|' . Rule::VALUE_NAME,
-            'email'                 => 'required|' . Rule::EMAIL,
+            // 権限回り実装後に修正
+            'email'                 => 'nullable|required_if:authority,1|' . Rule::EMAIL,
+            'authority'             => 'required|' . Rule::VALUE_POSITIVE_INTEGER,
             'disabled_flg'          => 'required|' . Rule::FLG_INTEGER,
             'password_changed'      => 'required|' . Rule::VALUE_BOOLEAN,
             'password'              => 'nullable|' . Rule::PASSWORD,
@@ -34,21 +35,19 @@ class OrganizationAdminUserUpdateForm extends BaseForm
 
     protected function bind($input)
     {
-        $this->id = intval($input['id']);
-        $this->code = strval($input['code']);
-        $this->name = strval($input['name']);
-        $this->email = strval($input['email']);
-        $this->disabled_flg = intval($input['disabled_flg']);
+        $this->id               = intval($input['id']);
+        $this->name             = strval($input['name']);
+        $this->email            = isset($input['email']) ? strval($input['email']) : '';
+        $this->authority        = intval($input['authority']);
+        $this->disabled_flg     = intval($input['disabled_flg']);
         $this->password_changed = boolval($input['password_changed']);
         
         if ($this->password_changed) {
-            $this->password = (isset($input['password']) && ! empty($input['password'])) 
-            ?  strval($input['password']) 
-            : null;
+            $existsPassword = isset($input['password']) && ! empty($input['password']); 
+            $this->password = $existsPassword ? strval($input['password']) : null;
             
-            $this->password_confirmation = (isset($input['password_confirmation']) && ! empty($input['password_confirmation'])) 
-            ? strval($input['password_confirmation']) 
-            : null;
+            $existsPasswordConfirmation = isset($input['password_confirmation']) && ! empty($input['password_confirmation']);
+            $this->password_confirmation = $existsPasswordConfirmation ? strval($input['password_confirmation']) : null;
         } else {
             $this->password = null;
             $this->password_confirmation = null;
