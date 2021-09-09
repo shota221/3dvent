@@ -70,9 +70,9 @@ class PatientValueService
         }
 
         // 取得組織とユーザーの所属組織の齟齬確認
-        $is_Matched = $patient_value->organization_id ===  1; // TODO　認証機能実装後修正 
+        $is_matched = $patient_value->organization_id ===  1; // TODO　認証機能実装後修正 
         
-        if (! $is_Matched) {
+        if (! $is_matched) {
             $form->addError('id', 'validation.id_not_found');
             throw new Exceptions\InvalidFormException($form);
         }
@@ -104,9 +104,9 @@ class PatientValueService
             throw new Exceptions\InvalidFormException($form);
         }
         
-        $is_Duplicated = ! is_null($confirmation_patient) && $confirmation_patient->id !== $old_patient_value->patient_id;
+        $is_duplicated = ! is_null($confirmation_patient) && $confirmation_patient->id !== $old_patient_value->patient_id;
 
-        if ($is_Duplicated) {
+        if ($is_duplicated) {
             $form->addError('patient_code', 'validation.duplicated_registration');
             throw new Exceptions\InvalidFormException($form);
         }
@@ -115,9 +115,9 @@ class PatientValueService
         $patient_entity->patient_code = $form->patient_code;
 
         // 患者所属組織とユーザーの所属組織の齟齬確認
-        $is_Matched = $patient_entity->organization_id ===  1; // TODO　認証機能実装後修正 
+        $is_matched = $patient_entity->organization_id ===  1; // TODO　認証機能実装後修正 
 
-        if (! $is_Matched) {
+        if (! $is_matched) {
             $form->addError('id', 'validation.id_not_found');
             throw new Exceptions\InvalidFormException($form);
         }
@@ -204,8 +204,8 @@ class PatientValueService
 
         // 組織齟齬がないかチェック
         foreach ($organization_ids as $organization_id) {  
-            $is_Matched = $organization_id ===  1; // TODO　認証機能実装後修正 
-            if (! $is_Matched) {
+            $is_matched = $organization_id ===  1; // TODO　認証機能実装後修正 
+            if (! $is_matched) {
                 $form->addError('id', 'validation.id_not_found');
                 throw new Exceptions\InvalidFormException($form);
             }
