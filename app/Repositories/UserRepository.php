@@ -176,6 +176,9 @@ class UserRepository
 
     private static function createWhereClauseFormSearchValues($query, array $search_values)
     {
+        $organization_id = $search_values['organization_id'];
+        $query->where('users.organization_id', $organization_id);
+
         if (isset($search_values['name'])){
             $name = $search_values['name'];
             $query->where('users.name', 'like', "%$name%");

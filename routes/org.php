@@ -86,4 +86,14 @@ Route::group(['middleware' => ['routetype:org']], function() {
         '/user', 
         'UserController@asyncLogicalDelete'
     )->name('org.user.logical_delete');
+
+    Route::get(
+        '/user/csv', 
+        'UserController@asyncExportCsvUserFormat'
+    )->name('org.user.export_csv_user_format');
+    
+    Route::post(
+        '/user/csv', 
+        'UserController@asyncImportCsvUserData'
+    )->name('org.user.import_csv_user_data');
 });
