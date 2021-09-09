@@ -165,7 +165,7 @@ $asyncCreate.on(
         var parameters = {};
         parameters['id']                    = $registerModalIdInput.val()
         parameters['name']                  = $registerModalNameInput.val();
-        parameters['email']                 = $editModalEmailInput.val();
+        parameters['email']                 = $registerModalEmailInput.val();
         parameters['authority']             = $registerModalAuthorityInput.val()
         parameters['disabled_flg']          = $registerModalDisabledFlgInput.val();
         parameters['password']              = $registerModalPasswordInput.val();
