@@ -64,6 +64,7 @@ class UserService
         // TODO 認証実装後　修正
         $organization_id = 1;
 
+        // ログインユーザーの所属組織に属するユーザー取得
         $user = Repos\UserRepository::findOneByOrganizationIdAndId($organization_id, $form->id);
 
         if (is_null($user)) {
@@ -85,6 +86,7 @@ class UserService
         // TODO 認証実装後修正
         $organization_id = 1;
 
+        // ログインユーザーの所属組織に属するユーザー取得
         $user = Repos\UserRepository::findOneByOrganizationIdAndId($organization_id, $form->id);
 
         if (is_null($user)) {

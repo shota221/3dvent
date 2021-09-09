@@ -13,7 +13,7 @@ class UserLogicalDeleteForm extends BaseForm
     protected function validationRule()
     {
         return [
-            'ids'    => 'required|array|',
+            'ids'    => 'required|array',
             'ids.* ' => 'required|' . Rule::VALUE_POSITIVE_INTEGER,
         ];
     }
