@@ -146,7 +146,18 @@ class VentilatorValueConverter
         $total_flow,
         $registered_at,
         $appkey_id,
-        $user_id = null
+        $user_id = null,
+        $status_use = null,
+        $status_use_other = '',
+        $spo2 = '',
+        $etco2 = '',
+        $pao2 = '',
+        $paco2 = '',
+        $fixed_flg = null,
+        $fixed_at = null,
+        $confirmed_flg = null,
+        $confirmed_at = null,
+        $confirmed_user_id = null
     ) {
         $entity = new VentilatorValue;
 
@@ -193,6 +204,29 @@ class VentilatorValueConverter
         $entity->appkey_id = $appkey_id;
 
         $entity->registered_user_id = $user_id;
+
+        $entity->status_use = $status_use;
+
+        $entity->status_use_other = $status_use_other;
+
+        $entity->spo2 = $spo2;
+
+        $entity->etco2 = $etco2;
+
+        $entity->pao2 = $pao2;
+
+        $entity->paco2 = $paco2;
+
+        if (!is_null($fixed_flg)) {
+            $entity->fixed_flg = $fixed_flg;
+            $entity->fixed_at = $fixed_at;
+        }
+
+        if (!is_null($confirmed_flg)) {
+            $entity->confirmed_flg = $confirmed_flg;
+            $entity->confirmed_at = $confirmed_at;
+            $entity->confirmed_user_id = $confirmed_user_id;
+        }
 
         return $entity;
     }
@@ -305,7 +339,7 @@ class VentilatorValueConverter
     public static function convertToAdminVentilatorValueResult(VentilatorValue $entity)
     {
         $ventilator_value_result = new Response\Admin\VentilatorValueResult;
-        
+
         $ventilator_value_result->id = $entity->id;
         $ventilator_value_result->patient_code = $entity->patient_code;
         $ventilator_value_result->gs1_code = $entity->gs1_code;
@@ -344,5 +378,32 @@ class VentilatorValueConverter
             },
             $entities->all()
         );
+    }
+
+    public static function convertToAdminVentilatorValueDetail(VentilatorValue $entity)
+    {
+        $ventilator_value_result = new Response\Admin\VentilatorValueResult;
+
+        $ventilator_value_result->id = $entity->id;
+        $ventilator_value_result->patient_code = $entity->patient_code;
+        $ventilator_value_result->registered_user_name = $entity->registered_user_name;
+        $ventilator_value_result->organization_id = $entity->organization_id;
+        $ventilator_value_result->fixed_flg = $entity->fixed_flg;
+        $ventilator_value_result->confirmed_flg = $entity->confirmed_flg;
+        $ventilator_value_result->height = $entity->height;
+        $ventilator_value_result->weight = $entity->weight;
+        $ventilator_value_result->gender = $entity->gender;
+        $ventilator_value_result->airway_pressure = $entity->airway_pressure;
+        $ventilator_value_result->air_flow = $entity->air_flow;
+        $ventilator_value_result->o2_flow = $entity->o2_flow;
+        $ventilator_value_result->fio2 = $entity->fio2;
+        $ventilator_value_result->status_use = $entity->status_use;
+        $ventilator_value_result->status_use_other = $entity->status_use_other;
+        $ventilator_value_result->spo2 = $entity->spo2;
+        $ventilator_value_result->etco2 = $entity->etco2;
+        $ventilator_value_result->pao2 = $entity->pao2;
+        $ventilator_value_result->paco2 = $entity->paco2;
+
+        return $ventilator_value_result;
     }
 }

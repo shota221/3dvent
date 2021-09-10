@@ -2,13 +2,17 @@
 
 namespace App\Http\Response\Admin;
 
-class VentilatorValueResult
+use App\Http\Response\SuccessJsonResult;
+
+class VentilatorValueResult extends SuccessJsonResult
 {
     public $id;
 
     public $patient_code;
 
     public $gs1_code;
+
+    public $organization_id;
 
     public $organization_name;
 

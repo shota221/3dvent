@@ -29,7 +29,8 @@
             data-expiration_date="{{ $ventilator->expiration_date }}"
             data-start_using_at="{{ $ventilator->start_using_at }}">
             <td class="align-middle">
-                <div class="form-check"><input type="checkbox" class="form-check-input item-check position-static" value={{ $ventilator->id }}>
+                <div class="form-check"><input type="checkbox" class="form-check-input item-check position-static"
+                        value={{ $ventilator->id }}>
                 </div>
             </td>
             <td class="align-middle"><a href="#" class="show-edit-modal"
@@ -43,7 +44,8 @@
             <td class="align-middle">{{ $ventilator->start_using_at }}</td>
             @if ($ventilator->has_bug)
                 <td class="align-middle">
-                    <a href="#" class="show-ventilator-bug-list-modal" data-url="{{ route('admin.ventilator.bugs') }}"
+                    <a href="#" class="show-ventilator-bug-list-modal"
+                        data-url="{{ route('admin.ventilator.bugs') }}"
                         data-method="GET">@lang('messages.exists')</a>
                 </td>
             @else
@@ -51,7 +53,13 @@
                     @lang('messages.none')
                 </td>
             @endif
-            <td class="align-middle"><a href="#">@lang('messages.detail')</a></td>
+            <td class="align-middle">
+                <form method="POST" class="show-ventilator_values" action="{{route('admin.ventilator_value.by_ventilator')}}">
+                    @csrf
+                    <input type="hidden" name="ventilator_id" value={{ $ventilator->id }}>
+                    <a href="#">@lang('messages.detail')</a>
+                </form>
+            </td>
         </tr>
     @endforeach
 </table>

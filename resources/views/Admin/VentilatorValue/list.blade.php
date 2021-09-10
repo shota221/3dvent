@@ -52,6 +52,8 @@
         <th>@lang('messages.pao2')</th>
         {{-- PaCO2 --}}
         <th>@lang('messages.paco2')</th>
+        {{-- 編集 --}}
+        <th>@lang('messages.edit')</th>
     </tr>
     @foreach ($ventilator_values as $ventilator_value)
         <tr>
@@ -91,13 +93,20 @@
             <td class="align-middle">{{ $ventilator_value->etco2 }}</td>
             <td class="align-middle">{{ $ventilator_value->pao2 }}</td>
             <td class="align-middle">{{ $ventilator_value->paco2 }}</td>
+            {{-- 編集 --}}
+            <td>
+                <a href="#" class="show-edit-modal" data-id="{{ $ventilator_value->id }}"
+                    data-url="{{ route('admin.ventilator_value.detail') }}" data-method="GET">
+                    @lang('messages.edit')
+                </a>
+            </td>
+        </tr>
         </tr>
     @endforeach
 
 </table>
-<div class="mt-3">{{ $ventilator_values->links('components.pagination') }}</div>
-<div id="overlay">
-    <div class="cv-spinner">
-        <span class="spinner"></span>
-    </div>
+<div class="row">
+    <button type="button" class="btn btn-danger" data-url="{{ route('admin.ventilator_value.bulk_delete') }}"
+        data-method="delete" id="btn-bulk-delete">@lang('messages.bulk_delete')</button>
 </div>
+<div class="mt-3">{{ $ventilator_values->links('components.pagination') }}</div>

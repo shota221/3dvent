@@ -107,7 +107,8 @@ Route::group(['middleware' => ['routetype:admin']], function () {
      * 機器観察研究データ
      */
     Route::get('/ventilator_value', 'VentilatorValueController@index')->name('admin.ventilator_value.index');
-    Route::get('/ventilator_value/edit', 'VentilatorValueController@asyncEdit')->name('admin.ventilator_value.edit');
+    Route::post('/ventilator_value', 'VentilatorValueController@index')->name('admin.ventilator_value.by_ventilator');
+    Route::get('/ventilator_value/detail', 'VentilatorValueController@asyncDetail')->name('admin.ventilator_value.detail');
     Route::get('/ventilator_value/search', 'VentilatorValueController@asyncSearch')->name('admin.ventilator_value.search');
     Route::put('/ventilator_value', 'VentilatorValueController@asyncUpdate')->name('admin.ventilator_value.update');
     Route::delete('/ventilator_value','VentilatorValueController@asyncBulkDelete')->name('admin.ventilator_value.bulk_delete');

@@ -481,9 +481,16 @@ class VentilatorService
         return new Response\SuccessJsonResult;
     }
 
-    function delete(Form\VentilatorDeleteForm $form)
+    function bulkDelete(Form\VentilatorBulkDeleteForm $form)
     {
         $ids = $form->ids;
+        $deletable_row_limit = config('view.items_per_page');
+
+        // ページネーションで表示する件数より多い場合は例外処理
+        if (count($ids) > $deletable_row_limit) {
+            $form->addError('validation.excessive_number_of_registrations');
+            throw new Exceptions\InvalidFormException($form);
+        }
 
         DBUtil::Transaction(
             'MicroVent削除',

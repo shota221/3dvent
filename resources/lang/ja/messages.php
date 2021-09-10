@@ -16,6 +16,7 @@ return [
     'change_password' => 'パスワードを変更する',
     'clear_search_form' => '検索条件をクリア',
     'common_setting' => '組織内共通設定',
+    'confirm' => '上記、機器観察研究データを確認しました。',
     'confirmed' => '確認済',
     'confirmed_at' => '確認日時',
     'create' => '登録',

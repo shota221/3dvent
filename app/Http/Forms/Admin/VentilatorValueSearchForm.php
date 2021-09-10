@@ -9,6 +9,7 @@ use App\Services\Support;
 
 class VentilatorValueSearchForm extends BaseForm
 {
+    public $ventilator_id;
     public $gs1_code;
     public $organization_id;
     public $patient_code;
@@ -22,6 +23,7 @@ class VentilatorValueSearchForm extends BaseForm
     protected function validationRule()
     {
         return [
+            'ventilator_id' => 'nullable|' .Rule::VALUE_POSITIVE_NON_ZERO,
             'gs1_code'      => 'nullable|' . Rule::VALUE_NAME,
             'organization_id'      => 'nullable|' . Rule::VALUE_POSITIVE_NON_ZERO,
             'patient_code'         => 'nullable|' . Rule::VALUE_NAME,
@@ -37,6 +39,7 @@ class VentilatorValueSearchForm extends BaseForm
 
     protected function bind($input)
     {
+        $this->ventilator_id = isset($input['ventilator_id']) ? intval($input['ventilator_id']) : null;
         $this->gs1_code = isset($input['gs1_code']) ? strval($input['gs1_code']) : null;
         $this->organization_id = isset($input['organization_id']) ? intval($input['organization_id']) : null;
         $this->patient_code = isset($input['patient_code']) ? strval($input['patient_code']) : null;

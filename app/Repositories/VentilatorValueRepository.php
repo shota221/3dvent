@@ -21,6 +21,18 @@ class VentilatorValueRepository
         return static::query()->where('id', $id)->first();
     }
 
+    public static function findOneWithPatientsAndUsersById($id)
+    {
+        $query = self::joinVentilatorsAndPatientsAndOrganizations();
+        $query = self::leftJoinUsers($query);
+        return $query->where('ventilator_values.id',$id)->select(
+            'ventilator_values.*',
+            'patients.patient_code AS patient_code',
+            'users.name AS registered_user_name',
+            'organizations.id AS organization_id'
+        )->first();
+    }
+
     public static function existsByVentilatorId($ventilator_id)
     {
         return static::query()->where('ventilator_id', $ventilator_id)->exists();
@@ -300,6 +312,8 @@ class VentilatorValueRepository
 
     private static function createWhereClauseFromSearchValues($query, $search_values)
     {
+        if (isset($search_values['ventilator_id'])) $query->where('ventilator_values.ventilator_id',$search_values['ventilator_id']);
+
         if (isset($search_values['organization_id'])) {
             $query->where('organizations.id', $search_values['organization_id']);
             if (isset($search_values['gs1_code'])) $query->where('ventilators.gs1_code', $search_values['gs1_code']);
@@ -328,5 +342,10 @@ class VentilatorValueRepository
         if (isset($search_values['confirmed_flg'])) $query->whereIn('confirmed_flg', $search_values['confirmed_flg']);
 
         return $query;
+    }
+
+    public static function logicalDeleteByIds(array $ids)
+    {
+        return  static::query()->whereIn('id', $ids)->update(['deleted_at' => DateUtil::now()]);
     }
 }

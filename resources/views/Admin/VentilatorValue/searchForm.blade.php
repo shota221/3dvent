@@ -64,20 +64,20 @@
                         <label>@lang('messages.status')</label>
                         <div>
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input form-control-sm" type="checkbox" name="fixed_flg" value="1">
-                                <label class="form-check-label">@lang('messages.show_fixed_values')</label>
+                                <input class="form-check-input form-control-sm" type="checkbox" name="fixed_flg" value="1" id="search-fixed_flg-1">
+                                <label class="form-check-label" for="search-fixed_flg-1">@lang('messages.show_fixed_values')</label>
                             </div>
                         </div>
                         <div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input form-control-sm" type="checkbox" name="confirmed_flg" value="1"
-                                    checked="">
-                                <label class="form-check-label">@lang('messages.confirmed')</label>
+                                    checked="" id="search-confirmed_flg-1">
+                                <label class="form-check-label" for="search-confirmed_flg-1">@lang('messages.confirmed')</label>
                             </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input form-control-sm" type="checkbox" name="confirmed_flg" value="0"
-                                    checked="">
-                                <label class="form-check-label">@lang('messages.unconfirmed')</label>
+                                    checked="" id="search-confirmed_flg-0">
+                                <label class="form-check-label" for="search-confirmed_flg-0">@lang('messages.unconfirmed')</label>
                             </div>
                         </div>
                     </div>

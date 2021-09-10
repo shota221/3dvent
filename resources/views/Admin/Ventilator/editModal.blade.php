@@ -14,7 +14,7 @@
             <div class="form-group">
                 <label for="gs1_code">@lang('messages.ventilator_code')</span></label>
                 <div>
-                    <input class="form-control" type="text" name="gs1_code" disabled>
+                    <input class="form-control" type="text" name="gs1_code" readonly>
                 </div>
             </div>
 
@@ -22,7 +22,7 @@
             <div class="form-group">
                 <label for="serial_number">@lang('messages.serial_number')</label>
                 <div>
-                    <input class="form-control" type="text" name="serial_number" disabled>
+                    <input class="form-control" type="text" name="serial_number" readonly>
                 </div>
             </div>
 
@@ -30,7 +30,7 @@
             <div class="form-group">
                 <label for="organization_name">@lang('messages.affiliation_organization')</label>
                 <div>
-                    <input class="form-control" type="text" name="organization_name" disabled>
+                    <input class="form-control" type="text" name="organization_name" readonly>
                 </div>
             </div>
 
@@ -38,7 +38,7 @@
             <div class="form-group">
                 <label for="registered_user_name">@lang('messages.registered_user_name')</span></label>
                 <div>
-                    <input class="form-control" type="text" name="registered_user_name" disabled>
+                    <input class="form-control" type="text" name="registered_user_name" readonly>
                 </div>
             </div>
 
@@ -46,7 +46,7 @@
             <div class="form-group">
                 <label for="expiration_date">@lang('messages.expiration_date')</label>
                 <div>
-                    <input class="form-control" type="text" name="expiration_date" disabled>
+                    <input class="form-control" type="text" name="expiration_date" readonly>
                 </div>
             </div>
 
@@ -54,7 +54,7 @@
             <div class="form-group">
                 <label for="patient_code">@lang('messages.patient_code')</label>
                 <div>
-                    <input class="form-control" type="text" name="patient_code" disabled>
+                    <input class="form-control" type="text" name="patient_code" readonly>
                 </div>
             </div>
 
@@ -62,7 +62,7 @@
             <div class="form-group">
                 <label for="start_using_at">@lang('messages.start_using_at')<span class="required"></span></label>
                 <div>
-                    <input class="form-control" type="text" name="start_using_at" required>
+                    <input type="text" class="form-control datetime" name="start_using_at" required>
                 </div>
             </div>
         @endslot

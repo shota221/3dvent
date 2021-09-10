@@ -41,11 +41,11 @@
                         <label>@lang('messages.expiration_date')</label>
                         <div class="row">
                             <div class="col-sm-5">
-                                <input type="date" class="form-control form-control-sm" name="expiration_date_from">
+                                <input type="text" class="form-control form-control-sm date" name="expiration_date_from">
                             </div>
                             &nbsp;〜&nbsp;
                             <div class="col-sm-5">
-                                <input type="date" class="form-control form-control-sm" name="expiration_date_to">
+                                <input type="text" class="form-control form-control-sm date" name="expiration_date_to">
                             </div>
                         </div>
                     </div>
@@ -57,11 +57,11 @@
                         <label>@lang('messages.start_using_at')</label>
                         <div class="row">
                             <div class="col-sm-5">
-                                <input type="date" class="form-control form-control-sm" name="start_using_at_from">
+                                <input type="text" class="form-control form-control-sm date" name="start_using_at_from">
                             </div>
                             &nbsp;〜&nbsp;
                             <div class="col-sm-5">
-                                <input type="date" class="form-control form-control-sm" name="start_using_at_to">
+                                <input type="text" class="form-control form-control-sm date" name="start_using_at_to">
                             </div>
                         </div>
                     </div>

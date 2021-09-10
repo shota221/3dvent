@@ -1,10 +1,9 @@
 const
-    $editModal = $('#modal-ventilator-update'),
-    $registerModal = $('#modal-ventilator-create'),
+    $editModal = $('#modal-ventilator_value-update'),
     $showRegisterModalBtn = $('#show-register-modal'),
     $modalCancelBtn = $('button.modal-cancel'),
     $paginatedList = $('#paginated-list'),
-    $ventilatorValueUpdateBtn = $('#async-ventilator-update'),
+    $ventilatorValueUpdateBtn = $('#async-ventilator_value-update'),
     $searchForm = $('#async-search-form'),
     $searchBtn = $('#async-search'),
     $clearSearchFormBtn = $('#clear-search-form'),
@@ -12,89 +11,118 @@ const
     ;
 
 
-// $showRegisterModalBtn.on(
-//     'click',
-//     function () {
-//         utilFormRemoveValidationErrorMessage()
+$modalCancelBtn.on(
+    'click',
+    function () {
+        $(this).closest('.modal').modal('hide');
 
-//         $registerModal.modal();
-
-//         return false;
-//     });
-
-// $modalCancelBtn.on(
-//     'click',
-//     function () {
-//         $(this).closest('.modal').modal('hide');
-
-//         return false;
-//     });
-
-// //edit-modal
+        return false;
+    });
 
 
-// $paginatedList.on(
-//     'click',
-//     '.show-edit-modal',
-//     function () {
-//         var dataset = $(this).closest('tr').data();
+// show edit modal
+$paginatedList.on(
+    'click',
+    '.show-edit-modal',
+    function (e) {
+        var $status = $editModal.find('span[name="status"]');
 
-//         $targetForm = $editModal.find('form[name="ventilator-update"]').eq(0);
+        utilFormRemoveValidationErrorMessage();
+        $editModal.find('textarea[name="status_use_other"]').prop('disabled', true);
+        $status.empty();
 
-//         utilFormRemoveValidationErrorMessage();
+        var parameters = {};
+        parameters['id'] = $(this).data('id');
 
-//         utilFormInputParameters($targetForm, dataset);
+        var successCallback = function (data) {
 
-//         var $featureElement = $(this);
+            var $form = $editModal.find('form[name="ventilator_value-update"]').eq(0);
 
-//         var parameters = {};
+            var isFixed = data['result']['fixed_flg'];
+            var isConfirmed = data['result']['confirmed_flg'];
+            utilFormInputParameters($form, data['result']);
+            $form.find('input[name="confirmed_flg"]').prop('checked',isConfirmed)
+        
+            //バッジ表記
+            if (isFixed) {
+                var $fixedBadge = $('<div class="badge badge-primary mr-1">' + i18n('message.fixed_value') + '</div>');
+                $status.append($fixedBadge);
+            }
+            if (isConfirmed) {
+                var $confirmedBadge = $('<div class="badge badge-success">' + i18n('message.confirmed') + '</div>');
+                $status.append($confirmedBadge);
+            }
 
-//         var successCallback = function (data) {
-//             patient_code = data.result.patient_code;
-//             $editModal.find('input[name="patient_code"]').val(patient_code);
-//         }
+            $editModal.modal();
+        }
 
-//         utilAsyncExecuteAjax($featureElement, parameters, false, successCallback);
+        var $element = $(this);
 
-//         $editModal.modal();
+        utilAsyncExecuteAjax($element, parameters, false, successCallback);
 
-//         return false;
-//     });
+        return false;
+    }
+)
 
-// //編集イベント
-// $ventilatorUpdateBtn.on(
-//     'click',
-//     function () {
-//         var parameters = {};
+$editModal.on(
+    'change',
+    'select[name="status_use"]',
+    function () {
+        $editModal.find('textarea[name="status_use_other"]').prop('disabled', $(this).val() !== '4');
+    }
+)
 
-//         var $targetForm = $('form[name="ventilator-update"]');
+// async-update
+$ventilatorValueUpdateBtn.on(
+    'click',
+    function() {
 
-//         parameters['id'] = $targetForm.find('input[name="id"]').val();
-//         parameters['start_using_at'] = $targetForm.find('input[name="start_using_at"]').val();
+        var parameters = {};
 
-//         var successCallback = function (data) {
-//             var $featureElement = $('.page-item' + '.active').children('button');
+        var $targetForm = $('form[name="ventilator_value-update"]');
 
-//             var parameters = {};
+        parameters['id'] = $targetForm.find('input[name="id"]').val();
+        parameters['organization_id'] = $targetForm.find('input[name="organization_id"]').val();
+        parameters['height'] = $targetForm.find('input[name="height"]').val();
+        parameters['weight'] = $targetForm.find('input[name="weight"]').val();
+        parameters['gender'] = $targetForm.find('input[name="gender"]:checked').val();
+        parameters['airway_pressure'] = $targetForm.find('input[name="airway_pressure"]').val();
+        parameters['air_flow'] = $targetForm.find('input[name="air_flow"]').val();
+        parameters['o2_flow'] = $targetForm.find('input[name="o2_flow"]').val();
+        parameters['status_use'] = $targetForm.find('select[name="status_use"]').val();
+        parameters['status_use_other'] = $targetForm.find('textarea[name="status_use_other"]').val();
+        parameters['spo2'] = $targetForm.find('input[name="spo2"]').val();
+        parameters['etco2'] = $targetForm.find('input[name="etco2"]').val();
+        parameters['pao2'] = $targetForm.find('input[name="pao2"]').val();
+        parameters['paco2'] = $targetForm.find('input[name="paco2"]').val();
+        parameters['confirmed_flg'] = $targetForm.find('input[name="confirmed_flg"]:checked').val();
 
-//             if (!$featureElement.length) {
-//                 $featureElement = $searchBtn;
-//                 parameters = buildSearchParameters($searchForm);
-//             }
+        var successCallback = function (data) {
+            var $featureElement = $('.page-item' + '.active').children('button');
 
-//             var successCallback = function (paginated_list) {
-//                 $paginatedList.html(paginated_list);
-//             }
+            var parameters = {};
 
-//             utilAsyncExecuteAjax($featureElement, parameters, false, successCallback);
+            if (!$featureElement.length) {
+                $featureElement = $searchBtn;
+                parameters = buildSearchParameters($searchForm);
+            }
 
-//             $editModal.modal('hide');
-//         }
+            var successCallback = function (paginated_list) {
+                $paginatedList.html(paginated_list);
+            }
 
-//         utilAsyncExecuteAjax($ventilatorUpdateBtn, parameters, true, successCallback);
+            utilAsyncExecuteAjax($featureElement, parameters, false, successCallback);
 
-//         return false;
-//     });
+            $editModal.modal('hide');
+        }
+
+        var $element = $(this);
+
+        utilAsyncExecuteAjax($element, parameters, true, successCallback);
+
+        return false;
+    }
+);
 
 /** 
  * checkbox管理(gmail風にunchecked,indeterminate,checkedの三段階)
@@ -177,7 +205,6 @@ function buildSelect2() {
     var $element = $('#async-organization-data');
 
     var successCallback = function (data) {
-        console.log(data);
         var organizations = [];
 
         data.forEach(function (datum) {
@@ -200,12 +227,14 @@ function buildSelect2() {
 
 $select2OrganizationName.on(
     'change',
-    function(e) {
+    function (e) {
 
-        $searchForm.find('input[name="gs1_code"]').prop('disabled', $(this).val()==='');
-        $searchForm.find('input[name="patient_code"]').prop('disabled', $(this).val()==='');
+        $searchForm.find('input[name="gs1_code"]').prop('disabled', $(this).val() === '');
+        $searchForm.find('input[name="patient_code"]').prop('disabled', $(this).val() === '');
     }
 );
+
+
 
 // ページネーション
 $paginatedList.on('click', '.page-link', function (e) {
@@ -269,13 +298,13 @@ function buildSearchParameters($form) {
 
 
 $('input.form-control.datetime').datetimepicker({
-    step:5,
-    format:'Y-m-d H:i:00'
-})  
+    step: 5,
+    format: 'Y-m-d H:i:00'
+})
 
 $('input.form-control.date').datetimepicker({
-    timepicker:false,
-    format:'Y-m-d'
-})  
+    timepicker: false,
+    format: 'Y-m-d'
+})
 
 buildSelect2();

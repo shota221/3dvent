@@ -58,11 +58,11 @@ class VentilatorController extends Controller
 
     public function asyncBulkDelete(Request $request)
     {
-        $form = new Form\VentilatorDeleteForm($request->all());
+        $form = new Form\VentilatorBulkDeleteForm($request->all());
 
-        $reponse = $this->service->delete($form);
+        if ($form->hasError()) throw new InvalidFormException($form);
 
-        return $reponse;
+        return $this->service->bulkDelete($form);;
     }
 
     public function asyncBugs(Request $request)

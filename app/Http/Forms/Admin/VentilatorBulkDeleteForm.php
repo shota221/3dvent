@@ -7,7 +7,7 @@ use App\Http\Forms\BaseForm;
 use App\Services\Support;
 use App\Exceptions;
 
-class VentilatorDeleteForm extends BaseForm
+class VentilatorBulkDeleteForm extends BaseForm
 {
     public $ids;
 
