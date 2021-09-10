@@ -55,12 +55,35 @@ Route::group(['middleware' => ['routetype:admin']], function () {
         /**
          * 組織管理
          */
-        Route::get('/organization', 'OrganizationController@index')->name('admin.organization.index');
-        Route::get('/organization/async', 'OrganizationController@asyncSearch')->name('admin.organization.async');
-        Route::get('/organization/async/search_list', 'OrganizationController@asyncSearchList')->name('admin.organization.search_list');
-        Route::get('/organization/async/users', 'OrganizationController@asyncUsers')->name('admin.organization.users');
-        Route::post('/organization', 'OrganizationController@asyncCreate')->name('admin.organization.create');
-        Route::put('/organization', 'OrganizationController@asyncUpdate')->name('admin.organization.update');
+        Route::get(
+            '/organization',
+            'OrganizationController@index'
+        )->name('admin.organization.index');
+    
+        Route::get(
+            '/organization/async',
+            'OrganizationController@asyncSearch'
+        )->name('admin.organization.async');
+    
+        Route::get(
+            '/organization/async/search_list',
+            'OrganizationController@asyncSearchList'
+        )->name('admin.organization.search_list');
+    
+        Route::get(
+            '/organization/async/users',
+            'OrganizationController@asyncUsers'
+        )->name('admin.organization.users');
+    
+        Route::post(
+            '/organization',
+            'OrganizationController@asyncCreate'
+        )->name('admin.organization.create');
+    
+        Route::put(
+            '/organization',
+            'OrganizationController@asyncUpdate'
+        )->name('admin.organization.update');
     
         /**
          * 組織管理者ユーザー管理

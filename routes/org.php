@@ -12,12 +12,13 @@
 | 
 |
 */
+
 /** 
  * 記述ruleは以下で統一 
  *   Route::get('auth', 'AuthController@index')->name('org.auth');
  */
 
-Route::group(['middleware' => ['routetype:org']], function() {
+Route::group(['middleware' => ['routetype:org']], function () {
 
     // ログイン、ログアウト等認証不要ルート
 
@@ -32,7 +33,7 @@ Route::group(['middleware' => ['routetype:org']], function() {
         'auth/login',
         'AuthController@login'
     )->name('org.login');
-    
+
     // ログアウト
     Route::get(
         'auth/logout',
@@ -40,17 +41,17 @@ Route::group(['middleware' => ['routetype:org']], function() {
     )->name('org.logout');
 
     // TODO　パスワードリセット
-        
+
     Route::group(['middleware' => ['auth:org']], function () {
 
         // 認証が必要なルート
-        
+
         // ダッシュボード
         Route::get(
             '/',
             'DashboardController@index'
         )->name('org.home');
-        
+
         /**
          * 組織設定管理
          */
@@ -58,7 +59,7 @@ Route::group(['middleware' => ['routetype:org']], function() {
             '/setting',
             'OrganizationSettingController@index'
         )->name('org.setting.index');
-        
+
         Route::put(
             '/setting',
             'OrganizationSettingController@asyncUpdate'
@@ -68,27 +69,27 @@ Route::group(['middleware' => ['routetype:org']], function() {
          * 患者観察研究データ管理
          */
         Route::get(
-            '/patient_value', 
+            '/patient_value',
             'PatientValueController@index'
         )->name('org.patient_value.index');
-        
+
         Route::put(
-            '/patient_value', 
+            '/patient_value',
             'PatientValueController@asyncUpdate'
         )->name('org.patient_value.update');
-        
+
         Route::delete(
-            '/patient_value', 
+            '/patient_value',
             'PatientValueController@asyncLogicalDelete'
         )->name('org.patient_value.logical_delete');
-        
+
         Route::get(
-            '/patient_value/detail', 
+            '/patient_value/detail',
             'PatientValueController@asyncGetDetail'
         )->name('org.patient_value.detail');
-        
+
         Route::get(
-            '/patient_value/search', 
+            '/patient_value/search',
             'PatientValueController@asyncSearch'
         )->name('org.patient_value.search');
 
@@ -96,44 +97,87 @@ Route::group(['middleware' => ['routetype:org']], function() {
          * ユーザー管理
          */
         Route::get(
-            '/user', 
+            '/user',
             'UserController@index'
         )->name('org.user.index');
-        
+
         Route::get(
-            '/user/search', 
+            '/user/search',
             'UserController@asyncSearch'
         )->name('org.user.search');
 
         Route::get(
-            '/user/detail', 
+            '/user/detail',
             'UserController@asyncGetDetail'
         )->name('org.user.detail');
-        
+
         Route::put(
-            '/user', 
+            '/user',
             'UserController@asyncUpdate'
-            )->name('org.user.update');
-            
+        )->name('org.user.update');
+
         Route::post(
-            '/user', 
+            '/user',
             'UserController@asyncCreate'
         )->name('org.user.create');
-        
+
         Route::delete(
-            '/user', 
+            '/user',
             'UserController@asyncLogicalDelete'
         )->name('org.user.logical_delete');
 
         Route::get(
-            '/user/csv', 
+            '/user/csv',
             'UserController@exportUserCsvFormat'
         )->name('org.user.export_user_csv_format');
-        
+
         Route::post(
-            '/user/csv', 
+            '/user/csv',
             'UserController@asyncImportUserCsvData'
         )->name('org.user.import_user_csv_data');
 
+        // 組織設定管理
+        Route::get(
+            '/setting',
+            'OrganizationSettingController@index'
+        )->name('org.setting.index');
+
+        Route::put(
+            '/setting',
+            'OrganizationSettingController@asyncUpdate'
+        )->name('org.setting.update');
+
+        /**
+         * MicroVent管理
+         */
+        Route::get(
+            '/ventilator',
+            'VentilatorController@index'
+        )->name('org.ventilator.index');
+
+        Route::get(
+            '/ventilator/async',
+            'VentilatorController@asyncSearch'
+        )->name('org.ventilator.async');
+
+        Route::get(
+            '/ventilator/async/patient',
+            'VentilatorController@asyncPatient'
+        )->name('org.ventilator.patient');
+
+        Route::get(
+            '/ventilator/async/bugs',
+            'VentilatorController@asyncBugs'
+        )->name('org.ventilator.bugs');
+
+        Route::put(
+            '/ventilator',
+            'VentilatorController@asyncUpdate'
+        )->name('org.ventilator.update');
+
+        Route::delete(
+            '/ventilator',
+            'VentilatorController@asyncBulkDelete'
+        )->name('org.ventilator.bulk_delete');
     });
 });

@@ -1,0 +1,76 @@
+<?php
+
+namespace App\Http\Controllers\Org;
+
+use App\Exceptions\InvalidFormException;
+use App\Http\Controllers\Controller;
+use App\Http\Controllers\Support\CsvLoader;
+use App\Http\Forms\Org as Form;
+use App\Services\Org as Service;
+use App\Services\Support\Gs1Util;
+use Illuminate\Http\Request;
+
+class VentilatorController extends Controller
+{
+    private $service;
+
+    function __construct()
+    {
+        $this->service = new Service\VentilatorService;
+    }
+
+    public function index(Request $request)
+    {
+        $path = $request->path();
+        $ventilator_paginator = $this->service->getVentilatorData($path);
+        $ventilator_paginator->withPath(route('admin.ventilator.async'), [], false);
+        return view('index', compact('ventilator_paginator'));
+    }
+
+    public function asyncSearch(Request $request)
+    {
+        $form = new Form\VentilatorSearchForm($request->all());
+
+        if ($form->hasError()) throw new InvalidFormException($form);
+
+        $path = $request->path();
+        $ventilator_paginator = $this->service->getVentilatorData($path, $form);
+        return view('list', compact('ventilator_paginator'));
+    }
+
+    public function asyncUpdate(Request $request)
+    {
+        $form = new Form\VentilatorUpdateForm($request->all());
+
+        if ($form->hasError()) throw new InvalidFormException($form);
+
+        return $this->service->update($form);
+    }
+
+    public function asyncPatient(Request $request)
+    {
+        $form = new Form\VentilatorPatientForm($request->all());
+
+        $response = $this->service->getPatient($form);
+
+        return $response;
+    }
+
+    public function asyncBulkDelete(Request $request)
+    {
+        $form = new Form\VentilatorBulkDeleteForm($request->all());
+
+        if ($form->hasError()) throw new InvalidFormException($form);
+
+        return $this->service->bulkDelete($form);;
+    }
+
+    public function asyncBugs(Request $request)
+    {
+        $form = new Form\VentilatorBugsForm($request->all());
+
+        $bugs = $this->service->getBugsList($form);
+
+        return view('ventilatorBugList', compact('bugs'));
+    }
+}

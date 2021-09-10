@@ -18,6 +18,11 @@ class VentilatorRepository
         return Ventilator::query();
     }
 
+    private static function queryByOrganizationId($organization_id)
+    {
+        return static::query()->where('organization_id',$organization_id);
+    }
+
     private static function querySelectGeom()
     {
         return static::query()->select([
@@ -257,4 +262,27 @@ class VentilatorRepository
 
         \DB::update($query, array_merge($ventilator_ids, $ventilator_patient_ids, $ventilator_ids));
     }
+
+    public static function findOneByOrganizationIdAndId($organization_id, $id)
+    {
+        return self::queryByOrganizationId($organization_id)->where('id', $id)->first();
+    }
+
+    public static function logicalDeleteByOrganizationIdAndIds($organization_id, $ids)
+    {
+        return self::queryByOrganizationId($organization_id)->whereIn('id', $ids)->update(['deleted_at' => DateUtil::now(), 'active' => null]);
+    }
+
+    public static function getPatientCodeByOrganizationIdAndId($organization_id, $id)
+    {
+        return static::leftJoinPatient(self::queryByOrganizationId($organization_id))
+            ->addSelect([
+                'ventilators.*',
+                'patients.patient_code AS patient_code'
+            ])
+            ->where('ventilators.id', $id)
+            ->orderBy('ventilators.created_at', 'DESC')
+            ->value('patient_code');
+    }
+
 }
