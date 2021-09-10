@@ -51,9 +51,9 @@ class VentilatorController extends Controller
     {
         $form = new Form\VentilatorPatientForm($request->all());
 
-        $response = $this->service->getPatient($form);
+        if ($form->hasError()) throw new InvalidFormException($form);
 
-        return $response;
+        return $this->service->getPatient($form);
     }
 
     public function asyncBulkDelete(Request $request)
@@ -69,6 +69,8 @@ class VentilatorController extends Controller
     {
         $form = new Form\VentilatorBugsForm($request->all());
 
+        if ($form->hasError()) throw new InvalidFormException($form);
+
         $bugs = $this->service->getBugsList($form);
 
         return view('ventilatorBugList', compact('bugs'));
@@ -77,6 +79,8 @@ class VentilatorController extends Controller
     public function exportCsv(Request $request)
     {
         $form = new Form\VentilatorCsvExportForm($request->all());
+
+        if ($form->hasError()) throw new InvalidFormException($form);
 
         return response()->streamDownload(
             function () use ($form) {

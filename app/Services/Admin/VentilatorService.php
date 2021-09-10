@@ -43,7 +43,7 @@ class VentilatorService
 
         $total_count = Repos\VentilatorRepository::countBySearchValues($search_values);
 
-        return Converter\VentilatorConverter::convertToAdminPagenate($ventilators, $total_count, $items_per_page, $path . $http_query);
+        return Converter\VentilatorConverter::convertToAdminPaginate($ventilators, $total_count, $items_per_page, $path . $http_query);
     }
 
     function getPatient(Form\VentilatorPatientForm $form)
@@ -56,7 +56,6 @@ class VentilatorService
     function create(Form\VentilatorCsvImportForm $form, $file)
     {
         $file_extension = pathinfo($file->getClientOriginalName(), PATHINFO_EXTENSION);
-        \Log::debug($file_extension);
 
         if($file_extension!=='csv'){
             $form->addError('csv_file', 'validation.csv_required');
@@ -469,12 +468,12 @@ class VentilatorService
     {
         $ventilator = Repos\VentilatorRepository::findOneById($form->id);
 
-        $entity = Converter\VentilatorConverter::convertToAdminVentilatorUpdateEntity($ventilator, $form->start_using_at);
+        $ventilator->start_using_at = $form->start_using_at;
 
         DBUtil::Transaction(
             'MicroVent編集',
-            function () use ($entity) {
-                $entity->save();
+            function () use ($ventilator) {
+                $ventilator->save();
             }
         );
 
@@ -522,12 +521,7 @@ class VentilatorService
     {
         $bugs = Repos\VentilatorBugRepository::findByVentilatorId($form->id);
 
-        return array_map(
-            function ($user) {
-                return Converter\VentilatorConverter::convertToBugsListElmEntity($user);
-            },
-            $bugs->all()
-        );
+        return Converter\VentilatorConverter::convertToBugsListData($bugs);
     }
 
     function createVentilatorCsv(Form\VentilatorCsvExportForm $form)

@@ -12,7 +12,6 @@ use App\Models\VentilatorBug;
 use App\Services\Support\DateUtil;
 use App\Services\Support\Gs1Util;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class VentilatorConverter
@@ -114,7 +113,7 @@ class VentilatorConverter
   }
 
 
-  public static function convertToAdminPagenate(Collection $entities, $total_count, $items_per_page, $base_url)
+  public static function convertToAdminPaginate(\Illuminate\Database\Eloquent\Collection $entities, $total_count, $items_per_page, $base_url)
   {
     $paginator = new LengthAwarePaginator(
       self::convertToAdminVentilatorData($entities),
@@ -143,7 +142,7 @@ class VentilatorConverter
     return $ventilator_result;
   }
 
-  private static function convertToAdminVentilatorData(Collection $entities)
+  private static function convertToAdminVentilatorData(\Illuminate\Database\Eloquent\Collection $entities)
   {
     return array_map(
       function ($entity) {
@@ -180,6 +179,17 @@ class VentilatorConverter
     
     return $bug_result;
   }
+
+  public static function convertToBugsListData(\Illuminate\Database\Eloquent\Collection $entities)
+  {
+    return array_map(
+      function ($entity) {
+        return self::convertToBugsListElmEntity($entity);
+      },
+      $entities->all()
+    );
+  }
+
 
   public static function convertToImportedVentilatorEntity($entity,$organization_id,$registered_user_id,$gs1_code,$serial_number,$city,$qr_read_at,$expiration_date,$start_using_at)
   {

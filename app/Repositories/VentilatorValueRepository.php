@@ -21,7 +21,7 @@ class VentilatorValueRepository
         return static::query()->where('id', $id)->first();
     }
 
-    public static function findOneWithPatientsAndUsersById($id)
+    public static function findOneWithPatientsAndOrganizationsAndUsersById($id)
     {
         $query = self::joinVentilatorsAndPatientsAndOrganizations();
         $query = self::leftJoinUsers($query);

@@ -228,7 +228,6 @@ function buildSelect2() {
 $select2OrganizationName.on(
     'change',
     function (e) {
-
         $searchForm.find('input[name="gs1_code"]').prop('disabled', $(this).val() === '');
         $searchForm.find('input[name="patient_code"]').prop('disabled', $(this).val() === '');
     }
@@ -281,7 +280,7 @@ $clearSearchFormBtn.on(
 function buildSearchParameters($form) {
     var parameters = {};
 
-    parameters['organization_id'] = $form.find('select[name="organization_id"] option:selected').val();
+    parameters['organization_id'] = $form.find('select[name="organization_id"]').val();
     parameters['registered_at_from'] = $form.find('input[name="registered_at_from"]').val();
     parameters['registered_at_to'] = $form.find('input[name="registered_at_to"]').val();
     parameters['gs1_code'] = $form.find('input[name="gs1_code"]').val();
