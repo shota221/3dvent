@@ -20,7 +20,7 @@ class VentilatorRepository
 
     private static function queryByOrganizationId($organization_id)
     {
-        return static::query()->where('organization_id',$organization_id);
+        return static::query()->where('ventilators.organization_id',$organization_id);
     }
 
     private static function querySelectGeom()
@@ -131,6 +131,13 @@ class VentilatorRepository
         return self::createWhereClauseFromSearchValues($query, $search_values);
     }
 
+    private static function queryByOrganizationIdAndSearchValues($organization_id, array $search_values)
+    {
+        $query = self::leftJoinUser(self::queryByOrganizationId($organization_id));
+        $query = self::leftJoinVentilatorBug($query);
+        return self::createWhereClauseFromSearchValues($query, $search_values);
+    }
+
     public static function findBySearchValuesAndOffsetAndLimit($offset, $limit, $search_values)
     {
         return self::queryBySearchValues($search_values)
@@ -148,12 +155,40 @@ class VentilatorRepository
             ->get();
     }
 
-    public static function countBySearchValues($search_values)
+    public static function findByOrganizationIdAndSearchValuesAndOffsetAndLimit($organization_id, $search_values, $offset, $limit)
+    {
+        return self::queryByOrganizationIdAndSearchValues($organization_id, $search_values)
+            ->select([
+                'ventilators.*',
+                'users.name AS registered_user_name',
+                'ventilator_bugs.ventilator_id AS bug_ventialtor_id'
+            ])
+            ->distinct()
+            ->limit($limit)
+            ->offset($offset)
+            ->orderBy('created_at', 'DESC')
+            ->orderBy('gs1_code', 'ASC')
+            ->get();
+    }
+
+    public static function countBySearchValues(array $search_values)
     {
         return self::queryBySearchValues($search_values)
             ->select([
                 'ventilators.*',
                 'organizations.name AS organization_name',
+                'users.name AS registered_user_name',
+                'ventilator_bugs.ventilator_id AS bug_ventialtor_id'
+            ])
+            ->distinct()
+            ->count();
+    }
+
+    public static function countByOrganizationIdAndSearchValues($organizaiton_id, array $search_values)
+    {
+        return self::queryByOrganizationIdAndSearchValues($organizaiton_id, $search_values)
+            ->select([
+                'ventilators.*',
                 'users.name AS registered_user_name',
                 'ventilator_bugs.ventilator_id AS bug_ventialtor_id'
             ])

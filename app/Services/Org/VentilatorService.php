@@ -29,11 +29,11 @@ class VentilatorService
         }
 
         //TODO userからorganization_id取得
-        $search_values['organization_id'] = 1;
+        $organization_id = 1;
 
-        $ventilators = Repos\VentilatorRepository::findBySearchValuesAndOffsetAndLimit($offset, $items_per_page, $search_values);
+        $ventilators = Repos\VentilatorRepository::findByOrganizationIdAndSearchValuesAndOffsetAndLimit($organization_id, $search_values, $offset, $items_per_page);
 
-        $total_count = Repos\VentilatorRepository::countBySearchValues($search_values);
+        $total_count = Repos\VentilatorRepository::countByOrganizationIdAndSearchValues($organization_id, $search_values);
 
         return Converter\VentilatorConverter::convertToOrgPaginate($ventilators, $total_count, $items_per_page, $path . $http_query);
     }
@@ -106,10 +106,10 @@ class VentilatorService
         return $search_values;
     }
 
-    function getBugsList(Form\VentilatorBugsForm $form)
+    function getBugList(Form\VentilatorBugsForm $form)
     {
         $bugs = Repos\VentilatorBugRepository::findByVentilatorId($form->id);
 
-        return Converter\VentilatorConverter::convertToBugsList($bugs);
+        return Converter\VentilatorConverter::convertToBugListData($bugs);
     }
 }

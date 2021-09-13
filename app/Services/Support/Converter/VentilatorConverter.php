@@ -202,7 +202,7 @@ class VentilatorConverter
   }
 
   
-  public static function convertToOrgPaginate(Collection $entities, $total_count, $items_per_page, $base_url)
+  public static function convertToOrgPaginate(\Illuminate\Database\Eloquent\Collection $entities, $total_count, $items_per_page, $base_url)
   {
     $paginator = new LengthAwarePaginator(
       self::convertToOrgVentilatorData($entities),
@@ -230,7 +230,7 @@ class VentilatorConverter
     return $ventilator_result;
   }
 
-  private static function convertToOrgVentilatorData(Collection $entities)
+  private static function convertToOrgVentilatorData(\Illuminate\Database\Eloquent\Collection $entities)
   {
     return array_map(
       function ($entity) {

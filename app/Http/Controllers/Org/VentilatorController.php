@@ -23,7 +23,7 @@ class VentilatorController extends Controller
     {
         $path = $request->path();
         $ventilator_paginator = $this->service->getVentilatorData($path);
-        $ventilator_paginator->withPath(route('admin.ventilator.async'), [], false);
+        $ventilator_paginator->withPath(route('org.ventilator.search'), [], false);
         return view('index', compact('ventilator_paginator'));
     }
 
@@ -51,9 +51,9 @@ class VentilatorController extends Controller
     {
         $form = new Form\VentilatorPatientForm($request->all());
 
-        $response = $this->service->getPatient($form);
+        if ($form->hasError()) throw new InvalidFormException($form);
 
-        return $response;
+        return $this->service->getPatient($form);
     }
 
     public function asyncBulkDelete(Request $request)
@@ -65,11 +65,13 @@ class VentilatorController extends Controller
         return $this->service->bulkDelete($form);;
     }
 
-    public function asyncBugs(Request $request)
+    public function asyncShowBugList(Request $request)
     {
         $form = new Form\VentilatorBugsForm($request->all());
 
-        $bugs = $this->service->getBugsList($form);
+        if ($form->hasError()) throw new InvalidFormException($form);
+
+        $bugs = $this->service->getBugList($form);
 
         return view('ventilatorBugList', compact('bugs'));
     }

@@ -131,24 +131,79 @@ Route::group(['middleware' => ['routetype:admin']], function () {
         /**
          * MicroVent管理
          */
-        Route::get('/ventilator', 'VentilatorController@index')->name('admin.ventilator.index');
-        Route::get('/ventilator/async', 'VentilatorController@asyncSearch')->name('admin.ventilator.async');
-        Route::get('/ventilator/async/patient','VentilatorController@asyncPatient')->name('admin.ventilator.patient');
-        Route::get('/ventilator/async/bugs','VentilatorController@asyncShowBugList')->name('admin.ventilator.bugs');
-        Route::get('/ventilator/csv','VentilatorController@exportCsv')->name('admin.ventilator.export_csv');
-        Route::post('/ventilator/csv','VentilatorController@importCsv')->name('admin.ventilator.import_csv');
-        Route::put('/ventilator', 'VentilatorController@asyncUpdate')->name('admin.ventilator.update');
-        Route::delete('/ventilator','VentilatorController@asyncBulkDelete')->name('admin.ventilator.bulk_delete');
-
+        Route::get(
+            '/ventilator',
+            'VentilatorController@index'
+        )->name('admin.ventilator.index');
+    
+        Route::get(
+            '/ventilator/async',
+            'VentilatorController@asyncSearch'
+        )->name('admin.ventilator.async');
+    
+        Route::get(
+            '/ventilator/async/patient',
+            'VentilatorController@asyncPatient'
+        )->name('admin.ventilator.patient');
+    
+        Route::get(
+            '/ventilator/async/bugs',
+            'VentilatorController@asyncShowBugList'
+        )->name('admin.ventilator.bugs');
+    
+        Route::get(
+            '/ventilator/csv',
+            'VentilatorController@exportCsv'
+        )->name('admin.ventilator.export_csv');
+    
+        Route::post(
+            '/ventilator/csv',
+            'VentilatorController@importCsv'
+        )->name('admin.ventilator.import_csv');
+    
+        Route::put(
+            '/ventilator',
+            'VentilatorController@asyncUpdate'
+        )->name('admin.ventilator.update');
+    
+        Route::delete(
+            '/ventilator',
+            'VentilatorController@asyncBulkDelete'
+        )->name('admin.ventilator.bulk_delete');
+    
+    
         /**
          * 機器観察研究データ
          */
-        Route::get('/ventilator_value', 'VentilatorValueController@index')->name('admin.ventilator_value.index');
-        Route::post('/ventilator_value', 'VentilatorValueController@index')->name('admin.ventilator_value.by_ventilator');
-        Route::get('/ventilator_value/detail', 'VentilatorValueController@asyncDetail')->name('admin.ventilator_value.detail');
-        Route::get('/ventilator_value/search', 'VentilatorValueController@asyncSearch')->name('admin.ventilator_value.search');
-        Route::put('/ventilator_value', 'VentilatorValueController@asyncUpdate')->name('admin.ventilator_value.update');
-        Route::delete('/ventilator_value','VentilatorValueController@asyncBulkDelete')->name('admin.ventilator_value.bulk_delete');
+        Route::get(
+            '/ventilator_value',
+            'VentilatorValueController@index'
+        )->name('admin.ventilator_value.index');
+    
+        Route::post(
+            '/ventilator_value',
+            'VentilatorValueController@index'
+        )->name('admin.ventilator_value.by_ventilator');
+    
+        Route::get(
+            '/ventilator_value/detail',
+            'VentilatorValueController@asyncDetail'
+        )->name('admin.ventilator_value.detail');
+    
+        Route::get(
+            '/ventilator_value/search',
+            'VentilatorValueController@asyncSearch'
+        )->name('admin.ventilator_value.search');
+    
+        Route::put(
+            '/ventilator_value',
+            'VentilatorValueController@asyncUpdate'
+        )->name('admin.ventilator_value.update');
+    
+        Route::delete(
+            '/ventilator_value',
+            'VentilatorValueController@asyncBulkDelete'
+        )->name('admin.ventilator_value.bulk_delete');
 
         /**
          * 患者観察研究データ管理

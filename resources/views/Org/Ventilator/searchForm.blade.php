@@ -1,6 +1,6 @@
     @component('components.searchForm', [
         'id' => 'ventilator-refined-search',
-        'action' => route('admin.ventilator.async'),
+        'action' => route('org.ventilator.search'),
         ])
 
         @slot('content')
@@ -60,13 +60,13 @@
                         <div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input form-control-sm" type="checkbox" name="has_bug" value="1"
-                                    checked="">
-                                <label class="form-check-label">@lang('messages.exists')</label>
+                                    checked="" id="search-has_bug-1">
+                                <label class="form-check-label" for="search-has_bug-1">@lang('messages.exists')</label>
                             </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input form-control-sm" type="checkbox" name="has_bug" value="0"
-                                    checked="">
-                                <label class="form-check-label">@lang('messages.none')</label>
+                                    checked="" id="search-has_bug-0">
+                                <label class="form-check-label" for="search-has_bug-0">@lang('messages.none')</label>
                             </div>
                         </div>
                     </div>
