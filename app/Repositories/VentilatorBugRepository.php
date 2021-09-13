@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Models\VentilatorBug;
 use App\Models\Ventilator;
 use App\Models\Organization;
+use App\Models\User;
 
 class VentilatorBugRepository
 {
@@ -31,6 +32,11 @@ class VentilatorBugRepository
 
         return $query->get();
         
+    }
+
+    public static function findByVentilatorId($ventilator_id)
+    {
+        return static::leftJoinUser()->where('ventilator_id',$ventilator_id)->get();
     }
    
     private static function createLimitOffsetClause($query, int $limit, int $offset)
@@ -91,5 +97,24 @@ class VentilatorBugRepository
         return $query;
 
     }
-   
+
+    private static function leftJoinUser($query = null)
+    {
+        $table = VentilatorBug::tableName();
+
+        $user_table = User::tableName();
+
+        return (!is_null($query) ? $query : static::query())
+            ->leftJoin(
+                $user_table,
+                function ($join) use ($table, $user_table) {
+                    $join
+                        ->on($user_table . '.id', '=', $table . '.bug_registered_user_id');
+                }
+            )
+            ->addSelect([
+                $table . '.*',
+                $user_table . '.name AS registered_user_name',
+            ]);
+    }
 }

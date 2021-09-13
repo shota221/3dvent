@@ -136,6 +136,32 @@ class VentilatorValueHistoryRepository
         return $query;
     }
 
+    public static function insertBulk(array $ventilator_value_ids, $operated_user_id, $operation)
+    {
+        $count = count($ventilator_value_ids);
 
-    
+        $placeholder = substr(str_repeat(',(?,?,?)', $count), 1);
+
+        $records = [];
+
+        for ($i = 0; $i < $count; $i++) {
+            $record = [
+                $ventilator_value_ids[$i],
+                $operated_user_id,
+                $operation
+            ];
+
+            $records = array_merge($records, $record);
+        }
+
+        $query = <<<EOM
+            INSERT INTO 
+                ventilator_value_histories
+                (ventilator_value_id,operated_user_id,operation)
+            VALUES
+                {$placeholder}
+        EOM;
+
+        \DB::insert($query, $records);
+    }
 }

@@ -3,6 +3,7 @@
 namespace App\Services\Api;
 
 use App\Exceptions;
+use App\Exceptions\HttpNotFoundException;
 use App\Http\Forms\Api\VentilatorShowForm;
 use App\Repositories as Repos;
 use App\Repositories\PatientRepository;
@@ -11,6 +12,7 @@ use App\Services\Support\Client\ReverseGeocodingClient;
 use App\Services\Support\Converter;
 use App\Services\Support\DBUtil;
 use App\Services\Support\DateUtil;
+use App\Services\Support\Gs1Util;
 use App\Services\Support\Logic as Logic;
 use App\Services\Support\OrganizationCheckUtil;
 use Illuminate\Validation\Rules\Exists;
@@ -18,7 +20,7 @@ use Illuminate\Validation\Rules\Exists;
 class VentilatorService
 {
     use Logic\CalculationLogic;
-    
+
 
     /**
      * gs1コードから呼吸器情報を取得する
@@ -36,20 +38,26 @@ class VentilatorService
 
         $ventilator = Repos\VentilatorRepository::findOneByGs1Code($form->gs1_code);
 
+        $from = DateUtil::parseToDatetime($ventilator->start_using_at);
+
+        $to = DateUtil::hourLater($from, config('calc.default.recommended_period_hour'));
+
+        $is_recommended_period = DateUtil::isBetweenDateTimeToAnother(DateUtil::now(), $from, $to);
+
         //no_authの場合
         $is_no_auth = is_null($user);
         if ($is_no_auth) {
-            return  Converter\VentilatorConverter::convertToVentilatorResult($ventilator);
+            return  Converter\VentilatorConverter::convertToVentilatorResult($ventilator,$is_recommended_period);
         }
 
-        $is_match_organization_id = OrganizationCheckUtil::checkUserAgainstVentilator($user,$ventilator->id);
+        $is_match_organization_id = OrganizationCheckUtil::checkUserAgainstVentilator($user, $ventilator->id);
 
-        if(!$is_match_organization_id){
-            $form->addError('gs1_code','validation.organization_mismatch');
+        if (!$is_match_organization_id) {
+            $form->addError('gs1_code', 'validation.organization_mismatch');
             throw new Exceptions\InvalidFormException($form);
         }
-        
-        return Converter\VentilatorConverter::convertToVentilatorResult($ventilator);
+
+        return Converter\VentilatorConverter::convertToVentilatorResult($ventilator,$is_recommended_period);
     }
 
     /**
@@ -70,13 +78,17 @@ class VentilatorService
             $organization_id = $user->organization_id;
         }
 
-        $serial_number = substr($form->gs1_code, -5);
+        $gs1_data = Gs1Util::extractGs1Data($form->gs1_code);
+
+        $serial_number = $gs1_data->serial_number ?? '';
+
+        $expiration_date = $gs1_data->expiration_date;
 
         if (!is_null($form->latitude) && !is_null($form->longitude)) {
             $city = (new Support\Client\ReverseGeocodingApiClient)->getReverseGeocodingData($form->latitude, $form->longitude, 13)->display_name;
         }
 
-        $entity = Converter\VentilatorConverter::convertToVentilatorEntity($form->gs1_code, $serial_number, DateUtil::toDatetimeStr(DateUtil::now()), $form->latitude, $form->longitude, $city, $organization_id, $registered_user_id);
+        $entity = Converter\VentilatorConverter::convertToVentilatorEntity($form->gs1_code, $serial_number, $expiration_date, DateUtil::toDatetimeStr(DateUtil::now()), $form->latitude, $form->longitude, $city, $organization_id, $registered_user_id);
 
         DBUtil::Transaction(
             '呼吸器情報登録',
@@ -137,18 +149,18 @@ class VentilatorService
                     $exists_new_organization_patient = Repos\PatientRepository::existsByPatientCodeAndOrganizationId(
                         $current_patient_code,
                         $new_patient_organization_id
-                        );
+                    );
 
                     if ($exists_new_organization_patient) {
                         $form->addError('patient_code', 'validation.duplicated_patient_code');
-                        return false; 
+                        return false;
                     }
                 }
 
                 // 組織セット 
                 $patient->organization_id = $new_patient_organization_id;
             }
-        } 
+        }
 
         DBUtil::Transaction(
             '呼吸器情報更新',
@@ -159,6 +171,5 @@ class VentilatorService
         );
 
         return Converter\VentilatorConverter::convertToVentilatorUpdateResult($entity);
-
     }
 }

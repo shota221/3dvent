@@ -12,6 +12,7 @@ use App\Models\Report;
 use App\Services\Support\Converter;
 use App\Http\Response\Api as Response;
 use Closure;
+use Exception;
 
 trait CalculationLogic
 {
@@ -138,5 +139,23 @@ trait CalculationLogic
     public function calcTotalFlow(float $air_flow, float $o2_flow)
     {
         return $air_flow + $o2_flow;
+    }
+
+    public function roundOff($raw_value = null)
+    {
+        try {
+            $decimal_place = config('calc.default.number_of_decimal_places');
+            if (is_null($raw_value)) {
+                return null;
+            }
+
+            if (!is_numeric($raw_value)) {
+                throw new Exceptions\LogicException('不適切な入力');
+            }
+            $float_value = floatval($raw_value);
+            return round($float_value, $decimal_place);
+        } catch (Exceptions\LogicException $e) {
+            throw new Exceptions\CalculationLogicException('四捨五入に失敗しました。');
+        }
     }
 }

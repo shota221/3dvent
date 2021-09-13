@@ -2,9 +2,11 @@
 
 namespace App\Services\Support\Converter;
 
-use App\Http\Response as Response;
+use App\Http\Response\Admin\OrganizationData;
 use App\Http\Response\Admin\OrganizationResult;
+use App\Http\Response\Admin\UserResult;
 use App\Models\Organization;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -17,7 +19,7 @@ class OrganizationConverter
     $representative_email,
     $status = Organization::DISABLED,
     $patient_obs_approved_flg = Organization::PATIENT_OBS_UNAPPROVED,
-    $edc_id = null,
+    $edcid = null
   ) {
     $entity = new Organization;
 
@@ -27,7 +29,7 @@ class OrganizationConverter
     $entity->representative_email = $representative_email;
     $entity->disabled_flg = $status;
     $entity->patient_obs_approved_flg = $patient_obs_approved_flg;
-    $entity->edcid = $edc_id;
+    $entity->edcid = $edcid;
 
     return $entity;
   }
@@ -40,7 +42,7 @@ class OrganizationConverter
     $representative_email,
     $status,
     $patient_obs_approved_flg,
-    $edc_id,
+    $edcid
   ) {
 
     $entity->name = $name;
@@ -49,7 +51,7 @@ class OrganizationConverter
     $entity->representative_email = $representative_email;
     $entity->disabled_flg = $status;
     $entity->patient_obs_approved_flg = $patient_obs_approved_flg;
-    $entity->edcid = $edc_id;
+    $entity->edcid = $edcid;
 
     return $entity;
   }
@@ -77,7 +79,7 @@ class OrganizationConverter
     $organization_result->representative_name = $entity->representative_name;
     $organization_result->representative_email = $entity->representative_email;
     $organization_result->edc_linked_flg = $entity->edc_linked_flg;
-    $organization_result->edc_id = $entity->edcid;
+    $organization_result->edcid = $entity->edcid;
     $organization_result->patient_obs_approved_flg = $entity->patient_obs_approved_flg;
     $organization_result->registered_at = $entity->created_at;
     $organization_result->disabled_flg = $entity->disabled_flg;
@@ -94,6 +96,45 @@ class OrganizationConverter
     );
   }
 
+  private static function convertToUsersListElm(User $entity)
+  {
+    $user_result = new UserResult;
 
+    $user_result->name = $entity->name;
+    $user_result->authority = $entity->authority;
+    $user_result->disabled_flg = $entity->disabled_flg;
+
+    return $user_result;
+  }
+
+  public static function convertToUsersList(Collection $entities)
+  {
+    return array_map(
+      function($entity){
+        return self::convertToUsersListElm($entity);
+      },$entities->all()
+    );
+  }
   
+  public static function convertToOrganizationSearchList(Collection $entities)
+  {
+      $organizations = array_map(
+          function($entity) {
+              return self::convertToOrganizationSearchListElm($entity);
+          }
+          ,$entities->all()
+      );
+
+      return $organizations;
+  }
+
+  private static function convertToOrganizationSearchListElm(Organization $entity)
+  {
+      $data = new OrganizationData();
+
+      $data->id = $entity->id;
+      $data->name = $entity->name;
+
+      return $data;
+  }
 }

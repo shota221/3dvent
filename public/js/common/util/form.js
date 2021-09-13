@@ -1,6 +1,6 @@
 function utilFormInputParameters($form, data) {
     $form[0].reset();
-    $.each($form.find('input, select, textarea'), function(i, elm) {
+    $.each($form.find('input, select, textarea'), function (i, elm) {
         $elm = $(elm);
 
         switch ($elm.prop('tagName')) {
@@ -17,10 +17,10 @@ function utilFormInputParameters($form, data) {
                 break;
             case 'SELECT':
                 if (data[$elm.attr('name')] !== undefined) {
-                    $.each($elm.find('option'), function(i, option) {
+                    $.each($elm.find('option'), function (i, option) {
                         $option = $(option);
                         if (parseInt($option.val()) === data[$elm.attr('name')]) {
-                            $elm.val($option.val()); 
+                            $elm.val($option.val());
                         }
                     });
                 }
@@ -28,7 +28,7 @@ function utilFormInputParameters($form, data) {
             case 'TEXTAREA':
                 $(elm).val(data[$elm.attr('name')]);
         }
-        
+
     });
 }
 
@@ -44,4 +44,3 @@ function utilFormDisplayValidationErrorMessage(errors) {
 function utilFormRemoveValidationErrorMessage() {
     $('.error-message').remove();
 }
-

@@ -27,13 +27,13 @@ class PatientRepository
     public static function existsByPatientCodeAndOrganizationId($patient_code, $organization_id)
     {
         return static::query()
-            ->where('patient_code', $patient_code)
             ->where('organization_id', $organization_id)
+            ->where('patient_code', $patient_code)
             ->exists();
     }
 
     public static function getOrganizationIdById(int $id)
     {
-        return static::query()->where('id',$id)->value('organization_id');
+        return static::query()->where('id', $id)->value('organization_id');
     }
 }

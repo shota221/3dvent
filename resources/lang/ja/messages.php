@@ -3,6 +3,8 @@
 return [
     // a
     'affiliation_organization' => '所属組織',
+    'airway_pressure' => '設定圧',
+    'air_flow' => '空気流量',
     'ambulance' => '救急車+周囲',
     'applied' => '申請しました',
     'approved' => '承認済',
@@ -14,6 +16,9 @@ return [
     'change_password' => 'パスワードを変更する',
     'clear_search_form' => '検索条件をクリア',
     'common_setting' => '組織内共通設定',
+    'confirm' => '上記、機器観察研究データを確認しました。',
+    'confirmed' => '確認済',
+    'confirmed_at' => '確認日時',
     'create' => '登録',
     'created' => '登録しました。',
     'csv_export' => '選択項目をエクスポート',
@@ -34,17 +39,30 @@ return [
     'edit_profile' => 'プロフィール編集',
     'email' => 'メールアドレス',
     'emergency_room' => '救命救急室',
+    'estimated_mv' => 'Estimated MV',
+    'estimated_peep' => 'Estimated PEEP',
+    'estimated_vt' => 'Estimated Vt',
+    'etco2' => '呼気終末二酸化炭素分圧',
     'exists' => '有',
     'expiration_date' => '有効期限',
+    'expiratory_time' => '呼気時間',
     // f
+    'female' => '女性',
+    'fio2' => 'FIO₂',
+    'fixed_value' => '最終設定値',
     // g
+    'gender' => '性別',
     // h
+    'height' => '身長',
     'hospital_name' => '病院名',
     // i
     'icu' => 'ICU',
+    'ideal_weight' => '理想体重',
     'immutable' => '不変',
     'import' => 'インポート',
     'improvement' => '改善',
+    'inspection_procedure' => '検査処置',
+    'inspiratory_time' => '吸気時間',
     'invalid' => '無効',
     'invalid_input' => '入力に誤りがあります。',
     'is_required_item' => ' は必須項目です。',
@@ -54,6 +72,7 @@ return [
     'linked' => '連携済',
     'list' => '一覧',
     // m
+    'male' => '男性',
     'mri' => 'MRI室',
     // n
     'national_name' => '国名',
@@ -61,6 +80,7 @@ return [
     'non_icu' => 'ICU以外の病室',
     'nppv' => 'NPPVに変更',
     // o
+    'o2_flow' => '酸素流量',
     'operating_room' => '手術室',
     'opt_out' => 'オプトアウト',
     'organization_admin_user_management' => '組織管理者アカウント管理',
@@ -87,6 +107,8 @@ return [
     'outcome' => '使用中止時の転帰',
     'oxygen_only' => '酸素投与のみ',
     // p
+    'paco2' => 'PaCO₂',
+    'pao2' => 'PaO₂',
     'password' => 'パスワード(組織ログイン時利用)',
     'password_confirmation' => 'パスワード(確認用)',
     'password_placeholder' => '半角英数字8文字以上',
@@ -97,6 +119,7 @@ return [
     'patient_value_management' => '患者観察研究データ管理',
     'patient_value_edit' => '患者観察研究データ編集',
     'patient_value_list' => '患者観察研究データ一覧',
+    'predicted_vt' => '予測一回換気量',
     'project_administrator' => 'プロジェクト運営者',
     'project_administrator_page' => 'プロジェクト運営者ページ',
     'post' => '登録',
@@ -111,19 +134,28 @@ return [
     'representative_email' => '代表者メールアドレス',
     'representative_name' => '代表者名',
     'request_improvement' => '改善要望',
+    'respiratory_failure' => '呼吸不全',
+    'rr' => '呼吸回数',
     // s
     'search' => '検索',
     'send' => '送信する',
     'sent' => '送信しました。',
     'serial_number' => 'シリアル番号',
     'setting' => '設定',
+    'show_fixed_values' => '最終設定値のみ表示',
+    'spo2' => '経皮的酸素飽和度',
     'start_using_at' => '使用開始日時',
     'status' => 'ステータス',
+    'status_use' => '使用状況',
+    'status_use_other' => 'その他使用状況',
+    'surgery' => '手術',
     // t
     'target_organization_name' => '対象組織名',
+    'total_flow' => '供給気量',
     'treatment' => '使用中止後の呼吸不全治療',
     // u
     'unapproved' => '未承認',
+    'unconfirmed' => '未確認',
     'unlinked' => '未連携',
     'used_place' => '使用場所',
     'user_authority' => '権限',
@@ -146,14 +178,14 @@ return [
     'ventilator_import' => 'CSVインポート',
     'ventilator_list' => 'MicroVent®一覧',
     'ventilator_management' => 'MicroVent®管理',
+    'ventilator_value_edit' => '機器観察研究データ編集',
     'ventilator_value_list' => '機器観察研究データ一覧',
+    'ventilator_value_management' => '機器観察研究データ管理',
     'ventilator_value_scan_interval' => '最終値決定時間（分）',
     'vt_per_kg' => '理想体重1kgあたりの予測一回換気量（ml/kg）',
     // w
+    'weight' => '体重',
     // x
     // y
     // z
 ];
-
-    
-

@@ -32,6 +32,10 @@ class CalcService
         } else {
             $fio2 = null;
         }
+        
+        $estimated_peep = $this->roundOff($estimated_peep);
+        $fio2 = $this->roundOff($fio2);
+
         return Converter\VentilatorValueConverter::convertToEstimatedDataResult($estimated_peep, $fio2);
     }
 
@@ -48,8 +52,8 @@ class CalcService
     {
         // \Log::debug('--getIeSoundStart--' . DateUtil::now());
         $min_sec = 2.0; //取得測定時間下限
-        $max_sec = 20; //取得測定時間上限（計算時間比例）
-        $cycle = 4; //呼吸音取得サンプル数
+        $max_sec = 25; //取得測定時間上限（計算時間比例）
+        $cycle = 5; //呼吸音取得サンプル数
         $cycle_min = 3; //最低呼吸音取得サンプル数
 
         //音声ファイル作成
@@ -126,12 +130,14 @@ class CalcService
         $hear = false; //受付開始
         $mode = 0; //0:吸気中,1:呼気中
 
-        $last_exh_start_at = null; //最後に呼気開始検出したインデックス
-        $last_inh_start_at = null; //最後に吸気開始検出したインデックス
+        $exh_start_at = []; //呼気開始検出したインデックス
+        $exh_start_count = 0;
+        $inh_start_at = []; //吸気開始検出したインデックス
+        $inh_start_count = 0;
         $exh_times = [];
         $inh_times = [];
 
-        $error_allowable = 10; //集めた呼気吸気時間に対してそれぞれ偏差値をとり、その50からの差でふるいをかける
+        $error_allowable = 15; //集めた呼気吸気時間に対してそれぞれ偏差値をとり、その50からの差でふるいをかける
         $click_allowable_time = 0.2; //呼気終了後であってもこの時間分だけはカチ音を受け付ける。
         $click_allowable_index = floor($click_allowable_time / $dt / $step);
         $click_threshold = 60; //呼気判定に入ってから$click_allowable_indexすぎるまでにこれを偏差値で上回る点があればクリック音として判定
@@ -149,37 +155,38 @@ class CalcService
                 if ($mode === 0) {
                     if (min(array_slice($standard_score_history, -$m, $m)) > $standard_score_threshold) {
                         //吸気中に過去m回すべてしきい値を上回れば呼気移行と判定
-                        $last_exh_start_at = $key - $m + 1;
+                        $exh_start_at[] = $key - $m + 1;
+                        $exh_start_count++;
                         $mode = 1;
-                        if ($last_inh_start_at !== null) {
-                            $inh_times[] = ($last_exh_start_at - $last_inh_start_at) * $step * $dt;
-                        }
-                    } else if ($key - $last_inh_start_at <= $click_allowable_index && $standard_score > $click_threshold) {
+                    } else if (!empty($inh_start_at) && $key - $inh_start_at[array_key_last($inh_start_at)] <= $click_allowable_index && $standard_score > $click_threshold) {
                         //吸気中と判定していたがクリック音が検出された場合の処理
-                        $last_inh_start_at = $key;
-                        array_pop($exh_times);
-                        $exh_times[] = ($last_inh_start_at - $last_exh_start_at) * $step * $dt;
+                        $inh_start_at[array_key_last($inh_start_at)] = $key;
                     }
-                    //print_r(array_slice($standard_score_history, -$m, $m));
-                    //print_r("last_exh_start_at" . $last_exh_start_at . "\n");
                 } else if (
                     $mode === 1
                     && max(array_slice($standard_score_history, -$k_1, $k_1)) < $standard_score_threshold_under
                     && max($gap_judge_array = array_slice($standard_score_history, -$k_2, $k_2)) - $standard_score > $standard_score_gap_threshold
                 ) {
                     $maxes = array_keys($gap_judge_array, max($gap_judge_array));
-                    $last_inh_start_at = $key - $k_2 + 1 + $maxes[0];//区間最大値を記録した点をカチ音=吸気スタートとみなす
+                    $inh_start_at[] = $key - $k_2 + 1 + $maxes[0];
+                    $inh_start_count++;
                     $mode = 0;
-                    $exh_times[] = ($last_inh_start_at - $last_exh_start_at) * $step * $dt;
-                    //print_r("last_inh_start_at" . $last_inh_start_at . "\n");
                 }
             } else if (max(array_slice($standard_score_history, -$n, $n)) < $standard_score_threshold_under) {
                 $hear = true;
-                // print_r($key . "\n");
             }
 
-            if (count($inh_times) === $cycle) break;
+            if ($inh_start_count === $cycle) break;
         }
+
+        for ($i = 0; $i < $inh_start_count; $i++) {
+            $exh_times[] = ($inh_start_at[$i] - $exh_start_at[$i]) * $step * $dt;
+        }
+
+        for ($i = 1; $i < $exh_start_count; $i++) {
+            $inh_times[] = ($exh_start_at[$i] - $inh_start_at[$i - 1]) * $step * $dt;
+        }
+
 
         if (count($inh_times) < $cycle_min) {
             $form->addError('sound', 'validation.not_enough_pulses');
@@ -191,19 +198,26 @@ class CalcService
         $exh_times_statistic = new Statistic($exh_times);
         $inh_times_statistic = new Statistic($inh_times);
         /**
-         * 外れ値削除
+         * 外れ値削除(4サンプル集まって初めて機能(3サンプルだと偏差値がかんたんにしきい値をまたいでしまうため))
          */
-        foreach ($exh_times as $key => $exh_time) {
-            if (abs($exh_times_statistic->standardScore($exh_time) - 50) > $error_allowable) {
-                unset($exh_times[$key]);
+        if (count($exh_times) >= 4) {
+            foreach ($exh_times as $key => $exh_time) {
+                if (abs($exh_times_statistic->standardScore($exh_time) - 50) > $error_allowable) {
+                    unset($exh_times[$key]);
+                    unset($exh_start_at[$key]);
+                }
             }
         }
 
-        foreach ($inh_times as $key => $inh_time) {
-            if (abs($inh_times_statistic->standardScore($inh_time) - 50) > $error_allowable) {
-                unset($inh_times[$key]);
+        if (count($inh_times) >= 4) {
+            foreach ($inh_times as $key => $inh_time) {
+                if (abs($inh_times_statistic->standardScore($inh_time) - 50) > $error_allowable) {
+                    unset($inh_times[$key]);
+                    unset($inh_start_at[$key]);
+                }
             }
         }
+
 
         $exh_times_statistic_good = new Statistic($exh_times);
         $inh_times_statistic_good = new Statistic($inh_times);

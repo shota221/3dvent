@@ -42,6 +42,7 @@
 
     <script src="{{ mix('js/form/app.js') }}"></script>
     <script src="js/common/util/async.js"></script>
+    <script src="js/common/util/form.js"></script>
 
     @yield('js')
 
