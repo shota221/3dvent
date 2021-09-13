@@ -516,7 +516,7 @@ class VentilatorService
         return $search_values;
     }
 
-    function getBugsList(Form\VentilatorBugsForm $form)
+    function getBugList(Form\VentilatorBugsForm $form)
     {
         $bugs = Repos\VentilatorBugRepository::findByVentilatorId($form->id);
 

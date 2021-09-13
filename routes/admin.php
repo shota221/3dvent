@@ -97,7 +97,7 @@ Route::group(['middleware' => ['routetype:admin']], function () {
     Route::get('/ventilator', 'VentilatorController@index')->name('admin.ventilator.index');
     Route::get('/ventilator/async', 'VentilatorController@asyncSearch')->name('admin.ventilator.async');
     Route::get('/ventilator/async/patient','VentilatorController@asyncPatient')->name('admin.ventilator.patient');
-    Route::get('/ventilator/async/bugs','VentilatorController@asyncShowBugsList')->name('admin.ventilator.bugs');
+    Route::get('/ventilator/async/bugs','VentilatorController@asyncShowBugList')->name('admin.ventilator.bugs');
     Route::get('/ventilator/csv','VentilatorController@exportCsv')->name('admin.ventilator.export_csv');
     Route::post('/ventilator/csv','VentilatorController@importCsv')->name('admin.ventilator.import_csv');
     Route::put('/ventilator', 'VentilatorController@asyncUpdate')->name('admin.ventilator.update');

@@ -65,13 +65,13 @@ class VentilatorController extends Controller
         return $this->service->bulkDelete($form);;
     }
 
-    public function asyncShowBugsList(Request $request)
+    public function asyncShowBugList(Request $request)
     {
         $form = new Form\VentilatorBugsForm($request->all());
 
         if ($form->hasError()) throw new InvalidFormException($form);
 
-        $bugs = $this->service->getBugsList($form);
+        $bugs = $this->service->getBugList($form);
 
         return view('ventilatorBugList', compact('bugs'));
     }
