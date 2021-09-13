@@ -164,7 +164,7 @@ class VentilatorConverter
     return $entity;
   }
 
-  public static function convertToBugsListElmEntity(VentilatorBug $entity)
+  public static function convertToBugListElmEntity(VentilatorBug $entity)
   {
     $bug_result = new Response\Admin\VentilatorBugResult;
 
@@ -176,11 +176,11 @@ class VentilatorConverter
     return $bug_result;
   }
 
-  public static function convertToBugsListData(\Illuminate\Database\Eloquent\Collection $entities)
+  public static function convertToBugListData(\Illuminate\Database\Eloquent\Collection $entities)
   {
     return array_map(
       function ($entity) {
-        return self::convertToBugsListElmEntity($entity);
+        return self::convertToBugListElmEntity($entity);
       },
       $entities->all()
     );

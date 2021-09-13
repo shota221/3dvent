@@ -145,7 +145,15 @@ class VentilatorRepository
 
     public static function countBySearchValues($search_values)
     {
-        return self::queryBySearchValues($search_values)->count();
+        return self::queryBySearchValues($search_values)
+            ->select([
+                'ventilators.*',
+                'organizations.name AS organization_name',
+                'users.name AS registered_user_name',
+                'ventilator_bugs.ventilator_id AS bug_ventialtor_id'
+            ])
+            ->distinct()
+            ->count();
     }
 
     private static function createWhereClauseFromSearchValues($query, $search_values)

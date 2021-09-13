@@ -520,7 +520,7 @@ class VentilatorService
     {
         $bugs = Repos\VentilatorBugRepository::findByVentilatorId($form->id);
 
-        return Converter\VentilatorConverter::convertToBugsListData($bugs);
+        return Converter\VentilatorConverter::convertToBugListData($bugs);
     }
 
     function createVentilatorCsv(Form\VentilatorCsvExportForm $form)
