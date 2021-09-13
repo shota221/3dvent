@@ -5,6 +5,7 @@ namespace App\Services\Support\Converter;
 use App\Http\Forms\Api as Form;
 use App\Http\Response as Response;
 use App\Http\Response\Api\VentilatorResult;
+use App\Models;
 use App\Models\Ventilator;
 use App\Models\VentilatorValue;
 use App\Models\Patient;
@@ -122,7 +123,7 @@ class VentilatorConverter
     return $paginator;
   }
 
-  public static function convertToAdminVentilatorResult(Ventilator $entity)
+  public static function convertToAdminVentilatorResult(Models\Ventilator $entity)
   {
     $ventilator_result = new Response\Admin\VentilatorResult;
 
@@ -215,7 +216,7 @@ class VentilatorConverter
     return $paginator;
   }
 
-  public static function convertToOrgVentilatorResult(Ventilator $entity)
+  public static function convertToOrgVentilatorResult(Models\Ventilator $entity)
   {
     $ventilator_result = new Response\Org\VentilatorResult;
 

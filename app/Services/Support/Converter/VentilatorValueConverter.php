@@ -4,12 +4,12 @@ namespace App\Services\Support\Converter;
 
 use App\Http\Forms\Api as Form;
 use App\Http\Response as Response;
+use App\Models;
 use App\Models\Ventilator;
 use App\Models\VentilatorValue;
 use App\Models\Patient;
 use App\Models\VentilatorValueHistory;
 use App\Services\Support\DateUtil;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class VentilatorValueConverter
@@ -323,7 +323,7 @@ class VentilatorValueConverter
         return $res;
     }
 
-    public static function convertToAdminPagenate(Collection $entities, $total_count, $items_per_page, $base_url)
+    public static function convertToAdminPaginate(\Illuminate\Database\Eloquent\Collection $entities, $total_count, $items_per_page, $base_url)
     {
         $paginator = new LengthAwarePaginator(
             self::convertToAdminVentilatorValueData($entities),
@@ -336,7 +336,7 @@ class VentilatorValueConverter
         return $paginator;
     }
 
-    public static function convertToAdminVentilatorValueResult(VentilatorValue $entity)
+    public static function convertToAdminVentilatorValueResult(Models\VentilatorValue $entity)
     {
         $ventilator_value_result = new Response\Admin\VentilatorValueResult;
 
@@ -370,7 +370,7 @@ class VentilatorValueConverter
         return $ventilator_value_result;
     }
 
-    private static function convertToAdminVentilatorValueData(Collection $entities)
+    private static function convertToAdminVentilatorValueData(\Illuminate\Database\Eloquent\Collection $entities)
     {
         return array_map(
             function ($entity) {
@@ -380,7 +380,7 @@ class VentilatorValueConverter
         );
     }
 
-    public static function convertToAdminVentilatorValueDetail(VentilatorValue $entity)
+    public static function convertToAdminVentilatorValueDetail(Models\VentilatorValue $entity)
     {
         $ventilator_value_result = new Response\Admin\VentilatorValueResult;
 
@@ -407,7 +407,7 @@ class VentilatorValueConverter
         return $ventilator_value_result;
     }
 
-    public static function convertToOrgPaginate(Collection $entities, $total_count, $items_per_page, $base_url)
+    public static function convertToOrgPaginate(\Illuminate\Database\Eloquent\Collection $entities, $total_count, $items_per_page, $base_url)
     {
         $paginator = new LengthAwarePaginator(
             self::convertToOrgVentilatorValueData($entities),
@@ -420,7 +420,7 @@ class VentilatorValueConverter
         return $paginator;
     }
 
-    public static function convertToOrgVentilatorValueResult(VentilatorValue $entity)
+    public static function convertToOrgVentilatorValueResult(Models\VentilatorValue $entity)
     {
         $ventilator_value_result = new Response\Org\VentilatorValueResult;
 
@@ -453,7 +453,7 @@ class VentilatorValueConverter
         return $ventilator_value_result;
     }
 
-    private static function convertToOrgVentilatorValueData(Collection $entities)
+    private static function convertToOrgVentilatorValueData(\Illuminate\Database\Eloquent\Collection $entities)
     {
         return array_map(
             function ($entity) {
@@ -463,7 +463,7 @@ class VentilatorValueConverter
         );
     }
 
-    public static function convertToOrgVentilatorValueDetail(VentilatorValue $entity)
+    public static function convertToOrgVentilatorValueDetail(Models\VentilatorValue $entity)
     {
         $ventilator_value_result = new Response\Org\VentilatorValueResult;
 

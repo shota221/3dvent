@@ -49,7 +49,7 @@ class VentilatorValueService
 
         $total_count = Repos\VentilatorValueRepository::countBySearchValues($search_values);
 
-        return Converter\VentilatorValueConverter::convertToAdminPagenate(
+        return Converter\VentilatorValueConverter::convertToAdminPaginate(
             $ventilator_value,
             $total_count,
             $item_per_page,

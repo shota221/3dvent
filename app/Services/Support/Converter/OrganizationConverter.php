@@ -56,7 +56,7 @@ class OrganizationConverter
     return $entity;
   }
 
-  public static function convertToPagenate(Collection $entities, $total_count, $items_per_page, $base_url)
+  public static function convertToPaginate(Collection $entities, $total_count, $items_per_page, $base_url)
   {
     $paginator = new LengthAwarePaginator(
       self::convertToOrganizationData($entities),

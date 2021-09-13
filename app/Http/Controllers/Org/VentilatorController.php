@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Org;
 
-use App\Exceptions\InvalidFormException;
+use App\Exceptions;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Support\CsvLoader;
 use App\Http\Forms\Org as Form;
@@ -31,7 +31,7 @@ class VentilatorController extends Controller
     {
         $form = new Form\VentilatorSearchForm($request->all());
 
-        if ($form->hasError()) throw new InvalidFormException($form);
+        if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
 
         $path = $request->path();
         $ventilator_paginator = $this->service->getVentilatorData($path, $form);
@@ -42,7 +42,7 @@ class VentilatorController extends Controller
     {
         $form = new Form\VentilatorUpdateForm($request->all());
 
-        if ($form->hasError()) throw new InvalidFormException($form);
+        if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
 
         return $this->service->update($form);
     }
@@ -51,7 +51,7 @@ class VentilatorController extends Controller
     {
         $form = new Form\VentilatorPatientForm($request->all());
 
-        if ($form->hasError()) throw new InvalidFormException($form);
+        if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
 
         return $this->service->getPatient($form);
     }
@@ -60,7 +60,7 @@ class VentilatorController extends Controller
     {
         $form = new Form\VentilatorBulkDeleteForm($request->all());
 
-        if ($form->hasError()) throw new InvalidFormException($form);
+        if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
 
         return $this->service->bulkDelete($form);;
     }
@@ -69,7 +69,7 @@ class VentilatorController extends Controller
     {
         $form = new Form\VentilatorBugsForm($request->all());
 
-        if ($form->hasError()) throw new InvalidFormException($form);
+        if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
 
         $bugs = $this->service->getBugList($form);
 

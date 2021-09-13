@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Org;
 
-use App\Exceptions\InvalidFormException;
+use App\Exceptions;
 use App\Http\Controllers\Controller;
 use App\Http\Forms\Org as Form;
 use App\Services\Org as Service;
@@ -21,7 +21,7 @@ class VentilatorValueController extends Controller
     {
         $form = new Form\VentilatorValueSearchForm($request->all());
 
-        if ($form->hasError()) throw new InvalidFormException($form);
+        if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
 
         $path = $request->path();
         $ventilator_values = $this->service->getPaginatedVentilatorValueData($path,$form);
@@ -34,7 +34,7 @@ class VentilatorValueController extends Controller
     {
         $form = new Form\VentilatorValueSearchForm($request->all());
 
-        if ($form->hasError()) throw new InvalidFormException($form);
+        if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
         
         $path = $request->path();
         $ventilator_values = $this->service->getPaginatedVentilatorValueData($path, $form);
@@ -46,7 +46,7 @@ class VentilatorValueController extends Controller
     {
         $form = new Form\VentilatorValueDetailForm($request->all());
 
-        if ($form->hasError()) throw new InvalidFormException($form);
+        if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
 
         return $this->service->getOneVentilatorValueData($form);
     }
@@ -55,7 +55,7 @@ class VentilatorValueController extends Controller
     {
         $form = new Form\VentilatorValueUpdateForm($request->all());
 
-        if ($form->hasError()) throw new InvalidFormException($form);
+        if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
 
         return $this->service->update($form);
     }
@@ -64,7 +64,7 @@ class VentilatorValueController extends Controller
     {
         $form = new Form\VentilatorValueBulkDeleteForm($request->all());
 
-        if ($form->hasError()) throw new InvalidFormException($form);
+        if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
 
         return $this->service->bulkDelete($form);
     }

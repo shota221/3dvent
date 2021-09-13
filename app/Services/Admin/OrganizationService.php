@@ -32,7 +32,7 @@ class OrganizationService
 
         $total_count = Repos\OrganizationRepository::countBySearchValues($search_values);
 
-        return Converter\OrganizationConverter::convertToPagenate($organizations, $total_count, $items_per_page, $path . $http_query);
+        return Converter\OrganizationConverter::convertToPaginate($organizations, $total_count, $items_per_page, $path . $http_query);
     }
 
     function create($form)
