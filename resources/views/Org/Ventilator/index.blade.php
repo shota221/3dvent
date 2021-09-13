@@ -43,6 +43,5 @@
 
 @section('modal')
     @include('Org.Ventilator.editModal')
-    @include('Org.Ventilator.importModal')
     @include('Org.Ventilator.ventilatorBugListModal')
 @stop

@@ -50,7 +50,7 @@
                 </td>
             @endif
             <td class="align-middle">
-                <form method="POST" class="show-ventilator_values" action="{{route('org.ventilator_value.by_ventilator')}}">
+                <form method="POST" class="show-ventilator_values" action="#">
                     @csrf
                     <input type="hidden" name="ventilator_id" value={{ $ventilator->id }}>
                     <a href="#">@lang('messages.detail')</a>
