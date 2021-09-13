@@ -179,5 +179,38 @@ Route::group(['middleware' => ['routetype:org']], function () {
             '/ventilator',
             'VentilatorController@asyncBulkDelete'
         )->name('org.ventilator.bulk_delete');
+
+        /**
+         * 機器観察研究データ
+         */
+        Route::get(
+            '/ventilator_value',
+            'VentilatorValueController@index'
+        )->name('org.ventilator_value.index');
+    
+        Route::post(
+            '/ventilator_value',
+            'VentilatorValueController@index'
+        )->name('org.ventilator_value.by_ventilator');
+    
+        Route::get(
+            '/ventilator_value/detail',
+            'VentilatorValueController@asyncDetail'
+        )->name('org.ventilator_value.detail');
+    
+        Route::get(
+            '/ventilator_value/search',
+            'VentilatorValueController@asyncSearch'
+        )->name('org.ventilator_value.search');
+    
+        Route::put(
+            '/ventilator_value',
+            'VentilatorValueController@asyncUpdate'
+        )->name('org.ventilator_value.update');
+    
+        Route::delete(
+            '/ventilator_value',
+            'VentilatorValueController@asyncBulkDelete'
+        )->name('org.ventilator_value.bulk_delete');
     });
 });
