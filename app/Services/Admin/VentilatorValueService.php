@@ -213,9 +213,8 @@ class VentilatorValueService
     public function bulkDelete(Form\VentilatorValueBulkDeleteForm $form)
     {
         $ids = $form->ids;
-        $deletable_row_limit = config('view.items_per_page');
+        $deletable_row_limit = 50;
 
-        // ページネーションで表示する件数より多い場合は例外処理
         if (count($ids) > $deletable_row_limit) {
             $form->addError('validation.excessive_number_of_registrations');
             throw new Exceptions\InvalidFormException($form);

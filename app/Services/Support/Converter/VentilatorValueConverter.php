@@ -31,9 +31,9 @@ class VentilatorValueConverter
 
         $round_at = config('calc.default.number_of_decimal_places');
 
-        $res->estimated_peep = !is_null($estimated_peep) ? strval(round($estimated_peep, $round_at)) : null;
+        $res->estimated_peep = !is_null($estimated_peep) ? strval($estimated_peep) : null;
 
-        $res->fio2 = !is_null($fio2) ? strval(round($fio2, $round_at)) : null;
+        $res->fio2 = !is_null($fio2) ? strval($fio2) : null;
 
         return $res;
     }

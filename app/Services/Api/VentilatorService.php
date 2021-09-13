@@ -20,7 +20,7 @@ use Illuminate\Validation\Rules\Exists;
 class VentilatorService
 {
     use Logic\CalculationLogic;
-    
+
 
     /**
      * gs1コードから呼吸器情報を取得する
@@ -38,20 +38,26 @@ class VentilatorService
 
         $ventilator = Repos\VentilatorRepository::findOneByGs1Code($form->gs1_code);
 
+        $from = DateUtil::parseToDatetime($ventilator->start_using_at);
+
+        $to = DateUtil::hourLater($from, config('calc.default.recommended_period_hour'));
+
+        $is_recommended_period = DateUtil::isBetweenDateTimeToAnother(DateUtil::now(), $from, $to);
+
         //no_authの場合
         $is_no_auth = is_null($user);
         if ($is_no_auth) {
-            return  Converter\VentilatorConverter::convertToVentilatorResult($ventilator);
+            return  Converter\VentilatorConverter::convertToVentilatorResult($ventilator,$is_recommended_period);
         }
 
-        $is_match_organization_id = OrganizationCheckUtil::checkUserAgainstVentilator($user,$ventilator->id);
+        $is_match_organization_id = OrganizationCheckUtil::checkUserAgainstVentilator($user, $ventilator->id);
 
-        if(!$is_match_organization_id){
-            $form->addError('gs1_code','validation.organization_mismatch');
+        if (!$is_match_organization_id) {
+            $form->addError('gs1_code', 'validation.organization_mismatch');
             throw new Exceptions\InvalidFormException($form);
         }
-        
-        return Converter\VentilatorConverter::convertToVentilatorResult($ventilator);
+
+        return Converter\VentilatorConverter::convertToVentilatorResult($ventilator,$is_recommended_period);
     }
 
     /**
@@ -143,18 +149,18 @@ class VentilatorService
                     $exists_new_organization_patient = Repos\PatientRepository::existsByPatientCodeAndOrganizationId(
                         $current_patient_code,
                         $new_patient_organization_id
-                        );
+                    );
 
                     if ($exists_new_organization_patient) {
                         $form->addError('patient_code', 'validation.duplicated_patient_code');
-                        return false; 
+                        return false;
                     }
                 }
 
                 // 組織セット 
                 $patient->organization_id = $new_patient_organization_id;
             }
-        } 
+        }
 
         DBUtil::Transaction(
             '呼吸器情報更新',
@@ -165,6 +171,5 @@ class VentilatorService
         );
 
         return Converter\VentilatorConverter::convertToVentilatorUpdateResult($entity);
-
     }
 }

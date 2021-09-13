@@ -32,6 +32,10 @@ class CalcService
         } else {
             $fio2 = null;
         }
+        
+        $estimated_peep = $this->roundOff($estimated_peep);
+        $fio2 = $this->roundOff($fio2);
+
         return Converter\VentilatorValueConverter::convertToEstimatedDataResult($estimated_peep, $fio2);
     }
 

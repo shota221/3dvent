@@ -203,7 +203,7 @@ class VentilatorRepository
             );
     }
 
-    public static function queryForCreateVentialtorCsvByids($ids)
+    public static function queryWithVentilatorValuesAndPatientsAndPatientValuesByids($ids)
     {
         $query = static::leftjoinVentilatorValue();
         $query = static::joinPatientAndPatientValue($query);

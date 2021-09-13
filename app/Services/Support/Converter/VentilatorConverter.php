@@ -16,7 +16,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class VentilatorConverter
 {
-  public static function convertToVentilatorResult($entity = null)
+  public static function convertToVentilatorResult($entity = null, $is_recommended_period = null)
   {
     $res = new Response\Api\VentilatorResult;
 
@@ -38,11 +38,7 @@ class VentilatorConverter
 
       $res->start_using_at = $entity->start_using_at;
 
-      $from = DateUtil::parseToDatetime($entity->start_using_at);
-
-      $to = DateUtil::hourLater($from, config('calc.default.recommended_period_hour'));
-
-      $res->is_recommended_period = DateUtil::isBetweenDateTimeToAnother(DateUtil::now(), $from, $to);
+      $res->is_recommended_period = $is_recommended_period;
     }
 
     $res->units = config('units');
@@ -176,7 +172,7 @@ class VentilatorConverter
     $bug_result->request_improvement = $entity->request_improvement;
     $bug_result->registered_at = $entity->registered_at;
     $bug_result->registered_user_name = $entity->registered_user_name;
-    
+
     return $bug_result;
   }
 
@@ -191,7 +187,7 @@ class VentilatorConverter
   }
 
 
-  public static function convertToImportedVentilatorEntity($entity,$organization_id,$registered_user_id,$gs1_code,$serial_number,$city,$qr_read_at,$expiration_date,$start_using_at)
+  public static function convertToImportedVentilatorEntity($entity, $organization_id, $registered_user_id, $gs1_code, $serial_number, $city, $qr_read_at, $expiration_date, $start_using_at)
   {
     $entity->organization_id = $organization_id;
     $entity->registered_user_id = $registered_user_id;

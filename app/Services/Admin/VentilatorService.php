@@ -483,9 +483,8 @@ class VentilatorService
     function bulkDelete(Form\VentilatorBulkDeleteForm $form)
     {
         $ids = $form->ids;
-        $deletable_row_limit = config('view.items_per_page');
+        $deletable_row_limit = 50;//現在のデリート方式での仮の処理上限
 
-        // ページネーションで表示する件数より多い場合は例外処理
         if (count($ids) > $deletable_row_limit) {
             $form->addError('validation.excessive_number_of_registrations');
             throw new Exceptions\InvalidFormException($form);
@@ -526,7 +525,7 @@ class VentilatorService
 
     function createVentilatorCsv(Form\VentilatorCsvExportForm $form)
     {
-        $query = Repos\VentilatorRepository::queryForCreateVentialtorCsvByids($form->ids);
+        $query = Repos\VentilatorRepository::queryWithVentilatorValuesAndPatientsAndPatientValuesByids($form->ids);
 
         $filename = config('ventilator_csv.filename');
 
