@@ -6,10 +6,6 @@ const
     $paginatedList = $('#paginated-list'),
     $ventilatorUpdateBtn = $('#async-ventilator-update'),
     $ventilatorBugListModal = $('#modal-ventilator-bug-list'),
-    $importModal = $('#modal-ventilator-import'),
-    $showImportModalBtn = $('#show-import-modal'),
-    $importCsvBtn = $('#async-ventilator-import'),
-    $exportCsvBtn = $('#btn-csv-export'),
     $searchForm = $('#async-search-form'),
     $searchBtn = $('#async-search'),
     $clearSearchFormBtn = $('#clear-search-form'),
@@ -197,84 +193,6 @@ $paginatedList.on(
         }
     }
 )
-
-/**
- * CSVエクスポート
- */
-$exportCsvBtn.on(
-    'click',
-    function () {
-        var selectedCount = $('.item-check:checked').length;
-
-        if (selectedCount > 0) {
-            var $form = $(this).closest('form');
-
-            $form.find('input').remove();
-
-            console.log($form.html());
-            $('.item-check:checked').each(function (i, elm) {
-                $("<input>", {
-                    type: "hidden",
-                    name: "ids[]",
-                    value: $(elm).val()
-                }).appendTo($form);
-            });
-        } else {
-            alert(i18n('message.object_unselected'));
-            return false;
-        }
-    }
-)
-
-/**
- * CSVインポート
- */
-//import-modal
-$showImportModalBtn.on(
-    'click',
-    function () {
-        // buildSelect2();
-
-        $importModal.modal();
-        return false;
-    });
-
-//importイベント
-$importCsvBtn.on(
-    'click',
-    function () {
-        var $targetForm = $('form[name="ventilator-import"]');
-
-        var parameters = new FormData($targetForm[0]);
-
-        var successCallback = function (data) {
-            var $featureElement = $('.page-item' + '.active').children('button');
-
-            var parameters = {};
-
-            if (!$featureElement.length) {
-                $featureElement = $searchBtn;
-                parameters = buildSearchParameters($searchForm);
-            }
-
-            var successCallback = function (paginated_list) {
-                $paginatedList.html(paginated_list);
-            }
-
-            utilAsyncExecuteAjax($featureElement, parameters, false, successCallback);
-
-            $importModal.modal('hide');
-        }
-
-        var extraSettings = {
-            processData: false,
-            contentType: false
-        }
-
-        utilAsyncExecuteAjax($importCsvBtn, parameters, true, successCallback, extraSettings);
-
-        return false;
-    });
 
 // ページネーション
 $paginatedList.on('click', '.page-link', function (e) {

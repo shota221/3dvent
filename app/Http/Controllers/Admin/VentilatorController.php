@@ -47,7 +47,7 @@ class VentilatorController extends Controller
         return $this->service->update($form);
     }
 
-    public function asyncPatient(Request $request)
+    public function asyncGetPatientData(Request $request)
     {
         $form = new Form\VentilatorPatientForm($request->all());
 

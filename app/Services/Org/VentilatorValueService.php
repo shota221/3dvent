@@ -70,7 +70,7 @@ class VentilatorValueService
     {
         $organization_id = 1; //TODO ユーザー情報から取り出し
 
-        $ventilator_value = Repos\VentilatorValueRepository::findOneWithPatientsAndOrganizationsAndUsersByOrganizationIdAndId($organization_id, $form->id);
+        $ventilator_value = Repos\VentilatorValueRepository::findOneWithPatientAndOrganizationAndRegisteredUserByOrganizationIdAndId($organization_id, $form->id);
         if (is_null($ventilator_value)) {
             $form->addError('id', 'validation.id_not_found');
             throw new Exceptions\InvalidFormException($form);

@@ -24,7 +24,6 @@ class VentilatorValueSearchForm extends BaseForm
         return [
             'ventilator_id' => 'nullable|' .Rule::VALUE_POSITIVE_NON_ZERO,
             'gs1_code'      => 'nullable|' . Rule::VALUE_NAME,
-            'organization_id'      => 'nullable|' . Rule::VALUE_POSITIVE_NON_ZERO,
             'patient_code'         => 'nullable|' . Rule::VALUE_NAME,
             'registered_user_name' => 'nullable|' . Rule::VALUE_NAME,
             'registered_at_from'   => 'nullable|date',

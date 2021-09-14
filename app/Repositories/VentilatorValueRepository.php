@@ -16,7 +16,7 @@ class VentilatorValueRepository
         return VentilatorValue::query();
     }
 
-    private static function queryByOrganizationId($organization_id)
+    private static function queryWithVentilatorsByOrganizationId(int $organization_id)
     {
         return self::joinVentilators()->where('ventilators.organization_id', $organization_id);
     }
@@ -28,11 +28,11 @@ class VentilatorValueRepository
 
     public static function findOneByOrganizationIdAndId($organization_id, $id)
     {
-        return self::queryByOrganizationId($organization_id)->where('ventilator_values.id', $id)
+        return self::queryWithVentilatorsByOrganizationId($organization_id)->where('ventilator_values.id', $id)
             ->select('ventilator_values.*')->first();
     }
 
-    public static function findOneWithPatientsAndOrganizationsAndUsersById($id)
+    public static function findOneWithPatientAndOrganizationAndRegisteredUserById($id)
     {
         $query = self::joinVentilatorsAndPatientsAndOrganizations();
         $query = self::leftJoinUsers($query);
@@ -44,9 +44,9 @@ class VentilatorValueRepository
         )->first();
     }
 
-    public static function findOneWithPatientsAndOrganizationsAndUsersByOrganizationIdAndId($organization_id, $id)
+    public static function findOneWithPatientAndOrganizationAndRegisteredUserByOrganizationIdAndId($organization_id, $id)
     {
-        $query = self::queryByOrganizationId($organization_id)
+        $query = self::queryWithVentilatorsByOrganizationId($organization_id)
             ->leftJoin(
                 'patients',
                 'ventilators.patient_id',
@@ -340,7 +340,7 @@ class VentilatorValueRepository
 
     private static function queryByOrganizationIdAndSearchValues($organization_id, array $search_values)
     {
-        $query = self::queryByOrganizationId($organization_id)
+        $query = self::queryWithVentilatorsByOrganizationId($organization_id)
             ->leftJoin(
                 'patients',
                 'ventilators.patient_id',
@@ -423,6 +423,6 @@ class VentilatorValueRepository
 
     public static function logicalDeleteByOrganizationIdAndIds($organization_id, array $ids)
     {
-        return  self::queryByOrganizationId($organization_id)->whereIn('ventilator_values.id', $ids)->update(['ventilator_values.deleted_at' => DateUtil::now()]);
+        return  self::queryWithVentilatorsByOrganizationId($organization_id)->whereIn('ventilator_values.id', $ids)->update(['ventilator_values.deleted_at' => DateUtil::now()]);
     }
 }

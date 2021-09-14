@@ -42,7 +42,7 @@ class VentilatorValueController extends Controller
         return view('list', compact('ventilator_values'));
     }
 
-    public function asyncDetail(Request $request)
+    public function asyncGetDetail(Request $request)
     {
         $form = new Form\VentilatorValueDetailForm($request->all());
 

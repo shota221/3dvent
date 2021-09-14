@@ -65,7 +65,7 @@ class VentilatorValueService
      */
     public function getOneVentilatorValueData(Form\VentilatorValueDetailForm $form)
     {
-        $ventilator_value = Repos\VentilatorValueRepository::findOneWithPatientsAndOrganizationsAndUsersById($form->id);
+        $ventilator_value = Repos\VentilatorValueRepository::findOneWithPatientAndOrganizationAndRegisteredUserById($form->id);
 
         if (is_null($ventilator_value)) {
             $form->addError('id', 'validation.id_not_found');
