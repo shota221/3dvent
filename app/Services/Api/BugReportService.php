@@ -12,7 +12,7 @@ use function PHPUnit\Framework\isJson;
 
 class BugReportService
 {
-    public function create($form, $user = null, $appkey)
+    public function create($form, $appkey, $user = null)
     {
         $ventilator_id = $form->ventilator_id;
 
@@ -27,7 +27,7 @@ class BugReportService
 
         $bug_registered_user_id = null;
 
-        if(!is_null($user)) {
+        if (!is_null($user)) {
             $bug_registered_user_id = $user->id;
         }
 

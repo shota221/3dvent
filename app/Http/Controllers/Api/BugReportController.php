@@ -29,7 +29,7 @@ class BugReportController extends ApiController
 
         $appkey = $request->header('X-App-Key');
 
-        if ($form->hasError() || !$response = $this->service->create($form, $user, $appkey)) {
+        if ($form->hasError() || !$response = $this->service->create($form, $appkey, $user)) {
             throw new Exceptions\InvalidFormException($form);
         }
 

@@ -105,7 +105,7 @@ Route::group(['middleware' => ['routetype:api']], function () {
          * bug *
          *******/
         //不具合報告
-        Route::post('/bug_repoort/no_auth', 'BugReportController@create')->name('api.bug_report.create.no_auth');
+        Route::post('/bug_report/no_auth', 'BugReportController@create')->name('api.bug_report.create.no_auth');
 
 
         /*************************
@@ -166,7 +166,7 @@ Route::group(['middleware' => ['routetype:api']], function () {
              * bug *
              *******/
             //不具合報告
-            Route::post('/bug_repoort', 'BugReportController@create')->name('api.bug_report.create');
+            Route::post('/bug_report', 'BugReportController@create')->name('api.bug_report.create');
         });
     });
 });
