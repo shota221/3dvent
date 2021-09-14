@@ -53,7 +53,7 @@ class PatientValueController extends Controller
 
         if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
         
-        return $this->service->update($form);
+        return $this->service->update($form, Auth::id());
     }
 
     public function asyncLogicalDelete(Request $request)
@@ -62,7 +62,7 @@ class PatientValueController extends Controller
 
         if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
 
-        return $this->service->logicalDelete($form);
+        return $this->service->logicalDelete($form, Auth::id());
     }
     
     public function asyncDataOrganization()

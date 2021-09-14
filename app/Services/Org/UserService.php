@@ -8,7 +8,6 @@ use App\Http\Response;
 use App\Repositories as Repos;
 use App\Services\Support\Converter;
 use App\Services\Support\DBUtil;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 use Illuminate\Support\Facades\Log;
@@ -24,6 +23,7 @@ class UserService
      */
     public function getPaginatedUserData(
         string $path,
+        int $organization_id,
         Form\UserSearchForm $form = null)
     {
         $limit         = config('view.items_per_page');
@@ -37,8 +37,6 @@ class UserService
             $http_query = '?' . http_build_query($search_values);
         }
         
-        $organization_id = Auth::user()->organization_id;
-
         $users = Repos\UserRepository::searchByOrganizationId(
             $search_values,
             $organization_id, 
@@ -62,10 +60,10 @@ class UserService
      * @param Form\UserDetailForm $form
      * @return type
      */
-    public function getOneUserData(Form\UserDetailForm $form)
+    public function getOneUserData(
+        Form\UserDetailForm $form, 
+        int $organization_id)
     {
-        $organization_id = Auth::user()->organization_id;
-
         // ログインユーザーの所属組織に属するユーザー取得
         $user = Repos\UserRepository::findOneByOrganizationIdAndId($organization_id, $form->id);
 
@@ -83,10 +81,11 @@ class UserService
      * @param Form\UserUpdateForm $form
      * @return type
      */
-    public function update(Form\UserUpdateForm $form)
+    public function update(
+        Form\UserUpdateForm $form, 
+        int $organization_id, 
+        int $user_id)
     {
-        $organization_id = Auth::user()->organization_id;
-
         // ログインユーザーの所属組織に属するユーザー取得
         $user = Repos\UserRepository::findOneByOrganizationIdAndId($organization_id, $form->id);
 
@@ -104,11 +103,9 @@ class UserService
             $form->addError('name', 'validation.duplicated_registration');
             throw new Exceptions\InvalidFormException($form);
         }
-
-        $updated_user_id = Auth::id();
      
         // 更新データのセット
-        $user->updated_user_id = $updated_user_id;
+        $user->updated_user_id = $user_id;
         $user->name            = $form->name;
         $user->email           = $form->email;
         $user->authority       = $form->authority;
@@ -131,10 +128,11 @@ class UserService
      * @param Form\UserCreateForm $form
      * @return type
      */
-    public function create(Form\UserCreateForm $form)
+    public function create(
+        Form\UserCreateForm $form, 
+        int $organization_id, 
+        int $user_id)
     {
-        $organization_id = Auth::user()->organization_id;
-
         $exists = Repos\UserRepository::existsByNameAndOrganizationId($form->name, $organization_id);
 
         if ($exists) {
@@ -142,11 +140,9 @@ class UserService
             throw new Exceptions\InvalidFormException($form);
         }
 
-        $created_user_id = Auth::id();
-
         $entity = Converter\UserConverter::convertToEntity(
             $organization_id,
-            $created_user_id,
+            $user_id,
             $form->name,
             $form->email,
             $form->authority,
@@ -170,7 +166,10 @@ class UserService
      * @param Form\logicalDelete $form
      * @return void
      */
-    public function logicalDelete(Form\UserLogicalDeleteForm $form)
+    public function logicalDelete(
+        Form\UserLogicalDeleteForm $form, 
+        int $organization_id, 
+        int $user_id)
     {
         $ids = $form->ids;
 
@@ -180,28 +179,18 @@ class UserService
             throw new Exceptions\InvalidFormException('validation.excessive_number_of_registrations');
         }
 
-        $organization_ids = Repos\UserRepository::getOrganizationIdsByIds($ids);
+        // リクエストのidが組織齟齬の可能性があるためid再取得
+        $target_ids = Repos\UserRepository::getIdsByOrganizationIdAndIds($organization_id, $ids);
 
-        if (is_null($organization_ids)) {
+        if (is_null($target_ids)) {
             $form->addError('id', 'validation.id_not_found');
             throw new Exceptions\InvalidFormException($form);
         }
 
-        // 組織齟齬がないかチェック
-        foreach ($organization_ids as $organization_id) {  
-            $is_matched = $organization_id === Auth::user()->organization_id; 
-            if (! $is_matched) {
-                $form->addError('id', 'validation.id_not_found');
-                throw new Exceptions\InvalidFormException($form);
-            }
-        }
-
-        $updated_user_id = Auth::id();
-
         DBUtil::Transaction(
             'ユーザー論理削除',
-            function () use ($ids, $updated_user_id) {
-                Repos\UserRepository::logicalDeleteByIds($ids, $updated_user_id);
+            function () use ($target_ids, $user_id) {
+                Repos\UserRepository::logicalDeleteByIds($target_ids->all(), $user_id);
             }
         );
 

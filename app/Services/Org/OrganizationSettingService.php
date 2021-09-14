@@ -8,7 +8,6 @@ use App\Http\Forms\Org as Form;
 use App\Services\Support\Converter;
 use App\Services\Support\DBUtil;
 use App\Http\Response;
-use Illuminate\Support\Facades\Auth;
 
 class OrganizationSettingService
 {
@@ -17,9 +16,9 @@ class OrganizationSettingService
      *
      * @return [type]
      */
-    public function getOrganizationSettingData()
+    public function getOrganizationSettingData(int $organization_id)
     {
-        $organization_setting = Repos\OrganizationSettingRepository::findOneByOrganizationId(Auth::user()->organization_id);
+        $organization_setting = Repos\OrganizationSettingRepository::findOneByOrganizationId($organization_id);
 
         return Converter\OrganizationSettingConverter::convertToSettingResult($organization_setting);
     }
@@ -30,12 +29,16 @@ class OrganizationSettingService
      * @param Form\OrganizationSettingUpdateForm $form
      * @return [type]
      */
-    public function update(Form\OrganizationSettingUpdateForm $form)
+    public function update(
+        Form\OrganizationSettingUpdateForm $form, 
+        int $organization_id,
+        int $user_id)
     {
-        $organization_setting = Repos\OrganizationSettingRepository::findOneByOrganizationId(Auth::user()->organization_id);
+        $organization_setting = Repos\OrganizationSettingRepository::findOneByOrganizationId($organization_id);
  
         $entity = Converter\OrganizationSettingConverter::convertToUpdateEntity(
-            $organization_setting, 
+            $organization_setting,
+            $user_id, 
             $form->ventilator_value_scan_interval,
             $form->vt_per_kg
         );

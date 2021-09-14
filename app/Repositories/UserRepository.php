@@ -48,9 +48,9 @@ class UserRepository
         return static::query()->where('id', $id)->value('organization_id');
     }
 
-    public static function getOrganizationIdsByIds(array $ids) 
+    public static function getIdsByOrganizationIdAndIds(int $organization_id, array $ids) 
     {
-        return static::query()->whereIn('id', $ids)->pluck('organization_id');
+        return static::query()->where('organization_id', $organization_id)->whereIn('id', $ids)->pluck('id');
     }
     
     public static function findOneWithOrganizationByAuthorityAndId(int $authority, int $id)

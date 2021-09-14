@@ -8,7 +8,6 @@ use App\Http\Response;
 use App\Repositories as Repos;
 use App\Services\Support\Converter;
 use App\Services\Support\DBUtil;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class OrganizationAdminUserService
@@ -21,7 +20,8 @@ class OrganizationAdminUserService
      * @return [type]
      */
     public function getPaginatedOrganizationAdminUserData(
-        string $path, 
+        string $path,
+        int $authority, 
         Form\OrganizationAdminUserSearchForm $form = null)
     {
         $limit = config('view.items_per_page');
@@ -36,8 +36,6 @@ class OrganizationAdminUserService
             $search_values = $this->buildOrganizationAdminUserSearchValues($form);
             $http_query = '?' . http_build_query($search_values);
         }
-
-        $authority = Auth::user()->authority;
 
         $organization_admin_users = Repos\UserRepository::findWithOrganizationByAuthorityAndSearchValuesAndLimitAndOffsetOrderByCreatedAt(
             $authority, 
@@ -64,10 +62,10 @@ class OrganizationAdminUserService
      * @param Form\OrganizationAdminUserDetailForm $form
      * @return [type]
      */
-    public function getOneOrganizationAdminUserData(Form\OrganizationAdminUserDetailForm $form)
+    public function getOneOrganizationAdminUserData(
+        Form\OrganizationAdminUserDetailForm $form,
+        int $authority)
     {
-        $authority = Auth::user()->authority;
-
         $organization_admin_user = Repos\UserRepository::findOneWithOrganizationByAuthorityAndId($authority, $form->id);
 
         if (is_null($organization_admin_user)) {
@@ -84,7 +82,10 @@ class OrganizationAdminUserService
      * @param Form\OrganizationAdminUserUpdateForm $form
      * @return void
      */
-    public function update(Form\OrganizationAdminUserUpdateForm $form)
+    public function update(
+        Form\OrganizationAdminUserUpdateForm $form,
+        int $authority,
+        int $user_id)
     {
         $organization = Repos\OrganizationRepository::findOneByCode($form->code);
 
@@ -102,8 +103,6 @@ class OrganizationAdminUserService
             throw new Exceptions\InvalidFormException($form);
         }
 
-        $authority = Auth::user()->authority;
-
         $organization_admin_user = Repos\UserRepository::findOneByAuthorityAndId($authority, $form->id);
 
         if (is_null($organization_admin_user)) {
@@ -111,11 +110,9 @@ class OrganizationAdminUserService
             throw new Exceptions\InvalidFormException($form);
         }
 
-        $updated_user_id = Auth::id();
-
         $entity = Converter\OrganizationAdminUserConverter::convertToUpdateEntity(
             $organization_admin_user,
-            $updated_user_id,
+            $user_id,
             $form->name,
             $form->email,
             $form->disabled_flg,
@@ -138,7 +135,10 @@ class OrganizationAdminUserService
      * @param Form\OrganizationAdminUserCreateForm $form
      * @return void
      */
-    public function create(Form\OrganizationAdminUserCreateForm $form)
+    public function create(
+        Form\OrganizationAdminUserCreateForm $form,
+        int $authority,
+        int $user_id)
     {
         $organization = Repos\OrganizationRepository::findOneByCode($form->code);
 
@@ -154,12 +154,9 @@ class OrganizationAdminUserService
             throw new Exceptions\InvalidFormException($form);
         }
 
-        $authority = Auth::user()->authority;
-        $created_user_id = Auth::id();
-
         $entity = Converter\OrganizationAdminUserConverter::convertToEntity(
             $authority,
-            $created_user_id,
+            $user_id,
             $organization->id,
             $form->name,
             $form->email,

@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Org;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Exceptions;
-use App\Services\Org as Service;
+use App\Http\Controllers\Controller;
 use App\Http\Forms\Org as Form;
+use App\Services\Org as Service;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 
 class OrganizationSettingController extends Controller
@@ -20,7 +21,7 @@ class OrganizationSettingController extends Controller
 
     public function index() 
     {
-        $setting = $this->service->getOrganizationSettingData();
+        $setting = $this->service->getOrganizationSettingData(Auth::user()->organization_id);
         
         return view('index', compact('setting'));
     }
@@ -31,7 +32,7 @@ class OrganizationSettingController extends Controller
 
         if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
 
-        $response = $this->service->update($form);
+        $response = $this->service->update($form, Auth::user()->organization_id, Auth::id());
 
         return $response;
     }
