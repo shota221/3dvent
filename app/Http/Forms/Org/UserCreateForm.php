@@ -7,6 +7,7 @@ use App\Http\Forms\BaseForm;
 use App\Http\Forms\ValidationRule as Rule;
 use App\Services\Support;
 
+
 class UserCreateForm extends BaseForm
 {
     public $name;
@@ -20,7 +21,7 @@ class UserCreateForm extends BaseForm
     {
         return [
             'name'                  => 'required|' . Rule::VALUE_NAME,
-            // 権限回り実装後に修正
+            // TODO 権限回り実装後に修正
             'email'                 => 'nullable|required_if:authority,1|' . Rule::EMAIL,
             'authority'             => 'required|' . Rule::VALUE_POSITIVE_INTEGER,
             'disabled_flg'          => 'required|' .Rule::FLG_INTEGER,
