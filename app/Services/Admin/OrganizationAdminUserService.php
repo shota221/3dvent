@@ -8,6 +8,7 @@ use App\Http\Response;
 use App\Repositories as Repos;
 use App\Services\Support\Converter;
 use App\Services\Support\DBUtil;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class OrganizationAdminUserService
@@ -36,8 +37,7 @@ class OrganizationAdminUserService
             $http_query = '?' . http_build_query($search_values);
         }
 
-        // TODO 権限周り決定後修正
-        $authority = 1;
+        $authority = Auth::user()->authority;
 
         $organization_admin_users = Repos\UserRepository::findWithOrganizationByAuthorityAndSearchValuesAndLimitAndOffsetOrderByCreatedAt(
             $authority, 
@@ -66,8 +66,7 @@ class OrganizationAdminUserService
      */
     public function getOneOrganizationAdminUserData(Form\OrganizationAdminUserDetailForm $form)
     {
-        // TODO 権限周り決定後修正
-        $authority = 1;
+        $authority = Auth::user()->authority;
 
         $organization_admin_user = Repos\UserRepository::findOneWithOrganizationByAuthorityAndId($authority, $form->id);
 
@@ -103,8 +102,7 @@ class OrganizationAdminUserService
             throw new Exceptions\InvalidFormException($form);
         }
 
-        // TODO 権限周り決定後修正
-        $authority = 1;
+        $authority = Auth::user()->authority;
 
         $organization_admin_user = Repos\UserRepository::findOneByAuthorityAndId($authority, $form->id);
 
@@ -113,8 +111,7 @@ class OrganizationAdminUserService
             throw new Exceptions\InvalidFormException($form);
         }
 
-        // TODO 認証回り作成後修正
-        $updated_user_id = 1;
+        $updated_user_id = Auth::id();
 
         $entity = Converter\OrganizationAdminUserConverter::convertToUpdateEntity(
             $organization_admin_user,
@@ -157,10 +154,8 @@ class OrganizationAdminUserService
             throw new Exceptions\InvalidFormException($form);
         }
 
-        // TODO 権限周り決定後修正
-        $authority = 1;
-        // TODO 認証回り作成後修正
-        $created_user_id = 1;
+        $authority = Auth::user()->authority;
+        $created_user_id = Auth::id();
 
         $entity = Converter\OrganizationAdminUserConverter::convertToEntity(
             $authority,

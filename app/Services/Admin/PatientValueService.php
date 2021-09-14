@@ -10,6 +10,7 @@ use App\Repositories as Repos;
 use App\Services\Support\Converter;
 use App\Services\Support\DateUtil;
 use App\Services\Support\DBUtil;
+use Illuminate\Support\Facades\Auth;
 
 class PatientValueService
 {
@@ -117,8 +118,7 @@ class PatientValueService
         $patient_entity = Repos\PatientRepository::findOneById($old_patient_value->patient_id);
         $patient_entity->patient_code =  $form->patient_code;
 
-        // TODO 認証機能実装後修正
-        $user_id = 1;
+        $user_id = Auth::id();
 
         // 編集後データ作成
         $new_patient_value = $this->buildNewPatientValue($old_patient_value, $form, $user_id);
@@ -172,8 +172,7 @@ class PatientValueService
             throw new Exceptions\InvalidFormException('validation.excessive_number_of_registrations');
         }
 
-        // TODO 認証回り修正後実装
-        $operated_user_id = 1;
+        $operated_user_id = Auth::id();
 
         DBUtil::Transaction(
             '患者観察研究データ論理削除、 ヒストリーテーブル登録',

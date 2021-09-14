@@ -36,7 +36,7 @@ class UserService
             $http_query = '?' . http_build_query($search_values);
         }
         
-        $search_values['organization_id'] = 1; // TODO 認証機能実装後 
+        $search_values['organization_id'] = Auth::user()->organization_id;
 
         $users = Repos\UserRepository::search(
             $search_values, 
@@ -61,8 +61,7 @@ class UserService
      */
     public function getOneUserData(Form\UserDetailForm $form)
     {
-        // TODO 認証実装後　修正
-        $organization_id = 1;
+        $organization_id = Auth::user()->organization_id;
 
         // ログインユーザーの所属組織に属するユーザー取得
         $user = Repos\UserRepository::findOneByOrganizationIdAndId($organization_id, $form->id);
@@ -83,8 +82,7 @@ class UserService
      */
     public function update(Form\UserUpdateForm $form)
     {
-        // TODO 認証実装後修正
-        $organization_id = 1;
+        $organization_id = Auth::user()->organization_id;
 
         // ログインユーザーの所属組織に属するユーザー取得
         $user = Repos\UserRepository::findOneByOrganizationIdAndId($organization_id, $form->id);
@@ -104,8 +102,7 @@ class UserService
             throw new Exceptions\InvalidFormException($form);
         }
 
-        // TODO 認証実装後修正
-        $updated_user_id = 1;
+        $updated_user_id = Auth::id();
      
         // 更新データのセット
         $user->updated_user_id = $updated_user_id;
@@ -133,8 +130,7 @@ class UserService
      */
     public function create(Form\UserCreateForm $form)
     {
-        // TODO 認証実装後修正
-        $organization_id = 1;
+        $organization_id = Auth::user()->organization_id;
 
         $exists = Repos\UserRepository::existsByNameAndOrganizationId($form->name, $organization_id);
 
@@ -143,8 +139,7 @@ class UserService
             throw new Exceptions\InvalidFormException($form);
         }
 
-        // TODO 認証実装後修正
-        $created_user_id = 1;
+        $created_user_id = Auth::id();
 
         $entity = Converter\UserConverter::convertToEntity(
             $organization_id,
@@ -191,16 +186,14 @@ class UserService
 
         // 組織齟齬がないかチェック
         foreach ($organization_ids as $organization_id) {  
-            $is_matched = $organization_id ===  1; // TODO　認証機能実装後修正 
+            $is_matched = $organization_id === Auth::user()->organization_id; 
             if (! $is_matched) {
                 $form->addError('id', 'validation.id_not_found');
                 throw new Exceptions\InvalidFormException($form);
             }
         }
 
-        
-        // TODO 認証実装後修正
-        $updated_user_id = 1;
+        $updated_user_id = Auth::id();
 
         DBUtil::Transaction(
             'ユーザー論理削除',

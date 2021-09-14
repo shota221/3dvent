@@ -18,8 +18,7 @@ class OrganizationSettingService
      */
     public function getOrganizationSettingData()
     {
-        // TODO Auth::user->organization_idで取得
-        $organization_setting = Repos\OrganizationSettingRepository::findOneByOrganizationId(1);
+        $organization_setting = Repos\OrganizationSettingRepository::findOneByOrganizationId(Auth::user()->organization_id);
 
         return Converter\OrganizationSettingConverter::convertToSettingResult($organization_setting);
     }
@@ -32,8 +31,7 @@ class OrganizationSettingService
      */
     public function update(Form\OrganizationSettingUpdateForm $form)
     {
-        // TODO Auth::user->organization_idで取得
-        $organization_setting = Repos\OrganizationSettingRepository::findOneByOrganizationId(1);
+        $organization_setting = Repos\OrganizationSettingRepository::findOneByOrganizationId(Auth::user()->organization_id);
  
         $entity = Converter\OrganizationSettingConverter::convertToUpdateEntity(
             $organization_setting, 

@@ -10,6 +10,7 @@ use App\Repositories as Repos;
 use App\Services\Support\Converter;
 use App\Services\Support\DateUtil;
 use App\Services\Support\DBUtil;
+use Illuminate\Support\Facades\Auth;
 
 class PatientValueService
 {
@@ -35,7 +36,7 @@ class PatientValueService
             $http_query = '?' . http_build_query($search_values);
         }
 
-        $search_values['organization_id'] = 1; // TODO　認証機能実装後修正
+        $search_values['organization_id'] = Auth::user()->organization_id;
 
         $patient_values = Repos\PatientValueRepository::findWithPatientAndUserAndOrganizationBySearchValuesAndLimitAndOffsetOrderByCreatedAt(
             $search_values,
@@ -70,7 +71,7 @@ class PatientValueService
         }
 
         // 取得組織とユーザーの所属組織の齟齬確認
-        $is_matched = $patient_value->organization_id ===  1; // TODO　認証機能実装後修正 
+        $is_matched = $patient_value->organization_id === Auth::user()->organization_id;
         
         if (! $is_matched) {
             $form->addError('id', 'validation.id_not_found');
@@ -92,8 +93,7 @@ class PatientValueService
         $confirmation_patient = null;
 
         if (! is_null($form->patient_code)) {
-            // TODO findOneByOrganizationIdAndPatientCodeの第一引数に入るorganization_idは認証実装後修正
-            $confirmation_patient = Repos\PatientRepository::findOneByOrganizationIdAndPatientCode(1, $form->patient_code);
+            $confirmation_patient = Repos\PatientRepository::findOneByOrganizationIdAndPatientCode( Auth::user()->organization_id, $form->patient_code);
         }
 
         // 編集元データ取得
@@ -115,15 +115,14 @@ class PatientValueService
         $patient_entity->patient_code = $form->patient_code;
 
         // 患者所属組織とユーザーの所属組織の齟齬確認
-        $is_matched = $patient_entity->organization_id ===  1; // TODO　認証機能実装後修正 
+        $is_matched = $patient_entity->organization_id ===  Auth::user()->organization_id;
 
         if (! $is_matched) {
             $form->addError('id', 'validation.id_not_found');
             throw new Exceptions\InvalidFormException($form);
         }
 
-        // TODO 認証機能実装後修正
-        $user_id = 1;
+        $user_id =  Auth::id();
 
         // 編集後データ作成
         $new_patient_value = Converter\PatientConverter::convertToPatientValueEntity(
@@ -204,15 +203,14 @@ class PatientValueService
 
         // 組織齟齬がないかチェック
         foreach ($organization_ids as $organization_id) {  
-            $is_matched = $organization_id ===  1; // TODO　認証機能実装後修正 
+            $is_matched = $organization_id === Auth::user()->organization_id;
             if (! $is_matched) {
                 $form->addError('id', 'validation.id_not_found');
                 throw new Exceptions\InvalidFormException($form);
             }
         }
 
-        // TODO 認証回り修正後実装
-        $operated_user_id = 1;
+        $operated_user_id = Auth::id();
 
         DBUtil::Transaction(
             '患者観察研究データ論理削除、ヒストリーテーブル登録',
