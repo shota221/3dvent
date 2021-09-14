@@ -8,6 +8,7 @@ use App\Http\Response;
 use App\Repositories as Repos;
 use App\Services\Support\Converter;
 use App\Services\Support\DBUtil;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 use Illuminate\Support\Facades\Log;
@@ -36,14 +37,16 @@ class UserService
             $http_query = '?' . http_build_query($search_values);
         }
         
-        $search_values['organization_id'] = Auth::user()->organization_id;
+        $organization_id = Auth::user()->organization_id;
 
-        $users = Repos\UserRepository::search(
-            $search_values, 
+        $users = Repos\UserRepository::searchByOrganizationId(
+            $search_values,
+            $organization_id, 
             $limit, 
             $offset);
 
-        $total_count = Repos\UserRepository::countBySearchValues($search_values);
+        $total_count = Repos\UserRepository::countByOrganizationIdAndSearchValues($organization_id, $search_values);
+        
         $item_per_page = $limit;
 
         return Converter\UserConverter::convertToPaginatedUserData(

@@ -17,7 +17,7 @@
         {{--権限--}}
         {{--TODO 権限周り実装後修正--}}
         <div class="col-sm-4">
-            <label for="authority">@lang('messages.authority')</label>
+            <label for="authority">@lang('messages.user_authority')</label>
             <select class="form-control form-control-sm select" name="authority">
                 <option></option>
                 <option value="1">1</option>

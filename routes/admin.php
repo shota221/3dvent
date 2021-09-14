@@ -40,7 +40,8 @@ Route::group(['middleware' => ['routetype:admin']], function () {
         'AuthController@logout'
     )->name('admin.logout');
 
-    
+    // TODO　パスワードリセット
+
     Route::group(['middleware' => ['auth:admin']], function () {
 
         // 認証が必要なルート

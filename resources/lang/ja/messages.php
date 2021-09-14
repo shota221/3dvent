@@ -165,6 +165,7 @@ return [
     'used_place' => '使用場所',
     'user_authority' => '権限',
     'user_list' => 'ユーザー一覧',
+    'user_management' => 'ユーザー管理',
     'user_name' => 'ユーザー名',
     'update' => '更新',
     'updated' => '更新しました。',

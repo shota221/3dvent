@@ -195,6 +195,7 @@ return [
     */
 
     'attributes' => [
+        'authority' => '権限',
         'height' => '身長',
         'weight' => '体重',
         'gender' => '性別',

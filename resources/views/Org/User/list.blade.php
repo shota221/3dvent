@@ -9,7 +9,7 @@
         <th>@lang('messages.user_name')</th>
         
         {{--権限--}}
-        <th>@lang('messages.authority')</th>
+        <th>@lang('messages.user_authority')</th>
 
         {{--登録日時--}}
         <th>@lang('messages.registered_at')</th>

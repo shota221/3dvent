@@ -152,12 +152,13 @@ class UserRepository
         return static::query()->where('organization_id', $organization_id)->get();
     }
 
-    public static function search(
+    public static function searchByOrganizationId(
         array $search_values, 
+        int $organization_id,
         int $limit, 
         int $offset)
     {
-        $query = static::query();
+        $query = self::createWhereClauseByOrganizationId(static::query(), $organization_id);
 
         return self::createWhereClauseFormSearchValues($query, $search_values)
             ->orderBy('created_at', 'DESC')
@@ -166,18 +167,21 @@ class UserRepository
             ->get();
     }
 
-    public static function countBySearchValues(array $search_values)
+    public static function countByOrganizationIdAndSearchValues(int $organization_id, array $search_values)
     {
-        $query = static::query();
+        $query = self::createWhereClauseByOrganizationId(static::query(), $organization_id);
 
         return self::createWhereClauseFormSearchValues($query, $search_values)
             ->count();
     }
 
+    private static function createWhereClauseByOrganizationId($query, int $organization_id)
+    {
+        return $query->where('users.organization_id', $organization_id);
+    }
+
     private static function createWhereClauseFormSearchValues($query, array $search_values)
     {
-        $organization_id = $search_values['organization_id'];
-        $query->where('users.organization_id', $organization_id);
 
         if (isset($search_values['name'])){
             $name = $search_values['name'];

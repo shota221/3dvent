@@ -39,6 +39,7 @@ Route::group(['middleware' => ['routetype:org']], function() {
         'AuthController@logout'
     )->name('org.logout');
 
+    // TODO　パスワードリセット
         
     Route::group(['middleware' => ['auth:org']], function () {
 

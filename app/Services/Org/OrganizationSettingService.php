@@ -8,6 +8,7 @@ use App\Http\Forms\Org as Form;
 use App\Services\Support\Converter;
 use App\Services\Support\DBUtil;
 use App\Http\Response;
+use Illuminate\Support\Facades\Auth;
 
 class OrganizationSettingService
 {

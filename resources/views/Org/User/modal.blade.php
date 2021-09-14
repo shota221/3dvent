@@ -19,7 +19,7 @@
         
         {{--メールアドレス--}}
         <div class="form-group">
-            <label for="email">@lang('messages.email')<span class="required"></span></label>
+            <label for="email">@lang('messages.email')</label>
             <div>
                 <input type="text" class="form-control" name="email" required>
             </div>
@@ -28,7 +28,7 @@
         {{--権限--}}
         {{--TODO 権限周り実装後修正--}}
         <div class="form-group">
-            <label for="authority">@lang('messages.authority')</label>
+            <label for="authority">@lang('messages.user_authority')<span class="required"></span></label>
             <select class="form-control select" name="authority">
                 <option></option>
                 <option value="1">1</option>
