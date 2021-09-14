@@ -87,7 +87,7 @@ Route::group(['middleware' => ['routetype:admin']], function () {
         
         Route::get(
             '/org_admin_user/detail', 
-            'OrganizationAdminUserController@asyncDetail'
+            'OrganizationAdminUserController@asyncGetDetail'
         )->name('admin.org_admin_user.detail');
         
         Route::get(
@@ -147,7 +147,7 @@ Route::group(['middleware' => ['routetype:admin']], function () {
         
         Route::get(
             '/patient_value/detail', 
-            'PatientValueController@asyncDetail'
+            'PatientValueController@asyncGetDetail'
         )->name('admin.patient_value.detail');
         
         Route::get(

@@ -39,7 +39,7 @@ class PatientValueController extends Controller
         return view('list', compact('patient_values'));
     }
     
-    public function asyncDetail(Request $request)
+    public function asyncGetDetail(Request $request)
     {
         $form = new Form\PatientValueDetailForm($request->all());
 

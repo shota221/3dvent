@@ -46,7 +46,7 @@ class OrganizationAdminUserController extends Controller
         return view('list', compact('organization_admin_users'));
     }
 
-    public function asyncDetail(Request $request)
+    public function asyncGetDetail(Request $request)
     {
         $form = new Form\OrganizationAdminUserDetailForm($request->all());
 

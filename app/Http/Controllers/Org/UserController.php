@@ -39,7 +39,7 @@ class UserController extends Controller
         return view('list', compact('users'));
     } 
     
-    public function asyncDetail(Request $request)
+    public function asyncGetDetail(Request $request)
     {   
         $form = new Form\UserDetailForm($request->all());
 
