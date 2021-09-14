@@ -1,10 +1,14 @@
+const 
+    $nameInput     = $('[name=name]'),
+    $passwordInput = $('[name=password]');
+
 // ログイン
 $("#login").on(
     'click',
     function (e) {
         var parameters = {};
-        parameters['name'] = $('[name=name]').val();
-        parameters['password'] = $('[name=password]').val();
+        parameters['name'] = $nameInput.val();
+        parameters['password'] = $passwordInput.val();
         parameters['remember'] = $('[name=remember]:checked').val();
 
         var $element = $(this);

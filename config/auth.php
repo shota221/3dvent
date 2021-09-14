@@ -105,17 +105,17 @@ return [
     'providers' => [
         'user' => [
             'driver' => 'eloquent_user',
-            'authority' => '',
+            'role'   => '',
         ],
 
         'admin' => [
-            'driver'    => 'eloquent_user',
-            'authority' => 'admin',
+            'driver' => 'eloquent_user',
+            'role'   => 'admin',
         ],
         
         'org' => [
-            'driver'    => 'eloquent_user',
-            'authority' => 'org',
+            'driver' => 'eloquent_user',
+            'role'   => 'org',
         ],
 
     ],

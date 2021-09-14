@@ -90,7 +90,7 @@ class UserProvider extends EloquentUserProvider
         $activeUser = $user && $user->active();
 
         if (! is_null($this->authority)) {
-            $authorityCheckMethod = 'hasAuthority' . ucfirst($this->authority);
+            $authorityCheckMethod = 'hasRole' . ucfirst($this->authority);
 
             $activeUser = $activeUser && $user->{$authorityCheckMethod}();
         }

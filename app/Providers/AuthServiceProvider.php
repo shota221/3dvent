@@ -36,7 +36,7 @@ class AuthServiceProvider extends ServiceProvider
         // eloquent user provider extend
         Auth::provider('eloquent_user', function($app, array $config) {
         Log::debug(print_r($config, true));
-        return new \App\Http\Auth\UserProvider($this->app['hash'], $config['authority']);
+        return new \App\Http\Auth\UserProvider($this->app['hash'], $config['role']);
         });
 
         // API TOKEN 認可定義

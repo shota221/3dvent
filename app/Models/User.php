@@ -62,14 +62,12 @@ class User extends Authenticatable
         return Str::snake(Str::pluralStudly(class_basename(static::class)));
     }
 
-    // TODO 権限周り決定後修正
-    public function hasAuthorityAdmin()
+    public function hasRoleAdmin()
     {
         return boolval($this->authority === self::AUTHORITY_ADMIN);
     }
 
-    
-    public function hasAuthorityOrg()
+    public function hasRoleOrg()
     {
         return boolval($this->authority !== self::AUTHORITY_ADMIN);
     }

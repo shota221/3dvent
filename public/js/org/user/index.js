@@ -122,7 +122,7 @@ $asyncUpdate.on(
         parameters['name']                  = $editModalNameInput.val();
         parameters['email']                 = $editModalEmailInput.val();
         parameters['authority']             = $editModalAuthorityInput.val()
-        parameters['disabled_flg']          = $editModalDisabledFlgInput.val();
+        parameters['disabled_flg']          = $editModal.find('[name=disabled_flg]:checked').val();
         parameters['password']              = $editModalPasswordInput.val();
         parameters['password_confirmation'] = $editModalPasswordConfirmationInput.val();
 
@@ -167,7 +167,7 @@ $asyncCreate.on(
         parameters['name']                  = $registerModalNameInput.val();
         parameters['email']                 = $registerModalEmailInput.val();
         parameters['authority']             = $registerModalAuthorityInput.val()
-        parameters['disabled_flg']          = $registerModalDisabledFlgInput.val();
+        parameters['disabled_flg']          = $registerModal.find('[name=disabled_flg]:checked').val();
         parameters['password']              = $registerModalPasswordInput.val();
         parameters['password_confirmation'] = $registerModalPasswordConfirmationInput.val();
 
