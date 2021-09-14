@@ -23,7 +23,7 @@ class UserUpdateForm extends BaseForm
         return [
             'id'                    => 'required|' . Rule::VALUE_POSITIVE_INTEGER,
             'name'                  => 'required|' . Rule::VALUE_NAME,
-            // 権限回り実装後に修正
+            // TODO 権限回り実装後に修正
             'email'                 => 'nullable|required_if:authority,1|' . Rule::EMAIL,
             'authority'             => 'required|' . Rule::VALUE_POSITIVE_INTEGER,
             'disabled_flg'          => 'required|' . Rule::FLG_INTEGER,

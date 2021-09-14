@@ -50,8 +50,10 @@ Route::group(['middleware' => ['routetype:org']], function() {
             '/',
             'DashboardController@index'
         )->name('org.home');
-
-        // 組織設定管理
+        
+        /**
+         * 組織設定管理
+         */
         Route::get(
             '/setting',
             'OrganizationSettingController@index'
@@ -62,7 +64,9 @@ Route::group(['middleware' => ['routetype:org']], function() {
             'OrganizationSettingController@asyncUpdate'
         )->name('org.setting.update');
 
-        // 患者観察研究データ管理
+        /**
+         * 患者観察研究データ管理
+         */
         Route::get(
             '/patient_value', 
             'PatientValueController@index'
@@ -88,7 +92,9 @@ Route::group(['middleware' => ['routetype:org']], function() {
             'PatientValueController@asyncSearch'
         )->name('org.patient_value.search');
 
-        //　ユーザー管理
+        /**
+         * ユーザー管理
+         */
         Route::get(
             '/user', 
             'UserController@index'
