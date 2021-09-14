@@ -42,6 +42,11 @@ class UserRepository
     {
         return static::query()->where('authority', $authority)->where('id', $id)->first();
     }
+
+    public static function findByOrganizationId(int $organization_id)
+    {
+        return static::query()->where('organization_id', $organization_id)->get();
+    }
     
     public static function getOrganizationIdById(int $id)
     {
@@ -60,18 +65,6 @@ class UserRepository
         return $query->where($table . '.authority', $authority)->where($table . '.id', $id)->first();
     }
 
-    public static function findWithOrganizationByAuthorityAndSearchValuesAndLimitAndOffsetOrderByCreatedAt(
-        int $authority,
-        array $search_values,
-        int $limit,
-        int $offset
-    ) {
-        return self::queryByAuthorityAndSeachValuesOrderByCreatedAt($authority, $search_values)
-            ->limit($limit)
-            ->offset($offset)
-            ->get();
-    }
-
     public static function logicalDeleteByIds(array $ids, int $updated_user_id)
     {
         return  static::query()
@@ -80,6 +73,18 @@ class UserRepository
                 'updated_user_id' => $updated_user_id, 
                 'deleted_at' => Support\DateUtil::now()
             ]);
+    }
+
+    public static function searchByAuthority(
+        array $search_values,
+        int $authority,
+        int $limit,
+        int $offset
+    ) {
+        return self::queryWithOrganizationByAuthorityAndSeachValuesOrderByCreatedAt($authority, $search_values)
+            ->limit($limit)
+            ->offset($offset)
+            ->get();
     }
 
     public static function countByAuthorityAndSearchValues(int $authority, array $search_values)
@@ -92,9 +97,10 @@ class UserRepository
         )->count();
     }
 
-    private static function queryByAuthorityAndSeachValuesOrderByCreatedAt(int $authority, array $search_values)
+    private static function queryWithOrganizationByAuthorityAndSeachValuesOrderByCreatedAt(int $authority, array $search_values)
     {
         $query = self::joinOrganization(static::query());
+        $query = self::createWhereClauseFromAuthority($query, $authority);
         return self::createWhereClauseFromAuthorityAndSearchValues(
             $query,
             $authority,
@@ -107,14 +113,19 @@ class UserRepository
         $table = User::tableName();
         $organization_table = Organization::tableName();
 
-        $query->join($organization_table, $table . '.organization_id', '=', $organization_table . '.id');
-        $query->addSelect([
-            $table . '.*',
-            $organization_table . '.name AS organization_name',
-            $organization_table . '.code',
+        $query->join('organizations', 'users.organization_id', '=', 'organizations.id');
+        $query->select([
+            'users.*',
+            'organizations.name AS organization_name',
+            'organizations.code',
         ]);
 
         return $query;
+    }
+   
+    private static function createWhereClauseFromAuthority($query, int $authority)
+    {
+        return $query->where('users.authority', $authority);
     }
 
     private static function createWhereClauseFromAuthorityAndSearchValues(
@@ -122,34 +133,27 @@ class UserRepository
         int $authority,
         array $search_values
     ) {
-        $table = User::tableName();
-        $organization_table = Organization::tableName();
 
-        $query->where($table . '.authority', $authority);
+        $query->where('users.authority', $authority);
 
-        if (isset($search_values['organization_name'])) {
-            $query->where($organization_table . '.name', $search_values['organization_name']);
+        if (isset($search_values['organization_id'])) {
+            $query->where('users.organization_id', $search_values['organization_id']);
         }
         if (isset($search_values['name'])) {
             $name = $search_values['name'];
-            $query->where($table . '.name', 'like', "%$name%");
+            $query->where('users.name', 'like', "%$name%");
         }
         if (isset($search_values['registered_at_from'])) {
-            $query->where($table . '.created_at', '>=', $search_values['registered_at_from']);
+            $query->where('users.created_at', '>=', $search_values['registered_at_from']);
         }
         if (isset($search_values['registered_at_to'])) {
-            $query->where($table . '.created_at', '<=', $search_values['registered_at_to']);
+            $query->where('users.created_at', '<=', $search_values['registered_at_to']);
         }
         if (isset($search_values['disabled_flg'])) {
-            $query->whereIn($table . '.disabled_flg', $search_values['disabled_flg']);
+            $query->whereIn('users.disabled_flg', $search_values['disabled_flg']);
         }
 
         return $query;
-    }
-
-    public static function findByOrganizationId(int $organization_id)
-    {
-        return static::query()->where('organization_id', $organization_id)->get();
     }
 
     public static function searchByOrganizationId(
@@ -158,9 +162,9 @@ class UserRepository
         int $limit, 
         int $offset)
     {
-        $query = self::createWhereClauseByOrganizationId(static::query(), $organization_id);
+        $query = self::createWhereClauseFromOrganizationId(static::query(), $organization_id);
 
-        return self::createWhereClauseFormSearchValues($query, $search_values)
+        return self::createWhereClauseFromSearchValues($query, $search_values)
             ->orderBy('created_at', 'DESC')
             ->limit($limit)
             ->offset($offset)
@@ -169,18 +173,18 @@ class UserRepository
 
     public static function countByOrganizationIdAndSearchValues(int $organization_id, array $search_values)
     {
-        $query = self::createWhereClauseByOrganizationId(static::query(), $organization_id);
+        $query = self::createWhereClauseFromOrganizationId(static::query(), $organization_id);
 
-        return self::createWhereClauseFormSearchValues($query, $search_values)
+        return self::createWhereClauseFromSearchValues($query, $search_values)
             ->count();
     }
 
-    private static function createWhereClauseByOrganizationId($query, int $organization_id)
+    private static function createWhereClauseFromOrganizationId($query, int $organization_id)
     {
         return $query->where('users.organization_id', $organization_id);
     }
 
-    private static function createWhereClauseFormSearchValues($query, array $search_values)
+    private static function createWhereClauseFromSearchValues($query, array $search_values)
     {
 
         if (isset($search_values['name'])){

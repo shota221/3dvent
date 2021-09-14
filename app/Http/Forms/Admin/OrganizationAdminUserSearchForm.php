@@ -9,7 +9,7 @@ use App\Services\Support;
 
 class OrganizationAdminUserSearchForm extends BaseForm
 {
-    public $organization_name;
+    public $organization_id;
     public $name;
     public $registerd_at_from;
     public $registerd_at_to;
@@ -19,7 +19,7 @@ class OrganizationAdminUserSearchForm extends BaseForm
     protected function validationRule()
     {
         return [
-            'organization_name'  => 'nullable|' . Rule::VALUE_NAME,
+            'organization_id'    => 'nullable|' . Rule::VALUE_POSITIVE_NON_ZERO,
             'name'               => 'nullable|' . Rule::VALUE_NAME,
             'registered_at_from' => 'nullable|date',
             'registered_at_to'   => 'nullable|date',
@@ -30,7 +30,7 @@ class OrganizationAdminUserSearchForm extends BaseForm
 
     protected function bind($input)
     {
-        $this->organization_name = isset($input['organization_name']) ? strval($input['organization_name']) : null;
+        $this->organization_id = isset($input['organization_id']) ? strval($input['organization_id']) : null;
         $this->name = isset($input['name']) ? strval($input['name']) : null;
         
         $this->registered_at_from = isset($input['registered_at_from']) 

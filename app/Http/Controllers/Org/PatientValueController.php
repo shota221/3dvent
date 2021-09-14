@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Forms\Org as Form;
 use App\Services\Org as Service;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PatientValueController extends Controller
 {

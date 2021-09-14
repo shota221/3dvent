@@ -37,9 +37,9 @@ class OrganizationAdminUserService
             $http_query = '?' . http_build_query($search_values);
         }
 
-        $organization_admin_users = Repos\UserRepository::findWithOrganizationByAuthorityAndSearchValuesAndLimitAndOffsetOrderByCreatedAt(
-            $authority, 
+        $organization_admin_users = Repos\UserRepository::searchByAuthority(
             $search_values,
+            $authority, 
             $limit, 
             $offset);
 
@@ -190,11 +190,11 @@ class OrganizationAdminUserService
     {
         $search_values = [];
 
-        if (isset($form->organization_name)) $search_values['organization_name'] = $form->organization_name;
-        if (isset($form->name)) $search_values['name'] = $form->name;
+        if (isset($form->organization_id))    $search_values['organization_id']    = $form->organization_id;
+        if (isset($form->name))               $search_values['name']               = $form->name;
         if (isset($form->registered_at_from)) $search_values['registered_at_from'] = $form->registered_at_from;
-        if (isset($form->registered_at_to)) $search_values['registered_at_to'] = $form->registered_at_to;
-        if (isset($form->disabled_flg)) $search_values['disabled_flg'] = $form->disabled_flg;
+        if (isset($form->registered_at_to))   $search_values['registered_at_to']   = $form->registered_at_to;
+        if (isset($form->disabled_flg))       $search_values['disabled_flg']       = $form->disabled_flg;
 
         return $search_values;
     }

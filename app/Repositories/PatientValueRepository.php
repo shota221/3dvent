@@ -85,9 +85,12 @@ class PatientValueRepository
         \DB::insert($query, $records);
     }
 
-    public static function getOrganizationIdsWithPatientByIds(array $ids) {
-        $query = self::joinPatient(static::query());
-        return $query->whereIn('patient_values.id', $ids)->pluck('patients.organization_id');
+    public static function getIdsWithPatientAndOrganizationByOrganizationIdAndIds(int $organization_id, array $ids) {
+        $query = self::joinPatientAndOrganization(static::query());
+        return $query
+            ->where('organizations.id', $organization_id)
+            ->whereIn('patient_values.id', $ids)
+            ->pluck('patient_values.id');
     }
 
     public static function findOneWithPatientAndOrganizationById(int $id)
@@ -103,12 +106,31 @@ class PatientValueRepository
         return $query->where('patient_values.id', $id)->first();
     }
 
-    public static function findWithPatientAndUserAndOrganizationBySearchValuesAndLimitAndOffsetOrderByCreatedAt(
+    
+    public static function findOneWithPatientAndOrganizationByOrganizationIdAndId(
+        int $organization_id,
+        int $id)
+    {
+        $query = self::joinPatientAndOrganization(static::query());
+        $query->addSelect([
+            'patient_values.*',
+            'patients.patient_code',
+            'organizations.name AS organization_name',
+            'organizations.id AS organization_id',
+        ]);
+        
+        return $query
+            ->where('organizations.id', $organization_id)
+            ->where('patient_values.id', $id)
+            ->first();
+    }
+
+    public static function searchWithPatientAndUserAndOrganization(
         array $search_values,
         int $limit,
         int $offset)
     {
-        $query = self::queryBySearchValues($search_values);
+        $query = self::queryWithPatientAndUserAndOrganizationBySearchValues(static::query(), $search_values);
         $query->addSelect([
             'patient_values.*',
             'patients.patient_code',
@@ -121,6 +143,33 @@ class PatientValueRepository
             ->offset($offset)
             ->orderBy('created_at', 'DESC')
             ->get();
+    }
+
+    public static function searchWithPatientAndUserAndOrganizationByOrganizationId(
+        array $search_values,
+        int $organization_id,
+        int $limit,
+        int $offset)
+    {
+        $query = self::createWhereClauseFromOrganizationId(static::query(), $organization_id);
+        $query = self::queryWithPatientAndUserAndOrganizationBySearchValues($query, $search_values, $organization_id);
+        $query->select([
+            'patient_values.*',
+            'patients.patient_code',
+            'organizations.name AS organization_name',
+            'users.name AS registered_user_name',
+        ]);
+
+        return $query
+            ->limit($limit)
+            ->offset($offset)
+            ->orderBy('created_at', 'DESC')
+            ->get();
+    }
+
+    private static function createWhereClauseFromOrganizationId($query, int $organization_id)
+    {
+        return $query->where('organizations.id', $organization_id);
     }
 
     public static function logicalDeleteByIds(array $ids)
@@ -138,13 +187,27 @@ class PatientValueRepository
         return $query->count();
     }
 
-    private static function queryBySearchValues(array $search_values)
+    public static function countByOrganizationIdAndSearchValues(int $organization_id, array $search_values)
     {
-        $query = self::joinPatientAndOrganization(static::query());
+        $query = static::query();
+        $query = self::joinPatientAndOrganization($query);
+        $query = self::joinUser($query);
+        $query = self::createWhereClauseFromSearchValues($query, $search_values, $organization_id);
+
+        return $query->count();
+    }
+
+    private static function queryWithPatientAndUserAndOrganizationBySearchValues(
+        $query, 
+        array $search_values,
+        int $organization_id = null)
+    {
+        $query = self::joinPatientAndOrganization($query);
         $query = self::joinUser($query);
         return self::createWhereClauseFromSearchValues(
             $query,
-            $search_values);
+            $search_values, 
+            $organization_id);
     }
 
     private static function joinUser($query)
@@ -169,12 +232,20 @@ class PatientValueRepository
         return $query;
     }
 
-    private static function createWhereClauseFromSearchValues($query, array $search_values)
+    private static function createWhereClauseFromSearchValues($query, array $search_values, int $organization_id = null)
     {
         if (isset($search_values['organization_id'])) {
             $query->where('organizations.id', $search_values['organization_id']);
             
             // 患者番号は組織名の絞込があった場合のみwhere句追加。
+            if (isset($search_values['patient_code'])) {
+                $patient_code = $search_values['patient_code'];
+                $query->where('patients.patient_code', 'like', "%$patient_code%");
+            }
+        }
+
+        // 組織ユーザーからの検索の場合$organization_idがセットされている。
+        if (is_null($organization_id)) {
             if (isset($search_values['patient_code'])) {
                 $patient_code = $search_values['patient_code'];
                 $query->where('patients.patient_code', 'like', "%$patient_code%");

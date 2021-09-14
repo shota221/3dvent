@@ -38,7 +38,7 @@ class PatientValueService
             $http_query = '?' . http_build_query($search_values);
         }
 
-        $patient_values = Repos\PatientValueRepository::findWithPatientAndUserAndOrganizationBySearchValuesAndLimitAndOffsetOrderByCreatedAt(
+        $patient_values = Repos\PatientValueRepository::searchWithPatientAndUserAndOrganization(
             $search_values,
             $limit,
             $offset);

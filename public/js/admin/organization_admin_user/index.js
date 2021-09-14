@@ -204,7 +204,8 @@ $('#password-changed').on(
 function buildSearchParameters($form) {
     var parameters = {};
 
-    parameters['organization_name'] = $form.find('[name=organization_name] option:selected').text();
+    // TODO 取得した要素はconstに定義
+    parameters['organization_id'] = $form.find('[name=organization_name]').val();
     parameters['name'] = $form.find('[name=name]').val();
     parameters['registered_at_from'] = $form.find('[name=registered_at_from]').val();
     parameters['registered_at_to'] = $form.find('[name=registered_at_to]').val();
