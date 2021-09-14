@@ -1,7 +1,5 @@
 const
     $editModal = $('#modal-ventilator-update'),
-    $registerModal = $('#modal-ventilator-create'),
-    $showRegisterModalBtn = $('#show-register-modal'),
     $modalCancelBtn = $('button.modal-cancel'),
     $paginatedList = $('#paginated-list'),
     $ventilatorUpdateBtn = $('#async-ventilator-update'),
@@ -11,17 +9,6 @@ const
     $clearSearchFormBtn = $('#clear-search-form'),
     $ventilatorBugList = $('#ventilator-bug-list')
     ;
-
-
-$showRegisterModalBtn.on(
-    'click',
-    function () {
-        utilFormRemoveValidationErrorMessage()
-
-        $registerModal.modal();
-
-        return false;
-    });
 
 $modalCancelBtn.on(
     'click',

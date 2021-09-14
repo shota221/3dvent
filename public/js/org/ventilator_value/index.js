@@ -1,6 +1,5 @@
 const
     $editModal = $('#modal-ventilator_value-update'),
-    $showRegisterModalBtn = $('#show-register-modal'),
     $modalCancelBtn = $('button.modal-cancel'),
     $paginatedList = $('#paginated-list'),
     $ventilatorValueUpdateBtn = $('#async-ventilator_value-update'),
