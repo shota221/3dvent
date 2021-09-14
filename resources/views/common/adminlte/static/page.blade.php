@@ -5,6 +5,9 @@
 @stop
 
 @section('master_js')
+    <script src="js/common/util/async.js"></script>
+    <script src="js/common/util/form.js"></script>
+    <script src="js/auth.js"></script>
     @yield('page_js')
 @stop
 

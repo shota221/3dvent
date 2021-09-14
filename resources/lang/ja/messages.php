@@ -2,6 +2,7 @@
 
 return [
     // a
+    'account' => 'アカウント名',
     'affiliation_organization' => '所属組織',
     'airway_pressure' => '設定圧',
     'air_flow' => '空気流量',
@@ -50,6 +51,7 @@ return [
     'female' => '女性',
     'fio2' => 'FIO₂',
     'fixed_value' => '最終設定値',
+    'forgot_password' => 'パスワードを忘れた方',
     // g
     'gender' => '性別',
     // h
@@ -71,6 +73,7 @@ return [
     // l
     'linked' => '連携済',
     'list' => '一覧',
+    'login' => 'ログイン',
     // m
     'male' => '男性',
     'mri' => 'MRI室',
@@ -109,7 +112,8 @@ return [
     // p
     'paco2' => 'PaCO₂',
     'pao2' => 'PaO₂',
-    'password' => 'パスワード(組織ログイン時利用)',
+    'password' => 'パスワード',
+    'password_annotation' => '(組織ログイン時利用)',
     'password_confirmation' => 'パスワード(確認用)',
     'password_placeholder' => '半角英数字8文字以上',
     'patient_age' => '患者年齢',
@@ -143,6 +147,7 @@ return [
     'serial_number' => 'シリアル番号',
     'setting' => '設定',
     'show_fixed_values' => '最終設定値のみ表示',
+    'sign_in' => 'サインイン',
     'spo2' => '経皮的酸素飽和度',
     'start_using_at' => '使用開始日時',
     'status' => 'ステータス',

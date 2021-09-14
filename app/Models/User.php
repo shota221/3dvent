@@ -18,7 +18,8 @@ class User extends Authenticatable
     const 
         TOKEN_COLUMN_NAME = 'api_token',
         DISABLED = 1,
-        ENABLED = 0
+        ENABLED = 0,
+        AUTHORITY_ADMIN = 1 // TODO　権限回り実装後修正
     ;
 
     /**
@@ -59,5 +60,17 @@ class User extends Authenticatable
     public static function tableName()
     {
         return Str::snake(Str::pluralStudly(class_basename(static::class)));
+    }
+
+    // TODO 権限周り決定後修正
+    public function hasAuthorityAdmin()
+    {
+        return boolval($this->authority === self::AUTHORITY_ADMIN);
+    }
+
+    
+    public function hasAuthorityOrg()
+    {
+        return boolval($this->authority !== self::AUTHORITY_ADMIN);
     }
 }

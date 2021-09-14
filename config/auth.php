@@ -39,7 +39,7 @@ return [
     */
 
     'defaults' => [
-        'guard' => 'user_token',
+        'guard'     => 'user_token',
         'passwords' => 'users',
     ],
 
@@ -62,16 +62,27 @@ return [
 
     'guards' => [
         'user_token' => [
-            'driver' => 'user_token', // token or session
-            'provider' => 'user',
-            'input_key' => env('USER_TOKEN_INPUT_KEY', null), // ex.) _m_t  nullable
+            'driver'      => 'user_token', // token or session
+            'provider'    => 'user',
+            'input_key'   => env('USER_TOKEN_INPUT_KEY', null), // ex.) _m_t  nullable
             'storage_key' => \App\Models\User::TOKEN_COLUMN_NAME,
-            'hash' => env('USER_TOKEN_HASH', true),
+            'hash'        => env('USER_TOKEN_HASH', true),
         ],
+
         'user' => [
-            'driver'=>'session',
+            'driver'   => 'session',
             'provider' => 'user'
-        ]
+        ],
+
+        'admin' => [
+            'driver'   => 'session',
+            'provider' => 'admin'
+        ],
+        
+        'org' => [
+            'driver'   => 'session',
+            'provider' => 'org'
+        ],
     ],
 
     /*
@@ -93,9 +104,19 @@ return [
 
     'providers' => [
         'user' => [
-            'driver'        => 'eloquent_user',
+            'driver' => 'eloquent_user',
+            'authority' => '',
+        ],
+
+        'admin' => [
+            'driver'    => 'eloquent_user',
+            'authority' => 'admin',
         ],
         
+        'org' => [
+            'driver'    => 'eloquent_user',
+            'authority' => 'org',
+        ],
 
     ],
 
@@ -117,8 +138,8 @@ return [
     'passwords' => [
         'users' => [
             'provider' => 'users',
-            'table' => 'password_resets',
-            'expire' => 60,
+            'table'    => 'password_resets',
+            'expire'   => 60,
             'throttle' => 60,
         ],
     ],

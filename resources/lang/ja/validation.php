@@ -136,6 +136,7 @@ return [
     'id_not_found'=>'削除されているか、存在しないIDです。',
     'code_not_found'=>'削除されているか、存在しない組織コードです。',
     'account_not_found'=>'削除されているか、存在しないアカウント名です。',
+    'account_or_password_incorrect'=>'アカウント名またはパスワードが違います。',
     'appkey_not_found'=>'存在しないアプリキーです。',
     'appkey_required'=>'アプリキーは必須です。',
     'not_enough_recording_time'=>'録音時間が短すぎます。再度録音してください。',

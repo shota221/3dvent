@@ -7,7 +7,7 @@
     <i class="fa fa-user"></i>&nbsp;
 
     <!-- hidden-xs hides the username on small devices so only the image appears. -->
-    <span class="hidden-xs">Auth::user()->name</span>
+    <span class="hidden-xs">{{ Auth::user()->name }}</span>
   </a>
   <ul class="dropdown-menu">
     <!-- The user image in the menu -->
@@ -16,10 +16,10 @@
       <div class="icon"><i class="ion ion-ios-person"></i></div>
       <div class="label">User</div>
       <p>
-        Auth::user()->name
+        {{ Auth::user()->name }}
       </p>
       <p>
-        <small>Auth::user()->email</small>
+        <small>{{ Auth::user()->email }}</small>
       </p>
       <p>
         <span 
@@ -40,7 +40,7 @@
     <li class="user-footer">
 
       <div class="text-center">
-        <a href="#">
+        <a href="{{ guess_route_path('logout') }}">
             <i class="fa fa-fw fa-power-off"></i> LOGOUT
         </a>
       </div>
