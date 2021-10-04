@@ -23,6 +23,7 @@ return [
     'create' => '登録',
     'created' => '登録しました。',
     'csv_export' => '選択項目をエクスポート',
+    'csv_format_export' => 'csvフォーマットをエクスポート',
     'csv_file' => 'CSVファイル選択',
     'csv_import' => 'CSVインポート',
     // d
@@ -164,6 +165,8 @@ return [
     'unlinked' => '未連携',
     'used_place' => '使用場所',
     'user_authority' => '権限',
+    'user_create' => 'ユーザー登録',
+    'user_edit' => 'ユーザー編集',
     'user_list' => 'ユーザー一覧',
     'user_management' => 'ユーザー管理',
     'user_name' => 'ユーザー名',

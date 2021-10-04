@@ -23,8 +23,7 @@ class UserSearchForm extends BaseForm
             'authority'          => 'nullable|' . Rule::VALUE_POSITIVE_INTEGER,
             'registered_at_from' => 'nullable|date',
             'registered_at_to'   => 'nullable|date',
-            'disabled_flg'       => 'nullable|array',
-            'disabled_flg.*'     => 'nullable|' . Rule::FLG_INTEGER,
+            'disabled_flg'       => 'nullable|' . Rule::FLG_INTEGER,
             'page'               => 'nullable|' . Rule::VALUE_POSITIVE_INTEGER,
         ];
     }

@@ -1,22 +1,44 @@
-// show register modal
-$('#show-register-modal').on(
-    'click',
-    function (e) {
-        utilFormRemoveValidationErrorMessage()
+const
+    $asyncCreate                            = $('#async-create'),
+    $asyncOrganizationData                  = $('#async-organization-data'),
+    $asyncUpdate                            = $('#async-update'),
+    $asyncSearch                            = $('#async-search'),
+    $cancelModal                            = $('button.modal-cancel'),
+    $clearSearchForm                        = $('#clear-search-form'),
+    $editModal                              = $('#edit-modal'),
+    $editModalDisabledFlgInput              = $editModal.find('[name=disabled_flg]'),
+    $editModalEmailInput                    = $editModal.find('[name=email]'),
+    $editModalIdInput                       = $editModal.find('[name=id]'),
+    $editModalCodeInput                     = $editModal.find('[name=code]'),
+    $editModalNameInput                     = $editModal.find('[name=name]'),
+    $editModalPasswordInput                 = $editModal.find('[name=password]'),
+    $editModalPasswordConfirmationInput     = $editModal.find('[name=password_confirmation]'),
+    $editModalPasswordChangedInput          = $editModal.find('[name=password_changed]'),
+    $editModalPasswordChangeField           = $editModal.find('.password-change-field'),
+    $datepicker                             = $('input.form-control.date'),
+    $paginatedList                          = $('#paginated-list'),
+    $registerModal                          = $('#register-modal'),
+    $registerModalCodeInput                 = $registerModal.find('[name=code]'),
+    $registerModalDisabledFlgInput          = $registerModal.find('[name=disabled_flg]'),
+    $registerModalEmailInput                = $registerModal.find('[name=email]'),
+    $registerModalNameInput                 = $registerModal.find('[name=name]'),
+    $registerModalPasswordInput             = $registerModal.find('[name=password]'),
+    $registerModalPasswordConfirmationInput = $registerModal.find('[name=password_confirmation]'),
+    $searchForm                             = $('#async-search-form'),
+    $searchFormAllInput                     = $searchForm.find('input'),
+    $searchFormNameInput                    = $searchForm.find('[name=name]'),
+    $searchFormOrganizationInput            = $searchForm.find('[name=organization_name]'),
+    $searchFormRegisteredAtFromInput        = $searchForm.find('[name=registered_at_from]'),    
+    $searchFormRegisteredAtToInput          = $searchForm.find('[name=registered_at_to]'),
+    $select2OrganizationName                = $('#select2-organization-name'),
+    $showRegisterModal                      = $('#show-register-modal');
 
-        $('#register-modal').modal();
-
-        return false;
-    }
-);
-
-// show edit modal
-$('#paginated-list').on(
+// 編集モーダル表示
+$paginatedList.on(
     'click',
     '.show-edit-modal',
-    function (e) {
-        
-        $('.password-change-inputs').addClass('collapse');
+    function () {
+        $editModalPasswordChangeField.addClass('collapse')
         utilFormRemoveValidationErrorMessage()
         
         var parameters = {};
@@ -24,11 +46,11 @@ $('#paginated-list').on(
         
         var successCallback = function (data) {
 
-            $form = $('#edit-modal').find('form[name="update"]').eq(0);
+            $form = $editModal.find('form[name="update"]').eq(0);
 
             utilFormInputParameters($form, data['result']);
             
-            $('#edit-modal').modal();
+            $editModal.modal();
         }
 
         var $element = $(this);
@@ -39,21 +61,35 @@ $('#paginated-list').on(
     }
 )
 
-// hide modal
-$('button.modal-cancel').on(
+// 新規登録モーダル表示
+$showRegisterModal.on(
     'click',
-    function (e) {
+    function () {
+        utilFormRemoveValidationErrorMessage()
+
+        $form = $registerModal.find('form[name="create"]').eq(0);
+        $form[0].reset();
+        $registerModal.modal();
+
+        return false;
+    }
+);
+
+// モーダル非表示
+$cancelModal.on(
+    'click',
+    function () {
         $(this).closest('.modal').modal('hide');
 
         return false;
     }
 );
 
-// async organization data
+// 組織名の非同期取得
 (function () {
     var parameters = {};
 
-    var $element = $('#async-organization-data');
+    var $element = $asyncOrganizationData ;
 
     var successCallback = function (data) {
         var organizations = [];
@@ -65,7 +101,7 @@ $('button.modal-cancel').on(
             organizations.push(organization);
         })
 
-        $('#select2-organization-name').select2({
+        $select2OrganizationName.select2({
             data: organizations,
             placeholder: '',
             allowClear: true
@@ -75,15 +111,15 @@ $('button.modal-cancel').on(
     utilAsyncExecuteAjax($element, parameters, false, successCallback);
 }(utilAsyncExecuteAjax));
 
-// async-search
-$('#async-search').on(
+// 検索
+$asyncSearch.on(
     'click',
-    function(e) {
-        var $form = $('#async-search-form');
+    function() {
+        var $form = $searchForm;
         var parameters = buildSearchParameters($form);
 
         var successCallback = function (paginated_list) {
-            $('#paginated-list').html(paginated_list);
+            $paginatedList.html(paginated_list);
         }
 
         var $element = $(this);
@@ -94,18 +130,20 @@ $('#async-search').on(
     }
 )
 
-// async-update
-$('#async-update').on(
+// 更新
+$asyncUpdate.on(
     'click',
     function(e) {
 
         var $modal = $('#edit-modal');
         var parameters = {};
-        parameters['id'] = $modal.find('[name=id]').val();
-        parameters['code'] = $modal.find('[name=code]').val();
-        parameters['name'] = $modal.find('[name=name]').val();
-        parameters['email'] = $modal.find('[name=email]').val();
-        parameters['disabled_flg'] = $modal.find('[name=disabled_flg]:checked').val();
+        parameters['id']                    = $editModalIdInput.val()
+        parameters['code']                  = $editModalCodeInput.val();
+        parameters['name']                  = $editModalNameInput.val();
+        parameters['email']                 = $editModalEmailInput.val();
+        parameters['disabled_flg']          = $editModal.find('[name=disabled_flg]:checked').val();
+        parameters['password']              = $editModalPasswordInput.val();
+        parameters['password_confirmation'] = $editModalPasswordConfirmationInput.val();
         
         if ($modal.find('[name=password_changed]:checked').val() === undefined) {
             parameters['password_changed'] = "0";    
@@ -113,21 +151,17 @@ $('#async-update').on(
             parameters['password_changed'] = "1";    
         }
         
-        parameters['password'] = $modal.find('[name=password]').val();
-        parameters['password_confirmation'] = $modal.find('[name=password_confirmation]').val();
-        
         var successCallback = function (data) {
             var $element = $('.page-item' + '.active').children('button');
 
             if (! $element.length) {
-                $element = $('#async-search');
+                $element = $asyncSearch;
             } 
 
-            var $form = $('#async-search-form');
-            var parameters = buildSearchParameters($form);
+            var parameters = buildSearchParameters($searchForm);
             
             var successCallback = function(pagineted_list) {
-                $('#paginated-list').html(pagineted_list);
+                $paginatedList.html(pagineted_list);
             } 
             utilAsyncExecuteAjax($element, parameters, false, successCallback);
           
@@ -142,35 +176,35 @@ $('#async-update').on(
     }
 )
 
-// async-create
-$('#async-create').on(
+// 新規登録
+$asyncCreate.on(
     'click',
     function (e) {
         
         var $modal = $('#register-modal');
         var parameters = {};
-        parameters['code'] = $modal.find('[name=code]').val();
-        parameters['name'] = $modal.find('[name=name]').val();
-        parameters['email'] = $modal.find('[name=email]').val();
-        parameters['disabled_flg'] = $modal.find('[name=disabled_flg]:checked').val();
-        parameters['password'] = $modal.find('[name=password]').val();
-        parameters['password_confirmation'] = $modal.find('[name=password_confirmation]').val();
+        parameters['code']                  = $registerModalCodeInput.val();
+        parameters['name']                  = $registerModalNameInput.val();
+        parameters['email']                 = $registerModalEmailInput.val();
+        parameters['disabled_flg']          = $registerModal.find('[name=disabled_flg]:checked').val();
+        parameters['password']              = $registerModalPasswordInput.val();
+        parameters['password_confirmation'] = $registerModalPasswordConfirmationInput.val();
         
         var successCallback = function (data) {
             var $element = $('.page-item' + '.active').children('button');
 
             if (! $element.length) {
-                $element = $('#async-search');
+                $element = $asyncSearch;
             } 
 
-            var $form = $('#async-search-form');
-            var parameters = buildSearchParameters($form);
+            var parameters = buildSearchParameters($searchForm);
 
             var successCallback = function(pagineted_list) {
-                $('#paginated-list').html(pagineted_list);
+                $paginatedList.html(pagineted_list);
             } 
             utilAsyncExecuteAjax($element, parameters, false, successCallback);
-            $('#register-modal').modal('hide');
+
+            $registerModal.modal('hide');
         }
 
         var $element = $(this);
@@ -181,53 +215,57 @@ $('#async-create').on(
     }
 );
 
-// clear search form
-$('#clear-search-form').on(
+// 検索フォーム初期化
+$clearSearchForm.on(
     'click',
     function (e) {
-        var $form = $('#async-search-form');
-        $form.find('input').not(':checkbox').val('');
-        $('#select2-organization-name').val(null).trigger('change');
+        $searchFormAllInput.not(':checkbox').val('');
+        $select2OrganizationName.val(null).trigger('change');
         $form.find(':checkbox').prop('checked', true);
     }
 )
 
-// show password-inputs
-$('#password-changed').on(
+// パスワード入力フォーム表示切替
+$editModalPasswordChangedInput.on(
     'click',
     function (e) {
-        $('.password-change-inputs').toggleClass('collapse');
+        $editModalPasswordChangeField.toggleClass('collapse');
     }
 )
 
-// build search parameters
+// 検索用パラメータ作成
 function buildSearchParameters($form) {
     var parameters = {};
 
-    // TODO 取得した要素はconstに定義
-    parameters['organization_id'] = $form.find('[name=organization_name]').val();
-    parameters['name'] = $form.find('[name=name]').val();
-    parameters['registered_at_from'] = $form.find('[name=registered_at_from]').val();
-    parameters['registered_at_to'] = $form.find('[name=registered_at_to]').val();
-    parameters['disabled_flg'] = [];
-    $form.find('[name=disabled_flg]:checked').each(function() {
-        parameters['disabled_flg'].push($(this).val());
-    });
+    parameters['organization_id']    = $searchFormOrganizationInput.val()
+    parameters['name']               = $searchFormNameInput.val()
+    parameters['registered_at_from'] = $searchFormRegisteredAtFromInput.val()
+    parameters['registered_at_to']   = $searchFormRegisteredAtToInput.val()
+     
+    $disabled_flg = $searchForm.find('[name=disabled_flg]:checked');
+
+    if ($disabled_flg.length == 1) {
+        parameters['disabled_flg'] = $disabled_flg.val();
+    }
 
     return parameters;
 }
 
-// pagination
-$('#paginated-list').on('click', '.page-link', function(e) {
+// ページネーション
+$paginatedList.on('click', '.page-link', function(e) {
     var $featureElement = $(this);
-    
-    // var $form = $('#async-search-form');
-    // var parameters = buildSearchParameters($form);
+
     var parameters = {};
 
     var successCallback = function(paginated_list) {
-        $('#paginated-list').html(paginated_list);
+        $paginatedList.html(paginated_list);
     }
 
-    utilAsyncExecuteAjax($featureElement, parameters, false, successCallback)
+    utilAsyncExecuteAjax($featureElement, parameters, false, successCallback);
 });
+
+// datepicker
+$datepicker.datetimepicker({
+    timepicker:false,
+    format:'Y-m-d'
+}) 

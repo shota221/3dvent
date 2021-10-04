@@ -1,9 +1,12 @@
 const
     $asyncCreate                            = $('#async-create'),
+    $asyncCsvImport                         = $('#async-csv-import'),
     $asyncUpdate                            = $('#async-update'),
     $asyncSearch                            = $('#async-search'),
     $bulkCheck                              = $('#bulk-check'),
     $cancelModal                            = $('button.modal-cancel'),
+    $csvImportModal                         = $('#csv-import-modal'),
+    $csvImportModalFileInput                = $csvImportModal.find('[name=csv_file]'),
     $clearSearchForm                        = $('#clear-search-form'),
     $editModal                              = $('#edit-modal'),
     $editModalAuthorityInput                = $editModal.find('[name=authority]'),
@@ -21,17 +24,16 @@ const
     $registerModalAuthorityInput            = $registerModal.find('[name=authority]'),
     $registerModalDisabledFlgInput          = $registerModal.find('[name=disabled_flg]'),
     $registerModalEmailInput                = $registerModal.find('[name=email]'),
-    $registerModalIdInput                   = $registerModal.find('[name=id]'),
     $registerModalNameInput                 = $registerModal.find('[name=name]'),
     $registerModalPasswordInput             = $registerModal.find('[name=password]'),
     $registerModalPasswordConfirmationInput = $registerModal.find('[name=password_confirmation]'),
-    $registerModalPasswordChangedInput      = $registerModal.find('[name=password_changed]'),
     $searchForm                             = $('#async-search-form'),
     $searchFormAllInput                     = $searchForm.find('input'),
     $searchFormAuthorityInput               = $searchForm.find('[name=authority]'),
     $searchFormNameInput                    = $searchForm.find('[name=name]'),
     $searchFormRegisteredAtFromInput        = $searchForm.find('[name=registered_at_from]'),    
     $searchFormRegisteredAtToInput          = $searchForm.find('[name=registered_at_to]'),
+    $showCsvImportModal                     = $('#show-csv-import-modal'),
     $showRegisterModal                      = $('#show-register-modal');
 
 // 編集モーダル表示
@@ -39,6 +41,7 @@ $paginatedList.on(
     'click',
     '.show-edit-modal',
     function (e) {
+        $editModalPasswordChangeField.addClass('collapse')
         utilFormRemoveValidationErrorMessage()
 
         var parameters = {};
@@ -73,6 +76,20 @@ $showRegisterModal.on(
         return false;
     }
 );
+
+// csvインポートモーダル表示
+$showCsvImportModal.on(
+    'click',
+    function () {
+        utilFormRemoveValidationErrorMessage()
+
+        $form = $csvImportModal.find('form[name="csv-import"]').eq(0);
+        $form[0].reset();
+        $csvImportModal.modal();
+
+        return false;
+    }
+)
 
 // モーダル非表示
 $cancelModal.on(
@@ -163,7 +180,6 @@ $asyncCreate.on(
     'click',
     function (e) {
         var parameters = {};
-        parameters['id']                    = $registerModalIdInput.val()
         parameters['name']                  = $registerModalNameInput.val();
         parameters['email']                 = $registerModalEmailInput.val();
         parameters['authority']             = $registerModalAuthorityInput.val()
@@ -193,6 +209,49 @@ $asyncCreate.on(
         var $element = $(this);
 
         utilAsyncExecuteAjax($element, parameters, true, successCallback);
+
+        return false;
+    }
+)
+
+// csvインポート
+$asyncCsvImport.on(
+    'click',
+    function () {
+
+        var $csv_file  = $csvImportModalFileInput
+        var parameters = new FormData();
+        
+        if ($csv_file.prop('files')[0] != undefined) {
+            parameters.append('csv_file', $csv_file.prop('files')[0])
+        }
+        
+        var successCallback = function (data) {
+            var $element = $('.page-item' + '.active').children('button');
+
+            if (! $element.length) {
+                $element = $asyncSearch;
+            }
+
+            var parameters = buildSearchParameters($searchForm);
+
+            var successCallback = function(paginated_list) {
+                $paginatedList.html(paginated_list);
+            }
+
+            utilAsyncExecuteAjax($element, parameters, false, successCallback);
+
+            $csvImportModal.modal('hide');
+        }
+
+        var $element = $(this);
+
+        var extraSettings = {
+            processData: false,
+            contentType: false
+        }
+
+        utilAsyncExecuteAjax($element, parameters, true, successCallback, extraSettings);
 
         return false;
     }
@@ -282,11 +341,12 @@ function buildSearchParameters($form) {
     parameters['authority']          = $searchFormAuthorityInput.val()
     parameters['registered_at_from'] = $searchFormRegisteredAtFromInput.val()
     parameters['registered_at_to']   = $searchFormRegisteredAtToInput.val()
-    parameters['disabled_flg']       = [];
     
-    $searchForm.find('[name=disabled_flg]:checked').each(function () {
-        parameters['disabled_flg'].push($(this).val());
-    });
+    $disabled_flg = $searchForm.find('[name=disabled_flg]:checked');
+
+    if ($disabled_flg.length == 1) {
+        parameters['disabled_flg'] = $disabled_flg.val();
+    }
 
     return parameters;
 }

@@ -127,13 +127,13 @@ Route::group(['middleware' => ['routetype:org']], function() {
 
         Route::get(
             '/user/csv', 
-            'UserController@asyncExportCsvUserFormat'
-        )->name('org.user.export_csv_user_format');
+            'UserController@exportUserCsvFormat'
+        )->name('org.user.export_user_csv_format');
         
         Route::post(
             '/user/csv', 
-            'UserController@asyncImportCsvUserData'
-        )->name('org.user.import_csv_user_data');
+            'UserController@asyncImportUserCsvData'
+        )->name('org.user.import_user_csv_data');
 
     });
 });

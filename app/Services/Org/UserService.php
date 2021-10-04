@@ -8,12 +8,15 @@ use App\Http\Response;
 use App\Repositories as Repos;
 use App\Services\Support\Converter;
 use App\Services\Support\DBUtil;
+use App\Services\Support\Logic;
 use Illuminate\Support\Facades\Hash;
 
 use Illuminate\Support\Facades\Log;
 
 class UserService
 {
+    use Logic\CsvLogic;
+
     /**
      * ユーザー一覧取得(ページネーション)
      *
@@ -195,6 +198,27 @@ class UserService
         );
 
         return new Response\SuccessJsonResult;
+    }
+
+    /**
+     * CSVフォーマット作成
+     *
+     * @return void
+     */
+    public function createUserCsvFormat()
+    {
+        $header  = config('user_csv.header');
+        $example = config('user_csv.example');
+
+        $this->createCsvFormat($header, $example);
+    }
+
+    public function createByCsv(
+        Form\UserCsvImportForm $form, 
+        int $organization_id, 
+        int $user_id)
+    {
+        
     }
 
     private function buildUserSearchValues(Form\UserSearchForm $form)

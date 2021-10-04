@@ -150,7 +150,7 @@ class UserRepository
             $query->where('users.created_at', '<=', $search_values['registered_at_to']);
         }
         if (isset($search_values['disabled_flg'])) {
-            $query->whereIn('users.disabled_flg', $search_values['disabled_flg']);
+            $query->where('users.disabled_flg', $search_values['disabled_flg']);
         }
 
         return $query;
@@ -209,7 +209,7 @@ class UserRepository
 
         if (isset($search_values['disabled_flg'])) {
             $disabled_flg = $search_values['disabled_flg'];
-            $query->whereIn('users.disabled_flg', $disabled_flg);
+            $query->where('users.disabled_flg', $disabled_flg);
         }
 
         return $query;

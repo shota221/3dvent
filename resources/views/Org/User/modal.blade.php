@@ -77,6 +77,25 @@
     @endslot
 @endcomponent
 
+{{--csvインポート--}}
+@component('components.modal', [
+    'id'   => 'csv-import-modal',
+    'form' => ['method' => 'POST', 'action' => route('org.user.import_user_csv_data'),
+    'name' => 'csv-import'],
+    ])
+    @slot('title')
+        @lang('messages.csv_import')
+    @endslot
+
+    @slot('content')        
+        {{-- CSVファイル選択 --}}
+        <div class="form-group">
+            <label for="csv_file">@lang('messages.csv_file')<span class="required"></span></label>
+            <input class="form-control-file" type="file" id="file" name="csv_file">
+        </div>
+    @endslot
+@endcomponent
+
 {{--編集--}}
 @component('components.modal', [
     'id'   => 'edit-modal',
@@ -163,6 +182,8 @@
 
     @endslot
 @endcomponent
+
+
 
 
 

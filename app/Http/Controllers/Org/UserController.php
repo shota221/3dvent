@@ -75,13 +75,22 @@ class UserController extends Controller
         return $this->service->logicalDelete($form, Auth::user()->organization_id, Auth::id());
     }
 
-    public function asyncExportCsvUserFormat()
+    public function exportUserCsvFormat()
     {
-
+        return response()->streamDownload(
+            function () {
+                $this->service->createUserCsvFormat();
+            },
+            config('user_csv.filename')
+        );
     }
 
-    public function asyncImportCsvUserData()
+    public function asyncImportUserCsvData(Request $request)
     {
-        
+        $form = new Form\UserCsvImportForm($request->all());
+
+        if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
+
+        return $this->service->createByCsv($form, Auth::user()->organization_id, Auth::id());
     }
 }
