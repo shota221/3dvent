@@ -25,12 +25,7 @@ use Illuminate\Support\Facades\Log;
  */
 class UserAuthService
 {
-    public function loggedin(string $user_auth_key)
-    {
-        return Auth::guard($user_auth_key)->check();
-    }
-
-    public function login(Form\UserAuthForm $form, string $user_auth_key)
+    public function login(Form\UserAuthForm $form, $guard)
     {
         $organization = Repos\OrganizationRepository::findOneByCode($form->organization_code);
 
@@ -45,7 +40,7 @@ class UserAuthService
             'password'        => $form->password,
         ];
 
-        $session_guard = Auth::guard($user_auth_key);
+        $session_guard = $guard;
 
         if (! $session_guard->attempt($credentials, $form->remember)) {
             $form->addError('accountOrPassword', 'validation.account_or_password_incorrect');
@@ -57,12 +52,6 @@ class UserAuthService
 
         return Converter\UserResponseConverter::convertToUserAuthResult($redirect_to);
     }
-
-    public function logout(string $user_auth_key)
-    {
-        return Auth::guard($user_auth_key)->logout();
-    }
-
 
     public function generateToken($form)
     {

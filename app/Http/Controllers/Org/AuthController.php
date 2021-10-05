@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Forms as Form;
 use App\Services as Service;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -21,7 +22,7 @@ class AuthController extends Controller
 
     public function index()
     {
-        if ($this->service->loggedin($this->user_auth_key)) {
+        if (Auth::guard($this->user_auth_key)->check()) {
             return redirect(route_path('org.home'));
         }
         
@@ -30,7 +31,7 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        if ($this->service->loggedin($this->user_auth_key)) {
+        if (Auth::guard($this->user_auth_key)->check()) {
             return redirect(route_path('org.home'));
         }
 
@@ -38,14 +39,14 @@ class AuthController extends Controller
  
         if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
 
-        $response = $this->service->login($form, $this->user_auth_key);
+        $response = $this->service->login($form, Auth::guard($this->user_auth_key));
 
         return $response;
     }
 
     public function logout(Request $request)
     {   
-        $this->service->logout($this->user_auth_key);
+        Auth::guard($this->user_auth_key)->logout();
 
         return redirect(route_path('org.auth'));
     }
