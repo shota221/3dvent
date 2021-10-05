@@ -218,7 +218,7 @@ class UserService
         int $organization_id, 
         int $user_id)
     {
-        
+        // TODO 途中
     }
 
     private function buildUserSearchValues(Form\UserSearchForm $form)
