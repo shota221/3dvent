@@ -30,7 +30,7 @@ class OrganizationAdminUserSearchForm extends BaseForm
 
     protected function bind($input)
     {
-        $this->organization_id = isset($input['organization_id']) ? strval($input['organization_id']) : null;
+        $this->organization_id = isset($input['organization_id']) ? intval($input['organization_id']) : null;
         $this->name = isset($input['name']) ? strval($input['name']) : null;
         
         $this->registered_at_from = isset($input['registered_at_from']) 

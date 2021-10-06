@@ -96,9 +96,9 @@ class OrganizationAdminUserService
 
         $user = Repos\UserRepository::findOneByOrganizationIdAndName($organization->id, $form->name);
 
-        $isDuplicated = ! is_null($user) && $user->id !== $form->id;
+        $is_duplicated = ! is_null($user) && $user->id !== $form->id;
 
-        if ($isDuplicated) {
+        if ($is_duplicated) {
             $form->addError('name', 'validation.duplicated_registration');
             throw new Exceptions\InvalidFormException($form);
         }

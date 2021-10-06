@@ -182,20 +182,17 @@ class UserService
             throw new Exceptions\InvalidFormException('validation.excessive_number_of_registrations');
         }
 
-        // リクエストのidが組織齟齬の可能性があるためid再取得
+        // 削除済み、または不正なリクエストidを考慮しid再取得
         $target_ids = Repos\UserRepository::getIdsByOrganizationIdAndIds($organization_id, $ids);
-
-        if (is_null($target_ids)) {
-            $form->addError('id', 'validation.id_not_found');
-            throw new Exceptions\InvalidFormException($form);
+        
+        if (! empty($target_ids)) {
+            DBUtil::Transaction(
+                'ユーザー論理削除',
+                function () use ($target_ids, $user_id) {
+                     Repos\UserRepository::logicalDeleteByIds($target_ids->all(), $user_id);
+                }
+            );
         }
-
-        DBUtil::Transaction(
-            'ユーザー論理削除',
-            function () use ($target_ids, $user_id) {
-                Repos\UserRepository::logicalDeleteByIds($target_ids->all(), $user_id);
-            }
-        );
 
         return new Response\SuccessJsonResult;
     }
