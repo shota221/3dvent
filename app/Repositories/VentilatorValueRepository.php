@@ -68,12 +68,18 @@ class VentilatorValueRepository
         )->first();
     }
 
-    public static function existsByVentilatorId($ventilator_id)
+    public static function existsByVentilatorId(int $ventilator_id)
     {
         return static::query()->where('ventilator_id', $ventilator_id)->exists();
     }
 
-    public static function findOneByVentilatorId($ventilator_id)
+    public static function existsByVentilatorIds(array $ventilator_ids)
+    {
+        return static::query()->whereIn('ventilator_id', $ventilator_ids)->exists();
+    }
+
+
+    public static function findOneByVentilatorId(int $ventilator_id)
     {
         $table = VentilatorValue::tableName();
         return static::joinVentilator()->where('ventilator_id', $ventilator_id)->orderBy($table . '.created_at', 'DESC')->first();

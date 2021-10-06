@@ -156,29 +156,24 @@ Route::group(['middleware' => ['routetype:org']], function () {
         )->name('org.ventilator.index');
 
         Route::get(
-            '/ventilator/async',
+            '/ventilator/search',
             'VentilatorController@asyncSearch'
-        )->name('org.ventilator.async');
+        )->name('org.ventilator.search');
 
         Route::get(
             '/ventilator/async/patient',
-            'VentilatorController@asyncPatient'
+            'VentilatorController@asyncGetPatientData'
         )->name('org.ventilator.patient');
 
         Route::get(
             '/ventilator/async/bugs',
-            'VentilatorController@asyncBugs'
+            'VentilatorController@asyncShowBugList'
         )->name('org.ventilator.bugs');
 
         Route::put(
             '/ventilator',
             'VentilatorController@asyncUpdate'
         )->name('org.ventilator.update');
-
-        Route::delete(
-            '/ventilator',
-            'VentilatorController@asyncBulkDelete'
-        )->name('org.ventilator.bulk_delete');
 
         /**
          * 機器観察研究データ

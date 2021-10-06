@@ -480,13 +480,27 @@ class VentilatorService
         return new Response\SuccessJsonResult;
     }
 
+    /**
+     * ventilatorの削除は組織移動の際に行われる。
+     * 選択されたventilatorに紐づくventilator_valueがすべて削除されている場合のみventilatorの削除が実行される。
+     *
+     * @param Form\VentilatorBulkDeleteForm $form
+     * @return void
+     */
     function bulkDelete(Form\VentilatorBulkDeleteForm $form)
     {
         $ids = $form->ids;
         $deletable_row_limit = 50;//現在のデリート方式での仮の処理上限
 
         if (count($ids) > $deletable_row_limit) {
-            $form->addError('validation.excessive_number_of_registrations');
+            $form->addError('ids','validation.excessive_number_of_deletions');
+            throw new Exceptions\InvalidFormException($form);
+        }
+
+        $ventilator_value_exists = Repos\VentilatorValueRepository::existsByVentilatorIds($ids);
+
+        if ($ventilator_value_exists) {
+            $form->addError('ids','validation.ventilator_value_exists_yet');
             throw new Exceptions\InvalidFormException($form);
         }
 

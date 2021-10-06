@@ -1,9 +1,5 @@
 <table class="table table-striped">
     <tr>
-        <th>
-            <div class="form-check"><input type="checkbox" class="form-check-input position-static" id="bulk-check">
-            </div>
-        </th>
         {{-- Microventコード --}}
         <th>@lang('messages.ventilator_code')</th>
         {{-- シリアルナンバー --}}
@@ -25,11 +21,6 @@
             data-registered_user_name="{{ $ventilator->registered_user_name }}"
             data-expiration_date="{{ $ventilator->expiration_date }}"
             data-start_using_at="{{ $ventilator->start_using_at }}">
-            <td class="align-middle">
-                <div class="form-check"><input type="checkbox" class="form-check-input item-check position-static"
-                        value={{ $ventilator->id }}>
-                </div>
-            </td>
             <td class="align-middle"><a href="#" class="show-edit-modal"
                     data-url="{{ route('org.ventilator.patient', ['id' => $ventilator->id]) }}"
                     data-method="GET">{{ $ventilator->gs1_code }}</a>

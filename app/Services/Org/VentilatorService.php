@@ -67,29 +67,6 @@ class VentilatorService
         return new Response\SuccessJsonResult;
     }
 
-    function bulkDelete(Form\VentilatorBulkDeleteForm $form)
-    {
-        $ids = $form->ids;
-        $deletable_row_limit = 50;
-
-        if (count($ids) > $deletable_row_limit) {
-            $form->addError('validation.excessive_number_of_registrations');
-            throw new Exceptions\InvalidFormException($form);
-        }
-
-        //TODO 認証ユーザーからの取り出し
-        $organization_id = 1;
-
-        DBUtil::Transaction(
-            'MicroVent削除',
-            function () use ($organization_id, $ids) {
-                Repos\VentilatorRepository::logicalDeleteByOrganizationIdAndIds($organization_id, $ids);
-            }
-        );
-
-        return new Response\SuccessJsonResult;
-    }
-
     function buildVentilatorSearchValues(Form\VentilatorSearchForm $form)
     {
         $search_values = [];

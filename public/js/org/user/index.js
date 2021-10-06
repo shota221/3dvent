@@ -214,48 +214,50 @@ $asyncCreate.on(
     }
 )
 
-// csvインポート
-$asyncCsvImport.on(
-    'click',
-    function () {
+// // csvインポート
+// $asyncCsvImport.on(
+//     'click',
+//     function () {
 
-        var $csv_file  = $csvImportModalFileInput
-        var parameters = new FormData();
+//         var $csv_file  = $csvImportModalFileInput
+//         var parameters = new FormData();
         
-        if ($csv_file.prop('files')[0] != undefined) {
-            parameters.append('csv_file', $csv_file.prop('files')[0])
-        }
+//         if ($csv_file.prop('files')[0] != undefined) {
+//             parameters.append('csv_file', $csv_file.prop('files')[0])
+//         }
         
-        var successCallback = function (data) {
-            var $element = $('.page-item' + '.active').children('button');
+//         var successCallback = function (data) {
+//             var $element = $('.page-item' + '.active').children('button');
 
-            if (! $element.length) {
-                $element = $asyncSearch;
-            }
+//             if (! $element.length) {
+//                 $element = $asyncSearch;
+//             }
 
-            var parameters = buildSearchParameters($searchForm);
+//             var parameters = buildSearchParameters($searchForm);
 
-            var successCallback = function(paginated_list) {
-                $paginatedList.html(paginated_list);
-            }
+//             var successCallback = function(paginated_list) {
+//                 $paginatedList.html(paginated_list);
+//             }
 
-            utilAsyncExecuteAjax($element, parameters, false, successCallback);
+//             utilAsyncExecuteAjax($element, parameters, false, successCallback);
 
-            $csvImportModal.modal('hide');
-        }
+//             $csvImportModal.modal('hide');
+//         }
 
-        var $element = $(this);
+//         var $element = $(this);
 
-        var extraSettings = {
-            processData: false,
-            contentType: false
-        }
+//         var extraSettings = {
+//             processData: false,
+//             contentType: false
+//         }
 
-        utilAsyncExecuteAjax($element, parameters, true, successCallback, extraSettings);
+//         var badRequestCallback = function (error) { }
 
-        return false;
-    }
-)
+//         utilAsyncExecuteAjax($importCsvBtn, parameters, true, successCallback, badRequestCallback, extraSettings);
+
+//         return false;
+//     }
+// )
 
 // checkbox管理
 $paginatedList

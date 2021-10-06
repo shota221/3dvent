@@ -191,7 +191,15 @@ $paginatedList.on(
                     utilAsyncExecuteAjax($featureElement, parameters, false, successCallback);
                 }
 
-                utilAsyncExecuteAjax($featureElement, parameters, true, successCallback)
+                var badRequestCallback = function (error) {
+                    var result = JSON.parse(error.responseText);
+                    result.errors.forEach(function (error) {
+                        var message = error.message.translated;
+                        alert(message);
+                    });
+                }
+
+                utilAsyncExecuteAjax($featureElement, parameters, true, successCallback, badRequestCallback)
             }
         } else {
             alert(i18n('message.object_unselected'));
@@ -240,42 +248,44 @@ $showImportModalBtn.on(
         return false;
     });
 
-//importイベント
-$importCsvBtn.on(
-    'click',
-    function () {
-        var $targetForm = $('form[name="ventilator-import"]');
+// //importイベント
+// $importCsvBtn.on(
+//     'click',
+//     function () {
+//         var $targetForm = $('form[name="ventilator-import"]');
 
-        var parameters = new FormData($targetForm[0]);
+//         var parameters = new FormData($targetForm[0]);
 
-        var successCallback = function (data) {
-            var $featureElement = $('.page-item' + '.active').children('button');
+//         var successCallback = function (data) {
+//             var $featureElement = $('.page-item' + '.active').children('button');
 
-            var parameters = {};
+//             var parameters = {};
 
-            if (!$featureElement.length) {
-                $featureElement = $searchBtn;
-                parameters = buildSearchParameters($searchForm);
-            }
+//             if (!$featureElement.length) {
+//                 $featureElement = $searchBtn;
+//                 parameters = buildSearchParameters($searchForm);
+//             }
 
-            var successCallback = function (paginated_list) {
-                $paginatedList.html(paginated_list);
-            }
+//             var successCallback = function (paginated_list) {
+//                 $paginatedList.html(paginated_list);
+//             }
 
-            utilAsyncExecuteAjax($featureElement, parameters, false, successCallback);
+//             utilAsyncExecuteAjax($featureElement, parameters, false, successCallback);
 
-            $importModal.modal('hide');
-        }
+//             $importModal.modal('hide');
+//         }
 
-        var extraSettings = {
-            processData: false,
-            contentType: false
-        }
+//         var extraSettings = {
+//             processData: false,
+//             contentType: false
+//         }
 
-        utilAsyncExecuteAjax($importCsvBtn, parameters, true, successCallback, extraSettings);
+//         var badRequestCallback = function (error) { }
 
-        return false;
-    });
+//         utilAsyncExecuteAjax($importCsvBtn, parameters, true, successCallback, badRequestCallback, extraSettings);
+
+//         return false;
+//     });
 
 // build select2(organization)
 function buildSelect2() {
@@ -377,13 +387,13 @@ $paginatedList.on(
 );
 
 $('input.form-control.datetime').datetimepicker({
-    step:5,
-    format:'Y-m-d H:i:00'
-})  
+    step: 5,
+    format: 'Y-m-d H:i:00'
+})
 
 $('input.form-control.date').datetimepicker({
-    timepicker:false,
-    format:'Y-m-d'
-})  
+    timepicker: false,
+    format: 'Y-m-d'
+})
 
 buildSelect2();

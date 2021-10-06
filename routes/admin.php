@@ -143,7 +143,7 @@ Route::group(['middleware' => ['routetype:admin']], function () {
     
         Route::get(
             '/ventilator/async/patient',
-            'VentilatorController@asyncPatient'
+            'VentilatorController@asyncGetPatientData'
         )->name('admin.ventilator.patient');
     
         Route::get(
