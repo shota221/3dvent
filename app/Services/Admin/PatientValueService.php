@@ -10,6 +10,7 @@ use App\Repositories as Repos;
 use App\Services\Support\Converter;
 use App\Services\Support\DateUtil;
 use App\Services\Support\DBUtil;
+use Illuminate\Support\Facades\Auth;
 
 class PatientValueService
 {
@@ -37,7 +38,7 @@ class PatientValueService
             $http_query = '?' . http_build_query($search_values);
         }
 
-        $patient_values = Repos\PatientValueRepository::findWithPatientAndUserAndOrganizationBySearchValuesAndLimitAndOffsetOrderByCreatedAt(
+        $patient_values = Repos\PatientValueRepository::searchWithPatientAndUserAndOrganization(
             $search_values,
             $limit,
             $offset);
@@ -90,7 +91,9 @@ class PatientValueService
      * @param Form\PatientValueUpdateForm $form
      * @return type
      */ 
-    public function update(Form\PatientValueUpdateForm $form)
+    public function update(
+        Form\PatientValueUpdateForm $form, 
+        int $user_id)
     {
         // 患者コード重複確認用患者データ格納用
         $confirmation_patient = null;
@@ -116,9 +119,6 @@ class PatientValueService
 
         $patient_entity = Repos\PatientRepository::findOneById($old_patient_value->patient_id);
         $patient_entity->patient_code =  $form->patient_code;
-
-        // TODO 認証機能実装後修正
-        $user_id = 1;
 
         // 編集後データ作成
         $new_patient_value = $this->buildNewPatientValue($old_patient_value, $form, $user_id);
@@ -163,7 +163,9 @@ class PatientValueService
      * @param Form\PatientValueLogicalDeleteForm $form
      * @return type
      */
-    public function logicalDelete(Form\PatientValueLogicalDeleteForm $form)
+    public function logicalDelete(
+        Form\PatientValueLogicalDeleteForm $form, 
+        int $user_id)
     {
         $ids = $form->ids;
 
@@ -172,19 +174,16 @@ class PatientValueService
             throw new Exceptions\InvalidFormException('validation.excessive_number_of_registrations');
         }
 
-        // TODO 認証回り修正後実装
-        $operated_user_id = 1;
-
         DBUtil::Transaction(
             '患者観察研究データ論理削除、 ヒストリーテーブル登録',
-            function () use ($ids, $operated_user_id) {
+            function () use ($ids, $user_id) {
                 // 論理削除
                 Repos\PatientValueRepository::logicalDeleteByIds($ids);
 
                 // ヒストリーテーブル登録
                 Repos\PatientValueHistoryRepository::insertBulk(
                     $ids,
-                    $operated_user_id,
+                    $user_id,
                     Models\HistoryBaseModel::DELETE);
             }
         );

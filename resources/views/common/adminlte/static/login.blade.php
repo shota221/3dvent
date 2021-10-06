@@ -5,6 +5,8 @@
     @yield('css')
 @stop
 
+@section('content_width', '500px')
+
 @section('page_js')
     @yield('js')
 @stop
@@ -25,11 +27,14 @@
     TITLE
 ************************/ 
 --}}
-@section('title_suffix', 'ログイン')
-
+@section('title_suffix')
+@lang('messages.login')
+@stop
 {{-- 
 /***********************
     CONTENT_HEADER
 ************************/ 
 --}}
-@section('content_header', 'ログイン')
+@section('content_header')
+@lang('messages.login')
+@stop

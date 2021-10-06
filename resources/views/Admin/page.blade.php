@@ -1,8 +1,8 @@
 @extends('common.adminlte.page', [
-'nav_left_menu' => 'Admin.left-menu',
-'nav_top_menu' => 'Admin.top-menu',
-'nav_top_class' => 'navbar-white',
-'nav_left_class' => 'sidebar-dark-primary',
+    'nav_left_menu'  => 'Admin.left-menu',
+    'nav_top_menu'   => 'Admin.top-menu',
+    'nav_top_class'  => 'navbar-light navbar-white',
+    'nav_left_class' => 'sidebar-dark-primary',
 ])
 
 @section('title')

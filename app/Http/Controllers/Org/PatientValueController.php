@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Forms\Org as Form;
 use App\Services\Org as Service;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PatientValueController extends Controller
 {
@@ -20,7 +21,7 @@ class PatientValueController extends Controller
     public function index(Request $request)
     {
         $path = $request->path();
-        $patient_values = $this->service->getPaginatedPatientValueData($path);
+        $patient_values = $this->service->getPaginatedPatientValueData($path, Auth::user()->organization_id);
         $patient_values->withPath(route('org.patient_value.search', [], false));
 
         return view('index', compact('patient_values'));
@@ -33,18 +34,18 @@ class PatientValueController extends Controller
         if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
 
         $path = $request->path();
-        $patient_values = $this->service->getPaginatedPatientValueData($path, $form);
+        $patient_values = $this->service->getPaginatedPatientValueData($path, Auth::user()->organization_id, $form);
 
         return view('list', compact('patient_values'));
     }
     
-    public function asyncDetail(Request $request)
+    public function asyncGetDetail(Request $request)
     {
         $form = new Form\PatientValueDetailForm($request->all());
 
         if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
 
-        return $this->service->getOnePatientValueData($form);
+        return $this->service->getOnePatientValueData($form, Auth::user()->organization_id);
     }
     
     public function asyncUpdate(Request $request)
@@ -53,7 +54,7 @@ class PatientValueController extends Controller
 
         if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
 
-        return $this->service->update($form);
+        return $this->service->update($form, Auth::user()->organization_id, Auth::id());
     }
     
     public function asyncLogicalDelete(Request $request)
@@ -62,6 +63,6 @@ class PatientValueController extends Controller
 
         if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
 
-        return $this->service->logicalDelete($form);
+        return $this->service->logicalDelete($form, Auth::user()->organization_id, Auth::id());
     }
 }

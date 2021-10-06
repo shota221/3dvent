@@ -2,11 +2,16 @@
 
 namespace App\Providers;
 
+
+use App\Models;
+
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Auth\ApiTokenGate;
 use App\Http\Auth\AppkeyGate;
+
+use Illuminate\Support\Facades\Log;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -28,10 +33,10 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        //
         // eloquent user provider extend
         Auth::provider('eloquent_user', function($app, array $config) {
-            return new \App\Http\Auth\UserProvider($this->app['hash']);
+        Log::debug(print_r($config, true));
+        return new \App\Http\Auth\UserProvider($this->app['hash'], $config['role']);
         });
 
         // API TOKEN 認可定義

@@ -9,20 +9,50 @@ use App\Models;
 use App\Repositories as Repos;
 use App\Http\Forms as Form;
 use App\Http\Response as Response;
-use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 use App\Services\Support\Converter;
 use App\Services\Support\CryptUtil;
 use App\Services\Support\DBUtil;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Password;
+
+use Illuminate\Support\Facades\Log;
 
 /**
  * ユーザー認証サービス
  */
 class UserAuthService
 {
+    public function login(Form\UserAuthForm $form, $guard)
+    {
+        $organization = Repos\OrganizationRepository::findOneByCode($form->organization_code);
+
+        if (is_null($organization)) {
+            $form->addError('name', 'validation.account_not_found');
+            throw new Exceptions\InvalidFormException($form);
+        }
+
+        $credentials = [
+            'name'            => $form->name,
+            'organization_id' => $organization->id,
+            'password'        => $form->password,
+        ];
+
+        $session_guard = $guard;
+
+        if (! $session_guard->attempt($credentials, $form->remember)) {
+            $form->addError('accountOrPassword', 'validation.account_or_password_incorrect');
+            throw new Exceptions\InvalidFormException($form);
+        }
+
+        // ログイン前アクセスURLにリダイレクト
+        $redirect_to = redirect()->intended(guess_route_path('home'))->getTargetUrl();
+
+        return Converter\UserResponseConverter::convertToUserAuthResult($redirect_to);
+    }
+
     public function generateToken($form)
     {
         //単にトークンを発行するのみ

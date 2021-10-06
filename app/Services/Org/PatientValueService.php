@@ -11,6 +11,8 @@ use App\Services\Support\Converter;
 use App\Services\Support\DateUtil;
 use App\Services\Support\DBUtil;
 
+use Illuminate\Support\Facades\Log;
+
 class PatientValueService
 {
     /**
@@ -22,6 +24,7 @@ class PatientValueService
      */
     public function getPaginatedPatientValueData(
         string $path,
+        int $organization_id,
         Form\PatientValueSearchForm $form = null)
     {
         $limit = config('view.items_per_page');
@@ -34,15 +37,14 @@ class PatientValueService
             $search_values = $this->buildPatientValueSearchValues($form);
             $http_query = '?' . http_build_query($search_values);
         }
-
-        $search_values['organization_id'] = 1; // TODO　認証機能実装後修正
-
-        $patient_values = Repos\PatientValueRepository::findWithPatientAndUserAndOrganizationBySearchValuesAndLimitAndOffsetOrderByCreatedAt(
+        
+        $patient_values = Repos\PatientValueRepository::searchWithPatientAndUserAndOrganizationByOrganizationId(
             $search_values,
+            $organization_id,
             $limit,
             $offset);
         
-        $total_count = Repos\PatientValueRepository::countBySearchValues($search_values);
+        $total_count = Repos\PatientValueRepository::countByOrganizationIdAndSearchValues($organization_id, $search_values);
 
         $item_per_page = $limit;
 
@@ -60,19 +62,13 @@ class PatientValueService
      * @param Form\PatientValueDetailForm $form
      * @return type
      */
-    public function getOnePatientValueData(Form\PatientValueDetailForm $form)
+    public function getOnePatientValueData(
+        Form\PatientValueDetailForm $form, 
+        int $organization_id)
     {
-        $patient_value = Repos\PatientValueRepository::findOneWithPatientAndOrganizationById($form->id);
+        $patient_value = Repos\PatientValueRepository::findOneWithPatientAndOrganizationByOrganizationIdAndId($organization_id, $form->id);
 
         if (is_null($patient_value)) {
-            $form->addError('id', 'validation.id_not_found');
-            throw new Exceptions\InvalidFormException($form);
-        }
-
-        // 取得組織とユーザーの所属組織の齟齬確認
-        $is_matched = $patient_value->organization_id ===  1; // TODO　認証機能実装後修正 
-        
-        if (! $is_matched) {
             $form->addError('id', 'validation.id_not_found');
             throw new Exceptions\InvalidFormException($form);
         }
@@ -86,18 +82,20 @@ class PatientValueService
      * @param Form\PatientValueUpdateForm $form
      * @return type
      */
-    public function update(Form\PatientValueUpdateForm $form)
+    public function update(
+        Form\PatientValueUpdateForm $form, 
+        int $organization_id, 
+        int $user_id)
     {
         // 患者コード重複確認用患者データ格納用
         $confirmation_patient = null;
 
         if (! is_null($form->patient_code)) {
-            // TODO findOneByOrganizationIdAndPatientCodeの第一引数に入るorganization_idは認証実装後修正
-            $confirmation_patient = Repos\PatientRepository::findOneByOrganizationIdAndPatientCode(1, $form->patient_code);
+            $confirmation_patient = Repos\PatientRepository::findOneByOrganizationIdAndPatientCode($organization_id, $form->patient_code);
         }
 
         // 編集元データ取得
-        $old_patient_value = Repos\PatientValueRepository::findOneById($form->id);
+        $old_patient_value = Repos\PatientValueRepository::findOneWithPatientAndOrganizationByOrganizationIdAndId($organization_id, $form->id);
 
         if (is_null($old_patient_value)) {
             $form->addError('id', 'validation.id_not_found');
@@ -111,19 +109,8 @@ class PatientValueService
             throw new Exceptions\InvalidFormException($form);
         }
 
-        $patient_entity = Repos\PatientRepository::findOneById($old_patient_value->patient_id);
+        $patient_entity = Repos\PatientRepository::findOneByOrganizationIdAndId($organization_id, $old_patient_value->patient_id);
         $patient_entity->patient_code = $form->patient_code;
-
-        // 患者所属組織とユーザーの所属組織の齟齬確認
-        $is_matched = $patient_entity->organization_id ===  1; // TODO　認証機能実装後修正 
-
-        if (! $is_matched) {
-            $form->addError('id', 'validation.id_not_found');
-            throw new Exceptions\InvalidFormException($form);
-        }
-
-        // TODO 認証機能実装後修正
-        $user_id = 1;
 
         // 編集後データ作成
         $new_patient_value = Converter\PatientConverter::convertToPatientValueEntity(
@@ -185,7 +172,10 @@ class PatientValueService
      * @param Form\PatientValueLogicalDeleteForm $form
      * @return type
      */
-    public function logicalDelete(Form\PatientValueLogicalDeleteForm $form)
+    public function logicalDelete(
+        Form\PatientValueLogicalDeleteForm $form, 
+        int $organization_id, 
+        int $user_id)
     {
         $ids = $form->ids;
 
@@ -194,36 +184,25 @@ class PatientValueService
         if (count($ids) > $deletable_row_limit) {
             throw new Exceptions\InvalidFormException('validation.excessive_number_of_registrations');
         }
+        
+        // リクエストのidが組織齟齬の可能性があるためid再取得
+        $target_ids = Repos\PatientValueRepository::getIdsWithPatientAndOrganizationByOrganizationIdAndIds($organization_id, $ids);
 
-        $organization_ids = Repos\PatientValueRepository::getOrganizationIdsWithPatientByIds($ids);
-
-        if (is_null($organization_ids)) {
+        if (is_null($target_ids)) {
             $form->addError('id', 'validation.id_not_found');
             throw new Exceptions\InvalidFormException($form);
         }
 
-        // 組織齟齬がないかチェック
-        foreach ($organization_ids as $organization_id) {  
-            $is_matched = $organization_id ===  1; // TODO　認証機能実装後修正 
-            if (! $is_matched) {
-                $form->addError('id', 'validation.id_not_found');
-                throw new Exceptions\InvalidFormException($form);
-            }
-        }
-
-        // TODO 認証回り修正後実装
-        $operated_user_id = 1;
-
         DBUtil::Transaction(
             '患者観察研究データ論理削除、ヒストリーテーブル登録',
-            function () use ($ids, $operated_user_id) {
+            function () use ($target_ids, $user_id) {
                 // 論理削除
-                Repos\PatientValueRepository::logicalDeleteByIds($ids);
+                Repos\PatientValueRepository::logicalDeleteByIds($target_ids->all());
 
                 // ヒストリーテーブル登録
                 Repos\PatientValueHistoryRepository::insertBulk(
-                    $ids,
-                    $operated_user_id,
+                    $target_ids->all(),
+                    $user_id,
                     Models\HistoryBaseModel::DELETE);
             }
         );

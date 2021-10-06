@@ -123,7 +123,7 @@
             </div>
         </div>
         
-        <div class="password-change-inputs collapse">
+        <div class="password-change-field collapse">
             {{--パスワード--}}
             <div class="form-group">
                 <label for="password">@lang('messages.password')<span class="required"></span></label>

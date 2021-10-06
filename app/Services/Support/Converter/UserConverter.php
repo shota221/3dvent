@@ -4,29 +4,29 @@ namespace App\Services\Support\Converter;
 
 use App\Http\Response as Response;
 use App\Models\User;
+use App\Services\Support\DateUtil;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class UserConverter
 {
     public static function convertToEntity(
+        int    $organization_id,
+        int    $created_user_id,
         string $name,
-        int $organization_id,
-        string $password,
-        int $authority,
-        string $email = '',
-        string $status = USER::DISABLED,
-        int $created_user_id = null,
-        int $created_admin_user_id = null,
+        string $email,
+        int    $authority,
+        int    $disabled_flg,
+        string $hashed_password
     ) {
         $entity = new User;
         
-        $entity->name = $name;
         $entity->organization_id = $organization_id;
-        $entity->password = $password;
-        $entity->authority = $authority;
-        $entity->email = $email;
-        $entity->status = $status;
         $entity->created_user_id = $created_user_id;
-        $entity->created_admin_user_id = $created_admin_user_id;
+        $entity->name            = $name;
+        $entity->email           = $email;
+        $entity->authority       = $authority;
+        $entity->disabled_flg    = $disabled_flg;
+        $entity->password        = $hashed_password;
 
         return $entity;
     }
@@ -79,7 +79,6 @@ class UserConverter
         return $res;
     }
 
-    // 追加　php8から必須でないパラメータが必須パラメータより前に定義されているとエラーを吐くようになったため$update_user_idと$emailの順番を入れ替えた。$emailのデフォは空文字に変更
     public static function convertToUserUpdateEntity(
         User $entity,
         string $user_name,
@@ -102,5 +101,43 @@ class UserConverter
         $res->has_token = $has_token;
 
         return $res;
+    }
+
+    public static function convertToPaginatedUserData(
+        \Illuminate\Database\Eloquent\Collection $entities,
+        int $total_count,
+        int $item_per_page,
+        string $path)
+    {
+        $users = array_map(
+            function ($entity) {
+                return self::convertToUserData($entity);
+            }
+            ,$entities->all()
+        );
+
+        $paginator = new LengthAwarePaginator(
+            $users,
+            $total_count,
+            $item_per_page,
+            null,
+            ['path' => $path]
+        );
+
+        return $paginator;
+    }
+
+    public static function convertToUserData(User $entity)
+    {
+        $data = new Response\Org\UserData;
+
+        $data->id           = $entity->id;
+        $data->name         = $entity->name;
+        $data->authority    = $entity->authority;
+        $data->email        = $entity->email;
+        $data->created_at   = DateUtil::toDatetimeStr($entity->created_at);
+        $data->disabled_flg = $entity->disabled_flg;
+
+        return $data;
     }
 }

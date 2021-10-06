@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Forms\Admin as Form;
 use App\Services\Admin as Service;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PatientValueController extends Controller
 {
@@ -38,7 +39,7 @@ class PatientValueController extends Controller
         return view('list', compact('patient_values'));
     }
 
-    public function asyncDetail(Request $request)
+    public function asyncGetDetail(Request $request)
     {
         $form = new Form\PatientValueDetailForm($request->all());
 
@@ -53,7 +54,7 @@ class PatientValueController extends Controller
 
         if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
         
-        return $this->service->update($form);
+        return $this->service->update($form, Auth::id());
     }
 
     public function asyncLogicalDelete(Request $request)
@@ -62,7 +63,7 @@ class PatientValueController extends Controller
 
         if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
 
-        return $this->service->logicalDelete($form);
+        return $this->service->logicalDelete($form, Auth::id());
     }
     
     public function asyncDataOrganization()

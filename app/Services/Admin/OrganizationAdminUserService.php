@@ -20,7 +20,8 @@ class OrganizationAdminUserService
      * @return [type]
      */
     public function getPaginatedOrganizationAdminUserData(
-        string $path, 
+        string $path,
+        int $authority, 
         Form\OrganizationAdminUserSearchForm $form = null)
     {
         $limit = config('view.items_per_page');
@@ -36,12 +37,9 @@ class OrganizationAdminUserService
             $http_query = '?' . http_build_query($search_values);
         }
 
-        // TODO 権限周り決定後修正
-        $authority = 1;
-
-        $organization_admin_users = Repos\UserRepository::findWithOrganizationByAuthorityAndSearchValuesAndLimitAndOffsetOrderByCreatedAt(
-            $authority, 
+        $organization_admin_users = Repos\UserRepository::searchByAuthority(
             $search_values,
+            $authority, 
             $limit, 
             $offset);
 
@@ -64,11 +62,10 @@ class OrganizationAdminUserService
      * @param Form\OrganizationAdminUserDetailForm $form
      * @return [type]
      */
-    public function getOneOrganizationAdminUserData(Form\OrganizationAdminUserDetailForm $form)
+    public function getOneOrganizationAdminUserData(
+        Form\OrganizationAdminUserDetailForm $form,
+        int $authority)
     {
-        // TODO 権限周り決定後修正
-        $authority = 1;
-
         $organization_admin_user = Repos\UserRepository::findOneWithOrganizationByAuthorityAndId($authority, $form->id);
 
         if (is_null($organization_admin_user)) {
@@ -85,7 +82,10 @@ class OrganizationAdminUserService
      * @param Form\OrganizationAdminUserUpdateForm $form
      * @return void
      */
-    public function update(Form\OrganizationAdminUserUpdateForm $form)
+    public function update(
+        Form\OrganizationAdminUserUpdateForm $form,
+        int $authority,
+        int $user_id)
     {
         $organization = Repos\OrganizationRepository::findOneByCode($form->code);
 
@@ -103,9 +103,6 @@ class OrganizationAdminUserService
             throw new Exceptions\InvalidFormException($form);
         }
 
-        // TODO 権限周り決定後修正
-        $authority = 1;
-
         $organization_admin_user = Repos\UserRepository::findOneByAuthorityAndId($authority, $form->id);
 
         if (is_null($organization_admin_user)) {
@@ -113,12 +110,9 @@ class OrganizationAdminUserService
             throw new Exceptions\InvalidFormException($form);
         }
 
-        // TODO 認証回り作成後修正
-        $updated_user_id = 1;
-
         $entity = Converter\OrganizationAdminUserConverter::convertToUpdateEntity(
             $organization_admin_user,
-            $updated_user_id,
+            $user_id,
             $form->name,
             $form->email,
             $form->disabled_flg,
@@ -141,7 +135,10 @@ class OrganizationAdminUserService
      * @param Form\OrganizationAdminUserCreateForm $form
      * @return void
      */
-    public function create(Form\OrganizationAdminUserCreateForm $form)
+    public function create(
+        Form\OrganizationAdminUserCreateForm $form,
+        int $authority,
+        int $user_id)
     {
         $organization = Repos\OrganizationRepository::findOneByCode($form->code);
 
@@ -157,14 +154,9 @@ class OrganizationAdminUserService
             throw new Exceptions\InvalidFormException($form);
         }
 
-        // TODO 権限周り決定後修正
-        $authority = 1;
-        // TODO 認証回り作成後修正
-        $created_user_id = 1;
-
         $entity = Converter\OrganizationAdminUserConverter::convertToEntity(
             $authority,
-            $created_user_id,
+            $user_id,
             $organization->id,
             $form->name,
             $form->email,
@@ -198,11 +190,11 @@ class OrganizationAdminUserService
     {
         $search_values = [];
 
-        if (isset($form->organization_name)) $search_values['organization_name'] = $form->organization_name;
-        if (isset($form->name)) $search_values['name'] = $form->name;
+        if (isset($form->organization_id))    $search_values['organization_id']    = $form->organization_id;
+        if (isset($form->name))               $search_values['name']               = $form->name;
         if (isset($form->registered_at_from)) $search_values['registered_at_from'] = $form->registered_at_from;
-        if (isset($form->registered_at_to)) $search_values['registered_at_to'] = $form->registered_at_to;
-        if (isset($form->disabled_flg)) $search_values['disabled_flg'] = $form->disabled_flg;
+        if (isset($form->registered_at_to))   $search_values['registered_at_to']   = $form->registered_at_to;
+        if (isset($form->disabled_flg))       $search_values['disabled_flg']       = $form->disabled_flg;
 
         return $search_values;
     }

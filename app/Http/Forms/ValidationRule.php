@@ -30,7 +30,6 @@ class ValidationRule
 
         VALUE_BOOLEAN   = 'boolean',
 
-
         FLG_INTEGER = 'integer|min:0|max:1',
 
         USED_PLACE_INTEGER = 'integer|min:1|max:8', // 使用場所 
@@ -41,7 +40,9 @@ class ValidationRule
 
         GENDER_INTEGER = 'integer|min:1|max:2',  
 
-        STATUS_USE_INTEGER = 'integer|min:1|max:4'; 
+        STATUS_USE_INTEGER = 'integer|min:1|max:4',
+
+        CSV_FILE = 'max:1024|file|mimes:csv,txt'; //　laravelだとtxtの指定が必要
 
     /**
      * ある文字列が含まれない正規表現を返す

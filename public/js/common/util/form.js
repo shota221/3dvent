@@ -38,6 +38,7 @@ function utilFormDisplayValidationErrorMessage(errors) {
         var message = error.message.translated;
         var errorMessageElement = '<small class="text-danger error-message">' + message + '</small>'
         $(errorMessageElement).insertAfter($('input[name="' + key + '"]'));
+        $(errorMessageElement).insertAfter($('select[name="' + key + '"]'));
     });
 }
 

@@ -20,9 +20,11 @@ class OrganizationSettingConverter
 
     public static function convertToUpdateEntity(
         Models\OrganizationSetting $entity, 
+        int $updated_user_id,
         string $ventilator_value_scan_interval,
         string $vt_per_kg
     ) {
+        $entity->updated_user_id = $updated_user_id;
         $entity->ventilator_value_scan_interval = $ventilator_value_scan_interval;
         $entity->vt_per_kg = $vt_per_kg;
 

@@ -15,14 +15,17 @@ use Illuminate\Contracts\Auth\Authenticatable;
  */
 class UserProvider extends EloquentUserProvider
 {
+    private $authority = null;
 
     /** 
      * [__construct description]
      * @param HasherContract $hasher [description]
      */
-    public function __construct(HasherContract $hasher)
+    public function __construct(HasherContract $hasher, ?string $authority = null)
     {
         parent::__construct($hasher, \App\Models\User::class);
+
+        $this->authority = $authority;
     }
 
     /**
@@ -79,12 +82,18 @@ class UserProvider extends EloquentUserProvider
 
     /**
      * 
-     * @param  Manager $manager [description]
+     * @param  User    $user    [description]
      * @return [type]           [description]
      */
     private function getValidUser(?User $user)
     {
         $activeUser = $user && $user->active();
+
+        if (! is_null($this->authority) && ! empty($this->authority)) {
+            $authorityCheckMethod = 'hasRole' . ucfirst($this->authority);
+
+            $activeUser = $activeUser && $user->{$authorityCheckMethod}();
+        }
 
         return $activeUser ? $user : null;
     }

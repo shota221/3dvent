@@ -10,6 +10,7 @@ use App\Services\Support;
 class OrganizationAdminUserUpdateForm extends BaseForm
 {
     public $id;
+    public $code;
     public $name;
     public $email;
     public $disabled_flg;
@@ -20,7 +21,7 @@ class OrganizationAdminUserUpdateForm extends BaseForm
     protected function validationRule()
     {
         return [
-            'id'                    => 'required|' . Rule::VALUE_NAME,
+            'id'                    => 'required|' . Rule::VALUE_POSITIVE_INTEGER,
             'code'                  => 'required|' . Rule::VALUE_NAME,
             'name'                  => 'required|' . Rule::VALUE_NAME,
             'email'                 => 'required|' . Rule::EMAIL,
