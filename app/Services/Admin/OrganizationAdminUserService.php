@@ -110,19 +110,17 @@ class OrganizationAdminUserService
             throw new Exceptions\InvalidFormException($form);
         }
 
-        $entity = Converter\OrganizationAdminUserConverter::convertToUpdateEntity(
-            $organization_admin_user,
-            $user_id,
-            $form->name,
-            $form->email,
-            $form->disabled_flg,
-            Hash::make($form->password)
-        );
+        // 更新データのセット
+        $organization_admin_user->updated_user_id = $user_id;
+        $organization_admin_user->name            = $form->name;
+        $organization_admin_user->email           = $form->email;
+        $organization_admin_user->disabled_flg    = $form->disabled_flg;
+        if (! is_null($form->password)) $user->password = Hash::make($form->password);
 
         DBUtil::Transaction(
             '組織管理者アカウント編集',
-            function () use ($entity) {
-                $entity->save();
+            function () use ($organization_admin_user) {
+                $organization_admin_user->save();
             }
         );
         
