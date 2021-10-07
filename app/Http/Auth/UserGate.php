@@ -12,7 +12,7 @@ class UserGate
          * 第1bitでadminかorgかを判別する。
          */
         //000000000000000001
-        USER_ROLE = 1,
+        ROLE_MASK = 1,
 
         //各ロール値
         ROLE_ADMIN = 1,
@@ -23,11 +23,10 @@ class UserGate
          * 2bitずつで各権限の及びそのスコープを表現。
          * うち第1bitは権限の有:1,無:0、第2bitはスコープの広さ(1:全範囲,0:制限有り※後述)を表す
          * adminの場合、11はすべてのデータ、01はすべての研究参加施設内データに対して権限有り
-         * orgの場合、11はすべての自施設内データ、01->1は担当患者データに対して権限有り
+         * orgの場合、11はすべての自施設内データ、01は担当患者データに対して権限有り
          */
         //000000000000000010
         VENTILATOR_READABLE = 2,
-
         //000000000000001000
         VENTILATOR_EDITABLE = 8,
 
@@ -103,10 +102,10 @@ class UserGate
      */
     //　　　　　　　　　　　呼吸器データ(閲覧)　呼吸器データ(編集) 機器観察研究データ(閲覧)　機器観察研究データ(編集) 患者観察研究データ(閲覧) 患者観察研究データ(編集)　組織データ(閲覧)　組織データ（編集） ユーザーデータ(閲覧) ユーザーデータ(編集)　機器設定値(編集)   権限                    
     //医師（施設内研究代表者）◯                   ◯               ◯                       ◯                   ◯                       ◯                      ✕               ✕               ◯                  ◯                  ◯              111001111111111110  237566
-    //医師（その他）　　　　　◯                   ◯               ◯                       △                   ◯                       △                      ✕               ✕               ✕                  ✕                  ✕              000000111011111110  3838
+    //医師（その他）　　　　　△                   △               △                       △                   △                       △                      ✕               ✕               ✕                  ✕                  ✕              000000101010101010  2730
     //CRC                   ◯                   ◯               ◯                       ◯                   ◯                       ◯                      ✕               ✕               ◯                  ◯                  ✕              011001111111111110  106494
-    //看護師                ◯                   ◯               △                       △                   △                       △                      ✕               ✕               ✕                  ✕                  ✕               000000101010111110  2750
-    //臨床工学技師           ◯                   ◯               ◯                       △                   ◯                       △                      ✕               ✕               ✕                  ✕                  ✕              000000111011111110  3838
+    //看護師                △                   △               △                       △                   △                       △                      ✕               ✕               ✕                  ✕                  ✕               000000101010101010  2730
+    //臨床工学技師           △                   △               △                       △                   △                       △                      ✕               ✕               ✕                  ✕                  ✕              000000101010101010  2730
 
     //test_org_user = 111111111111111110 -> 262142
 
@@ -181,32 +180,38 @@ class UserGate
      */
     public static function scopeOfVentialtorReadable(User $user)
     {
-        return ($user->authority & (self::VENTILATOR_READABLE << 1));
+        $scope_mask = self::VENTILATOR_READABLE << 1;
+        return ($user->authority & $scope_mask)/$scope_mask;
     }
 
     public static function scopeOfVentilatorEditable(User $user)
     {
-        return ($user->authority & (self::VENTILATOR_EDITABLE << 1));
+        $scope_mask = self::VENTILATOR_EDITABLE << 1;
+        return ($user->authority & $scope_mask)/$scope_mask;
     }
 
     public static function scopeOfVentilatorValueReadable(User $user)
     {
-        return ($user->authority & (self::VENTILATOR_VALUE_READABLE << 1));
+        $scope_mask = self::VENTILATOR_VALUE_READABLE << 1;
+        return ($user->authority & $scope_mask)/$scope_mask;
     }
 
     public static function scopeOfVentilatorValueEditable(User $user)
     {
-        return ($user->authority & (self::VENTILATOR_VALUE_EDITABLE << 1));
+        $scope_mask = self::VENTILATOR_VALUE_EDITABLE << 1;
+        return ($user->authority & $scope_mask)/$scope_mask;
     }
 
     public static function scopeOfPatientValueReadable(User $user)
     {
-        return ($user->authority & (self::PATIENT_VALUE_READABLE << 1));
+        $scope_mask = self::PATIENT_VALUE_READABLE << 1;
+        return ($user->authority & $scope_mask)/$scope_mask;
     }
 
     public static function scopeOfPatientValueEditable(User $user)
     {
-        return ($user->authority & (self::PATIENT_VALUE_EDITABLE << 1));
+        $scope_mask = self::PATIENT_VALUE_EDITABLE << 1;
+        return ($user->authority & $scope_mask)/$scope_mask;
     }
 
     /**
@@ -216,6 +221,6 @@ class UserGate
      */
     public static function roleOf(User $user)
     {
-        return ($user->authority & (self::USER_ROLE));
+        return ($user->authority & (self::ROLE_MASK));
     }
 }
