@@ -174,12 +174,13 @@ class UserGate
     }
 
     /**
-     * 指定されたユーザーについて権限のスコープの広さを返す(上述：権限スコープの広さ参照)
+     * 指定されたユーザーについて権限のスコープの広さを0または1で返す(上述：権限スコープの広さ参照)
      * (例)医師(施設内研究代表者)111001111111111110　に対して、scopeOfVentilatorReadableを作用すると1（自施設内全範囲）
      * 臨床工学技士00000111011111110　に対して、scopeOfVentilatorValueEditableを作用すると0（担当患者）
      */
     public static function scopeOfVentialtorReadable(User $user)
     {
+        //2bit表現の権限については、上位1bitが権限のスコープの広さを表す。
         $scope_mask = self::VENTILATOR_READABLE << 1;
         return ($user->authority & $scope_mask)/$scope_mask;
     }
