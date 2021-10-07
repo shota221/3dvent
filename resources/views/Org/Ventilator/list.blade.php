@@ -50,8 +50,4 @@
         </tr>
     @endforeach
 </table>
-<div class="row">
-    <button type="button" class="btn btn-danger" data-url="{{ route('org.ventilator.bulk_delete') }}"
-        data-method="delete" id="btn-bulk-delete">@lang('messages.bulk_delete')</button>
-</div>
 <div class="mt-3">{{ $ventilator_paginator->links('components.pagination') }}</div>
