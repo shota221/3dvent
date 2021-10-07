@@ -14,6 +14,10 @@ class UserGate
         //000000000000000001
         USER_ROLE = 1,
 
+        //各ロール値
+        ROLE_ADMIN = 1,
+        ROLE_ORG = 0,
+
         /**
          * 呼吸器閲覧・編集権限(各2bit)
          * 2bitずつで各権限の及びそのスコープを表現。

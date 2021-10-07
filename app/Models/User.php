@@ -19,9 +19,7 @@ class User extends Authenticatable
     const 
         TOKEN_COLUMN_NAME = 'api_token',
         DISABLED = 1,
-        ENABLED = 0,
-        ROLE_ADMIN = 1,
-        ROLE_ORG = 0
+        ENABLED = 0
     ;
 
     /**
@@ -66,11 +64,11 @@ class User extends Authenticatable
 
     public function hasRoleAdmin()
     {
-        return (UserGate::roleOf($this) === self::ROLE_ADMIN);
+        return (UserGate::roleOf($this) === UserGate::ROLE_ADMIN);
     }
 
     public function hasRoleOrg()
     {
-        return (UserGate::roleOf($this) === self::ROLE_ORG);
+        return (UserGate::roleOf($this) === UserGate::ROLE_ORG);
     }
 }
