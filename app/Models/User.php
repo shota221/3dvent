@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Auth\UserGate;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -19,7 +20,8 @@ class User extends Authenticatable
         TOKEN_COLUMN_NAME = 'api_token',
         DISABLED = 1,
         ENABLED = 0,
-        AUTHORITY_ADMIN = 1 // TODO　権限回り実装後修正
+        ROLE_ADMIN = 1,
+        ROLE_ORG = 0
     ;
 
     /**
@@ -64,11 +66,11 @@ class User extends Authenticatable
 
     public function hasRoleAdmin()
     {
-        return boolval($this->authority === self::AUTHORITY_ADMIN);
+        return (UserGate::roleOf($this) === self::ROLE_ADMIN);
     }
 
     public function hasRoleOrg()
     {
-        return boolval($this->authority !== self::AUTHORITY_ADMIN);
+        return (UserGate::roleOf($this) === self::ROLE_ORG);
     }
 }

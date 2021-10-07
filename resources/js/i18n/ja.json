@@ -10,17 +10,18 @@
         "csv_download_faild": "CSVファイル作成に失敗しました。管理者にお問い合わせください。",
         "deleted": "削除しました。",
         "delete_confirm": "データの復帰はできません。削除を実行しますか。",
+        "delete_count_confirm":"データの復帰はできません。選択済みの{{count}}件を削除しますか？",
         "fixed_value":"最終設定値",
         "internal_server_error":"エラーが発生しました。再度生じる場合は管理者まで報告をお願いします。",
         "invalid_form_inputs": "入力値が不正です。",
         "no_data": "データが存在しません。",
+        "object_unselected":"対象が未選択です。",
         "reflected": "反映しました。登録ボタンをクリックするまでデータは登録されません。",
         "registered": "登録しました。",
         "registered_reload": "登録しました。登録内容を反映するためページをリロードします。",
         "timeout":"レスポンスタイムアウト。処理は完了している可能性があります。画面をリロードし、確認後再度実行してみてください。",
         "updated": "更新しました。",
-        "object_unselected":"対象が未選択です。",
-        "delete_count_confirm":"データの復帰はできません。選択済みの{{count}}件を削除しますか？"
+        "unauthorized_operation":"この操作を行う権限がありません。"
     },
     "validate": {
         "length" : "{{max}}以下で入力してください。",

@@ -51,6 +51,10 @@ function utilAsyncExecuteAjax($featureElement, parameters = {}, withMessages = f
                 }
                 badRequestCallback(error);
                 break;
+            case 401:
+            case 403:
+                alert(i18n('message.unauthorized_operation'));
+                break;
             case 500:
                 alert(i18n('message.internal_server_error'));
                 break;
