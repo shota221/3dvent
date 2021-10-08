@@ -236,7 +236,6 @@ trait CsvLogic
                         if (! array_key_exists($dupulicate_confirmation_target, $dupulicate_confirmation_list)) {
                             $dupulicate_confirmation_list[$dupulicate_confirmation_target] = [];
                         }
-                        \Log::debug(print_r($dupulicate_confirmation_list, true));
                         
                         if (in_array($map_attribute_to_row[$dupulicate_confirmation_target], $dupulicate_confirmation_list[$dupulicate_confirmation_target])) {
                             $error_row = $file->key();

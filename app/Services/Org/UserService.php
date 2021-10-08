@@ -177,7 +177,7 @@ class UserService
     {
         $ids = $form->ids;
 
-        $deletable_row_limit = 1; // ページネーション表示件数
+        $deletable_row_limit = 50; // ページネーション表示件数
 
         if (count($ids) > $deletable_row_limit) {
             $form->addError('id', 'validation.excessive_number_of_registrations');
