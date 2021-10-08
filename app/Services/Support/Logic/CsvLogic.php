@@ -152,42 +152,46 @@ trait CsvLogic
 
     /** 
      * CSV処理
-     * 
-     * ClosureのExceptionはキャッチしていない
      *
      * @param  string      $fileUrl           [description]
-     * @param  array|null  $header            [description]
-     * @param  array       $validationRule    [0 => 'required|string', 1 => 'required|numeric'] 列値のバリデーション
+     * @param  array|null  $map_attribute_to_header            [key1 => header_name1, key2 => header_name2,...]
+     * @param  array       $map_attribute_to_validation_rule   [key1 => 'required|string', key2 => 'required|numeric',...] 列値のバリデーション
+     * @param  array       $dupulicate_confirmation_targets    [k1,k2,...] 重複確認対象用($map_attribute_to_headerのkeyを指定)
      * @param  \Closure    $procedureFunction [description]
      * @param  int|integer $chunkSize         [description]
-     * @return [type]                         [description]
+     * @return void                         
      */
     public function processCsv(
-        string $fileUrl,
-        array $header = null,
-        array $validationRule,
-        \Closure $procedureFunction,
-        int $chunkSize = 5000
-    ) {
-        \Log::info('CSV読み込み処理を実行します。fileUrl=' . $fileUrl);
+        string $file_url,
+        array  $map_attribute_to_header,
+        array  $map_attribute_to_validation_rule,
+        array  $dupulicate_confirmation_targets = null,
+        \Closure $procedure_function,
+        int $chunk_size = 5000
+    )
+    {
+        \Log::info('CSV読み込み処理を実行します。file_url=' . $file_url);
 
         \Log::debug('START MEMORY=' . memory_get_usage(FALSE));
 
         $file = null;
 
-        // 処理完了行数
-        $finishedRowCount = 0;
+        //　重複確認格納配列
+        if (!is_null($dupulicate_confirmation_targets)) $dupulicate_confirmation_list = [];
+
+        // 処理完了件数
+        $finished_row_count = 0;
 
         try {
             try {
-                // ファイルの読み込み throwable RuntimeException
-                $file = new \SplFileObject($fileUrl);
+                // ファイルの読み込み
+                $file = new \SplFileObject($file_url);
 
                 $file->setFlags(
-                    \SplFileObject::READ_CSV |           // CSV 列として行を読み込む
-                        \SplFileObject::READ_AHEAD |       // 先読み/巻き戻しで読み出す。
-                        \SplFileObject::SKIP_EMPTY |         // 空行は読み飛ばす
-                        \SplFileObject::DROP_NEW_LINE    // 行末の改行を読み飛ばす
+                    \SplFileObject::READ_CSV |       // CSV 列として行を読み込む
+                    \SplFileObject::READ_AHEAD |     // 先読み/巻き戻しで読み出す。
+                    \SplFileObject::SKIP_EMPTY |     // 空行は読み飛ばす
+                    \SplFileObject::DROP_NEW_LINE    // 行末の改行を読み飛ばす
                 );
             } catch (\Exception $e) {
                 throw new Exceptions\LogicException('ファイル読み込みに失敗');
@@ -195,49 +199,65 @@ trait CsvLogic
 
             $file->next();
 
-            if (!is_null($header)) {
-                $firstRow = $this->sjisToUtf8($file->current());
+            $first_row = $this->sjisToUtf8($file->current());
+            $header    = array_values($map_attribute_to_header);
 
-                if (!empty(array_diff($header, $firstRow))) {
-                    throw new Exceptions\LogicException('ヘッダ行がマッチしないため読み込みをキャンセルします。header=' . var_export($firstRow, true));
-                }
-
-                // 処理済み件数に追加
-                $finishedRowCount = $finishedRowCount + 1;
-
-                $file->next();
+            if (! empty(array_diff($header, $first_row))) {
+                throw new Exceptions\LogicException('ヘッダ行がマッチしないため読み込みをキャンセルします。');
             }
+
+            // 処理済み件数に追加
+            $finished_row_count = $finished_row_count + 1;
+
+            $file->next();
 
             while ($file->valid()) {
                 $row = $this->sjisToUtf8($file->current());
 
-                // 行バリーデーション
-                $validation = Validator::make($row, $validationRule);
+                $map_attribute_to_row = [];
+
+                foreach (array_keys($map_attribute_to_header) as $key => $attr) {
+                    $map_attribute_to_row[$attr] = $row[$key];
+                } 
+
+                // 行バリデーション
+                $validation = Validator::make($map_attribute_to_row, $map_attribute_to_validation_rule);
 
                 if ($validation->fails()) {
-                    $errors = [];
-
-                    foreach ($validation->failed() as $attribute => $result) {
-                        $errors['列-' . $attribute] = $result;
-                    }
-
-                    throw new Exceptions\LogicException(
-                        '行データが不正です。読み込みをキャンセルします。'
-                            . ' errors=' . var_export($errors, true)
-                            . ' translated=' . var_export($validation->errors()->getMessages(), true)
-                    );
+                    $error_row = $file->key();
+                    throw new Exceptions\LogicException($error_row . '行目の入力に誤りがあるため読み込みをキャンセルしました。');
                 }
 
-                $rows[] = $row;
 
-                if (count($rows) === $chunkSize) {
-                    // 一旦処理 処理完了行数更新
-                    $procedureFunction($rows);
+                // 重複確認
+                if (! is_null($dupulicate_confirmation_targets)) {                      
+                    foreach ($dupulicate_confirmation_targets as $dupulicate_confirmation_target) {
 
+                        if (! array_key_exists($dupulicate_confirmation_target, $dupulicate_confirmation_list)) {
+                            $dupulicate_confirmation_list[$dupulicate_confirmation_target] = [];
+                        }
+                        \Log::debug(print_r($dupulicate_confirmation_list, true));
+                        
+                        if (in_array($map_attribute_to_row[$dupulicate_confirmation_target], $dupulicate_confirmation_list[$dupulicate_confirmation_target])) {
+                            $error_row = $file->key();
+                            $attribute = $map_attribute_to_header[$dupulicate_confirmation_target];
+                            throw new Exceptions\LogicException($error_row . '行目の' . $attribute .'が重複しているため読み込みをキャンセルしました。');
+                        } 
+                        
+                        if (! empty($map_attribute_to_row[$dupulicate_confirmation_target])) {
+                            $dupulicate_confirmation_list[$dupulicate_confirmation_target][] = $map_attribute_to_row[$dupulicate_confirmation_target];
+                        }
+                    }
+                }
+                
+                $rows[] = $map_attribute_to_row;
+
+                if (count($rows) === $chunk_size) {
+                    // 一旦処理　処理完了行数更新
+                    $procedure_function($rows);
                     // 処理済み件数に追加
-                    $finishedRowCount = $finishedRowCount + $chunkSize;
-
-                    //
+                    $finished_row_count = $finished_row_count + $chunk_size;
+        
                     $rows = [];
                 }
 
@@ -245,26 +265,25 @@ trait CsvLogic
             }
 
             // 残りを処理
-            if (!empty($rows)) {
-                // throws Exceptions\LogicException
-                $procedureFunction($rows);
-
+            if (! empty($rows)) {
+                $procedure_function($rows);
                 // 処理済み件数に追加
-                $finishedRowCount = $finishedRowCount + count($rows);
+                $finished_row_count = $finished_row_count + count($rows);
             }
 
-            \Log::info('処理完了行数(ヘッダ行含む)=' . $finishedRowCount);
-
-            return $finishedRowCount;
+            \Log::info('処理完了行数(ヘッダ行含む)=' . $finished_row_count);
+            
+            return;
         } catch (Exceptions\LogicException $e) {
-            $message = 'processCsv CSV処理に失敗しました。 previous message=' . $e->getMessage();
+            $message = 'CSV処理失敗。' . $e->getMessage();
 
-            throw new Exceptions\CsvLogicException($message, $fileUrl, $finishedRowCount, $e);
+            throw new Exceptions\CsvLogicException($message, null, $finished_row_count, $e);
         } finally {
             $file = null;
 
             \Log::debug('END MEMORY=' . memory_get_usage(FALSE));
         }
+
     }
 
     /** 

@@ -91,7 +91,6 @@ class UserController extends Controller
 
         if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
         
-        // TODO 途中
         return $this->service->createByCsv($form, Auth::user()->organization_id, Auth::id());
     }
 }

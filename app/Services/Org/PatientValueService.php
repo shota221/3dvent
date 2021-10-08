@@ -182,7 +182,8 @@ class PatientValueService
         $deletable_row_limit = 50; // ページネーション表示件数
 
         if (count($ids) > $deletable_row_limit) {
-            throw new Exceptions\InvalidFormException('validation.excessive_number_of_registrations');
+            $form->addError('id', 'validation.excessive_number_of_registrations');
+            throw new Exceptions\InvalidFormException($form);
         }
         
         // 削除済み、または不正なリクエストidを考慮しid再取得

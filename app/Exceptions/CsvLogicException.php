@@ -18,9 +18,13 @@ class CsvLogicException extends LogicException
      * @param int             $finishedRowCount [処理件数]
      * @param \Exception|null $previous         [description]
      */
-    public function __construct(string $message = null, string $fileUrl, int $finishedRowCount = 0, \Exception $previous = null)
+    public function __construct(string $message = null, string $fileUrl = null, int $finishedRowCount = 0, \Exception $previous = null)
     {
-        $message = $message . ' ファイルURL=' . $fileUrl . ' ヘッダ行含む処理済み行数=' . $finishedRowCount;
+        if (is_null($fileUrl)) {
+            $message = $message . ' ヘッダ行含む処理済み行数=' . $finishedRowCount;
+        } else {
+            $message = $message . ' ファイルURL=' . $fileUrl . ' ヘッダ行含む処理済み行数=' . $finishedRowCount;
+        }
 
         $this->fileUrl = $fileUrl;
 
