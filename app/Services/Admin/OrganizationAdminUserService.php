@@ -115,7 +115,7 @@ class OrganizationAdminUserService
         $organization_admin_user->name            = $form->name;
         $organization_admin_user->email           = $form->email;
         $organization_admin_user->disabled_flg    = $form->disabled_flg;
-        if (! is_null($form->password)) $user->password = Hash::make($form->password);
+        if (! is_null($form->password)) $user->password = CryptUtil::createHashedPassword($form->password);
 
         DBUtil::Transaction(
             '組織管理者アカウント編集',
@@ -158,7 +158,7 @@ class OrganizationAdminUserService
             $organization->id,
             $form->name,
             $form->email,
-            Hash::make($form->password),
+            CryptUtil::createHashedPassword($form->password),
             $form->disabled_flg
         );
 

@@ -156,7 +156,7 @@ trait CsvLogic
      * @param  string      $fileUrl           [description]
      * @param  array|null  $map_attribute_to_header            [key1 => header_name1, key2 => header_name2,...]
      * @param  array       $map_attribute_to_validation_rule   [key1 => 'required|string', key2 => 'required|numeric',...] 列値のバリデーション
-     * @param  array       $dupulicate_confirmation_targets    [k1,k2,...] 重複確認対象用($map_attribute_to_headerのkeyを指定)
+     * @param  array       $dupulicate_confirmation_targets    [key1,key2,...] 重複確認対象用($map_attribute_to_headerのkeyを指定)
      * @param  \Closure    $procedureFunction [description]
      * @param  int|integer $chunkSize         [description]
      * @return void                         
@@ -177,7 +177,7 @@ trait CsvLogic
         $file = null;
 
         //　重複確認格納配列
-        if (!is_null($dupulicate_confirmation_targets)) $dupulicate_confirmation_list = [];
+        if (! is_null($dupulicate_confirmation_targets)) $dupulicate_confirmation_list = [];
 
         // 処理完了件数
         $finished_row_count = 0;

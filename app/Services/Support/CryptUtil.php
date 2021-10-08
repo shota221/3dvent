@@ -2,6 +2,8 @@
 
 namespace App\Services\Support;
 
+use Illuminate\Support\Facades\Hash;
+
 class CryptUtil
 {
 
@@ -35,5 +37,10 @@ class CryptUtil
         }
 
         return hash('sha256', $token);
+    }
+
+    public static function createHashedPassword(string $password)
+    {
+        return Hash::make($password);
     }
 }

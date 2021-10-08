@@ -151,7 +151,7 @@ class UserService
             $form->email,
             $form->authority,
             $form->disabled_flg,
-            Hash::make($form->password));
+            CryptUtil::createHashedPassword($form->password));
 
         
         DBUtil::Transaction(
@@ -247,7 +247,7 @@ class UserService
                     $names            = array_map(function ($row) { return $row['name']; }, $rows);
                     $emails           = array_map(function ($row) { return $row['email']; }, $rows);
                     $authorities      = array_map(function ($row) { return $row['authority']; }, $rows);
-                    $hashed_passwords = array_map(function ($row) { return Hash::make($row['password']); }, $rows);
+                    $hashed_passwords = array_map(function ($row) { return CryptUtil::createHashedPassword($row['password']); }, $rows);
 
                     $exists = Repos\UserRepository::existsByOrganizationIdAndNames($organization_id, $names);
 
