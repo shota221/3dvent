@@ -2871,23 +2871,21 @@ paths:
             schema:
               description: ''
               type: object
+              x-examples:
+                example-1:
+                  ventilator_id: 1
+                  bug_name: string
+                  request_improvement: string
               properties:
                 ventilator_id:
                   type: number
                 bug_name:
-                  type: number
+                  type: string
                 request_improvement:
                   type: string
-                  minLength: 1
               required:
                 - ventilator_id
                 - bug_name
-                - request_improvement
-              x-examples:
-                example-1:
-                  ventilator_id: 1
-                  bug_name: 1
-                  request_improvement: string
       tags:
         - bug
     parameters: []
@@ -2940,23 +2938,21 @@ paths:
             schema:
               description: ''
               type: object
+              x-examples:
+                example-1:
+                  ventilator_id: 1
+                  bug_name: string
+                  request_improvement: string
               properties:
                 ventilator_id:
                   type: number
                 bug_name:
-                  type: number
+                  type: string
                 request_improvement:
                   type: string
-                  minLength: 1
               required:
                 - ventilator_id
                 - bug_name
-                - request_improvement
-              x-examples:
-                example-1:
-                  ventilator_id: 1
-                  bug_name: 1
-                  request_improvement: string
       tags:
         - bug
     parameters: []

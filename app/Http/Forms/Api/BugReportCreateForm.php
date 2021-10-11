@@ -21,7 +21,7 @@ class BugReportCreateForm extends BaseForm
         
             'bug_name' => 'required|'.Rule::VALUE_STRING,
 
-            'request_improvement' => 'required|'.Rule::VALUE_TEXT
+            'request_improvement' => 'nullable|'.Rule::VALUE_TEXT
         ];  
     }
 
@@ -31,6 +31,6 @@ class BugReportCreateForm extends BaseForm
 
         $this->bug_name = strval($input['bug_name']);
 
-        $this->request_improvement = strval($input['request_improvement']);
+        $this->request_improvement = isset($input['request_improvement']) ? strval($input['request_improvement']) : '';
     }
 }
