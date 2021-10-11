@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Services\Admin;
+namespace App\Services\Org;
 
 use App\Exceptions;
-use App\Http\Forms\Admin as Form;
+use App\Http\Forms\Org as Form;
 use App\Http\Response;
 use App\Models;
 use App\Models\HistoryBaseModel;
@@ -27,12 +27,11 @@ class VentilatorValueService
      */
     public function getPaginatedVentilatorValueData(
         string $path,
+        User $user,
         Form\VentilatorValueSearchForm $form = null
     ) {
         $item_per_page = config('view.items_per_page');
-
         $offset = 0;
-
         $search_values = [];
         $http_query = '';
 
@@ -42,15 +41,18 @@ class VentilatorValueService
             $http_query = '?' . http_build_query($search_values);
         }
 
-        $ventilator_value = Repos\VentilatorValueRepository::searchWithUsersAndVentilatorsAndPatientsAndOrganizations(
+        $organization_id = $user->organization_id;
+
+        $ventilator_value = Repos\VentilatorValueRepository::searchWithUsersAndVentilatorsAndPatientsAndOrganizationsByOrganizationId(
+            $organization_id,
             $search_values,
             $item_per_page,
             $offset
         );
 
-        $total_count = Repos\VentilatorValueRepository::countBySearchValues($search_values);
+        $total_count = Repos\VentilatorValueRepository::countByOrganizationIdAndSearchValues($organization_id, $search_values);
 
-        return Converter\VentilatorValueConverter::convertToAdminPaginate(
+        return Converter\VentilatorValueConverter::convertToOrgPaginate(
             $ventilator_value,
             $total_count,
             $item_per_page,
@@ -64,16 +66,18 @@ class VentilatorValueService
      * @param Form\VentilatorValueDetailForm $form
      * @return type
      */
-    public function getOneVentilatorValueData(Form\VentilatorValueDetailForm $form)
+    public function getOneVentilatorValueData(Form\VentilatorValueDetailForm $form, User $user)
     {
-        $ventilator_value = Repos\VentilatorValueRepository::findOneWithPatientAndOrganizationAndRegisteredUserById($form->id);
+        $organization_id = $user->organization_id;
+
+        $ventilator_value = Repos\VentilatorValueRepository::findOneWithPatientAndOrganizationAndRegisteredUserByOrganizationIdAndId($organization_id, $form->id);
 
         if (is_null($ventilator_value)) {
             $form->addError('id', 'validation.id_not_found');
             throw new Exceptions\InvalidFormException($form);
         }
 
-        return Converter\VentilatorValueConverter::convertToAdminVentilatorValueDetail($ventilator_value);
+        return Converter\VentilatorValueConverter::convertToOrgVentilatorValueDetail($ventilator_value);
     }
 
     /**
@@ -84,7 +88,9 @@ class VentilatorValueService
      */
     public function update(Form\VentilatorValueUpdateForm $form, User $user)
     {
-        $ventilator_value = Repos\VentilatorValueRepository::findOneById($form->id);
+        $organization_id = $user->organization_id;
+
+        $ventilator_value = Repos\VentilatorValueRepository::findOneByOrganizationIdAndId($organization_id, $form->id);
 
         if (is_null($ventilator_value)) {
             $form->addError('ventilator_value_id', 'validation.id_not_found');
@@ -96,11 +102,9 @@ class VentilatorValueService
         //編集後データの再計算 
         $vt_per_kg = config('calc.default.vt_per_kg');
 
-        if (!is_null($form->organization_id)) {
-            $organization_setting = Repos\OrganizationSettingRepository::findOneByOrganizationId($form->organization_id);
+        $organization_setting = Repos\OrganizationSettingRepository::findOneByOrganizationId($organization_id);
 
-            if (!is_null($organization_setting)) $vt_per_kg = $organization_setting->vt_per_kg;
-        }
+        if (!is_null($organization_setting)) $vt_per_kg = $organization_setting->vt_per_kg;
 
         $total_flow = $this->calcTotalFlow($form->air_flow, $form->o2_flow);
 
@@ -192,7 +196,6 @@ class VentilatorValueService
         $search_values = [];
         if (isset($form->ventilator_id)) $search_values['ventilator_id'] = $form->ventilator_id;
         if (isset($form->gs1_code)) $search_values['gs1_code'] = $form->gs1_code;
-        if (isset($form->organization_id)) $search_values['organization_id'] = $form->organization_id;
         if (isset($form->patient_code)) $search_values['patient_code'] = $form->patient_code;
         if (isset($form->registered_user_name)) $search_values['registered_user_name'] = $form->registered_user_name;
         if (isset($form->registered_at_from)) $search_values['registered_at_from'] = $form->registered_at_from;
@@ -216,14 +219,14 @@ class VentilatorValueService
         $deletable_row_limit = 50;
 
         if (count($ids) > $deletable_row_limit) {
-            $form->addError('validation.excessive_number_of_registrations');
+            $form->addError('ids', 'validation.excessive_number_of_registrations');
             throw new Exceptions\InvalidFormException($form);
         }
 
         $operated_user_id = $user->id;
+        $organization_id = $user->organization_id;
 
-        //すでに削除されている場合にそれらを除外する
-        $target_ids = Repos\VentilatorValueRepository::getIdsByIds($ids);
+        $target_ids = Repos\VentilatorValueRepository::getIdsByOrganizationIdAndIds($organization_id, $ids);
 
         if (!empty($target_ids)) {
             DBUtil::Transaction(
@@ -241,7 +244,6 @@ class VentilatorValueService
                 }
             );
         }
-
 
         return new Response\SuccessJsonResult;
     }

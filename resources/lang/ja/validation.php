@@ -156,6 +156,8 @@ return [
     'required_password_confirmation' => 'パスワード(確認用)は必須です。',
     'password_confirmed' => 'パスワードを確認用と一致させてください。',
     'excessive_number_of_registrations' => '登録数が超過しています。',
+    'excessive_number_of_deletions' => '削除件数が超過しています。',
+    'ventilator_value_exists_yet' => 'MicroVent機器の削除は、対象の機器が紐づく機器観察研究データをすべて削除してから実行してください。',
 
     /*
     |--------------------------------------------------------------------------

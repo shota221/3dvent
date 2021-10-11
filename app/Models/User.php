@@ -19,7 +19,7 @@ class User extends Authenticatable
         TOKEN_COLUMN_NAME = 'api_token',
         DISABLED = 1,
         ENABLED = 0,
-        AUTHORITY_ADMIN = 1 // TODO　権限回り実装後修正
+        ROLE_ADMIN = 1
     ;
 
     /**
@@ -64,11 +64,11 @@ class User extends Authenticatable
 
     public function hasRoleAdmin()
     {
-        return boolval($this->authority === self::AUTHORITY_ADMIN);
+        return $this->admin_flg === self::ROLE_ADMIN;
     }
 
     public function hasRoleOrg()
     {
-        return boolval($this->authority !== self::AUTHORITY_ADMIN);
+        return $this->admin_flg !== self::ROLE_ADMIN;
     }
 }

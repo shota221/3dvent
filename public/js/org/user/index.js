@@ -251,7 +251,9 @@ $asyncCsvImport.on(
             contentType: false
         }
 
-        utilAsyncExecuteAjax($element, parameters, true, successCallback, extraSettings);
+        var badRequestCallback = function (error) { }
+
+        utilAsyncExecuteAjax($importCsvBtn, parameters, true, successCallback, badRequestCallback, extraSettings);
 
         return false;
     }

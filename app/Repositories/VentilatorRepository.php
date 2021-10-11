@@ -18,6 +18,11 @@ class VentilatorRepository
         return Ventilator::query();
     }
 
+    private static function queryByOrganizationId(int $organization_id)
+    {
+        return static::query()->where('ventilators.organization_id', $organization_id);
+    }
+
     private static function querySelectGeom()
     {
         return static::query()->select([
@@ -33,18 +38,23 @@ class VentilatorRepository
         return static::query()->where('gs1_code', $gs1_code)->exists();
     }
 
-    public static function existsById($id)
+    public static function existsById(int $id)
     {
         return static::query()->where('id', $id)->exists();
     }
 
-    public static function findOneById($id)
+    public static function existsByOrganizationIdAndId(int $organization_id, int $id)
+    {
+        return static::queryByOrganizationId($organization_id)->where('id', $id)->exists();
+    }
+
+    public static function findOneById(int $id)
     {
         $table = Ventilator::tableName();
         return static::query()->where('id', $id)->first();
     }
 
-    public static function logicalDeleteByIds($ids)
+    public static function logicalDeleteByIds(array $ids)
     {
         return static::query()->whereIn('id', $ids)->update(['deleted_at' => DateUtil::now(), 'active' => null]);
     }
@@ -126,7 +136,14 @@ class VentilatorRepository
         return self::createWhereClauseFromSearchValues($query, $search_values);
     }
 
-    public static function findBySearchValuesAndOffsetAndLimit($offset, $limit, $search_values)
+    private static function queryByOrganizationIdAndSearchValues(int $organization_id, array $search_values)
+    {
+        $query = self::leftJoinUser(self::queryByOrganizationId($organization_id));
+        $query = self::leftJoinVentilatorBug($query);
+        return self::createWhereClauseFromSearchValues($query, $search_values);
+    }
+
+    public static function findBySearchValuesAndOffsetAndLimit(int $offset, int $limit, array $search_values)
     {
         return self::queryBySearchValues($search_values)
             ->select([
@@ -143,7 +160,23 @@ class VentilatorRepository
             ->get();
     }
 
-    public static function countBySearchValues($search_values)
+    public static function findByOrganizationIdAndSearchValuesAndOffsetAndLimit(int $organization_id, array $search_values, int $offset, int $limit)
+    {
+        return self::queryByOrganizationIdAndSearchValues($organization_id, $search_values)
+            ->select([
+                'ventilators.*',
+                'users.name AS registered_user_name',
+                'ventilator_bugs.ventilator_id AS bug_ventialtor_id'
+            ])
+            ->distinct()
+            ->limit($limit)
+            ->offset($offset)
+            ->orderBy('created_at', 'DESC')
+            ->orderBy('gs1_code', 'ASC')
+            ->get();
+    }
+
+    public static function countBySearchValues(array $search_values)
     {
         return self::queryBySearchValues($search_values)
             ->select([
@@ -156,7 +189,19 @@ class VentilatorRepository
             ->count();
     }
 
-    private static function createWhereClauseFromSearchValues($query, $search_values)
+    public static function countByOrganizationIdAndSearchValues(int $organizaiton_id, array $search_values)
+    {
+        return self::queryByOrganizationIdAndSearchValues($organizaiton_id, $search_values)
+            ->select([
+                'ventilators.*',
+                'users.name AS registered_user_name',
+                'ventilator_bugs.ventilator_id AS bug_ventialtor_id'
+            ])
+            ->distinct()
+            ->count();
+    }
+
+    private static function createWhereClauseFromSearchValues($query, array $search_values)
     {
         if (isset($search_values['serial_number'])) {
             $serial_number = $search_values['serial_number'];
@@ -256,5 +301,27 @@ class VentilatorRepository
         EOM;
 
         \DB::update($query, array_merge($ventilator_ids, $ventilator_patient_ids, $ventilator_ids));
+    }
+
+    public static function findOneByOrganizationIdAndId(int $organization_id, int $id)
+    {
+        return self::queryByOrganizationId($organization_id)->where('id', $id)->first();
+    }
+
+    public static function logicalDeleteByOrganizationIdAndIds(int $organization_id, array $ids)
+    {
+        return self::queryByOrganizationId($organization_id)->whereIn('id', $ids)->update(['deleted_at' => DateUtil::now(), 'active' => null]);
+    }
+
+    public static function getPatientCodeByOrganizationIdAndId(int $organization_id, int $id)
+    {
+        return static::leftJoinPatient(self::queryByOrganizationId($organization_id))
+            ->addSelect([
+                'ventilators.*',
+                'patients.patient_code AS patient_code'
+            ])
+            ->where('ventilators.id', $id)
+            ->orderBy('ventilators.created_at', 'DESC')
+            ->value('patient_code');
     }
 }

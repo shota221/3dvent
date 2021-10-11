@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Forms\Admin;
+namespace App\Http\Forms\Org;
 
 use App\Exceptions;
 use App\Http\Forms\BaseForm;
@@ -11,7 +11,6 @@ class VentilatorValueSearchForm extends BaseForm
 {
     public $ventilator_id;
     public $gs1_code;
-    public $organization_id;
     public $patient_code;
     public $registered_user_name;
     public $registered_at_from;
@@ -23,15 +22,14 @@ class VentilatorValueSearchForm extends BaseForm
     protected function validationRule()
     {
         return [
-            'ventilator_id'        => 'nullable|' .Rule::VALUE_POSITIVE_NON_ZERO,
-            'gs1_code'             => 'nullable|' . Rule::VALUE_NAME,
-            'organization_id'      => 'nullable|' . Rule::VALUE_POSITIVE_NON_ZERO,
+            'ventilator_id' => 'nullable|' .Rule::VALUE_POSITIVE_NON_ZERO,
+            'gs1_code'      => 'nullable|' . Rule::VALUE_NAME,
             'patient_code'         => 'nullable|' . Rule::VALUE_NAME,
             'registered_user_name' => 'nullable|' . Rule::VALUE_NAME,
             'registered_at_from'   => 'nullable|date',
             'registered_at_to'     => 'nullable|date',
             'fixed_flg'            => 'nullable|' . Rule::FLG_INTEGER,
-            'confirmed_flg'        => 'nullable|' . Rule::FLG_INTEGER,
+            'confirmed_flg'      => 'nullable|' . Rule::FLG_INTEGER,
             'page'                 => 'nullable|' . Rule::VALUE_POSITIVE_NON_ZERO,
         ];
     }
@@ -40,7 +38,6 @@ class VentilatorValueSearchForm extends BaseForm
     {
         $this->ventilator_id = isset($input['ventilator_id']) ? intval($input['ventilator_id']) : null;
         $this->gs1_code = isset($input['gs1_code']) ? strval($input['gs1_code']) : null;
-        $this->organization_id = isset($input['organization_id']) ? intval($input['organization_id']) : null;
         $this->patient_code = isset($input['patient_code']) ? strval($input['patient_code']) : null;
         $this->registered_user_name = isset($input['registered_user_name']) ? strval($input['registered_user_name']) : null;
         $this->registered_at_from = isset($input['registered_at_from']) ? Support\DateUtil::parseToDate($input['registered_at_from']) : null;

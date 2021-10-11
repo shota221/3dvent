@@ -1,13 +1,11 @@
 const
     $editModal = $('#modal-ventilator_value-update'),
-    $showRegisterModalBtn = $('#show-register-modal'),
     $modalCancelBtn = $('button.modal-cancel'),
     $paginatedList = $('#paginated-list'),
     $ventilatorValueUpdateBtn = $('#async-ventilator_value-update'),
     $searchForm = $('#async-search-form'),
     $searchBtn = $('#async-search'),
-    $clearSearchFormBtn = $('#clear-search-form'),
-    $select2OrganizationName = $('#search-organization-name')
+    $clearSearchFormBtn = $('#clear-search-form')
     ;
 
 
@@ -79,7 +77,6 @@ $ventilatorValueUpdateBtn.on(
         var $targetForm = $('form[name="ventilator_value-update"]');
 
         parameters['id'] = $targetForm.find('input[name="id"]').val();
-        parameters['organization_id'] = $targetForm.find('input[name="organization_id"]').val();
         parameters['height'] = $targetForm.find('input[name="height"]').val();
         parameters['weight'] = $targetForm.find('input[name="weight"]').val();
         parameters['gender'] = $targetForm.find('input[name="gender"]:checked').val();
@@ -194,44 +191,6 @@ $paginatedList.on(
     }
 );
 
-// build select2(organization)
-function buildSelect2() {
-
-    var parameters = {};
-
-    var $element = $('#async-organization-data');
-
-    var successCallback = function (data) {
-        var organizations = [];
-
-        data.forEach(function (datum) {
-            var organization = {};
-            organization['id'] = datum['id'];
-            organization['text'] = datum['name'];
-            organizations.push(organization);
-        });
-
-        $select2OrganizationName.select2({
-            data: organizations,
-            placeholder: '',
-            allowClear: true,
-            width: '100%'
-        });
-    }
-
-    utilAsyncExecuteAjax($element, parameters, false, successCallback);
-}
-
-$select2OrganizationName.on(
-    'change',
-    function (e) {
-        $searchForm.find('input[name="gs1_code"]').prop('disabled', $(this).val() === '');
-        $searchForm.find('input[name="patient_code"]').prop('disabled', $(this).val() === '');
-    }
-);
-
-
-
 // ページネーション
 $paginatedList.on('click', '.page-link', function (e) {
     var $featureElement = $(this);
@@ -269,7 +228,6 @@ $clearSearchFormBtn.on(
     'click',
     function (e) {
         $searchForm[0].reset();
-        $select2OrganizationName.val(null).trigger('change');
     }
 )
 
@@ -277,7 +235,6 @@ $clearSearchFormBtn.on(
 function buildSearchParameters($form) {
     var parameters = {};
 
-    parameters['organization_id'] = $form.find('select[name="organization_id"]').val();
     parameters['registered_at_from'] = $form.find('input[name="registered_at_from"]').val();
     parameters['registered_at_to'] = $form.find('input[name="registered_at_to"]').val();
     parameters['gs1_code'] = $form.find('input[name="gs1_code"]').val();
@@ -295,11 +252,9 @@ function buildSearchParameters($form) {
 $('input.form-control.datetime').datetimepicker({
     step: 5,
     format: 'Y-m-d H:i:00'
-})
+});
 
 $('input.form-control.date').datetimepicker({
     timepicker: false,
     format: 'Y-m-d'
-})
-
-buildSelect2();
+});

@@ -8,8 +8,6 @@
         <th>@lang('messages.ventilator_code')</th>
         {{-- 患者番号 --}}
         <th>@lang('messages.patient_code')</th>
-        {{-- 所属組織 --}}
-        <th>@lang('messages.affiliation_organization')</th>
         {{-- 登録者 --}}
         <th>@lang('messages.registered_user_name')</th>
         {{-- 登録日時 --}}
@@ -64,7 +62,6 @@
             </td>
             <td class="align-middle">{{ $ventilator_value->gs1_code }}</td>
             <td class="align-middle">{{ $ventilator_value->patient_code }}</td>
-            <td class="align-middle">{{ $ventilator_value->organization_name }}</td>
             <td class="align-middle">{{ $ventilator_value->registered_user_name }}</td>
             <td class="align-middle">{{ $ventilator_value->registered_at }}</td>
             <td class="align-middle">{{ $ventilator_value->updated_at }}</td>
@@ -96,7 +93,7 @@
             {{-- 編集 --}}
             <td>
                 <a href="#" class="show-edit-modal"
-                    data-url="{{ route('admin.ventilator_value.detail', ['id' => $ventilator_value->id]) }}" data-method="GET">
+                    data-url="{{ route('org.ventilator_value.detail', ['id' => $ventilator_value->id]) }}" data-method="GET">
                     @lang('messages.edit')
                 </a>
             </td>
@@ -106,7 +103,7 @@
 
 </table>
 <div class="row">
-    <button type="button" class="btn btn-danger" data-url="{{ route('admin.ventilator_value.bulk_delete') }}"
+    <button type="button" class="btn btn-danger" data-url="{{ route('org.ventilator_value.bulk_delete') }}"
         data-method="delete" id="btn-bulk-delete">@lang('messages.bulk_delete')</button>
 </div>
 <div class="mt-3">{{ $ventilator_values->links('components.pagination') }}</div>
