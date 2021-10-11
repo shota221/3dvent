@@ -359,7 +359,7 @@ class VentilatorValueRepository
                 'organizations.id'
             );
         $query = self::leftJoinUsers($query);
-        return self::createWhereClauseFromSearchValues($query, $search_values, true);
+        return self::createWhereClauseFromSearchValuesInOrganziationScope($query, $search_values);
     }
 
     private static function joinVentilatorsAndPatientsAndOrganizations($query = null)
@@ -389,17 +389,54 @@ class VentilatorValueRepository
             );
     }
 
-    private static function createWhereClauseFromSearchValues($query, $search_values, $is_org_scope = false)
+    private static function createWhereClauseFromSearchValues($query, array $search_values)
     {
         if (isset($search_values['ventilator_id'])) $query->where('ventilator_values.ventilator_id', $search_values['ventilator_id']);
 
-        if (isset($search_values['organization_id']) || $is_org_scope) {
-            if (isset($search_values['organization_id'])) $query->where('organizations.id', $search_values['organization_id']);
+        if (isset($search_values['organization_id'])) {
+            $query->where('organizations.id', $search_values['organization_id']);
             if (isset($search_values['gs1_code'])) $query->where('ventilators.gs1_code', $search_values['gs1_code']);
             if (isset($search_values['patient_code'])) {
                 $patient_code = $search_values['patient_code'];
                 $query->where('patients.patient_code', 'like', "%$patient_code%");
             }
+        }
+
+        if (isset($search_values['registered_user_name'])) {
+            $registered_user_name = $search_values['registered_user_name'];
+            $query->where('users.name', 'like', "%$registered_user_name%");
+        }
+
+        if (isset($search_values['registered_at_from'])) {
+            $query->where('ventilator_values.registered_at', '>=', $search_values['registered_at_from']);
+        }
+
+        if (isset($search_values['registered_at_to'])) {
+            $query->where('ventilator_values.registered_at', '<=', $search_values['registered_at_to']);
+        }
+
+        if (isset($search_values['fixed_flg'])) $query->where('fixed_flg', $search_values['fixed_flg']);
+
+        if (isset($search_values['confirmed_flg'])) $query->where('confirmed_flg', $search_values['confirmed_flg']);
+
+        return $query;
+    }
+
+    /**
+     * org内での絞り込みの場合
+     *
+     * @param [type] $query
+     * @param [type] $search_values
+     */
+    private static function createWhereClauseFromSearchValuesInOrganziationScope($query, array $search_values)
+    {
+        if (isset($search_values['ventilator_id'])) $query->where('ventilator_values.ventilator_id', $search_values['ventilator_id']);
+
+        if (isset($search_values['gs1_code'])) $query->where('ventilators.gs1_code', $search_values['gs1_code']);
+
+        if (isset($search_values['patient_code'])) {
+            $patient_code = $search_values['patient_code'];
+            $query->where('patients.patient_code', 'like', "%$patient_code%");
         }
 
         if (isset($search_values['registered_user_name'])) {
@@ -432,12 +469,12 @@ class VentilatorValueRepository
         return  self::queryWithVentilatorsByOrganizationId($organization_id)->whereIn('ventilator_values.id', $ids)->update(['ventilator_values.deleted_at' => DateUtil::now()]);
     }
 
-    public static function getIdsByOrganizationIdAndIds(int $organization_id, array $ids) 
+    public static function getIdsByOrganizationIdAndIds(int $organization_id, array $ids)
     {
         return self::queryWithVentilatorsByOrganizationId($organization_id)->whereIn('ventilator_values.id', $ids)->pluck('ventilator_values.id');
     }
 
-    public static function getIdsByIds(array $ids) 
+    public static function getIdsByIds(array $ids)
     {
         return static::query()->whereIn('id', $ids)->pluck('id');
     }

@@ -10,7 +10,8 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Auth\ApiTokenGate;
 use App\Http\Auth\AppkeyGate;
-use App\Http\Auth\UserGate;
+use App\Http\Auth\AdminUserGate;
+use App\Http\Auth\OrgUserGate;
 use Illuminate\Support\Facades\Log;
 
 class AuthServiceProvider extends ServiceProvider
@@ -52,8 +53,12 @@ class AuthServiceProvider extends ServiceProvider
             AppkeyGate::define();
         }
 
-        if ($this->app->isHttpRouteTypeAdmin() || $this->app->isHttpRouteTypeOrg()) {
-            UserGate::define();
+        if ($this->app->isHttpRouteTypeAdmin()) {
+            AdminUserGate::define();
+        }
+
+        if ($this->app->isHttpRouteTypeOrg()) {
+            OrgUserGate::define();
         }
     }
 }
