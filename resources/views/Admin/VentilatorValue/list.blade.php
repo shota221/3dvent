@@ -95,8 +95,8 @@
             <td class="align-middle">{{ $ventilator_value->paco2 }}</td>
             {{-- 編集 --}}
             <td>
-                <a href="#" class="show-edit-modal" data-id="{{ $ventilator_value->id }}"
-                    data-url="{{ route('admin.ventilator_value.detail') }}" data-method="GET">
+                <a href="#" class="show-edit-modal"
+                    data-url="{{ route('admin.ventilator_value.detail', ['id' => $ventilator_value->id]) }}" data-method="GET">
                     @lang('messages.edit')
                 </a>
             </td>

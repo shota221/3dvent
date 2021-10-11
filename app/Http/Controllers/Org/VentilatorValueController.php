@@ -43,9 +43,9 @@ class VentilatorValueController extends Controller
         return view('list', compact('ventilator_values'));
     }
 
-    public function asyncGetDetail(Request $request)
+    public function asyncGetDetail($id)
     {
-        $form = new Form\VentilatorValueDetailForm($request->all());
+        $form = new Form\VentilatorValueDetailForm(compact('id'));
 
         if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
 

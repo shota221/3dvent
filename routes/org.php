@@ -161,7 +161,7 @@ Route::group(['middleware' => ['routetype:org']], function () {
             )->name('org.ventilator.index');
 
             Route::get(
-                '/ventilator/search',
+                '/ventilators',
                 'VentilatorController@asyncSearch'
             )->name('org.ventilator.search');
 
@@ -200,12 +200,12 @@ Route::group(['middleware' => ['routetype:org']], function () {
             )->name('org.ventilator_value.by_ventilator');
 
             Route::get(
-                '/ventilator_value/detail',
+                '/ventilator_value/{id}',
                 'VentilatorValueController@asyncGetDetail'
             )->name('org.ventilator_value.detail');
 
             Route::get(
-                '/ventilator_value/search',
+                '/ventilator_values',
                 'VentilatorValueController@asyncSearch'
             )->name('org.ventilator_value.search');
         });

@@ -31,9 +31,6 @@ $paginatedList.on(
         $editModal.find('textarea[name="status_use_other"]').prop('disabled', true);
         $status.empty();
 
-        var parameters = {};
-        parameters['id'] = $(this).data('id');
-
         var successCallback = function (data) {
 
             var $form = $editModal.find('form[name="ventilator_value-update"]').eq(0);
@@ -58,7 +55,7 @@ $paginatedList.on(
 
         var $element = $(this);
 
-        utilAsyncExecuteAjax($element, parameters, false, successCallback);
+        utilAsyncExecuteAjax($element, {}, false, successCallback);
 
         return false;
     }

@@ -63,10 +63,11 @@ Route::group(['middleware' => ['routetype:admin']], function () {
             )->name('admin.organization.index');
 
             Route::get(
-                '/organization/async',
+                '/organizations',
                 'OrganizationController@asyncSearch'
             )->name('admin.organization.async');
 
+            //select2での組織選択用
             Route::get(
                 '/organization/async/search_list',
                 'OrganizationController@asyncSearchList'
@@ -140,7 +141,7 @@ Route::group(['middleware' => ['routetype:admin']], function () {
             )->name('admin.ventilator.index');
 
             Route::get(
-                '/ventilator/async',
+                '/ventilators',
                 'VentilatorController@asyncSearch'
             )->name('admin.ventilator.async');
 
@@ -193,12 +194,12 @@ Route::group(['middleware' => ['routetype:admin']], function () {
             )->name('admin.ventilator_value.by_ventilator');
 
             Route::get(
-                '/ventilator_value/detail',
+                '/ventilator_value/{id}',
                 'VentilatorValueController@asyncGetDetail'
             )->name('admin.ventilator_value.detail');
 
             Route::get(
-                '/ventilator_value/search',
+                '/ventilator_values',
                 'VentilatorValueController@asyncSearch'
             )->name('admin.ventilator_value.search');
         });
