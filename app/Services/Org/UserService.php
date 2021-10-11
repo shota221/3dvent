@@ -243,7 +243,7 @@ class UserService
                 $map_attribute_to_header,
                 $map_attribute_to_validation_rule, 
                 $dupulicate_confirmation_targets,
-                function ($rows, $finished_row_count) use ($form, $organization_id, $user_id) {
+                function ($rows) use ($form, $organization_id, $user_id) {
 
                     $names            = array_map(function ($row) { return $row['name']; }, $rows);
                     $emails           = array_map(function ($row) { return $row['email']; }, $rows);
@@ -253,7 +253,7 @@ class UserService
                     $exists = Repos\UserRepository::existsByOrganizationIdAndNames($organization_id, $names);
 
                     if ($exists) {
-                        throw new Exceptions\InvalidCsvException('validation.csv_registered_user_name', [], $finished_row_count);
+                        throw new Exceptions\InvalidException('validation.csv_registered_user_name');
                     }
 
                     DBUtil::Transaction(

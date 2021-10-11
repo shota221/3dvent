@@ -104,7 +104,6 @@
             <a 
                 href="#" 
                 class="show-edit-modal" 
-                data-id="{{ $patient_value->id }}" 
                 data-url="{{ route('org.patient_value.detail', ['id' => $patient_value->id]) }}" 
                 data-method="GET"
             >

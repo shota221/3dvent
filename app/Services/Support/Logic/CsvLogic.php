@@ -255,7 +255,7 @@ trait CsvLogic
 
                 if (count($rows) === $chunk_size) {
                     // 一旦処理　処理完了行数更新
-                    $procedure_function($rows, $finished_row_count);
+                    $procedure_function($rows);
                     // 処理済み件数に追加
                     $finished_row_count = $finished_row_count + $chunk_size;
         
@@ -267,7 +267,7 @@ trait CsvLogic
 
             // 残りを処理
             if (! empty($rows)) {
-                $procedure_function($rows, $finished_row_count);
+                $procedure_function($rows);
                 // 処理済み件数に追加
                 $finished_row_count = $finished_row_count + count($rows);
             }
@@ -279,6 +279,10 @@ trait CsvLogic
             $message = 'processCsv CSV処理に失敗しました。 previous message=' . $e->getMessage();
 
             throw new Exceptions\CsvLogicException($message, $file_url, $finished_row_count, $e);
+        } catch (Exceptions\InvalidException $e) {
+            $message = $e->getMessage();
+
+            throw new Exceptions\InvalidCsvException($message, [], $finished_row_count);
         } finally {
             $file = null;
 
