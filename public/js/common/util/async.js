@@ -1,13 +1,18 @@
 /**
  * 
- * @param {*} $featureElement data-{attr}を記述する要素。これをもとにAjax通信先を設定。
+ * @param {*} $featureElement data-{attr}を記述する要素。これをもとにAjax通信先を設定:必須。
  * @param {Object} parameters リクエストパラメータ
  * @param {Function} successCallback 通信成功時の処理を記述。
  * @param {Function} badRequestCallback 400エラー時の追加処理を記述。
  * @param {boolean} withMessages 通信の結果をメッセージとしてユーザーに通知したい場合はtrue。
  * @param {Object} extraSettings その他ajax設定。
  */
-function utilAsyncExecuteAjax($featureElement, parameters = {}, withMessages = false, successCallback = function (data) { }, badRequestCallback = function (error) { }, extraSettings = {}) {
+function utilAsyncExecuteAjax($featureElement, parameters, withMessages, successCallback, badRequestCallback, extraSettings) {
+    
+    //IEでデフォルト引数が使えないため、undefined時に備えて初期化
+    parameters = parameters || {};
+    extraSettings = extraSettings || {};
+
     //data-{}の属性から抽出
     var url = $featureElement.data('url');
     var type = $featureElement.data('method');
@@ -38,7 +43,8 @@ function utilAsyncExecuteAjax($featureElement, parameters = {}, withMessages = f
         if (withMessages) {
             utilAsyncAlertMessage(message)
         }
-        successCallback(data);
+        //successCallbackが定義されていれば実行
+        successCallback && successCallback(data);
     }).fail(function (error) {
         switch (error.status) {
             case 0:
@@ -49,7 +55,8 @@ function utilAsyncExecuteAjax($featureElement, parameters = {}, withMessages = f
                     var result = JSON.parse(error.responseText);
                     utilFormDisplayValidationErrorMessage(result.errors);
                 }
-                badRequestCallback(error);
+                //badRequestCallbackが定義されていれば実行
+                badRequestCallback || badRequestCallback(error);
                 break;
             case 401:
             case 403:

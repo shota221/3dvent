@@ -240,12 +240,4 @@ class VentilatorConverter
       $entities->all()
     );
   }
-
-
-  public static function convertToOrgVentilatorUpdateEntity($entity, $start_using_at)
-  {
-    $entity->start_using_at = $start_using_at;
-
-    return $entity;
-  }
 }

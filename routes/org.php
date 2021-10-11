@@ -201,7 +201,7 @@ Route::group(['middleware' => ['routetype:org']], function () {
 
             Route::get(
                 '/ventilator_value/detail',
-                'VentilatorValueController@asyncDetail'
+                'VentilatorValueController@asyncGetDetail'
             )->name('org.ventilator_value.detail');
 
             Route::get(

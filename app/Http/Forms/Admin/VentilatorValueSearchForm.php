@@ -23,16 +23,15 @@ class VentilatorValueSearchForm extends BaseForm
     protected function validationRule()
     {
         return [
-            'ventilator_id' => 'nullable|' .Rule::VALUE_POSITIVE_NON_ZERO,
-            'gs1_code'      => 'nullable|' . Rule::VALUE_NAME,
+            'ventilator_id'        => 'nullable|' .Rule::VALUE_POSITIVE_NON_ZERO,
+            'gs1_code'             => 'nullable|' . Rule::VALUE_NAME,
             'organization_id'      => 'nullable|' . Rule::VALUE_POSITIVE_NON_ZERO,
             'patient_code'         => 'nullable|' . Rule::VALUE_NAME,
             'registered_user_name' => 'nullable|' . Rule::VALUE_NAME,
             'registered_at_from'   => 'nullable|date',
             'registered_at_to'     => 'nullable|date',
             'fixed_flg'            => 'nullable|' . Rule::FLG_INTEGER,
-            'confirmed_flg'        => 'nullable|array',
-            'confirmed_flg.*'      => 'nullable|' . Rule::FLG_INTEGER,
+            'confirmed_flg'        => 'nullable|' . Rule::FLG_INTEGER,
             'page'                 => 'nullable|' . Rule::VALUE_POSITIVE_NON_ZERO,
         ];
     }
@@ -47,7 +46,7 @@ class VentilatorValueSearchForm extends BaseForm
         $this->registered_at_from = isset($input['registered_at_from']) ? Support\DateUtil::parseToDate($input['registered_at_from']) : null;
         $this->registered_at_to = isset($input['registered_at_to']) ? Support\DateUtil::parseToDate($input['registered_at_to']) : null;
         $this->fixed_flg = isset($input['fixed_flg']) ? intval($input['fixed_flg']) : null;
-        $this->confirmed_flg = isset($input['confirmed_flg']) ? $input['confirmed_flg'] : null;
+        $this->confirmed_flg = isset($input['confirmed_flg']) ? intval($input['confirmed_flg']) : null;
         $this->page = isset($input['page']) ? intval($input['page']) : null;
     }
 }

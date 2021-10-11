@@ -9,6 +9,7 @@ use App\Http\Forms\Org as Form;
 use App\Services\Org as Service;
 use App\Services\Support\Gs1Util;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class VentilatorController extends Controller
 {
@@ -22,7 +23,7 @@ class VentilatorController extends Controller
     public function index(Request $request)
     {
         $path = $request->path();
-        $ventilator_paginator = $this->service->getVentilatorData($path);
+        $ventilator_paginator = $this->service->getVentilatorData($path, Auth::user());
         $ventilator_paginator->withPath(route('org.ventilator.search'), [], false);
         return view('index', compact('ventilator_paginator'));
     }
@@ -34,7 +35,7 @@ class VentilatorController extends Controller
         if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
 
         $path = $request->path();
-        $ventilator_paginator = $this->service->getVentilatorData($path, $form);
+        $ventilator_paginator = $this->service->getVentilatorData($path, Auth::user(), $form);
         return view('list', compact('ventilator_paginator'));
     }
 
@@ -44,7 +45,7 @@ class VentilatorController extends Controller
 
         if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
 
-        return $this->service->update($form);
+        return $this->service->update($form, Auth::user());
     }
 
     public function asyncGetPatientData(Request $request)
@@ -53,7 +54,7 @@ class VentilatorController extends Controller
 
         if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
 
-        return $this->service->getPatient($form);
+        return $this->service->getPatient($form, Auth::user());
     }
 
     public function asyncShowBugList(Request $request)
@@ -62,7 +63,7 @@ class VentilatorController extends Controller
 
         if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
 
-        $bugs = $this->service->getBugList($form);
+        $bugs = $this->service->getBugList($form, Auth::user());
 
         return view('ventilatorBugList', compact('bugs'));
     }

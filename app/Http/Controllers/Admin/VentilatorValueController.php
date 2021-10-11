@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Forms\Admin as Form;
 use App\Services\Admin as Service;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class VentilatorValueController extends Controller
 {
@@ -57,7 +58,7 @@ class VentilatorValueController extends Controller
 
         if ($form->hasError()) throw new InvalidFormException($form);
 
-        return $this->service->update($form);
+        return $this->service->update($form, Auth::user());
     }
 
     public function asyncBulkDelete(Request $request)
@@ -66,6 +67,6 @@ class VentilatorValueController extends Controller
 
         if ($form->hasError()) throw new InvalidFormException($form);
 
-        return $this->service->bulkDelete($form);
+        return $this->service->bulkDelete($form, Auth::user());
     }
 }

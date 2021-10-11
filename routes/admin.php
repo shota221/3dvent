@@ -194,7 +194,7 @@ Route::group(['middleware' => ['routetype:admin']], function () {
 
             Route::get(
                 '/ventilator_value/detail',
-                'VentilatorValueController@asyncDetail'
+                'VentilatorValueController@asyncGetDetail'
             )->name('admin.ventilator_value.detail');
 
             Route::get(

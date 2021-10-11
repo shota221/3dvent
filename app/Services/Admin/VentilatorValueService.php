@@ -7,6 +7,7 @@ use App\Http\Forms\Admin as Form;
 use App\Http\Response;
 use App\Models;
 use App\Models\HistoryBaseModel;
+use App\Models\User;
 use App\Models\VentilatorValue;
 use App\Repositories as Repos;
 use App\Services\Support\Converter;
@@ -81,7 +82,7 @@ class VentilatorValueService
      * @param Form\VentialtorValueUpdateForm $form
      * @return void
      */
-    public function update(Form\VentilatorValueUpdateForm $form)
+    public function update(Form\VentilatorValueUpdateForm $form, User $user)
     {
         $ventilator_value = Repos\VentilatorValueRepository::findOneById($form->id);
 
@@ -90,8 +91,7 @@ class VentilatorValueService
             throw new Exceptions\InvalidFormException($form);
         }
 
-        // TODO 認証機能実装後修正
-        $user_id = 1;
+        $user_id = $user->id;
 
         //編集後データの再計算 
         $vt_per_kg = config('calc.default.vt_per_kg');
@@ -210,7 +210,7 @@ class VentilatorValueService
      * @param Form\VentilatorValueBulkDeleteForm $form
      * @return type
      */
-    public function bulkDelete(Form\VentilatorValueBulkDeleteForm $form)
+    public function bulkDelete(Form\VentilatorValueBulkDeleteForm $form, User $user)
     {
         $ids = $form->ids;
         $deletable_row_limit = 50;
@@ -220,23 +220,28 @@ class VentilatorValueService
             throw new Exceptions\InvalidFormException($form);
         }
 
-        // TODO 認証回り修正後実装
-        $operated_user_id = 1;
+        $operated_user_id = $user->id;
 
-        DBUtil::Transaction(
-            '機器観察研究データ論理削除、 ヒストリーテーブル登録',
-            function () use ($ids, $operated_user_id) {
-                // 論理削除
-                Repos\VentilatorValueRepository::logicalDeleteByIds($ids);
+        //すでに削除されている場合にそれらを除外する
+        $target_ids = Repos\VentilatorValueRepository::getIdsByIds($ids);
 
-                // ヒストリーテーブル登録
-                Repos\VentilatorValueHistoryRepository::insertBulk(
-                    $ids,
-                    $operated_user_id,
-                    Models\HistoryBaseModel::DELETE
-                );
-            }
-        );
+        if (!empty($target_ids)) {
+            DBUtil::Transaction(
+                '機器観察研究データ論理削除、 ヒストリーテーブル登録',
+                function () use ($target_ids, $operated_user_id) {
+                    // 論理削除
+                    Repos\VentilatorValueRepository::logicalDeleteByIds($target_ids->all());
+
+                    // ヒストリーテーブル登録
+                    Repos\VentilatorValueHistoryRepository::insertBulk(
+                        $target_ids->all(),
+                        $operated_user_id,
+                        Models\HistoryBaseModel::DELETE
+                    );
+                }
+            );
+        }
+
 
         return new Response\SuccessJsonResult;
     }

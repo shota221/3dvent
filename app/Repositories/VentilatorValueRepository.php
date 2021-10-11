@@ -417,7 +417,7 @@ class VentilatorValueRepository
 
         if (isset($search_values['fixed_flg'])) $query->where('fixed_flg', $search_values['fixed_flg']);
 
-        if (isset($search_values['confirmed_flg'])) $query->whereIn('confirmed_flg', $search_values['confirmed_flg']);
+        if (isset($search_values['confirmed_flg'])) $query->where('confirmed_flg', $search_values['confirmed_flg']);
 
         return $query;
     }
@@ -430,5 +430,15 @@ class VentilatorValueRepository
     public static function logicalDeleteByOrganizationIdAndIds($organization_id, array $ids)
     {
         return  self::queryWithVentilatorsByOrganizationId($organization_id)->whereIn('ventilator_values.id', $ids)->update(['ventilator_values.deleted_at' => DateUtil::now()]);
+    }
+
+    public static function getIdsByOrganizationIdAndIds(int $organization_id, array $ids) 
+    {
+        return self::queryWithVentilatorsByOrganizationId($organization_id)->whereIn('ventilator_values.id', $ids)->pluck('ventilator_values.id');
+    }
+
+    public static function getIdsByIds(array $ids) 
+    {
+        return static::query()->whereIn('id', $ids)->pluck('id');
     }
 }

@@ -287,10 +287,9 @@ function buildSearchParameters($form) {
     parameters['patient_code'] = $form.find('input[name="patient_code"]').val();
     parameters['registered_user_name'] = $form.find('input[name="registered_user_name"]').val();
     parameters['fixed_flg'] = $form.find('input[name="fixed_flg"]:checked').val();
-    parameters['confirmed_flg'] = [];
-    $form.find('input[name="confirmed_flg"]:checked').each(function (i, elm) {
-        parameters['confirmed_flg'].push($(elm).val());
-    });
+    if($form.find('[name=confirmed_flg]:checked').length==1){
+        parameters['confirmed_flg'] = $form.find('[name=confirmed_flg]:checked').val();
+    }
 
     return parameters;
 }

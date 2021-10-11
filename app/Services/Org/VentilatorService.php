@@ -8,15 +8,15 @@ use App\Http\Response as Response;
 use App\Repositories as Repos;
 use App\Services\Support\Converter;
 use App\Services\Support\DBUtil;
+use App\Models\User;
+use Exception;
 
 class VentilatorService
 {
-    function getVentilatorData($path, $form = null)
+    public function getVentilatorData($path, User $user, $form = null)
     {
         $items_per_page = config('view.items_per_page');
-
         $offset = 0;
-
         $search_values = [];
         $http_query = '';
 
@@ -28,8 +28,7 @@ class VentilatorService
             $http_query = '?' . http_build_query($search_values);
         }
 
-        //TODO userからorganization_id取得
-        $organization_id = 1;
+        $organization_id = $user->organization_id;
 
         $ventilators = Repos\VentilatorRepository::findByOrganizationIdAndSearchValuesAndOffsetAndLimit($organization_id, $search_values, $offset, $items_per_page);
 
@@ -38,36 +37,39 @@ class VentilatorService
         return Converter\VentilatorConverter::convertToOrgPaginate($ventilators, $total_count, $items_per_page, $path . $http_query);
     }
 
-    function getPatient(Form\VentilatorPatientForm $form)
+    public function getPatient(Form\VentilatorPatientForm $form, User $user)
     {
-        //TODO 認証ユーザーからの取り出し
-        $organization_id = 1;
+        $organization_id = $user->organization_id;
 
         $patient_code = Repos\VentilatorRepository::getPatientCodeByOrganizationIdAndId($organization_id, $form->id);
 
         return Converter\VentilatorConverter::convertToPatientResult($patient_code);
     }
 
-    function update(Form\VentilatorUpdateForm $form)
+    public function update(Form\VentilatorUpdateForm $form, User $user)
     {
-        //TODO 認証ユーザーからの取り出し
-        $organization_id = 1;
+        $organization_id = $user->organization_id;
 
         $ventilator = Repos\VentilatorRepository::findOneByOrganizationIdAndId($organization_id, $form->id);
 
-        $entity = Converter\VentilatorConverter::convertToOrgVentilatorUpdateEntity($ventilator, $form->start_using_at);
+        if (is_null($ventilator)) {
+            $form->addError('id', 'validation.id_not_found');
+            throw new Exceptions\InvalidFormException($form);
+        }
+
+        $ventilator->start_using_at = $form->start_using_at;
 
         DBUtil::Transaction(
             'MicroVent編集',
-            function () use ($entity) {
-                $entity->save();
+            function () use ($ventilator) {
+                $ventilator->save();
             }
         );
 
         return new Response\SuccessJsonResult;
     }
 
-    function buildVentilatorSearchValues(Form\VentilatorSearchForm $form)
+    private function buildVentilatorSearchValues(Form\VentilatorSearchForm $form)
     {
         $search_values = [];
 
@@ -82,8 +84,15 @@ class VentilatorService
         return $search_values;
     }
 
-    function getBugList(Form\VentilatorBugsForm $form)
+    public function getBugList(Form\VentilatorBugsForm $form, User $user)
     {
+        $exists = Repos\VentilatorRepository::existsByOrganizationIdAndId($user->organization_id, $form->id);
+
+        if (!$exists) {
+            $form->addError('id', 'validation.id_not_found');
+            throw new Exceptions\InvalidFormException($form);
+        }
+
         $bugs = Repos\VentilatorBugRepository::findByVentilatorId($form->id);
 
         return Converter\VentilatorConverter::convertToBugListData($bugs);

@@ -20,7 +20,7 @@ class VentilatorRepository
 
     private static function queryByOrganizationId(int $organization_id)
     {
-        return static::query()->where('ventilators.organization_id',$organization_id);
+        return static::query()->where('ventilators.organization_id', $organization_id);
     }
 
     private static function querySelectGeom()
@@ -41,6 +41,11 @@ class VentilatorRepository
     public static function existsById(int $id)
     {
         return static::query()->where('id', $id)->exists();
+    }
+
+    public static function existsByOrganizationIdAndId(int $organization_id, int $id)
+    {
+        return static::queryByOrganizationId($organization_id)->where('id', $id)->exists();
     }
 
     public static function findOneById(int $id)
@@ -319,5 +324,4 @@ class VentilatorRepository
             ->orderBy('ventilators.created_at', 'DESC')
             ->value('patient_code');
     }
-
 }
