@@ -155,10 +155,7 @@ Route::group(['middleware' => ['routetype:api']], function () {
             //機器観察研究データの更新
             Route::put('/ventilator_value/{id}', 'VentilatorValueController@update')->name('api.ventilator_value.update');
 
-            /**************
-             * bug_report * 
-             **************/
-            //不具合、改善要望登録
+            // Route::get('/test', 'TestController@index');
         });
     });
 });
