@@ -45,7 +45,6 @@ $paginatedList.on(
         utilFormRemoveValidationErrorMessage()
 
         var parameters = {};
-        parameters['id'] = $(this).data('id');
 
         var successCallback = function (data) {
             $form = $editModal.find('form[name="update"]').eq(0);

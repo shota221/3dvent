@@ -102,12 +102,12 @@ Route::group(['middleware' => ['routetype:admin']], function () {
             )->name('admin.org_admin_user.index');
 
             Route::get(
-                '/org_admin_user/search',
+                '/org_admin_users',
                 'OrganizationAdminUserController@asyncSearch'
             )->name('admin.org_admin_user.search');
 
             Route::get(
-                '/org_admin_user/detail',
+                '/org_admin_user/{id}',
                 'OrganizationAdminUserController@asyncGetDetail'
             )->name('admin.org_admin_user.detail');
 
@@ -227,12 +227,12 @@ Route::group(['middleware' => ['routetype:admin']], function () {
             )->name('admin.patient_value.index');
 
             Route::get(
-                '/patient_value/detail',
+                '/patient_value/{id}',
                 'PatientValueController@asyncGetDetail'
             )->name('admin.patient_value.detail');
 
             Route::get(
-                '/patient_value/search',
+                '/patient_values',
                 'PatientValueController@asyncSearch'
             )->name('admin.patient_value.search');
 

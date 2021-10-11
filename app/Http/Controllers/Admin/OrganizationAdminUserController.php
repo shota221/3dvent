@@ -46,9 +46,9 @@ class OrganizationAdminUserController extends Controller
         return view('list', compact('organization_admin_users'));
     }
 
-    public function asyncGetDetail(Request $request)
+    public function asyncGetDetail(int $id)
     {
-        $form = new Form\OrganizationAdminUserDetailForm($request->all());
+        $form = new Form\OrganizationAdminUserDetailForm(compact('id'));
 
         if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
         

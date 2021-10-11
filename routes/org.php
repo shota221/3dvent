@@ -79,12 +79,12 @@ Route::group(['middleware' => ['routetype:org']], function () {
             )->name('org.patient_value.index');
 
             Route::get(
-                '/patient_value/detail',
+                '/patient_value/{id}',
                 'PatientValueController@asyncGetDetail'
             )->name('org.patient_value.detail');
 
             Route::get(
-                '/patient_value/search',
+                '/patient_values',
                 'PatientValueController@asyncSearch'
             )->name('org.patient_value.search');
         });
@@ -113,12 +113,12 @@ Route::group(['middleware' => ['routetype:org']], function () {
             )->name('org.user.index');
 
             Route::get(
-                '/user/search',
+                '/users',
                 'UserController@asyncSearch'
             )->name('org.user.search');
 
             Route::get(
-                '/user/detail',
+                '/user/{id}',
                 'UserController@asyncGetDetail'
             )->name('org.user.detail');
         });

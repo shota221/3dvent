@@ -29,7 +29,7 @@
                 href="#" 
                 class="show-edit-modal" 
                 data-id="{{ $user->id }}"
-                data-url="{{ route('org.user.detail') }}"
+                data-url="{{ route('org.user.detail', ['id' => $user->id]) }}"
                 data-method="GET"
             >
                 {{ $user->name }}
