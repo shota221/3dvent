@@ -7,6 +7,7 @@ use App\Http\Forms\Org as Form;
 use App\Http\Response;
 use App\Repositories as Repos;
 use App\Services\Support\Converter;
+use App\Services\Support\CryptUtil;
 use App\Services\Support\DBUtil;
 use App\Services\Support\FileUtil;
 use App\Services\Support\Logic;
@@ -180,7 +181,7 @@ class UserService
         $deletable_row_limit = 50; // ページネーション表示件数
 
         if (count($ids) > $deletable_row_limit) {
-            $form->addError('id', 'validation.excessive_number_of_registrations');
+            $form->addError('ids', 'validation.excessive_number_of_registrations');
             throw new Exceptions\InvalidFormException($form);
         }
 
@@ -226,7 +227,7 @@ class UserService
         $file                             = $form->csv_file;
         $path                             = FileUtil::getUploadedFilePath($file);
         $row_count                        = count(file($path)) - 1; //ヘッダー行含めない 
-        $creatale_row_limit               = 100;  // 一括登録最件数 
+        $creatale_row_limit               = 100;  // 一括登録最大件数 
         $map_attribute_to_header          = config('user_csv.header');
         $map_attribute_to_validation_rule = config('user_csv.validation_rule');
         $dupulicate_confirmation_targets  = config('user_csv.dupulicate_confirmation_targets'); 
@@ -242,7 +243,7 @@ class UserService
                 $map_attribute_to_header,
                 $map_attribute_to_validation_rule, 
                 $dupulicate_confirmation_targets,
-                function ($rows) use ($form, $organization_id, $user_id) {
+                function ($rows, $finished_row_count) use ($form, $organization_id, $user_id) {
 
                     $names            = array_map(function ($row) { return $row['name']; }, $rows);
                     $emails           = array_map(function ($row) { return $row['email']; }, $rows);
@@ -252,8 +253,7 @@ class UserService
                     $exists = Repos\UserRepository::existsByOrganizationIdAndNames($organization_id, $names);
 
                     if ($exists) {
-                        // processCsvでキャッチ
-                        throw new Exceptions\LogicException('登録済みのユーザー名が存在しているため読み込みをキャンセルしました。');
+                        throw new Exceptions\InvalidCsvException('validation.csv_registered_user_name', [], $finished_row_count);
                     }
 
                     DBUtil::Transaction(
@@ -278,8 +278,8 @@ class UserService
                 }
             );
 
-        } catch (Exceptions\CsvLogicException $e) {
-            $error_message = $e->getMessage();
+        } catch (Exceptions\InvalidCsvException $e) {
+            $error_message = $e->getMessage() . $e->finishedRowCountMessage;
             $form->addError('csv_file', $error_message);
 
             throw new Exceptions\InvalidFormException($form);

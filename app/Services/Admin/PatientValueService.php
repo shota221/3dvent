@@ -171,7 +171,7 @@ class PatientValueService
 
         // ページネーションで表示する件数より多い場合は例外処理
         if (count($ids) > 50) {
-            $form->addError('id', 'validation.excessive_number_of_registrations');
+            $form->addError('ids', 'validation.excessive_number_of_registrations');
             throw new Exceptions\InvalidFormException($form);
         }
 
