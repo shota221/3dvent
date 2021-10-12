@@ -225,7 +225,7 @@ return [
         'adverse_event_flg' => '機器に関する有害事象',
         'adverse_event_contents' => '機器に関する有害事象の内容',
         'status_use' => '使用状況',
-        'status_use_other' => '使用状況そ（その他の場合）',
+        'status_use_other' => '使用状況（その他の場合）',
         'spo2' => '経皮酸素飽和度',
         'etco2' => '呼気終末二酸化炭素分圧',
         'start_using_at' => '使用開始日時',
@@ -243,6 +243,8 @@ return [
         'patient_observation_status'=>'患者観察研究ステータス',
         'code'=>'組織コード',
         'password_confirmation'=>'パスワード(確認用)',
+        'bug_name'=>'不具合名',
+        'request_improvement'=>'改善要望'
     ],
 
 ];
