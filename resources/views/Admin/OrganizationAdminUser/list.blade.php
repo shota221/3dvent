@@ -11,8 +11,7 @@
             <a  
                 href="#" 
                 class="show-edit-modal" 
-                data-id="{{ $organization_admin_user->id }}"
-                data-url="{{ route('admin.org_admin_user.detail') }}"
+                data-url="{{ route('admin.org_admin_user.detail', ['id' => $organization_admin_user->id]) }}"
                 data-method="GET"
             >
                 {{ $organization_admin_user->name }}

@@ -18,6 +18,11 @@ class UserRepository
         return static::query()->where('name', $name)->where('organization_id', $organization_id)->exists();
     }
 
+    public static function existsByOrganizationIdAndNames(int $organization_id, array $names)
+    {
+        return static::query()->where('organization_id', $organization_id)->whereIn('name', $names)->exists();
+    }
+
     public static function findOneById(int $id)
     {
         return static::query()->where('id', $id)->first();
@@ -213,5 +218,45 @@ class UserRepository
         }
 
         return $query;
+    }
+
+    public static function insertBulk(
+        int   $organization_id, 
+        int   $created_user_id,
+        array $names,
+        array $emails,
+        array $authorities,
+        array $hashed_passwords)
+    {
+        $count = count($names);
+
+        $placeholder = substr(str_repeat(',(?,?,?,?,?,?)', $count), 1);
+
+        $records = [];
+
+        for ($i = 0; $i < $count; $i++) {
+            $record = [
+                $organization_id, 
+                $created_user_id,
+                $names[$i],
+                $emails[$i],
+                $authorities[$i],
+                $hashed_passwords[$i],
+            ];
+
+            $records = array_merge($records, $record);
+
+            
+        }
+
+        $query = <<<EOM
+        INSERT INTO 
+            users
+            (organization_id,created_user_id,name,email,authority,password)
+        VALUES
+            {$placeholder}
+        EOM;
+
+        \DB::insert($query, $records);
     }
 }

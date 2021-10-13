@@ -182,30 +182,28 @@ class PatientValueService
         $deletable_row_limit = 50; // ページネーション表示件数
 
         if (count($ids) > $deletable_row_limit) {
-            throw new Exceptions\InvalidFormException('validation.excessive_number_of_registrations');
-        }
-        
-        // リクエストのidが組織齟齬の可能性があるためid再取得
-        $target_ids = Repos\PatientValueRepository::getIdsWithPatientAndOrganizationByOrganizationIdAndIds($organization_id, $ids);
-
-        if (is_null($target_ids)) {
-            $form->addError('id', 'validation.id_not_found');
+            $form->addError('id', 'validation.excessive_number_of_registrations');
             throw new Exceptions\InvalidFormException($form);
         }
+        
+        // 削除済み、または不正なリクエストidを考慮しid再取得
+        $target_ids = Repos\PatientValueRepository::getIdsWithPatientAndOrganizationByOrganizationIdAndIds($organization_id, $ids);
 
-        DBUtil::Transaction(
-            '患者観察研究データ論理削除、ヒストリーテーブル登録',
-            function () use ($target_ids, $user_id) {
-                // 論理削除
-                Repos\PatientValueRepository::logicalDeleteByIds($target_ids->all());
-
-                // ヒストリーテーブル登録
-                Repos\PatientValueHistoryRepository::insertBulk(
-                    $target_ids->all(),
-                    $user_id,
-                    Models\HistoryBaseModel::DELETE);
-            }
-        );
+        if (! empty($target_ids)) {
+            DBUtil::Transaction(
+                '患者観察研究データ論理削除、ヒストリーテーブル登録',
+                function () use ($target_ids, $user_id) {
+                    // 論理削除
+                    Repos\PatientValueRepository::logicalDeleteByIds($target_ids->all());
+    
+                    // ヒストリーテーブル登録
+                    Repos\PatientValueHistoryRepository::insertBulk(
+                        $target_ids->all(),
+                        $user_id,
+                        Models\HistoryBaseModel::DELETE);
+                }
+            );
+        }
 
         return new Response\SuccessJsonResult;
     }

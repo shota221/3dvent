@@ -39,9 +39,9 @@ class UserController extends Controller
         return view('list', compact('users'));
     } 
     
-    public function asyncGetDetail(Request $request)
+    public function asyncGetDetail(int $id)
     {   
-        $form = new Form\UserDetailForm($request->all());
+        $form = new Form\UserDetailForm(compact('id'));
 
         if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
 
@@ -91,7 +91,6 @@ class UserController extends Controller
 
         if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
         
-        // TODO 途中
         return $this->service->createByCsv($form, Auth::user()->organization_id, Auth::id());
     }
 }

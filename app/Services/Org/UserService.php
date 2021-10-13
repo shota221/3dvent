@@ -7,7 +7,9 @@ use App\Http\Forms\Org as Form;
 use App\Http\Response;
 use App\Repositories as Repos;
 use App\Services\Support\Converter;
+use App\Services\Support\CryptUtil;
 use App\Services\Support\DBUtil;
+use App\Services\Support\FileUtil;
 use App\Services\Support\Logic;
 use Illuminate\Support\Facades\Hash;
 
@@ -150,7 +152,7 @@ class UserService
             $form->email,
             $form->authority,
             $form->disabled_flg,
-            Hash::make($form->password));
+            CryptUtil::createHashedPassword($form->password));
 
         
         DBUtil::Transaction(
@@ -179,23 +181,21 @@ class UserService
         $deletable_row_limit = 50; // ページネーション表示件数
 
         if (count($ids) > $deletable_row_limit) {
-            throw new Exceptions\InvalidFormException('validation.excessive_number_of_registrations');
-        }
-
-        // リクエストのidが組織齟齬の可能性があるためid再取得
-        $target_ids = Repos\UserRepository::getIdsByOrganizationIdAndIds($organization_id, $ids);
-
-        if (is_null($target_ids)) {
-            $form->addError('id', 'validation.id_not_found');
+            $form->addError('ids', 'validation.excessive_number_of_registrations');
             throw new Exceptions\InvalidFormException($form);
         }
 
-        DBUtil::Transaction(
-            'ユーザー論理削除',
-            function () use ($target_ids, $user_id) {
-                Repos\UserRepository::logicalDeleteByIds($target_ids->all(), $user_id);
-            }
-        );
+        // 削除済み、または不正なリクエストidを考慮しid再取得
+        $target_ids = Repos\UserRepository::getIdsByOrganizationIdAndIds($organization_id, $ids);
+        
+        if (! empty($target_ids)) {
+            DBUtil::Transaction(
+                'ユーザー論理削除',
+                function () use ($target_ids, $user_id) {
+                     Repos\UserRepository::logicalDeleteByIds($target_ids->all(), $user_id);
+                }
+            );
+        }
 
         return new Response\SuccessJsonResult;
     }
@@ -207,18 +207,85 @@ class UserService
      */
     public function createUserCsvFormat()
     {
-        $header  = config('user_csv.header');
+        $header  = array_values(config('user_csv.header'));
         $example = config('user_csv.example');
 
         $this->createCsvFormat($header, $example);
     }
 
+    /**
+     * ユーザーアカウントcsv一括登録
+     *
+     * @param Form\UserCsvImportForm $form
+     * @return type
+     */
     public function createByCsv(
         Form\UserCsvImportForm $form, 
         int $organization_id, 
         int $user_id)
     {
-        // TODO 途中
+        $file                             = $form->csv_file;
+        $path                             = FileUtil::getUploadedFilePath($file);
+        $row_count                        = count(file($path)) - 1; //ヘッダー行含めない 
+        $creatale_row_limit               = 100;  // 一括登録最大件数 
+        $map_attribute_to_header          = config('user_csv.header');
+        $map_attribute_to_validation_rule = config('user_csv.validation_rule');
+        $dupulicate_confirmation_targets  = config('user_csv.dupulicate_confirmation_targets'); 
+
+        if ($row_count > $creatale_row_limit) {
+            $form->addError('csv_file', 'validation.excessive_number_of_registrations');
+            throw new Exceptions\InvalidFormException($form);
+        }
+
+        try {
+            $this->processCsv(
+                $path,
+                $map_attribute_to_header,
+                $map_attribute_to_validation_rule, 
+                $dupulicate_confirmation_targets,
+                function ($rows) use ($form, $organization_id, $user_id) {
+
+                    $names            = array_map(function ($row) { return $row['name']; }, $rows);
+                    $emails           = array_map(function ($row) { return $row['email']; }, $rows);
+                    $authorities      = array_map(function ($row) { return $row['authority']; }, $rows);
+                    $hashed_passwords = array_map(function ($row) { return CryptUtil::createHashedPassword($row['password']); }, $rows);
+
+                    $exists = Repos\UserRepository::existsByOrganizationIdAndNames($organization_id, $names);
+
+                    if ($exists) {
+                        throw new Exceptions\InvalidException('validation.csv_registered_user_name');
+                    }
+
+                    DBUtil::Transaction(
+                        'ユーザーアカウント登録',
+                        function () use (
+                            $organization_id, 
+                            $user_id,
+                            $names,
+                            $emails,
+                            $authorities,
+                            $hashed_passwords) {
+
+                            Repos\UserRepository::insertBulk(
+                                $organization_id, 
+                                $user_id,
+                                $names,
+                                $emails,
+                                $authorities,
+                                $hashed_passwords);
+                        }
+                    );
+                }
+            );
+
+        } catch (Exceptions\InvalidCsvException $e) {
+            $error_message = $e->getMessage() . $e->finishedRowCountMessage;
+            $form->addError('csv_file', $error_message);
+
+            throw new Exceptions\InvalidFormException($form);
+        }
+
+        return new Response\SuccessJsonResult;
     }
 
     private function buildUserSearchValues(Form\UserSearchForm $form)

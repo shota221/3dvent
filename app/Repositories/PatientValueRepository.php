@@ -245,7 +245,7 @@ class PatientValueRepository
         }
 
         // 組織ユーザーからの検索の場合$organization_idがセットされている。
-        if (is_null($organization_id)) {
+        if (! is_null($organization_id)) {
             if (isset($search_values['patient_code'])) {
                 $patient_code = $search_values['patient_code'];
                 $query->where('patients.patient_code', 'like', "%$patient_code%");

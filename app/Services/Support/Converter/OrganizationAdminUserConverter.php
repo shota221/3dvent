@@ -32,23 +32,6 @@ class OrganizationAdminUserConverter
         return $entity;
     }
 
-    public static function convertToUpdateEntity(
-        Models\User $entity,
-        int $updated_user_id,
-        string $name,
-        string $email,
-        int $disabled_flg,
-        string $hashed_password)
-    {
-        $entity->updated_user_id = $updated_user_id;
-        $entity->name = $name;
-        $entity->email = $email;
-        $entity->disabled_flg = $disabled_flg;
-        $entity->password = $hashed_password;
-
-        return $entity;
-    }
-
     public static function convertToOrganizationAdminUserData(Models\User $entity)
     {
         $data = new Response\Admin\OrganizationAdminUserData;
