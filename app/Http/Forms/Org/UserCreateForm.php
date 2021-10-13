@@ -5,6 +5,7 @@ namespace App\Http\Forms\Org;
 use App\Exceptions;
 use App\Http\Forms\BaseForm;
 use App\Http\Forms\ValidationRule as Rule;
+use App\Models;
 use App\Services\Support;
 
 
@@ -12,7 +13,7 @@ class UserCreateForm extends BaseForm
 {
     public $name;
     public $email;
-    public $authority;
+    public $authority_type;
     public $disabled_flg;
     public $password;
     public $password_confirmation;
@@ -21,9 +22,8 @@ class UserCreateForm extends BaseForm
     {
         return [
             'name'                  => 'required|' . Rule::VALUE_NAME,
-            // TODO 権限回り実装後に修正
-            'email'                 => 'nullable|required_if:authority,1|' . Rule::EMAIL,
-            'authority'             => 'required|' . Rule::VALUE_POSITIVE_INTEGER,
+            'email'                 => 'nullable|required_if:authority_type,' . Models\User::ORG_PRINCIPAL_INVESTIGATOR_TYPE . '|' . Rule::EMAIL,
+            'authority_type'        => 'required|' . Rule::ORG_AUTHORITY_TYPE,
             'disabled_flg'          => 'required|' .Rule::FLG_INTEGER,
             'password'              => 'required|confirmed|' . Rule::PASSWORD,
             'password_confirmation' => 'required',
@@ -32,10 +32,10 @@ class UserCreateForm extends BaseForm
 
     protected function bind($input)
     {
-        $this->name         = strval($input['name']);
-        $this->email        = isset($input['email']) ? strval($input['email']) : '';
-        $this->authority    = intval($input['authority']);
-        $this->disabled_flg = intval($input['disabled_flg']);
-        $this->password     = strval($input['password']);
+        $this->name           = strval($input['name']);
+        $this->email          = isset($input['email']) ? strval($input['email']) : '';
+        $this->authority_type = intval($input['authority_type']);
+        $this->disabled_flg   = intval($input['disabled_flg']);
+        $this->password       = strval($input['password']);
     }
 }

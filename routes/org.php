@@ -106,23 +106,6 @@ Route::group(['middleware' => ['routetype:org']], function () {
         /**
          * ユーザー管理
          */
-        Route::group(['middleware' => ['can:user_readable']], function () {
-            Route::get(
-                '/user',
-                'UserController@index'
-            )->name('org.user.index');
-
-            Route::get(
-                '/users',
-                'UserController@asyncSearch'
-            )->name('org.user.search');
-
-            Route::get(
-                '/user/{id}',
-                'UserController@asyncGetDetail'
-            )->name('org.user.detail');
-        });
-
         Route::group(['middleware' => ['can:user_editable']], function () {
             Route::put(
                 '/user',
@@ -148,6 +131,23 @@ Route::group(['middleware' => ['routetype:org']], function () {
                 '/user/csv',
                 'UserController@asyncImportUserCsvData'
             )->name('org.user.import_user_csv_data');
+        });
+        
+        Route::group(['middleware' => ['can:user_readable']], function () {
+            Route::get(
+                '/user',
+                'UserController@index'
+            )->name('org.user.index');
+
+            Route::get(
+                '/users',
+                'UserController@asyncSearch'
+            )->name('org.user.search');
+
+            Route::get(
+                '/user/{id}',
+                'UserController@asyncGetDetail'
+            )->name('org.user.detail');
         });
 
         /**

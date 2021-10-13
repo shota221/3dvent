@@ -197,9 +197,9 @@ class UserRepository
             $query->where('users.name', 'like', "%$name%");
         }
 
-        if (isset($search_values['authority'])){
-            $authority = $search_values['authority'];
-            $query->where('users.authority', $authority);
+        if (isset($search_values['authority_type'])){
+            $authority_type = $search_values['authority_type'];
+            $query->where('users.authority_type', $authority_type);
         }
 
         if (isset($search_values['registered_at_from'])){
@@ -225,12 +225,13 @@ class UserRepository
         int   $created_user_id,
         array $names,
         array $emails,
+        array $authority_types,
         array $authorities,
         array $hashed_passwords)
     {
         $count = count($names);
 
-        $placeholder = substr(str_repeat(',(?,?,?,?,?,?)', $count), 1);
+        $placeholder = substr(str_repeat(',(?,?,?,?,?,?,?)', $count), 1);
 
         $records = [];
 
@@ -240,6 +241,7 @@ class UserRepository
                 $created_user_id,
                 $names[$i],
                 $emails[$i],
+                $authority_types[$i],
                 $authorities[$i],
                 $hashed_passwords[$i],
             ];
@@ -252,7 +254,7 @@ class UserRepository
         $query = <<<EOM
         INSERT INTO 
             users
-            (organization_id,created_user_id,name,email,authority,password)
+            (organization_id,created_user_id,name,email,authority_type,authority,password)
         VALUES
             {$placeholder}
         EOM;

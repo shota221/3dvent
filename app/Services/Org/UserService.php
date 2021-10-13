@@ -113,7 +113,8 @@ class UserService
         $user->updated_user_id = $user_id;
         $user->name            = $form->name;
         $user->email           = $form->email;
-        $user->authority       = $form->authority;
+        $user->authority_type  = $form->authority_type;
+        $user->authority       = Converter\Type\Authority::convertToAuthority($form->authority_type);
         $user->disabled_flg    = $form->disabled_flg;
         if (! is_null($form->password)) $user->password = Hash::make($form->password);
         
@@ -150,7 +151,8 @@ class UserService
             $user_id,
             $form->name,
             $form->email,
-            $form->authority,
+            $form->authority_type,
+            Converter\Type\Authority::convertToAuthority($form->authority_type),
             $form->disabled_flg,
             CryptUtil::createHashedPassword($form->password));
 
@@ -247,7 +249,11 @@ class UserService
 
                     $names            = array_map(function ($row) { return $row['name']; }, $rows);
                     $emails           = array_map(function ($row) { return $row['email']; }, $rows);
-                    $authorities      = array_map(function ($row) { return $row['authority']; }, $rows);
+                    $authority_types  = array_map(function ($row) { return $row['authority_type']; }, $rows);
+                    $authorities      = array_map(function ($row) { 
+                        return Converter\Type\Authority::convertToAuthority($row['authority_type']); 
+                    }, $rows);
+                    
                     $hashed_passwords = array_map(function ($row) { return CryptUtil::createHashedPassword($row['password']); }, $rows);
 
                     $exists = Repos\UserRepository::existsByOrganizationIdAndNames($organization_id, $names);
@@ -263,6 +269,7 @@ class UserService
                             $user_id,
                             $names,
                             $emails,
+                            $authority_types,
                             $authorities,
                             $hashed_passwords) {
 
@@ -271,6 +278,7 @@ class UserService
                                 $user_id,
                                 $names,
                                 $emails,
+                                $authority_types,
                                 $authorities,
                                 $hashed_passwords);
                         }
@@ -292,13 +300,13 @@ class UserService
     {
         $search_values      = [];
         $name               = $form->name;
-        $authority          = $form->authority;
+        $authority_type     = $form->authority_type;
         $registered_at_from = $form->registered_at_from;
         $registered_at_to   = $form->registered_at_to;
         $disabled_flg       = $form->disabled_flg;
         
         if (isset($name))               $search_values['name']               = $name;
-        if (isset($authority))          $search_values['authority']          = $authority;
+        if (isset($authority_type))     $search_values['authority_type']     = $authority_type;
         if (isset($registered_at_from)) $search_values['registered_at_from'] = $registered_at_from;
         if (isset($registered_at_to))   $search_values['registered_at_to']   = $registered_at_to;
         if (isset($disabled_flg))       $search_values['disabled_flg']       = $disabled_flg;

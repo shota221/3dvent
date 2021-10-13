@@ -4,6 +4,7 @@ namespace App\Services\Support\Converter;
 
 use App\Http\Response as Response;
 use App\Models\User;
+use App\Services\Support\Converter;
 use App\Services\Support\DateUtil;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -14,6 +15,7 @@ class UserConverter
         int    $created_user_id,
         string $name,
         string $email,
+        int    $authority_type,
         int    $authority,
         int    $disabled_flg,
         string $hashed_password
@@ -24,6 +26,7 @@ class UserConverter
         $entity->created_user_id = $created_user_id;
         $entity->name            = $name;
         $entity->email           = $email;
+        $entity->authority_type  = $authority_type;
         $entity->authority       = $authority;
         $entity->disabled_flg    = $disabled_flg;
         $entity->password        = $hashed_password;
@@ -131,12 +134,13 @@ class UserConverter
     {
         $data = new Response\Org\UserData;
 
-        $data->id           = $entity->id;
-        $data->name         = $entity->name;
-        $data->authority    = $entity->authority;
-        $data->email        = $entity->email;
-        $data->created_at   = DateUtil::toDatetimeStr($entity->created_at);
-        $data->disabled_flg = $entity->disabled_flg;
+        $data->id             = $entity->id;
+        $data->name           = $entity->name;
+        $data->authority_name = Converter\Lang\Authority::convertToAuthorityName($entity->authority_type);
+        $data->authority_type = $entity->authority_type;
+        $data->email          = $entity->email;
+        $data->created_at     = DateUtil::toDatetimeStr($entity->created_at);
+        $data->disabled_flg   = $entity->disabled_flg;
 
         return $data;
     }

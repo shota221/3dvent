@@ -15,19 +15,15 @@
         </div>
                 
         {{--権限--}}
-        {{--TODO 権限周り実装後修正--}}
         <div class="col-sm-4">
-            <label for="authority">@lang('messages.user_authority')</label>
-            <select class="form-control form-control-sm select" name="authority">
+            <label for="authority_type">@lang('messages.user_authority')</label>
+            <select class="form-control form-control-sm select" name="authority_type">
                 <option></option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
+                <option value="6">@lang('messages.principal_investigator')</option>
+                <option value="7">@lang('messages.other_investigator')</option>
+                <option value="8">@lang('messages.crc')</option>
+                <option value="9">@lang('messages.nurse')</option>
+                <option value="10">@lang('messages.clinical_engineer')</option>
             </select>
         </div>
 
