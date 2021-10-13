@@ -151,7 +151,8 @@ trait CsvLogic
     }
 
     /** 
-     * CSV処理
+     *　TODO　チャンク処理時、処理が中断しないように修正
+     *  CSV処理
      *
      * @param  string      $fileUrl           [description]
      * @param  array|null  $map_attribute_to_header            [key1 => header_name1, key2 => header_name2,...]
