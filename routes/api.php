@@ -101,6 +101,12 @@ Route::group(['middleware' => ['routetype:api']], function () {
         //測定時機器関連値登録
         Route::post('/ventilator_value/no_auth', 'VentilatorValueController@create')->name('api.ventilator_value.create.no_auth');
 
+        /*******
+         * bug *
+         *******/
+        //不具合報告
+        Route::post('/bug_report/no_auth', 'BugReportController@create')->name('api.bug_report.create.no_auth');
+
 
         /*************************
          * X-User-Token必須ルート *
@@ -155,7 +161,12 @@ Route::group(['middleware' => ['routetype:api']], function () {
             //機器観察研究データの更新
             Route::put('/ventilator_value/{id}', 'VentilatorValueController@update')->name('api.ventilator_value.update');
 
-            // Route::get('/test', 'TestController@index');
+
+            /*******
+             * bug *
+             *******/
+            //不具合報告
+            Route::post('/bug_report', 'BugReportController@create')->name('api.bug_report.create');
         });
     });
 });

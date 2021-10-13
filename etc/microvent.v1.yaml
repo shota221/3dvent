@@ -2817,11 +2817,151 @@ paths:
       description: 関連値を登録する。
       tags:
         - ventilator_value
+  /bug_report:
+    post:
+      summary: ''
+      operationId: post-bug-report
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      ventilator_id:
+                        type: number
+                    required:
+                      - ventilator_id
+                required:
+                  - result
+                x-examples:
+                  example-1:
+                    result:
+                      ventilator_id: 1
+              examples:
+                example-1:
+                  value:
+                    result:
+                      ventilator_id: 1
+      description: バグ報告用API
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: X-App-Key
+          description: アプリキー
+        - schema:
+            type: string
+          in: header
+          name: Accept
+          description: application/json
+        - schema:
+            type: string
+          in: header
+          name: X-User-Token
+          description: ユーザー識別用トークン
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              x-examples:
+                example-1:
+                  ventilator_id: 1
+                  bug_name: string
+                  request_improvement: string
+              properties:
+                ventilator_id:
+                  type: number
+                bug_name:
+                  type: string
+                request_improvement:
+                  type: string
+              required:
+                - ventilator_id
+                - bug_name
+      tags:
+        - bug
+    parameters: []
+  /bug_report/no_auth:
+    post:
+      summary: ''
+      operationId: post-bug-report-no_auth
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      ventilator_id:
+                        type: number
+                    required:
+                      - ventilator_id
+                required:
+                  - result
+                x-examples:
+                  example-1:
+                    result:
+                      ventilator_id: 1
+              examples:
+                example-1:
+                  value:
+                    result:
+                      ventilator_id: 1
+      description: バグ報告用API
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: X-App-Key
+          description: アプリキー
+        - schema:
+            type: string
+          in: header
+          name: Accept
+          description: application/json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              x-examples:
+                example-1:
+                  ventilator_id: 1
+                  bug_name: string
+                  request_improvement: string
+              properties:
+                ventilator_id:
+                  type: number
+                bug_name:
+                  type: string
+                request_improvement:
+                  type: string
+              required:
+                - ventilator_id
+                - bug_name
+      tags:
+        - bug
+    parameters: []
 components:
   schemas: {}
 tags:
   - name: appkey
   - name: auth
+  - name: bug
   - name: calculate
   - name: patient
   - name: user
