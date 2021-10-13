@@ -7,6 +7,7 @@ use App\Http\Forms\Admin as Form;
 use App\Http\Response;
 use App\Repositories as Repos;
 use App\Services\Support\Converter;
+use App\Services\Support\CryptUtil;
 use App\Services\Support\DBUtil;
 use Illuminate\Support\Facades\Hash;
 

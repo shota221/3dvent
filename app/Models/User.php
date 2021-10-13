@@ -22,6 +22,21 @@ class User extends Authenticatable
         ROLE_ADMIN = 1
     ;
 
+    const 
+        // admin用権限
+        ADMIN_PROJETCT_MANAGER_AUTHOIRTY       = 16383, // プロジェクト運営者
+        ADMIN_DATA_MANAGER_AUTHOIRTY           = 16383, // データマネージャー
+        ADMIN_DATA_MONITOR_AUTHOIRTY           = 4915,  // データモニター
+        ADMIN_PRINCIPAL_INVESTIGATOR_AUTHOIRTY = 4403,  // 医師（全体研究代表者）
+        ADMIN_COMPANY_AUTHOIRTY                = 4099,  // 企業管理ユーザー
+        // org用権限
+        ORG_PRINCIPAL_INVESTIGATOR_AUTHOIRTY   = 32767,  // 医師（施設内研究代表者）
+        ORG_OTHRE_INVESTIGATOR_AUTHOIRTY       = 1365,   // 医師（その他）
+        ORG_CRC_AUTHOIRTY                      = 16383,  // CRC
+        ORG_PATIENT_AUTHOIRTY                  = 1365,   // 看護師
+        ORG_CLINICAL_ENGINEER_AUTHOIRTY        = 1365    // 臨床工学士
+    ;
+
     /**
      * The attributes that are mass assignable.
      *
