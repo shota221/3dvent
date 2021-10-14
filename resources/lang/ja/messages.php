@@ -106,6 +106,7 @@ return [
     'organization_management' => '組織管理',
     'organization_name' => '組織名',
     'organization_registration_form' => '組織登録申請フォーム',
+    'organization_setting_management' => '組織設定管理',
     'organization_user' => '組織ユーザー',
     'organization_user_page' => '組織ユーザーページ',
     'other' => 'その他',

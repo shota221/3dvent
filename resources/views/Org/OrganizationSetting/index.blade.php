@@ -22,7 +22,7 @@ JS
         <div id = "alert-message"></div>
         <div class="card card-default color-palette-box">
             <div class="card-header">
-                <h3>@lang('messages.setting')</h3>
+                <h3>@lang('messages.organization_setting_management')</h3>
             </div>
             <div class="card-body">
                 <form id="setting-form" name="async-page-update">
