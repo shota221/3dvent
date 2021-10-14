@@ -50,4 +50,52 @@ class AuthController extends Controller
 
         return redirect(route_path('org.auth'));
     }
+    
+    /**
+     * パスワードリセット申請受付
+     * 
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function asyncApplyPasswordReset(Request $request)
+    {
+        $form = new Form\UserApplyPasswordResetForm($request->all());
+
+        if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
+
+        $response = $this->service->applyPasswordReset($form, $this->user_auth_key);
+
+        return $response;
+    }
+
+    /**
+     * パスワードリセット画面
+     * 
+     * @return [type] [description]
+     */
+    public function indexPasswordReset($token)
+    {
+        if (Auth::guard($this->user_auth_key)->check()) {
+            return redirect(route_path('org.home'));
+        }
+
+        return view('password_reset', compact('token'));
+    }
+
+    /**
+     * パスワードリセット
+     * 
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function asyncResetPassword(Request $request)
+    {
+        $form = new Form\UserResetPasswordForm($request->all());
+
+        if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
+
+        $response = $this->service->resetPassword($form, $this->user_auth_key);
+
+        return $response;
+    }
 }

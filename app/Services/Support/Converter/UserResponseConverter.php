@@ -25,4 +25,13 @@ class UserResponseConverter
 
         return $res;
     }
+
+    public static function convertToPasswordResetResult()
+    {
+        $res = new Response\UserPasswordResetResult;
+
+        $res->home_url = guess_route_path('home');
+
+        return $res;
+    }
 }

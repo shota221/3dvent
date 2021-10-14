@@ -70,7 +70,11 @@
 
         <div class="row">
             <div class="col-7">
-                <span class="btn btn-default btn-block apply-password-reset">@lang('messages.forgot_password')</span>
+                <span 
+                    id="show-password-reset-modal"
+                    class="btn btn-default btn-block apply-password-reset">
+                    @lang('messages.forgot_password')
+                </span>
             </div>
             <div class="col-5">
                 <button 
@@ -90,4 +94,38 @@
             <span class="spinner"></span>
         </div>
     </div>
+@stop
+
+@section('modal')
+    {{-- PASSWORD RESET APPLY MODAL --}}
+
+    @component('components.modal', [
+        'id'    => 'apply-password-reset-modal',
+        'form'  => [ 
+            'method' => 'POST', 
+            'action' => guess_route_path('auth.async.apply_password_reset') ,
+            'name'   => 'apply-password-reset'
+        ],
+    ])
+        @slot('title')
+            {{-- パスワード再設定メール送信 --}}
+            @lang('messages.send_password_reset_email')
+        @endslot
+
+        @slot('content')
+            <tr>
+                {{-- 登録メールアドレス --}}
+                <th width="160px">@lang('messages.registered_email')
+                    <span class="required">(@lang('messages.contact_organization_admin_user'))</span>
+                </th>
+                <td>
+                    <input 
+                        class="form-control" 
+                        type="text" 
+                        name="email" 
+                        placeholder="xxx@yyy.com"/>
+                </td>
+            </tr>   
+        @endslot
+    @endcomponent
 @stop

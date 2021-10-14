@@ -40,6 +40,25 @@ Route::group(['middleware' => ['routetype:admin']], function () {
         'AuthController@logout'
     )->name('admin.logout');
 
+    // パスワード変更申請
+    Route::post(
+        'auth/password_reset_application',
+        'AuthController@asyncApplyPasswordReset'
+    )->name('admin.auth.async.apply_password_reset');
+
+    // パスワード変更画面
+    Route::get(
+        'auth/password_reset/{token}',
+        'AuthController@indexPasswordReset'
+    )->name('admin.auth.password_reset');
+
+    // パスワード変更
+    Route::put(
+        'auth/password_reset',
+        'AuthController@asyncResetPassword'
+    )->name('admin.auth.async.reset_password');
+    
+
     // TODO　パスワードリセット
 
     Route::group(['middleware' => ['auth:admin']], function () {

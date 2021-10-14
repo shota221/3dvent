@@ -40,7 +40,23 @@ Route::group(['middleware' => ['routetype:org']], function () {
         'AuthController@logout'
     )->name('org.logout');
 
-    // TODO　パスワードリセット
+    // パスワード変更申請
+    Route::post(
+        'auth/password_reset_application',
+        'AuthController@asyncApplyPasswordReset'
+    )->name('org.auth.async.apply_password_reset');
+
+    // パスワード変更画面
+    Route::get(
+        'auth/password_reset/{token}',
+        'AuthController@indexPasswordReset'
+    )->name('org.auth.password_reset');
+
+    // パスワード変更
+    Route::put(
+        'auth/password_reset',
+        'AuthController@asyncResetPassword'
+    )->name('org.auth.async.reset_password');
 
     Route::group(['middleware' => ['auth:org']], function () {
 

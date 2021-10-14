@@ -6,7 +6,7 @@
 ************************/ 
 --}}
 @section('css')
-    <link rel="stylesheet" href="{{ mix('css/admin/app.css') }}">
+    <link rel="stylesheet" href="{{ mix('css/org/app.css') }}">
 @stop
 
 {{-- 
@@ -15,7 +15,7 @@
 ************************/ 
 --}}
 @section('js')
-    <script src="{{ mix('js/admin/app.js') }}"></script>
+    <script src="{{ mix('js/org/app.js') }}"></script>
     <script src="/js/password_reset.js"></script>
 
 @stop
@@ -26,7 +26,7 @@
 ************************/ 
 --}}
 @section('title')
-@lang('messages.project_administrator_page')
+@lang('messages.organization_user_page')
 @stop
 {{-- 
 /***********************
@@ -34,7 +34,7 @@
 ************************/ 
 --}}
 @section('logo')
-@lang('messages.project_administrator_page')
+@lang('messages.organization_user_page')
 @stop
 
 {{-- 
@@ -117,7 +117,7 @@
                                 id="async-password-reset"
                                 type="submit" 
                                 class="btn btn-block btn-primary btn-submit"
-                                data-url="{{ route_path('admin.auth.async.reset_password') }}"
+                                data-url="{{ route_path('org.auth.async.reset_password') }}"
                                 data-method="PUT"
                             >
                                 {{-- 再設定 --}}

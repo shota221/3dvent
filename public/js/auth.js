@@ -1,6 +1,11 @@
 const 
-    $nameInput     = $('[name=name]'),
-    $passwordInput = $('[name=password]');
+    $applyPasswordResetModal = $('#apply-password-reset-modal'),
+    $applyPasswordResetModalEmailInput = $applyPasswordResetModal.find('[name=email]'),
+    $asyncApplyPasswordReset           = $('#async-apply-password-reset'),
+    $cancelModal                       = $('button.modal-cancel'),
+    $nameInput                         = $('[name=name]'),
+    $passwordInput                     = $('[name=password]'),
+    $showPasswordResetModal            = $('#show-password-reset-modal');
 
 // ログイン
 $("#login").on(
@@ -23,3 +28,49 @@ $("#login").on(
         return false;
     }
 )
+
+// パスワード再設定メール送信モーダル表示
+$showPasswordResetModal.on(
+    'click',
+    function () {
+        utilFormRemoveValidationErrorMessage()
+
+        $form = $applyPasswordResetModal.find('form[name="apply-password-reset"]').eq(0);
+        $form[0].reset();
+        
+        $applyPasswordResetModal.modal();
+
+        return false;
+    }
+);
+
+// モーダル非表示
+$cancelModal.on(
+    'click',
+    function () {
+        $(this).closest('.modal').modal('hide');
+
+        return false;
+    }
+);
+
+// パスワード再設定メール送信
+$asyncApplyPasswordReset.on(
+    'click',
+    function () {
+        
+        var parameters = {};
+        parameters['email'] = $applyPasswordResetModalEmailInput.val();
+
+        var successCallback = function (data) {
+            alert(i18n('message.accept_password_reset_application'));
+            $applyPasswordResetModal.modal('hide');
+        }
+
+        var $element = $(this);
+
+        utilAsyncExecuteAjax($element, parameters, true, successCallback);
+
+        return false;
+    }
+);
