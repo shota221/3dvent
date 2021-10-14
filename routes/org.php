@@ -46,6 +46,18 @@ Route::group(['middleware' => ['routetype:org']], function () {
 
         // 認証が必要なルート
 
+        // プロフィール取得
+        Route::get(
+            '/account/async/data_profile',
+            'AccountController@asyncDataProfile'
+        )->name('org.account.async.data_profile');
+
+        // プロフィール更新
+        Route::put(
+            '/account/async/profile',
+            'AccountController@asyncUpdateProfile'
+        )->name('org.account.async.profile');
+
         // ダッシュボード
         Route::get(
             '/',

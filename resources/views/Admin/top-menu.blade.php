@@ -23,8 +23,11 @@
       </p>
       <p>
         <span 
+          id = "show-profile-edit-modal"
           class="btn btn-sm btn-success edit-profile ladda-button" 
-          data-style="zoom-in">
+          data-style="zoom-in" 
+          data-url="{{ guess_route_path('account.async.data_profile') }}"
+          data-method="GET">
           <span class="glyphicon glyphicon-pencil"></span>&nbsp;@lang('messages.edit_profile')
         </span>
       </p>

@@ -9,6 +9,6 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        return redirect(guess_route_path('user.index'));
+        return redirect(guess_route_path('ventilator.index'));
     }
 }
