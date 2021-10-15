@@ -11,7 +11,7 @@ use App\Services\Support;
 class UserSearchForm extends BaseForm
 {
     public $name;
-    public $authority_type;
+    public $org_authority_type;
     public $registered_at_from;
     public $registerd_at_to;
     public $disabled_flg;
@@ -21,7 +21,7 @@ class UserSearchForm extends BaseForm
     {
         return [
             'name'               => 'nullable|' . Rule::VALUE_NAME,
-            'authority_type'     => 'nullable|' . Rule::ORG_AUTHORITY_TYPE,
+            'org_authority_type' => 'nullable|' . Rule::ORG_AUTHORITY_TYPE,
             'registered_at_from' => 'nullable|date',
             'registered_at_to'   => 'nullable|date',
             'disabled_flg'       => 'nullable|' . Rule::FLG_INTEGER,
@@ -35,8 +35,8 @@ class UserSearchForm extends BaseForm
         ? strval($input['name']) 
         : null;
 
-        $this->authority_type = isset($input['authority_type']) 
-        ? intval($input['authority_type']) 
+        $this->org_authority_type = isset($input['org_authority_type']) 
+        ? intval($input['org_authority_type']) 
         : null;
         
         $this->registered_at_from = isset($input['registered_at_from']) 

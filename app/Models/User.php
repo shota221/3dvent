@@ -24,17 +24,17 @@ class User extends Authenticatable
 
     const 
         // admin用権限
-        ADMIN_PROJETCT_MANAGER_AUTHOIRTY       = 16383, // プロジェクト運営者
-        ADMIN_DATA_MANAGER_AUTHOIRTY           = 16383, // データマネージャー
-        ADMIN_DATA_MONITOR_AUTHOIRTY           = 4915,  // データモニター
-        ADMIN_PRINCIPAL_INVESTIGATOR_AUTHOIRTY = 4403,  // 医師（全体研究代表者）
-        ADMIN_COMPANY_AUTHOIRTY                = 4099,  // 企業管理ユーザー
+        ADMIN_PROJETCT_MANAGER_AUTHORITY       = 16383, // プロジェクト運営者
+        ADMIN_DATA_MANAGER_AUTHORITY           = 16383, // データマネージャー
+        ADMIN_DATA_MONITOR_AUTHORITY           = 4915,  // データモニター
+        ADMIN_PRINCIPAL_INVESTIGATOR_AUTHORITY = 4403,  // 医師（全体研究代表者）
+        ADMIN_COMPANY_AUTHORITY                = 4099,  // 企業管理ユーザー
         // org用権限
-        ORG_PRINCIPAL_INVESTIGATOR_AUTHOIRTY   = 32767,  // 医師（施設内研究代表者）
-        ORG_OTHRE_INVESTIGATOR_AUTHOIRTY       = 1365,   // 医師（その他）
-        ORG_CRC_AUTHOIRTY                      = 16383,  // CRC
-        ORG_NURSE_AUTHOIRTY                    = 1365,   // 看護師
-        ORG_CLINICAL_ENGINEER_AUTHOIRTY        = 1365    // 臨床工学士
+        ORG_PRINCIPAL_INVESTIGATOR_AUTHORITY   = 32767,  // 医師（施設内研究代表者）
+        ORG_OTHRE_INVESTIGATOR_AUTHORITY       = 1365,   // 医師（その他）
+        ORG_CRC_AUTHORITY                      = 16383,  // CRC
+        ORG_NURSE_AUTHORITY                    = 1365,   // 看護師
+        ORG_CLINICAL_ENGINEER_AUTHORITY        = 1365    // 臨床工学士
     ;
    
     const 
@@ -45,11 +45,11 @@ class User extends Authenticatable
         ADMIN_PRINCIPAL_INVESTIGATOR_TYPE = 4, // 医師（全体研究代表者）
         ADMIN_COMPANY_TYPE                = 5, // 企業管理ユーザー
         // org用権限タイプ
-        ORG_PRINCIPAL_INVESTIGATOR_TYPE   = 6, // 医師（施設内研究代表者）
-        ORG_OTHRE_INVESTIGATOR_TYPE       = 7, // 医師（その他）
-        ORG_CRC_TYPE                      = 8, // CRC
-        ORG_NURSE_TYPE                    = 9, // 看護師
-        ORG_CLINICAL_ENGINEER_TYPE        = 10 // 臨床工学士
+        ORG_PRINCIPAL_INVESTIGATOR_TYPE   = 1, // 医師（施設内研究代表者）
+        ORG_OTHRE_INVESTIGATOR_TYPE       = 2, // 医師（その他）
+        ORG_CRC_TYPE                      = 3, // CRC
+        ORG_NURSE_TYPE                    = 4, // 看護師
+        ORG_CLINICAL_ENGINEER_TYPE        = 5 // 臨床工学士
     ;
 
     /**

@@ -45,7 +45,7 @@ class UserAccountService
             throw new Exceptions\InvalidFormException($form);
         }
 
-        $is_principal_investigator = $user->authority_type === Models\User::ORG_PRINCIPAL_INVESTIGATOR_TYPE;
+        $is_principal_investigator = $user->org_authority_type === Models\User::ORG_PRINCIPAL_INVESTIGATOR_TYPE;
         
         // 組織管理アカウントの場合はメアド必須
         if($is_principal_investigator && empty($form->email)) {

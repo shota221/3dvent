@@ -42,7 +42,7 @@ class ValidationRule
 
         STATUS_USE_INTEGER = 'integer|min:1|max:4',
 
-        ORG_AUTHORITY_TYPE = 'integer|min:6|max:10',
+        ORG_AUTHORITY_TYPE = 'integer|min:1|max:5',
 
         CSV_FILE = 'max:1024|file|mimes:csv,txt'; //　laravelだとtxtの指定が必要
 

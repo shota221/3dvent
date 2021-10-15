@@ -110,12 +110,12 @@ class UserService
         }
      
         // 更新データのセット
-        $user->updated_user_id = $user_id;
-        $user->name            = $form->name;
-        $user->email           = $form->email;
-        $user->authority_type  = $form->authority_type;
-        $user->authority       = Converter\Type\Authority::convertToAuthority($form->authority_type);
-        $user->disabled_flg    = $form->disabled_flg;
+        $user->updated_user_id     = $user_id;
+        $user->name                = $form->name;
+        $user->email               = $form->email;
+        $user->org_authority_type  = $form->org_authority_type;
+        $user->authority           = Converter\Type\Authority::convertToOrgAuthority($form->org_authority_type);
+        $user->disabled_flg        = $form->disabled_flg;
         if (! is_null($form->password)) $user->password = Hash::make($form->password);
         
         DBUtil::Transaction(
@@ -151,8 +151,8 @@ class UserService
             $user_id,
             $form->name,
             $form->email,
-            $form->authority_type,
-            Converter\Type\Authority::convertToAuthority($form->authority_type),
+            $form->org_authority_type,
+            Converter\Type\Authority::convertToOrgAuthority($form->org_authority_type),
             $form->disabled_flg,
             CryptUtil::createHashedPassword($form->password));
 
@@ -247,11 +247,11 @@ class UserService
                 $dupulicate_confirmation_targets,
                 function ($rows) use ($form, $organization_id, $user_id) {
 
-                    $names            = array_map(function ($row) { return $row['name']; }, $rows);
-                    $emails           = array_map(function ($row) { return $row['email']; }, $rows);
-                    $authority_types  = array_map(function ($row) { return $row['authority_type']; }, $rows);
-                    $authorities      = array_map(function ($row) { 
-                        return Converter\Type\Authority::convertToAuthority($row['authority_type']); 
+                    $names                = array_map(function ($row) { return $row['name']; }, $rows);
+                    $emails               = array_map(function ($row) { return $row['email']; }, $rows);
+                    $org_authority_types  = array_map(function ($row) { return $row['org_authority_type']; }, $rows);
+                    $authorities          = array_map(function ($row) { 
+                        return Converter\Type\Authority::convertToOrgAuthority($row['org_authority_type']); 
                     }, $rows);
                     
                     $hashed_passwords = array_map(function ($row) { return CryptUtil::createHashedPassword($row['password']); }, $rows);
@@ -269,7 +269,7 @@ class UserService
                             $user_id,
                             $names,
                             $emails,
-                            $authority_types,
+                            $org_authority_types,
                             $authorities,
                             $hashed_passwords) {
 
@@ -278,7 +278,7 @@ class UserService
                                 $user_id,
                                 $names,
                                 $emails,
-                                $authority_types,
+                                $org_authority_types,
                                 $authorities,
                                 $hashed_passwords);
                         }
@@ -300,13 +300,13 @@ class UserService
     {
         $search_values      = [];
         $name               = $form->name;
-        $authority_type     = $form->authority_type;
+        $org_authority_type = $form->org_authority_type;
         $registered_at_from = $form->registered_at_from;
         $registered_at_to   = $form->registered_at_to;
         $disabled_flg       = $form->disabled_flg;
         
         if (isset($name))               $search_values['name']               = $name;
-        if (isset($authority_type))     $search_values['authority_type']     = $authority_type;
+        if (isset($org_authority_type)) $search_values['org_authority_type'] = $org_authority_type;
         if (isset($registered_at_from)) $search_values['registered_at_from'] = $registered_at_from;
         if (isset($registered_at_to))   $search_values['registered_at_to']   = $registered_at_to;
         if (isset($disabled_flg))       $search_values['disabled_flg']       = $disabled_flg;

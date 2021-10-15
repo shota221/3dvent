@@ -9,7 +9,7 @@ const
     $csvImportModalFileInput                = $csvImportModal.find('[name=csv_file]'),
     $clearSearchForm                        = $('#clear-search-form'),
     $editModal                              = $('#edit-modal'),
-    $editModalAuthorityInput                = $editModal.find('[name=authority_type]'),
+    $editModalAuthorityInput                = $editModal.find('[name=org_authority_type]'),
     $editModalDisabledFlgInput              = $editModal.find('[name=disabled_flg]'),
     $editModalEmailInput                    = $editModal.find('[name=email]'),
     $editModalIdInput                       = $editModal.find('[name=id]'),
@@ -21,7 +21,7 @@ const
     $datepicker                             = $('input.form-control.date'),
     $paginatedList                          = $('#paginated-list'),
     $registerModal                          = $('#register-modal'),
-    $registerModalAuthorityInput            = $registerModal.find('[name=authority_type]'),
+    $registerModalAuthorityInput            = $registerModal.find('[name=org_authority_type]'),
     $registerModalDisabledFlgInput          = $registerModal.find('[name=disabled_flg]'),
     $registerModalEmailInput                = $registerModal.find('[name=email]'),
     $registerModalNameInput                 = $registerModal.find('[name=name]'),
@@ -29,7 +29,7 @@ const
     $registerModalPasswordConfirmationInput = $registerModal.find('[name=password_confirmation]'),
     $searchForm                             = $('#async-search-form'),
     $searchFormAllInput                     = $searchForm.find('input'),
-    $searchFormAuthorityInput               = $searchForm.find('[name=authority_type]'),
+    $searchFormAuthorityInput               = $searchForm.find('[name=org_authority_type]'),
     $searchFormNameInput                    = $searchForm.find('[name=name]'),
     $searchFormRegisteredAtFromInput        = $searchForm.find('[name=registered_at_from]'),    
     $searchFormRegisteredAtToInput          = $searchForm.find('[name=registered_at_to]'),
@@ -137,7 +137,7 @@ $asyncUpdate.on(
         parameters['id']                    = $editModalIdInput.val()
         parameters['name']                  = $editModalNameInput.val();
         parameters['email']                 = $editModalEmailInput.val();
-        parameters['authority_type']        = $editModalAuthorityInput.val()
+        parameters['org_authority_type']    = $editModalAuthorityInput.val()
         parameters['disabled_flg']          = $editModal.find('[name=disabled_flg]:checked').val();
         parameters['password']              = $editModalPasswordInput.val();
         parameters['password_confirmation'] = $editModalPasswordConfirmationInput.val();
@@ -181,7 +181,7 @@ $asyncCreate.on(
         var parameters = {};
         parameters['name']                  = $registerModalNameInput.val();
         parameters['email']                 = $registerModalEmailInput.val();
-        parameters['authority_type']        = $registerModalAuthorityInput.val()
+        parameters['org_authority_type']    = $registerModalAuthorityInput.val()
         parameters['disabled_flg']          = $registerModal.find('[name=disabled_flg]:checked').val();
         parameters['password']              = $registerModalPasswordInput.val();
         parameters['password_confirmation'] = $registerModalPasswordConfirmationInput.val();
@@ -339,7 +339,7 @@ function buildSearchParameters($form) {
     var parameters = {};
 
     parameters['name']               = $searchFormNameInput.val()
-    parameters['authority_type']     = $searchFormAuthorityInput.val()
+    parameters['org_authority_type'] = $searchFormAuthorityInput.val()
     parameters['registered_at_from'] = $searchFormRegisteredAtFromInput.val()
     parameters['registered_at_to']   = $searchFormRegisteredAtToInput.val()
     

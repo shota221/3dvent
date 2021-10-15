@@ -8,8 +8,8 @@ class UserData extends SuccessJsonResult
 {
     public $id;
     public $name;
-    public $authority_name;
-    public $authority_type;
+    public $org_authority_name;
+    public $org_authority_type;
     public $email;
     public $created_at;
     public $disabled_flg;

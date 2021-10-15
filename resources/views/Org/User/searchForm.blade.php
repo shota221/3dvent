@@ -16,14 +16,14 @@
                 
         {{--権限--}}
         <div class="col-sm-4">
-            <label for="authority_type">@lang('messages.user_authority')</label>
-            <select class="form-control form-control-sm select" name="authority_type">
+            <label for="org_authority_type">@lang('messages.user_authority')</label>
+            <select class="form-control form-control-sm select" name="org_authority_type">
                 <option></option>
-                <option value="6">@lang('messages.principal_investigator')</option>
-                <option value="7">@lang('messages.other_investigator')</option>
-                <option value="8">@lang('messages.crc')</option>
-                <option value="9">@lang('messages.nurse')</option>
-                <option value="10">@lang('messages.clinical_engineer')</option>
+                <option value="1">@lang('messages.principal_investigator')</option>
+                <option value="2">@lang('messages.other_investigator')</option>
+                <option value="3">@lang('messages.crc')</option>
+                <option value="4">@lang('messages.nurse')</option>
+                <option value="5">@lang('messages.clinical_engineer')</option>
             </select>
         </div>
 

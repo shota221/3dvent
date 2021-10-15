@@ -6,9 +6,10 @@ use App\Models;
 
 class Authority 
 {
-    public static function convertToAuthorityName(int $authority_type)
+    // convertToAuthorityName
+    public static function convertToAdminAuthorityName(int $admin_authority_type)
     {
-        switch ($authority_type) {
+        switch ($admin_authority_type) {
             case Models\User::ADMIN_PROJETCT_MANAGER_TYPE:
                 return __('messages.project_manager');
                 break;
@@ -24,6 +25,14 @@ class Authority
             case Models\User::ADMIN_COMPANY_TYPE:
                 return __('messages.company');
                 break;
+            default:
+                return '';
+        }
+    }
+
+    public static function convertToOrgAuthorityName(int $org_authority_type)
+    {
+        switch ($org_authority_type) {
             case Models\User::ORG_PRINCIPAL_INVESTIGATOR_TYPE:
                 return __('messages.principal_investigator');
                 break;

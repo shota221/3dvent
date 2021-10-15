@@ -13,7 +13,7 @@ class UserUpdateForm extends BaseForm
     public $id;
     public $name;
     public $email;
-    public $authority_type;
+    public $org_authority_type;
     public $disabled_flg;
     public $password_changed;
     public $password;
@@ -24,8 +24,8 @@ class UserUpdateForm extends BaseForm
         return [
             'id'                    => 'required|' . Rule::VALUE_POSITIVE_INTEGER,
             'name'                  => 'required|' . Rule::VALUE_NAME,
-            'email'                 => 'nullable|required_if:authority_type,' . Models\User::ORG_PRINCIPAL_INVESTIGATOR_TYPE . '|' . Rule::EMAIL,
-            'authority_type'        => 'required|' . Rule::ORG_AUTHORITY_TYPE,
+            'email'                 => 'nullable|required_if:org_authority_type,' . Models\User::ORG_PRINCIPAL_INVESTIGATOR_TYPE . '|' . Rule::EMAIL,
+            'org_authority_type'    => 'required|' . Rule::ORG_AUTHORITY_TYPE,
             'disabled_flg'          => 'required|' . Rule::FLG_INTEGER,
             'password_changed'      => 'required|' . Rule::VALUE_BOOLEAN,
             'password'              => 'nullable|' . Rule::PASSWORD,
@@ -35,12 +35,12 @@ class UserUpdateForm extends BaseForm
 
     protected function bind($input)
     {
-        $this->id               = intval($input['id']);
-        $this->name             = strval($input['name']);
-        $this->email            = isset($input['email']) ? strval($input['email']) : '';
-        $this->authority_type   = intval($input['authority_type']);
-        $this->disabled_flg     = intval($input['disabled_flg']);
-        $this->password_changed = boolval($input['password_changed']);
+        $this->id                 = intval($input['id']);
+        $this->name               = strval($input['name']);
+        $this->email              = isset($input['email']) ? strval($input['email']) : '';
+        $this->org_authority_type = intval($input['org_authority_type']);
+        $this->disabled_flg       = intval($input['disabled_flg']);
+        $this->password_changed   = boolval($input['password_changed']);
         
         if ($this->password_changed) {
             $existsPassword = isset($input['password']) && ! empty($input['password']); 

@@ -6,17 +6,17 @@ return [
     'filename' => 'user_format.csv',
 
     'header' => [
-        'name'           => 'ユーザー名',
-        'email'          => 'メールアドレス(医師（研究代表者)の場合は必須',
-        'authority_type' => '権限（医師（研究代表者）:6, 医師（その他）:7,CRC:8,看護師:9,臨床工学士:10）',
-        'password'       => 'パスワード',
+        'name'               => 'ユーザー名',
+        'email'              => 'メールアドレス(医師（研究代表者)の場合は必須',
+        'org_authority_type' => '権限（医師（研究代表者）:1, 医師（その他）:2,CRC:3,看護師:4,臨床工学士:5）',
+        'password'           => 'パスワード',
     ],
 
     'validation_rule' => [
-        'name'           => 'required|' . Rule::VALUE_NAME,
-        'email'          => 'nullable|required_if:authority_type,' . Models\User::ORG_PRINCIPAL_INVESTIGATOR_TYPE . '|' . Rule::EMAIL,
-        'authority_type' => 'required|' . Rule::ORG_AUTHORITY_TYPE,
-        'password'       => 'required|' . Rule::PASSWORD,
+        'name'               => 'required|' . Rule::VALUE_NAME,
+        'email'              => 'nullable|required_if:org_authority_type,' . Models\User::ORG_PRINCIPAL_INVESTIGATOR_TYPE . '|' . Rule::EMAIL,
+        'org_authority_type' => 'required|' . Rule::ORG_AUTHORITY_TYPE,
+        'password'           => 'required|' . Rule::PASSWORD,
     ],
 
     'dupulicate_confirmation_targets' => [
@@ -26,7 +26,7 @@ return [
     'example' => [
         'suzuki',
         'suzuki@sample.com',
-        '6',
+        '1',
         'password',
     ],
 ];

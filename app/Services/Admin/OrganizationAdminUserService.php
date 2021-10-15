@@ -38,7 +38,7 @@ class OrganizationAdminUserService
             $http_query = '?' . http_build_query($search_values);
         }
   
-        $authority = Models\User::ORG_PRINCIPAL_INVESTIGATOR_AUTHOIRTY;
+        $authority = Models\User::ORG_PRINCIPAL_INVESTIGATOR_AUTHORITY;
 
         $organization_admin_users = Repos\UserRepository::searchByAuthority(
             $search_values,
@@ -67,7 +67,7 @@ class OrganizationAdminUserService
      */
     public function getOneOrganizationAdminUserData(Form\OrganizationAdminUserDetailForm $form)
     {
-        $authority = Models\User::ORG_PRINCIPAL_INVESTIGATOR_AUTHOIRTY;
+        $authority = Models\User::ORG_PRINCIPAL_INVESTIGATOR_AUTHORITY;
 
         $organization_admin_user = Repos\UserRepository::findOneWithOrganizationByAuthorityAndId($authority, $form->id);
 
@@ -105,7 +105,7 @@ class OrganizationAdminUserService
             throw new Exceptions\InvalidFormException($form);
         }
 
-        $authority = Models\User::ORG_PRINCIPAL_INVESTIGATOR_AUTHOIRTY;
+        $authority = Models\User::ORG_PRINCIPAL_INVESTIGATOR_AUTHORITY;
 
         $organization_admin_user = Repos\UserRepository::findOneByAuthorityAndId($authority, $form->id);
 
@@ -155,7 +155,8 @@ class OrganizationAdminUserService
             throw new Exceptions\InvalidFormException($form);
         }
         
-        $authority = Models\User::ORG_PRINCIPAL_INVESTIGATOR_AUTHOIRTY;
+        $authority          = Models\User::ORG_PRINCIPAL_INVESTIGATOR_AUTHORITY;
+        $org_authority_type = Models\User::ORG_PRINCIPAL_INVESTIGATOR_TYPE;
 
         $entity = Converter\OrganizationAdminUserConverter::convertToEntity(
             $authority,
@@ -163,6 +164,7 @@ class OrganizationAdminUserService
             $organization->id,
             $form->name,
             $form->email,
+            $org_authority_type,
             CryptUtil::createHashedPassword($form->password),
             $form->disabled_flg
         );

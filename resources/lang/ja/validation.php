@@ -194,7 +194,7 @@ return [
     */
 
     'values' => [
-        'authority_type' => [
+        'org_authority_type' => [
             // 6 => 医師(施設内代表者)
             Models\User::ORG_PRINCIPAL_INVESTIGATOR_TYPE => __('messages.principal_investigator'),
         ]
@@ -218,7 +218,8 @@ return [
 
     'attributes' => [
         'authority' => '権限',
-        'authority_type' => "権限",
+        'admin_authority_type' => "権限",
+        'org_authority_type' => "権限",
         'height' => '身長',
         'weight' => '体重',
         'gender' => '性別',
