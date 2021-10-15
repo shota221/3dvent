@@ -73,6 +73,16 @@
                     <table class="table dl-table">
                         <tbody>
                             <tr>
+                                {{-- 組織コード --}}
+                                <th>@lang('messages.organization_code')<span class="required"></span></th>
+                                <td height="50px">
+                                    <input 
+                                        type="text" 
+                                        class="form-control" 
+                                        name="code" />
+                                </td>
+                            </tr>
+                            <tr>
                                 {{-- 登録メールアドレス --}}
                                 <th>@lang('messages.registered_email')<span class="required"></span></th>
                                 <td height="50px">
@@ -80,8 +90,7 @@
                                         type="text" 
                                         class="form-control" 
                                         name="email" 
-                                        placeholder="xxx@yyy.com" 
-                                        data-validation-types='["required"]' />
+                                        placeholder="xxx@yyy.com" />
                                 </td>
                             </tr>
                             <tr>
@@ -92,8 +101,7 @@
                                         type="password" 
                                         class="form-control" 
                                         name="password" 
-                                        placeholder="@lang('messages.password_placeholder')" 
-                                        data-validation-types='["required"]' />
+                                        placeholder="@lang('messages.password_placeholder')" />
                                 </td>
                             </tr>
                             <tr>
@@ -103,8 +111,7 @@
                                     <input 
                                         type="password" 
                                         class="form-control" 
-                                        name="password-confirmation" 
-                                        data-validation-types='["required"]' />
+                                        name="password-confirmation" />
                                 </td>
                             </tr>
                         </tbody>

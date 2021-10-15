@@ -1,5 +1,6 @@
 const 
     $applyPasswordResetModal = $('#apply-password-reset-modal'),
+    $applyPasswordResetModalCodeInput  = $applyPasswordResetModal.find('[name=code]'),
     $applyPasswordResetModalEmailInput = $applyPasswordResetModal.find('[name=email]'),
     $asyncApplyPasswordReset           = $('#async-apply-password-reset'),
     $cancelModal                       = $('button.modal-cancel'),
@@ -60,6 +61,7 @@ $asyncApplyPasswordReset.on(
     function () {
         
         var parameters = {};
+        parameters['code']  = $applyPasswordResetModalCodeInput.val();
         parameters['email'] = $applyPasswordResetModalEmailInput.val();
 
         var successCallback = function (data) {

@@ -150,7 +150,7 @@ class UserAuthService
         $password_reset_token_provider = Password::broker($user_auth_key);
 
         // メールアドレスチェック
-        $user = Repos\UserRepository::findOneByEmail($form->email);
+        $user = Repos\UserRepository::findOneWithOrganizationByEmailAndCode($form->email, $form->code);
 
         if (is_null($user)) {
             $form->addError('email', 'auth.not_exists_registered_email');
@@ -199,7 +199,7 @@ class UserAuthService
         $password_reset_token_provider = Password::broker($user_auth_key);
 
         // メールアドレスチェック
-        $user = Repos\UserRepository::findOneByEmail($form->email);
+        $user = Repos\UserRepository::findOneWithOrganizationByEmailAndCode($form->email, $form->code);
 
         if (is_null($user)) {
             $form->addError('email', 'auth.not_exists_registered_email');

@@ -114,6 +114,14 @@
 
         @slot('content')
             <tr>
+                {{-- 組織コード --}}
+                <th width="160px">@lang('messages.organization_code')<span class="required"></span></th>
+                <td>
+                    <input 
+                        class="form-control mb-2" 
+                        type="text" 
+                        name="code"/>
+                </td>
                 {{-- 登録メールアドレス --}}
                 <th width="160px">@lang('messages.registered_email')<span class="required"></span></th>
                 <td>

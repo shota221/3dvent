@@ -33,9 +33,10 @@ class UserRepository
         return static::query()->where(User::TOKEN_COLUMN_NAME, $token)->first();
     }
 
-    public static function findOneByEmail($email)
+    public static function findOneWithOrganizationByEmailAndCode(string $email, string $code)
     {
-        return static::query()->where('email', $email)->first();
+        $query = self::joinOrganization(static::query());
+        return $query->where('users.email', $email)->where('organizations.code', $code)->first();
     }
 
     public static function findOneByOrganizationIdAndName(int $organization_id, string $name)
