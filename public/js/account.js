@@ -22,7 +22,6 @@ $showProfileEditModal.on(
 
             $form = $profileEditModal.find('form[name="profile-update"]').eq(0);
 
-            console.log(data);
             utilFormInputParameters($form, data['result']);
             
             $profileEditModal.modal();
@@ -62,8 +61,9 @@ $asyncProfileUpdate.on(
         }
         
         var successCallback = function (data) {
-            window.location.reload();
             $profileEditModal.modal('hide');
+            alert(i18n('message.registered_reload'));
+            window.location.reload();
         }
 
         var $element = $(this);
