@@ -56,7 +56,7 @@ function utilAsyncExecuteAjax($featureElement, parameters, withMessages, success
                     utilFormDisplayValidationErrorMessage(result.errors);
                 }
                 //badRequestCallbackが定義されていれば実行
-                badRequestCallback || badRequestCallback(error);
+                badRequestCallback && badRequestCallback(error);
                 break;
             case 401:
             case 403:
@@ -84,8 +84,7 @@ function utilAsyncHideIndicator() {
 }
 
 function utilAsyncAlertMessage(message) {
-    var asyncAlertMessageElement = '<div class="alert alert-success alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>' + message + '</strong> </div>'
-    $(asyncAlertMessageElement).insertAfter('#alert-message');
+    alert(message)
 }
 
 function utilAsyncRemoveAlertMessage() {
