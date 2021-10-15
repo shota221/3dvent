@@ -1,5 +1,7 @@
 <?php
 
+use App\Models;
+
 return [
 
     /*
@@ -185,6 +187,21 @@ return [
     ],
 
     /*
+    |--------------------------------------------------------------------------
+    | Custom Validation Values
+    | カスタム検証値
+    |--------------------------------------------------------------------------
+    */
+
+    'values' => [
+        'authority_type' => [
+            // 6 => 医師(施設内代表者)
+            Models\User::ORG_PRINCIPAL_INVESTIGATOR_TYPE => __('messages.principal_investigator'),
+        ]
+    ],
+
+
+    /*
       |--------------------------------------------------------------------------
       | Custom Validation Attributes
       | カスタム検証属性
@@ -201,6 +218,7 @@ return [
 
     'attributes' => [
         'authority' => '権限',
+        'authority_type' => "権限",
         'height' => '身長',
         'weight' => '体重',
         'gender' => '性別',
@@ -245,7 +263,7 @@ return [
         'code'=>'組織コード',
         'password_confirmation'=>'パスワード(確認用)',
         'bug_name'=>'不具合名',
-        'request_improvement'=>'改善要望'
+        'request_improvement'=>'改善要望',
     ],
 
 ];
