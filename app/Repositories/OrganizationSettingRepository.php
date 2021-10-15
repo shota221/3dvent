@@ -13,6 +13,6 @@ class OrganizationSettingRepository
 
     public static function findOneByOrganizationId(int $organization_id)
     {
-        return static::query()->where('id', $organization_id)->first();
+        return static::query()->where('organization_id', $organization_id)->first();
     }
 }
