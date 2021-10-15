@@ -13,7 +13,7 @@ return [
     'back' => '戻る',
     'bulk_delete' => '選択項目を削除',
     // c
-    'campany'=> '企業管理ユーザー',
+    'company'=> '企業管理ユーザー',
     'change_login_password' => 'ログインパスワード変更',
     'change_password' => 'パスワードを変更する',
     'clear_search_form' => '検索条件をクリア',

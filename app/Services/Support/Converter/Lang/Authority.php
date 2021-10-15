@@ -22,7 +22,7 @@ class Authority
                 return __('messages.overall_principal_investigator');
                 break;
             case Models\User::ADMIN_COMPANY_TYPE:
-                return __('messages.campany');
+                return __('messages.company');
                 break;
             case Models\User::ORG_PRINCIPAL_INVESTIGATOR_TYPE:
                 return __('messages.principal_investigator');
