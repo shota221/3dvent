@@ -18,9 +18,19 @@ class UserRepository
         return static::query()->where('name', $name)->where('organization_id', $organization_id)->exists();
     }
 
+    public static function existsByEmailAndOrganizationId(string $email, int $organization_id)
+    {
+        return static::query()->where('email', $email)->where('organization_id', $organization_id)->exists();
+    }
+
     public static function existsByOrganizationIdAndNames(int $organization_id, array $names)
     {
         return static::query()->where('organization_id', $organization_id)->whereIn('name', $names)->exists();
+    }
+
+    public static function existsByOrganizationIdAndEmails(int $organization_id, array $emails)
+    {
+        return static::query()->where('organization_id', $organization_id)->whereIn('email', $emails)->exists();
     }
 
     public static function findOneById(int $id)
@@ -42,6 +52,11 @@ class UserRepository
     public static function findOneByOrganizationIdAndName(int $organization_id, string $name)
     {
         return static::query()->where('organization_id', $organization_id)->where('name', $name)->first();
+    }
+
+    public static function findOneByOrganizationIdAndEmail(int $organization_id, string $email)
+    {
+        return static::query()->where('organization_id', $organization_id)->where('email', $email)->first();
     }
 
     public static function findOneByOrganizationIdAndId(int $organization_id, int $id)

@@ -21,6 +21,7 @@ return [
 
     'dupulicate_confirmation_targets' => [
         'name',
+        'email',
     ],
 
     'example' => [

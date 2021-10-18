@@ -39,9 +39,9 @@ class UserAccountService
     {
         $registered_user = Repos\UserRepository::findOneByOrganizationIdAndName($user->organization_id, $form->name);
 
-        $is_duplicated = ! is_null($registered_user) && $registered_user->id !== $user->id;
+        $is_duplicated_name = ! is_null($registered_user) && $registered_user->id !== $user->id;
 
-        if ($is_duplicated) {
+        if ($is_duplicated_name) {
             $form->addError('name', 'validation.duplicated_registration');
             throw new Exceptions\InvalidFormException($form);
         }
@@ -52,6 +52,18 @@ class UserAccountService
         if($is_principal_investigator && empty($form->email)) {
             $form->addError('email', 'validation.required_for_principal_investigator');
             throw new Exceptions\InvalidFormException($form);
+        } 
+
+        // メールの入力がある場合は組織内重複チェック
+        if (! empty($form->email)) {
+            $registered_user = Repos\UserRepository::findOneByOrganizationIdAndEmail($user->organization_id, $form->email);
+
+            $is_duplicated_email = ! is_null($registered_user) && $registered_user->id !== $user->id;
+    
+            if ($is_duplicated_email) {
+                $form->addError('email', 'validation.duplicated_registration');
+                throw new Exceptions\InvalidFormException($form);
+            }
         }
 
         $entity = $user;

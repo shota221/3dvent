@@ -99,14 +99,26 @@ class UserService
             throw new Exceptions\InvalidFormException($form);
         }
 
-        // 組織内ユーザー名重複確認用ユーザーデータ格納
-        $confirmation_user = Repos\UserRepository::findOnebyOrganizationIdAndName($organization_id, $form->name);
+        // 組織内ユーザー名重複チェック
+        $registered_user = Repos\UserRepository::findOnebyOrganizationIdAndName($organization_id, $form->name);
 
-        $is_duplicated = ! is_null($confirmation_user) && $confirmation_user->id !== $user->id;
+        $is_duplicated_name = ! is_null($registered_user) && $registered_user->id !== $user->id;
 
-        if ($is_duplicated) {
+        if ($is_duplicated_name) {
             $form->addError('name', 'validation.duplicated_registration');
             throw new Exceptions\InvalidFormException($form);
+        }
+
+        // メールの入力がある場合は組織内重複チェック
+        if (! empty($form->email)) {
+            $registered_user = Repos\UserRepository::findOneByOrganizationIdAndEmail($user->organization_id, $form->email);
+
+            $is_duplicated_email = ! is_null($registered_user) && $registered_user->id !== $user->id;
+    
+            if ($is_duplicated_email) {
+                $form->addError('email', 'validation.duplicated_registration');
+                throw new Exceptions\InvalidFormException($form);
+            }
         }
      
         // 更新データのセット
@@ -139,11 +151,20 @@ class UserService
         int $organization_id, 
         int $user_id)
     {
-        $exists = Repos\UserRepository::existsByNameAndOrganizationId($form->name, $organization_id);
+        $exists_name = Repos\UserRepository::existsByNameAndOrganizationId($form->name, $organization_id);
 
-        if ($exists) {
+        if ($exists_name) {
             $form->addError('name', 'validation.duplicated_registration');
             throw new Exceptions\InvalidFormException($form);
+        }
+   
+        if (! empty($form->email)) {
+            $exists_email = Repos\UserRepository::existsByEmailAndOrganizationId($form->email, $organization_id);
+    
+            if ($exists_email) {
+                $form->addError('email', 'validation.duplicated_registration');
+                throw new Exceptions\InvalidFormException($form);
+            }
         }
 
         $entity = Converter\UserConverter::convertToEntity(
@@ -256,10 +277,18 @@ class UserService
                     
                     $hashed_passwords = array_map(function ($row) { return CryptUtil::createHashedPassword($row['password']); }, $rows);
 
-                    $exists = Repos\UserRepository::existsByOrganizationIdAndNames($organization_id, $names);
+                    $exists_name = Repos\UserRepository::existsByOrganizationIdAndNames($organization_id, $names);
 
-                    if ($exists) {
+                    if ($exists_name) {
                         throw new Exceptions\InvalidException('validation.csv_registered_user_name');
+                    }
+
+                    if (! empty($emails)) {
+                        $exists_email = Repos\UserRepository::existsByOrganizationIdAndEmails($organization_id, $emails);
+                
+                        if ($exists_email) {
+                            throw new Exceptions\InvalidException('validation.csv_registered_user_email');
+                        }
                     }
 
                     DBUtil::Transaction(
