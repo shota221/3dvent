@@ -33,6 +33,12 @@ class UserRepository
         return static::query()->where(User::TOKEN_COLUMN_NAME, $token)->first();
     }
 
+    public static function findOneWithOrganizationByEmailAndCode(string $email, string $code)
+    {
+        $query = self::joinOrganization(static::query());
+        return $query->where('users.email', $email)->where('organizations.code', $code)->first();
+    }
+
     public static function findOneByOrganizationIdAndName(int $organization_id, string $name)
     {
         return static::query()->where('organization_id', $organization_id)->where('name', $name)->first();
@@ -197,9 +203,9 @@ class UserRepository
             $query->where('users.name', 'like', "%$name%");
         }
 
-        if (isset($search_values['authority'])){
-            $authority = $search_values['authority'];
-            $query->where('users.authority', $authority);
+        if (isset($search_values['org_authority_type'])){
+            $org_authority_type = $search_values['org_authority_type'];
+            $query->where('users.org_authority_type', $org_authority_type);
         }
 
         if (isset($search_values['registered_at_from'])){
@@ -225,12 +231,13 @@ class UserRepository
         int   $created_user_id,
         array $names,
         array $emails,
+        array $org_authority_types,
         array $authorities,
         array $hashed_passwords)
     {
         $count = count($names);
 
-        $placeholder = substr(str_repeat(',(?,?,?,?,?,?)', $count), 1);
+        $placeholder = substr(str_repeat(',(?,?,?,?,?,?,?)', $count), 1);
 
         $records = [];
 
@@ -240,6 +247,7 @@ class UserRepository
                 $created_user_id,
                 $names[$i],
                 $emails[$i],
+                $org_authority_types[$i],
                 $authorities[$i],
                 $hashed_passwords[$i],
             ];
@@ -252,7 +260,7 @@ class UserRepository
         $query = <<<EOM
         INSERT INTO 
             users
-            (organization_id,created_user_id,name,email,authority,password)
+            (organization_id,created_user_id,name,email,org_authority_type,authority,password)
         VALUES
             {$placeholder}
         EOM;

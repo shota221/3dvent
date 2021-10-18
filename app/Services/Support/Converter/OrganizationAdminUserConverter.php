@@ -11,23 +11,25 @@ use Illuminate\Pagination\LengthAwarePaginator;
 class OrganizationAdminUserConverter
 {
     public static function convertToEntity(
-        int $authority,
-        int $created_user_id,
-        int $organization_id,
+        int    $authority,
+        int    $created_user_id,
+        int    $organization_id,
         string $name,
         string $email,
+        int    $org_authority_type,
         string $hashed_password,
-        int $disabled_flg)
+        int    $disabled_flg)
     {
         $entity = new Models\User;
         
-        $entity->authority = $authority;
-        $entity->created_user_id = $created_user_id;
-        $entity->organization_id = $organization_id;
-        $entity->name = $name;
-        $entity->email = $email;
-        $entity->password = $hashed_password;
-        $entity->disabled_flg = $disabled_flg;
+        $entity->authority          = $authority;
+        $entity->created_user_id    = $created_user_id;
+        $entity->organization_id    = $organization_id;
+        $entity->name               = $name;
+        $entity->email              = $email;
+        $entity->org_authority_type = $org_authority_type;
+        $entity->password           = $hashed_password;
+        $entity->disabled_flg       = $disabled_flg;
 
         return $entity;
     }

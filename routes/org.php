@@ -40,11 +40,39 @@ Route::group(['middleware' => ['routetype:org']], function () {
         'AuthController@logout'
     )->name('org.logout');
 
-    // TODO　パスワードリセット
+    // パスワード変更申請
+    Route::post(
+        'auth/password_reset_application',
+        'AuthController@asyncApplyPasswordReset'
+    )->name('org.auth.async.apply_password_reset');
+
+    // パスワード変更画面
+    Route::get(
+        'auth/password_reset/{token}',
+        'AuthController@indexPasswordReset'
+    )->name('org.auth.password_reset');
+
+    // パスワード変更
+    Route::put(
+        'auth/password_reset',
+        'AuthController@asyncResetPassword'
+    )->name('org.auth.async.reset_password');
 
     Route::group(['middleware' => ['auth:org']], function () {
 
         // 認証が必要なルート
+
+        // プロフィール取得
+        Route::get(
+            '/account/async/data_profile',
+            'AccountController@asyncDataProfile'
+        )->name('org.account.async.data_profile');
+
+        // プロフィール更新
+        Route::put(
+            '/account/async/profile',
+            'AccountController@asyncUpdateProfile'
+        )->name('org.account.async.profile');
 
         // ダッシュボード
         Route::get(
@@ -106,23 +134,6 @@ Route::group(['middleware' => ['routetype:org']], function () {
         /**
          * ユーザー管理
          */
-        Route::group(['middleware' => ['can:user_readable']], function () {
-            Route::get(
-                '/user',
-                'UserController@index'
-            )->name('org.user.index');
-
-            Route::get(
-                '/users',
-                'UserController@asyncSearch'
-            )->name('org.user.search');
-
-            Route::get(
-                '/user/{id}',
-                'UserController@asyncGetDetail'
-            )->name('org.user.detail');
-        });
-
         Route::group(['middleware' => ['can:user_editable']], function () {
             Route::put(
                 '/user',
@@ -148,6 +159,23 @@ Route::group(['middleware' => ['routetype:org']], function () {
                 '/user/csv',
                 'UserController@asyncImportUserCsvData'
             )->name('org.user.import_user_csv_data');
+        });
+        
+        Route::group(['middleware' => ['can:user_readable']], function () {
+            Route::get(
+                '/user',
+                'UserController@index'
+            )->name('org.user.index');
+
+            Route::get(
+                '/users',
+                'UserController@asyncSearch'
+            )->name('org.user.search');
+
+            Route::get(
+                '/user/{id}',
+                'UserController@asyncGetDetail'
+            )->name('org.user.detail');
         });
 
         /**

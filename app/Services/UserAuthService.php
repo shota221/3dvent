@@ -138,4 +138,103 @@ class UserAuthService
         
         return $token;
     }
+
+    /**
+     * パスワードリセット申請処理
+     * 
+     * @param  Form\UserApplyPasswordResetForm $form [description]
+     * @return [type]                          [description]
+     */
+    public function applyPasswordReset(Form\UserApplyPasswordResetForm $form, string $user_auth_key)
+    {
+        $password_reset_token_provider = Password::broker($user_auth_key);
+
+        // メールアドレスチェック
+        $user = Repos\UserRepository::findOneWithOrganizationByEmailAndCode($form->email, $form->code);
+
+        if (is_null($user)) {
+            $form->addError('email', 'auth.not_exists_registered_email');
+            throw new Exceptions\InvalidFormException($form);
+        }
+
+        // トークン生成
+        $token = $password_reset_token_provider->createToken($user);
+
+        $to = $user->email;
+
+        $subject = '【PRSFRM】パスワード再設定';
+
+        // リセットURLメール通知
+        Mail::send(
+            [
+                'text' => 'Mail.password_reset'
+            ], 
+            [
+                'expire' => config('auth.passwords.' . $user_auth_key . '.expire'),
+                'url'    => guess_route('auth.password_reset', ['token' => $token])
+            ], 
+            function(\Illuminate\Mail\Message $message) use($to, $subject) {
+                $message->to($to);
+
+                $message->subject($subject);
+
+                $message->from(
+                    'noreply@' . app()->getTld(), 
+                    config('app.name') . ' notification'
+                );
+            }
+        );
+
+        return new Response\SuccessJsonResult();
+    }
+
+    /**
+     * パスワードリセット
+     * 
+     * @param  Form\UserResetPasswordForm $form [description]
+     * @return [type]                           [description]
+     */
+    public function resetPassword(Form\UserResetPasswordForm $form, string $user_auth_key)
+    {
+        $password_reset_token_provider = Password::broker($user_auth_key);
+
+        // メールアドレスチェック
+        $user = Repos\UserRepository::findOneWithOrganizationByEmailAndCode($form->email, $form->code);
+
+        if (is_null($user)) {
+            $form->addError('email', 'auth.not_exists_registered_email');
+            throw new Exceptions\InvalidFormException($form);
+        }
+
+        // トークンチェック
+        $exists_token = $password_reset_token_provider->tokenExists($user, $form->token);
+
+        if (! $exists_token) {
+            $form->addError('email', 'auth.invalid_reset_password_token');
+            throw new Exceptions\InvalidFormException($form);
+        } 
+
+        // パスワード更新
+
+        $entity = $user;
+
+        $entity->password = Hash::make($form->password);
+
+        $entity->setRememberToken(Str::random(60));
+
+        Support\DBUtil::Transaction(
+            'ユーザーパスワードパスワード更新',
+            function() use($entity, $password_reset_token_provider) {
+                //     
+                $entity->save();
+
+                // リセットトークンレコード削除
+                $password_reset_token_provider->deleteToken($entity);
+            });
+
+        // ログイン
+        Auth::guard($user_auth_key)->login($entity);
+
+        return Converter\UserResponseConverter::convertToPasswordResetResult();
+    }
 }

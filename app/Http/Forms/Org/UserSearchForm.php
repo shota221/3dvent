@@ -5,12 +5,13 @@ namespace App\Http\Forms\Org;
 use App\Exceptions;
 use App\Http\Forms\BaseForm;
 use App\Http\Forms\ValidationRule as Rule;
+use App\Models;
 use App\Services\Support;
 
 class UserSearchForm extends BaseForm
 {
     public $name;
-    public $authority;
+    public $org_authority_type;
     public $registered_at_from;
     public $registerd_at_to;
     public $disabled_flg;
@@ -20,7 +21,7 @@ class UserSearchForm extends BaseForm
     {
         return [
             'name'               => 'nullable|' . Rule::VALUE_NAME,
-            'authority'          => 'nullable|' . Rule::VALUE_POSITIVE_INTEGER,
+            'org_authority_type' => 'nullable|' . Rule::ORG_AUTHORITY_TYPE,
             'registered_at_from' => 'nullable|date',
             'registered_at_to'   => 'nullable|date',
             'disabled_flg'       => 'nullable|' . Rule::FLG_INTEGER,
@@ -34,8 +35,8 @@ class UserSearchForm extends BaseForm
         ? strval($input['name']) 
         : null;
 
-        $this->authority = isset($input['authority']) 
-        ? intval($input['authority']) 
+        $this->org_authority_type = isset($input['org_authority_type']) 
+        ? intval($input['org_authority_type']) 
         : null;
         
         $this->registered_at_from = isset($input['registered_at_from']) 

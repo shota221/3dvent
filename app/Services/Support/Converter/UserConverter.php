@@ -4,6 +4,7 @@ namespace App\Services\Support\Converter;
 
 use App\Http\Response as Response;
 use App\Models\User;
+use App\Services\Support\Converter;
 use App\Services\Support\DateUtil;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -14,23 +15,25 @@ class UserConverter
         int    $created_user_id,
         string $name,
         string $email,
+        int    $org_authority_type,
         int    $authority,
         int    $disabled_flg,
         string $hashed_password
     ) {
         $entity = new User;
         
-        $entity->organization_id = $organization_id;
-        $entity->created_user_id = $created_user_id;
-        $entity->name            = $name;
-        $entity->email           = $email;
-        $entity->authority       = $authority;
-        $entity->disabled_flg    = $disabled_flg;
-        $entity->password        = $hashed_password;
+        $entity->organization_id     = $organization_id;
+        $entity->created_user_id     = $created_user_id;
+        $entity->name                = $name;
+        $entity->email               = $email;
+        $entity->org_authority_type  = $org_authority_type;
+        $entity->authority           = $authority;
+        $entity->disabled_flg        = $disabled_flg;
+        $entity->password            = $hashed_password;
 
         return $entity;
     }
-
+    
     public static function convertToLoginUserResult(int $id, string $api_token = null, string $user_name = null, string $organization_name = null)
     {
         $res = new Response\Api\UserResult;
@@ -131,12 +134,13 @@ class UserConverter
     {
         $data = new Response\Org\UserData;
 
-        $data->id           = $entity->id;
-        $data->name         = $entity->name;
-        $data->authority    = $entity->authority;
-        $data->email        = $entity->email;
-        $data->created_at   = DateUtil::toDatetimeStr($entity->created_at);
-        $data->disabled_flg = $entity->disabled_flg;
+        $data->id                 = $entity->id;
+        $data->name               = $entity->name;
+        $data->org_authority_name = Converter\Lang\Authority::convertToOrgAuthorityName($entity->org_authority_type);
+        $data->org_authority_type = $entity->org_authority_type;
+        $data->email              = $entity->email;
+        $data->created_at         = DateUtil::toDatetimeStr($entity->created_at);
+        $data->disabled_flg       = $entity->disabled_flg;
 
         return $data;
     }

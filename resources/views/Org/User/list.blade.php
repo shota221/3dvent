@@ -34,7 +34,7 @@
                 {{ $user->name }}
             </a>
         </td>
-        <td>{{ $user->authority }}</td>
+        <td>{{ $user->org_authority_name }}</td>
         <td>{{ $user->created_at }}</td>
         <td>
 

@@ -26,19 +26,15 @@
         </div>
         
         {{--権限--}}
-        {{--TODO 権限周り実装後修正--}}
         <div class="form-group">
-            <label for="authority">@lang('messages.user_authority')<span class="required"></span></label>
-            <select class="form-control select" name="authority">
+            <label for="org_authority_type">@lang('messages.user_authority')<span class="required"></span></label>
+            <select class="form-control select" name="org_authority_type">
                 <option></option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
+                <option value="1">@lang('messages.principal_investigator')</option>
+                <option value="2">@lang('messages.other_investigator')</option>
+                <option value="3">@lang('messages.crc')</option>
+                <option value="4">@lang('messages.nurse')</option>
+                <option value="5">@lang('messages.clinical_engineer')</option>
             </select>
         </div>
 
@@ -126,19 +122,15 @@
         </div>
 
         {{--権限--}}
-        {{--TODO 権限周り実装後修正--}}
         <div class="form-group">
-            <label for="authority">@lang('messages.user_authority')</label>
-            <select class="form-control select" name="authority">
+            <label for="org_authority_type">@lang('messages.user_authority')</label>
+            <select class="form-control select" name="org_authority_type">
                 <option></option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
+                <option value="1">@lang('messages.principal_investigator')</option>
+                <option value="2">@lang('messages.other_investigator')</option>
+                <option value="3">@lang('messages.crc')</option>
+                <option value="4">@lang('messages.nurse')</option>
+                <option value="5">@lang('messages.clinical_engineer')</option>
             </select>
         </div>
 

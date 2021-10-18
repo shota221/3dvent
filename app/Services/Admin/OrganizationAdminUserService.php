@@ -5,8 +5,10 @@ namespace App\Services\Admin;
 use App\Exceptions;
 use App\Http\Forms\Admin as Form;
 use App\Http\Response;
+use App\Models;
 use App\Repositories as Repos;
 use App\Services\Support\Converter;
+use App\Services\Support\CryptUtil;
 use App\Services\Support\DBUtil;
 use Illuminate\Support\Facades\Hash;
 
@@ -21,7 +23,6 @@ class OrganizationAdminUserService
      */
     public function getPaginatedOrganizationAdminUserData(
         string $path,
-        int $authority, 
         Form\OrganizationAdminUserSearchForm $form = null)
     {
         $limit = config('view.items_per_page');
@@ -36,6 +37,8 @@ class OrganizationAdminUserService
             $search_values = $this->buildOrganizationAdminUserSearchValues($form);
             $http_query = '?' . http_build_query($search_values);
         }
+  
+        $authority = Models\User::ORG_PRINCIPAL_INVESTIGATOR_AUTHORITY;
 
         $organization_admin_users = Repos\UserRepository::searchByAuthority(
             $search_values,
@@ -62,10 +65,10 @@ class OrganizationAdminUserService
      * @param Form\OrganizationAdminUserDetailForm $form
      * @return [type]
      */
-    public function getOneOrganizationAdminUserData(
-        Form\OrganizationAdminUserDetailForm $form,
-        int $authority)
+    public function getOneOrganizationAdminUserData(Form\OrganizationAdminUserDetailForm $form)
     {
+        $authority = Models\User::ORG_PRINCIPAL_INVESTIGATOR_AUTHORITY;
+
         $organization_admin_user = Repos\UserRepository::findOneWithOrganizationByAuthorityAndId($authority, $form->id);
 
         if (is_null($organization_admin_user)) {
@@ -84,7 +87,6 @@ class OrganizationAdminUserService
      */
     public function update(
         Form\OrganizationAdminUserUpdateForm $form,
-        int $authority,
         int $user_id)
     {
         $organization = Repos\OrganizationRepository::findOneByCode($form->code);
@@ -102,6 +104,8 @@ class OrganizationAdminUserService
             $form->addError('name', 'validation.duplicated_registration');
             throw new Exceptions\InvalidFormException($form);
         }
+
+        $authority = Models\User::ORG_PRINCIPAL_INVESTIGATOR_AUTHORITY;
 
         $organization_admin_user = Repos\UserRepository::findOneByAuthorityAndId($authority, $form->id);
 
@@ -135,7 +139,6 @@ class OrganizationAdminUserService
      */
     public function create(
         Form\OrganizationAdminUserCreateForm $form,
-        int $authority,
         int $user_id)
     {
         $organization = Repos\OrganizationRepository::findOneByCode($form->code);
@@ -151,6 +154,9 @@ class OrganizationAdminUserService
             $form->addError('name', 'validation.duplicated_registration');
             throw new Exceptions\InvalidFormException($form);
         }
+        
+        $authority          = Models\User::ORG_PRINCIPAL_INVESTIGATOR_AUTHORITY;
+        $org_authority_type = Models\User::ORG_PRINCIPAL_INVESTIGATOR_TYPE;
 
         $entity = Converter\OrganizationAdminUserConverter::convertToEntity(
             $authority,
@@ -158,6 +164,7 @@ class OrganizationAdminUserService
             $organization->id,
             $form->name,
             $form->email,
+            $org_authority_type,
             CryptUtil::createHashedPassword($form->password),
             $form->disabled_flg
         );

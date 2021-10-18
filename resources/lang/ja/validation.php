@@ -1,5 +1,7 @@
 <?php
 
+use App\Models;
+
 return [
 
     /*
@@ -150,6 +152,7 @@ return [
     'invalid_sound' => '雑音が大きいため測定できませんでした。手動測定に切り替えてください。',
     'not_enough_recording_time' => '録音時間が短すぎます。再度録音してください。',
     'not_enough_pulses' => '十分なパルスが検出できませんでした。呼吸器に近づけて再度録音してください。',
+    'required_for_principal_investigator' => '医師（施設内研究代表者の場合メールアドレスは必須です）',
     'organization_mismatch' => '組織情報が一致しません。',
     'unauthenticated' => '認証エラー',
     'user_token_required' => 'ユーザートークンは必須です。',
@@ -184,6 +187,21 @@ return [
     ],
 
     /*
+    |--------------------------------------------------------------------------
+    | Custom Validation Values
+    | カスタム検証値
+    |--------------------------------------------------------------------------
+    */
+
+    'values' => [
+        'org_authority_type' => [
+            // 6 => 医師(施設内代表者)
+            Models\User::ORG_PRINCIPAL_INVESTIGATOR_TYPE => __('messages.principal_investigator'),
+        ]
+    ],
+
+
+    /*
       |--------------------------------------------------------------------------
       | Custom Validation Attributes
       | カスタム検証属性
@@ -200,6 +218,8 @@ return [
 
     'attributes' => [
         'authority' => '権限',
+        'admin_authority_type' => "権限",
+        'org_authority_type' => "権限",
         'height' => '身長',
         'weight' => '体重',
         'gender' => '性別',
@@ -244,7 +264,7 @@ return [
         'code'=>'組織コード',
         'password_confirmation'=>'パスワード(確認用)',
         'bug_name'=>'不具合名',
-        'request_improvement'=>'改善要望'
+        'request_improvement'=>'改善要望',
     ],
 
 ];
