@@ -3,9 +3,9 @@
 namespace App\Http\Forms\Org;
 
 use App\Exceptions;
+use App\Http\Auth;
 use App\Http\Forms\BaseForm;
 use App\Http\Forms\ValidationRule as Rule;
-use App\Models;
 use App\Services\Support;
 
 
@@ -22,9 +22,9 @@ class UserCreateForm extends BaseForm
     {
         return [
             'name'                  => 'required|' . Rule::VALUE_NAME,
-            'email'                 => 'nullable|required_if:org_authority_type,' . Models\User::ORG_PRINCIPAL_INVESTIGATOR_TYPE . '|' . Rule::EMAIL,
+            'email'                 => 'nullable|' . Rule::EMAIL,
             'org_authority_type'    => 'required|' . Rule::ORG_AUTHORITY_TYPE,
-            'disabled_flg'          => 'required|' .Rule::FLG_INTEGER,
+            'disabled_flg'          => 'required|' . Rule::FLG_INTEGER,
             'password'              => 'required|confirmed|' . Rule::PASSWORD,
             'password_confirmation' => 'required',
         ];
@@ -32,10 +32,18 @@ class UserCreateForm extends BaseForm
 
     protected function bind($input)
     {
-        $this->name           = strval($input['name']);
-        $this->email          = isset($input['email']) ? strval($input['email']) : '';
+        $this->name               = strval($input['name']);
+        $this->email              = isset($input['email']) ? strval($input['email']) : '';
         $this->org_authority_type = intval($input['org_authority_type']);
-        $this->disabled_flg   = intval($input['disabled_flg']);
-        $this->password       = strval($input['password']);
+        $this->disabled_flg       = intval($input['disabled_flg']);
+        $this->password           = strval($input['password']);
+    }
+
+    protected function validateAfterBinding() {
+        if ($this->org_authority_type === Auth\OrgUserGate::AUTHORITIES['principal_investigator']['type']) {
+            if (empty($this->email)) {
+                $this->addError('email', 'validation.required_for_principal_investigator');
+            }
+        }
     }
 }

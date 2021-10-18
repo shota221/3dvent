@@ -93,8 +93,10 @@ class AuthController extends Controller
         $form = new Form\UserResetPasswordForm($request->all());
 
         if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
-
-        $response = $this->service->resetPassword($form, $this->user_auth_key);
+        
+        $guard = Auth::guard($this->user_auth_key);
+        
+        $response = $this->service->resetPassword($form, $this->user_auth_key, $guard);
 
         return $response;
     }

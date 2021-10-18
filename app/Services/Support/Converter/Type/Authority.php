@@ -2,47 +2,47 @@
 
 namespace App\Services\Support\Converter\Type;
 
-use App\Models;
+use App\Http\Auth;
 
 class Authority
 {
     //convertToAuthority
     public static function convertToAdminAuthority(int $admin_authority_type) {
         switch ($admin_authority_type) {
-            case Models\User::ADMIN_PROJETCT_MANAGER_TYPE:           
-                return Models\User::ADMIN_PROJETCT_MANAGER_AUTHORITY;
+            case Auth\AdminUserGate::AUTHORITIES['project_manager']['type']:           
+                return Auth\AdminUserGate::AUTHORITIES['project_manager']['authority'];
                 break;
-            case Models\User::ADMIN_DATA_MANAGER_TYPE:
-                return Models\User::ADMIN_DATA_MANAGER_AUTHORITY;
+            case Auth\AdminUserGate::AUTHORITIES['data_manager']['type']:
+                return Auth\AdminUserGate::AUTHORITIES['data_manager']['authority'];
                 break;
-            case Models\User::ADMIN_DATA_MONITOR_TYPE:
-                return Models\User::ADMIN_DATA_MONITOR_AUTHORITY;
+            case Auth\AdminUserGate::AUTHORITIES['data_monitor']['type']:
+                return Auth\AdminUserGate::AUTHORITIES['data_monitor']['authority'];
                 break;
-            case Models\User::ADMIN_PRINCIPAL_INVESTIGATOR_TYPE:
-                return Models\User::ADMIN_PRINCIPAL_INVESTIGATOR_AUTHORITY;
+            case Auth\AdminUserGate::AUTHORITIES['overall_principal_investigator']['type']:
+                return Auth\AdminUserGate::AUTHORITIES['overall_principal_investigator']['authority'];
                 break;
-            case Models\User::ADMIN_COMPANY_TYPE:
-                return Models\User::ADMIN_COMPANY_AUTHORITY;
+            case Auth\AdminUserGate::AUTHORITIES['company']['type']:
+                return Auth\AdminUserGate::AUTHORITIES['company']['authority'];
                 break;
         }
     }
     
     public static function convertToOrgAuthority(int $org_authority_type) {
         switch ($org_authority_type) {
-            case Models\User::ORG_PRINCIPAL_INVESTIGATOR_TYPE:
-                return Models\User::ORG_PRINCIPAL_INVESTIGATOR_AUTHORITY;
+            case Auth\OrgUserGate::AUTHORITIES['principal_investigator']['type']:
+                return Auth\OrgUserGate::AUTHORITIES['principal_investigator']['authority'];
                 break;
-            case Models\User::ORG_OTHRE_INVESTIGATOR_TYPE:
-                return Models\User::ORG_OTHRE_INVESTIGATOR_AUTHORITY;
+            case Auth\OrgUserGate::AUTHORITIES['other_investigator']['type']:
+                return Auth\OrgUserGate::AUTHORITIES['other_investigator']['authority'];
                 break;
-            case Models\User::ORG_CRC_TYPE:
-                return Models\User::ORG_CRC_AUTHORITY;
+            case Auth\OrgUserGate::AUTHORITIES['crc']['type']:
+                return Auth\OrgUserGate::AUTHORITIES['crc']['authority'];
                 break;
-            case Models\User::ORG_NURSE_TYPE:
-                return Models\User::ORG_NURSE_AUTHORITY;
+            case Auth\OrgUserGate::AUTHORITIES['nurse']['type']:
+                return Auth\OrgUserGate::AUTHORITIES['nurse']['authority'];
                 break;
-            case Models\User::ORG_CLINICAL_ENGINEER_TYPE:
-                return Models\User::ORG_CLINICAL_ENGINEER_AUTHORITY;
+            case Auth\OrgUserGate::AUTHORITIES['clinical_engineer']['type']:
+                return Auth\OrgUserGate::AUTHORITIES['clinical_engineer']['authority'];
                 break;
         }
     }

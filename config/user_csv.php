@@ -1,6 +1,6 @@
 <?php
 use App\Http\Forms\ValidationRule as Rule;
-use App\Models;
+use App\Http\Auth;
 
 return [
     'filename' => 'user_format.csv',
@@ -14,13 +14,14 @@ return [
 
     'validation_rule' => [
         'name'               => 'required|' . Rule::VALUE_NAME,
-        'email'              => 'nullable|required_if:org_authority_type,' . Models\User::ORG_PRINCIPAL_INVESTIGATOR_TYPE . '|' . Rule::EMAIL,
+        'email'              => 'nullable|required_if:org_authority_type,' . Auth\OrgUserGate::AUTHORITIES['principal_investigator']['type'] . '|' . Rule::EMAIL,
         'org_authority_type' => 'required|' . Rule::ORG_AUTHORITY_TYPE,
         'password'           => 'required|' . Rule::PASSWORD,
     ],
 
     'dupulicate_confirmation_targets' => [
         'name',
+        'email',
     ],
 
     'example' => [

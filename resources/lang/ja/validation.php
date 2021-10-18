@@ -1,6 +1,6 @@
 <?php
 
-use App\Models;
+use App\Http\Auth;
 
 return [
 
@@ -131,6 +131,7 @@ return [
     'csv_header_error' => '1行目の項目名に誤りがあるため読み込みをキャンセルしました。。エクスポートCSVの項目名に合わせてください。',
     'csv_row_error' => ':row_nums行目の入力に誤りがあるため読み込みをキャンセルしました。。',
     'csv_duplicated_row' => ':error_row 行目の :attribute が重複しているため読み込みをキャンセルしました。',
+    'csv_registered_user_email' => '登録済みのメールアドレスが存在しているため読み込みをキャンセルしました。',
     'csv_registered_user_name' => '登録済みのユーザー名が存在しているため読み込みをキャンセルしました。',
     'duplicated_email_registration' => 'すでに登録されているメールアドレスです。別のメールアドレスを利用してください。',
     'duplicated_patient_code_imported' => ':patient_codeはインポート先組織ですでに使われている患者コードです。CSVを編集し、新しい患者コードに書き換えてください。',
@@ -152,7 +153,7 @@ return [
     'invalid_sound' => '雑音が大きいため測定できませんでした。手動測定に切り替えてください。',
     'not_enough_recording_time' => '録音時間が短すぎます。再度録音してください。',
     'not_enough_pulses' => '十分なパルスが検出できませんでした。呼吸器に近づけて再度録音してください。',
-    'required_for_principal_investigator' => '医師（施設内研究代表者の場合メールアドレスは必須です）',
+    'required_for_principal_investigator' => '医師（施設内研究代表者）の場合メールアドレスは必須です。',
     'organization_mismatch' => '組織情報が一致しません。',
     'unauthenticated' => '認証エラー',
     'user_token_required' => 'ユーザートークンは必須です。',
@@ -184,20 +185,6 @@ return [
         'attribute-name' => [
             'rule-name' => 'custom-message',
         ],
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Custom Validation Values
-    | カスタム検証値
-    |--------------------------------------------------------------------------
-    */
-
-    'values' => [
-        'org_authority_type' => [
-            // 6 => 医師(施設内代表者)
-            Models\User::ORG_PRINCIPAL_INVESTIGATOR_TYPE => __('messages.principal_investigator'),
-        ]
     ],
 
 

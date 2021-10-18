@@ -3,6 +3,7 @@
 namespace App\Services\Org;
 
 use App\Exceptions;
+use App\Http\Auth;
 use App\Models;
 use App\Repositories as Repos;
 use App\Http\Forms\Org as Form;
@@ -38,19 +39,31 @@ class UserAccountService
     {
         $registered_user = Repos\UserRepository::findOneByOrganizationIdAndName($user->organization_id, $form->name);
 
-        $is_duplicated = ! is_null($registered_user) && $registered_user->id !== $user->id;
+        $is_duplicated_name = ! is_null($registered_user) && $registered_user->id !== $user->id;
 
-        if ($is_duplicated) {
+        if ($is_duplicated_name) {
             $form->addError('name', 'validation.duplicated_registration');
             throw new Exceptions\InvalidFormException($form);
         }
 
-        $is_principal_investigator = $user->org_authority_type === Models\User::ORG_PRINCIPAL_INVESTIGATOR_TYPE;
+        $is_principal_investigator = $user->org_authority_type === Auth\OrgUserGate::AUTHORITIES['principal_investigator']['type'];
         
         // 組織管理アカウントの場合はメアド必須
         if($is_principal_investigator && empty($form->email)) {
             $form->addError('email', 'validation.required_for_principal_investigator');
             throw new Exceptions\InvalidFormException($form);
+        } 
+
+        // メールの入力がある場合は組織内重複チェック
+        if (! empty($form->email)) {
+            $registered_user = Repos\UserRepository::findOneByOrganizationIdAndEmail($user->organization_id, $form->email);
+
+            $is_duplicated_email = ! is_null($registered_user) && $registered_user->id !== $user->id;
+    
+            if ($is_duplicated_email) {
+                $form->addError('email', 'validation.duplicated_registration');
+                throw new Exceptions\InvalidFormException($form);
+            }
         }
 
         $entity = $user;

@@ -1,11 +1,11 @@
 const 
     $asyncPasswordReset                    = $('#async-password-reset'),
-    $passwordResetForm                     = $('[name=password-reset]'),
-    $passwordResetFormCodeInput            = $passwordResetForm.find('[name=code]'),
-    $passwordResetFormEmailInput           = $passwordResetForm.find('[name=email]'),
-    $passwordResetFormPasswordInput        = $passwordResetForm.find('[name=password]'),
-    $passwordResetFormPasswordConfirmInput = $passwordResetForm.find('[name=password-confirmation]'),
-    $passwordResetFormTokenInput           = $passwordResetForm.find('[name=token]');
+    $passwordResetForm                     = $('[name="password-reset"]'),
+    $passwordResetFormCodeInput            = $passwordResetForm.find('[name="code"]'),
+    $passwordResetFormEmailInput           = $passwordResetForm.find('[name="email"]'),
+    $passwordResetFormPasswordInput        = $passwordResetForm.find('[name="password"]'),
+    $passwordResetFormPasswordConfirmInput = $passwordResetForm.find('[name="password-confirmation"]'),
+    $passwordResetFormTokenInput           = $passwordResetForm.find('[name="token"]');
 
 // パスワード再設定
 $asyncPasswordReset.on(

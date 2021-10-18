@@ -1,11 +1,11 @@
 const 
     $applyPasswordResetModal = $('#apply-password-reset-modal'),
-    $applyPasswordResetModalCodeInput  = $applyPasswordResetModal.find('[name=code]'),
-    $applyPasswordResetModalEmailInput = $applyPasswordResetModal.find('[name=email]'),
+    $applyPasswordResetModalCodeInput  = $applyPasswordResetModal.find('[name="code"]'),
+    $applyPasswordResetModalEmailInput = $applyPasswordResetModal.find('[name="email"]'),
     $asyncApplyPasswordReset           = $('#async-apply-password-reset'),
     $cancelModal                       = $('button.modal-cancel'),
-    $nameInput                         = $('[name=name]'),
-    $passwordInput                     = $('[name=password]'),
+    $nameInput                         = $('[name="name"]'),
+    $passwordInput                     = $('[name="password"]'),
     $showPasswordResetModal            = $('#show-password-reset-modal');
 
 // ログイン
@@ -15,7 +15,7 @@ $("#login").on(
         var parameters = {};
         parameters['name'] = $nameInput.val();
         parameters['password'] = $passwordInput.val();
-        parameters['remember'] = $('[name=remember]:checked').val();
+        parameters['remember'] = $('[name="remember"]:checked').val();
 
         var $element = $(this);
 

@@ -6,33 +6,33 @@ const
     $bulkCheck                              = $('#bulk-check'),
     $cancelModal                            = $('button.modal-cancel'),
     $csvImportModal                         = $('#csv-import-modal'),
-    $csvImportModalFileInput                = $csvImportModal.find('[name=csv_file]'),
+    $csvImportModalFileInput                = $csvImportModal.find('[name="csv_file"]'),
     $clearSearchForm                        = $('#clear-search-form'),
     $editModal                              = $('#edit-modal'),
-    $editModalAuthorityInput                = $editModal.find('[name=org_authority_type]'),
-    $editModalDisabledFlgInput              = $editModal.find('[name=disabled_flg]'),
-    $editModalEmailInput                    = $editModal.find('[name=email]'),
-    $editModalIdInput                       = $editModal.find('[name=id]'),
-    $editModalNameInput                     = $editModal.find('[name=name]'),
-    $editModalPasswordInput                 = $editModal.find('[name=password]'),
-    $editModalPasswordConfirmationInput     = $editModal.find('[name=password_confirmation]'),
-    $editModalPasswordChangedInput          = $editModal.find('[name=password_changed]'),
+    $editModalAuthorityInput                = $editModal.find('[name="org_authority_type"]'),
+    $editModalDisabledFlgInput              = $editModal.find('[name="disabled_flg"]'),
+    $editModalEmailInput                    = $editModal.find('[name="email"]'),
+    $editModalIdInput                       = $editModal.find('[name="id"]'),
+    $editModalNameInput                     = $editModal.find('[name="name"]'),
+    $editModalPasswordInput                 = $editModal.find('[name="password"]'),
+    $editModalPasswordConfirmationInput     = $editModal.find('[name="password_confirmation"]'),
+    $editModalPasswordChangedInput          = $editModal.find('[name="password_changed"]'),
     $editModalPasswordChangeField           = $editModal.find('.password-change-field'),
     $datepicker                             = $('input.form-control.date'),
     $paginatedList                          = $('#paginated-list'),
     $registerModal                          = $('#register-modal'),
-    $registerModalAuthorityInput            = $registerModal.find('[name=org_authority_type]'),
-    $registerModalDisabledFlgInput          = $registerModal.find('[name=disabled_flg]'),
-    $registerModalEmailInput                = $registerModal.find('[name=email]'),
-    $registerModalNameInput                 = $registerModal.find('[name=name]'),
-    $registerModalPasswordInput             = $registerModal.find('[name=password]'),
-    $registerModalPasswordConfirmationInput = $registerModal.find('[name=password_confirmation]'),
+    $registerModalAuthorityInput            = $registerModal.find('[name="org_authority_type"]'),
+    $registerModalDisabledFlgInput          = $registerModal.find('[name="disabled_flg"]'),
+    $registerModalEmailInput                = $registerModal.find('[name="email"]'),
+    $registerModalNameInput                 = $registerModal.find('[name="name"]'),
+    $registerModalPasswordInput             = $registerModal.find('[name="password"]'),
+    $registerModalPasswordConfirmationInput = $registerModal.find('[name="password_confirmation"]'),
     $searchForm                             = $('#async-search-form'),
     $searchFormAllInput                     = $searchForm.find('input'),
-    $searchFormAuthorityInput               = $searchForm.find('[name=org_authority_type]'),
-    $searchFormNameInput                    = $searchForm.find('[name=name]'),
-    $searchFormRegisteredAtFromInput        = $searchForm.find('[name=registered_at_from]'),    
-    $searchFormRegisteredAtToInput          = $searchForm.find('[name=registered_at_to]'),
+    $searchFormAuthorityInput               = $searchForm.find('[name="org_authority_type"]'),
+    $searchFormNameInput                    = $searchForm.find('[name="name"]'),
+    $searchFormRegisteredAtFromInput        = $searchForm.find('[name="registered_at_from"]'),    
+    $searchFormRegisteredAtToInput          = $searchForm.find('[name="registered_at_to"]'),
     $showCsvImportModal                     = $('#show-csv-import-modal'),
     $showRegisterModal                      = $('#show-register-modal');
 
@@ -138,11 +138,11 @@ $asyncUpdate.on(
         parameters['name']                  = $editModalNameInput.val();
         parameters['email']                 = $editModalEmailInput.val();
         parameters['org_authority_type']    = $editModalAuthorityInput.val()
-        parameters['disabled_flg']          = $editModal.find('[name=disabled_flg]:checked').val();
+        parameters['disabled_flg']          = $editModal.find('[name="disabled_flg"]:checked').val();
         parameters['password']              = $editModalPasswordInput.val();
         parameters['password_confirmation'] = $editModalPasswordConfirmationInput.val();
 
-        if ($editModal.find('[name=password_changed]:checked').val() === undefined) {
+        if ($editModal.find('[name="password_changed"]:checked').val() === undefined) {
             parameters['password_changed'] = "0";
         } else {
             parameters['password_changed'] = "1";
@@ -182,7 +182,7 @@ $asyncCreate.on(
         parameters['name']                  = $registerModalNameInput.val();
         parameters['email']                 = $registerModalEmailInput.val();
         parameters['org_authority_type']    = $registerModalAuthorityInput.val()
-        parameters['disabled_flg']          = $registerModal.find('[name=disabled_flg]:checked').val();
+        parameters['disabled_flg']          = $registerModal.find('[name="disabled_flg"]:checked').val();
         parameters['password']              = $registerModalPasswordInput.val();
         parameters['password_confirmation'] = $registerModalPasswordConfirmationInput.val();
 
@@ -343,7 +343,7 @@ function buildSearchParameters($form) {
     parameters['registered_at_from'] = $searchFormRegisteredAtFromInput.val()
     parameters['registered_at_to']   = $searchFormRegisteredAtToInput.val()
     
-    $disabled_flg = $searchForm.find('[name=disabled_flg]:checked');
+    $disabled_flg = $searchForm.find('[name="disabled_flg"]:checked');
 
     if ($disabled_flg.length == 1) {
         parameters['disabled_flg'] = $disabled_flg.val();

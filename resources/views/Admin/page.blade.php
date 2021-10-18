@@ -65,7 +65,7 @@
             <div class="form-group">
                 <label class="d-block">@lang('messages.change_login_password')</label>
                 <div class="form-check form-check-inline">
-                    <label class="form-check-label"><input class="form-check-input" type="checkbox" name="password_changed" id="password-changed" value="1">@lang('messages.change_password')</label>
+                    <label class="form-check-label"><input class="form-check-input" type="checkbox" name="password_changed" value="1">@lang('messages.change_password')</label>
                 </div>
             </div>
 

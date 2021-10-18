@@ -3,9 +3,9 @@
 namespace App\Services\Admin;
 
 use App\Exceptions;
+use App\Http\Auth;
 use App\Http\Forms\Admin as Form;
 use App\Http\Response;
-use App\Models;
 use App\Repositories as Repos;
 use App\Services\Support\Converter;
 use App\Services\Support\CryptUtil;
@@ -38,7 +38,7 @@ class OrganizationAdminUserService
             $http_query = '?' . http_build_query($search_values);
         }
   
-        $authority = Models\User::ORG_PRINCIPAL_INVESTIGATOR_AUTHORITY;
+        $authority = Auth\OrgUserGate::AUTHORITIES['principal_investigator']['authority'];
 
         $organization_admin_users = Repos\UserRepository::searchByAuthority(
             $search_values,
@@ -67,7 +67,7 @@ class OrganizationAdminUserService
      */
     public function getOneOrganizationAdminUserData(Form\OrganizationAdminUserDetailForm $form)
     {
-        $authority = Models\User::ORG_PRINCIPAL_INVESTIGATOR_AUTHORITY;
+        $authority = Auth\OrgUserGate::AUTHORITIES['principal_investigator']['authority'];
 
         $organization_admin_user = Repos\UserRepository::findOneWithOrganizationByAuthorityAndId($authority, $form->id);
 
@@ -96,16 +96,25 @@ class OrganizationAdminUserService
             throw new Exceptions\InvalidFormException($form);
         } 
 
-        $user = Repos\UserRepository::findOneByOrganizationIdAndName($organization->id, $form->name);
+        $registered_user = Repos\UserRepository::findOneByOrganizationIdAndName($organization->id, $form->name);
 
-        $is_duplicated = ! is_null($user) && $user->id !== $form->id;
+        $is_duplicated_name = ! is_null($registered_user) && $registered_user->id !== $form->id;
 
-        if ($is_duplicated) {
+        if ($is_duplicated_name) {
             $form->addError('name', 'validation.duplicated_registration');
             throw new Exceptions\InvalidFormException($form);
         }
 
-        $authority = Models\User::ORG_PRINCIPAL_INVESTIGATOR_AUTHORITY;
+        $registered_user = Repos\UserRepository::findOneByOrganizationIdAndEmail($organization->id, $form->email);
+
+        $is_duplicated_email = ! is_null($registered_user) && $registered_user->id !== $form->id;
+
+        if ($is_duplicated_email) {
+            $form->addError('email', 'validation.duplicated_registration');
+            throw new Exceptions\InvalidFormException($form);
+        }
+
+        $authority = Auth\OrgUserGate::AUTHORITIES['principal_investigator']['authority'];
 
         $organization_admin_user = Repos\UserRepository::findOneByAuthorityAndId($authority, $form->id);
 
@@ -119,7 +128,7 @@ class OrganizationAdminUserService
         $organization_admin_user->name            = $form->name;
         $organization_admin_user->email           = $form->email;
         $organization_admin_user->disabled_flg    = $form->disabled_flg;
-        if (! is_null($form->password)) $user->password = CryptUtil::createHashedPassword($form->password);
+        if (! is_null($form->password)) $organization_admin_user->password = CryptUtil::createHashedPassword($form->password);
 
         DBUtil::Transaction(
             '組織管理者アカウント編集',
@@ -148,15 +157,22 @@ class OrganizationAdminUserService
             throw new Exceptions\InvalidFormException($form);
         } 
 
-        $exists = Repos\UserRepository::existsByNameAndOrganizationId($form->name, $organization->id);
+        $exists_name = Repos\UserRepository::existsByNameAndOrganizationId($form->name, $organization->id);
 
-        if ($exists) {
+        if ($exists_name) {
             $form->addError('name', 'validation.duplicated_registration');
             throw new Exceptions\InvalidFormException($form);
         }
+
+        $exists_email = Repos\UserRepository::existsByEmailAndOrganizationId($form->email, $organization->id);
+
+        if ($exists_email) {
+            $form->addError('email', 'validation.duplicated_registration');
+            throw new Exceptions\InvalidFormException($form);
+        }
         
-        $authority          = Models\User::ORG_PRINCIPAL_INVESTIGATOR_AUTHORITY;
-        $org_authority_type = Models\User::ORG_PRINCIPAL_INVESTIGATOR_TYPE;
+        $authority          = Auth\OrgUserGate::AUTHORITIES['principal_investigator']['authority'];
+        $org_authority_type = Auth\OrgUserGate::AUTHORITIES['principal_investigator']['type'];
 
         $entity = Converter\OrganizationAdminUserConverter::convertToEntity(
             $authority,

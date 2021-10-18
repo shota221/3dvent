@@ -3,9 +3,9 @@
 namespace App\Http\Forms\Org;
 
 use App\Exceptions;
+use App\Http\Auth;
 use App\Http\Forms\BaseForm;
 use App\Http\Forms\ValidationRule as Rule;
-use App\Models;
 use App\Services\Support;
 
 class UserUpdateForm extends BaseForm
@@ -24,7 +24,7 @@ class UserUpdateForm extends BaseForm
         return [
             'id'                    => 'required|' . Rule::VALUE_POSITIVE_INTEGER,
             'name'                  => 'required|' . Rule::VALUE_NAME,
-            'email'                 => 'nullable|required_if:org_authority_type,' . Models\User::ORG_PRINCIPAL_INVESTIGATOR_TYPE . '|' . Rule::EMAIL,
+            'email'                 => 'nullable|' . Rule::EMAIL,
             'org_authority_type'    => 'required|' . Rule::ORG_AUTHORITY_TYPE,
             'disabled_flg'          => 'required|' . Rule::FLG_INTEGER,
             'password_changed'      => 'required|' . Rule::VALUE_BOOLEAN,
@@ -55,6 +55,12 @@ class UserUpdateForm extends BaseForm
     }
 
     protected function validateAfterBinding() {
+        if ($this->org_authority_type === Auth\OrgUserGate::AUTHORITIES['principal_investigator']['type']) {
+            if (empty($this->email)) {
+                $this->addError('email', 'validation.required_for_principal_investigator');
+            }
+        }
+
         if ($this->password_changed && is_null($this->password)) {
             $this->addError('password', 'validation.required_password');
         }

@@ -30,11 +30,9 @@
             <label for="org_authority_type">@lang('messages.user_authority')<span class="required"></span></label>
             <select class="form-control select" name="org_authority_type">
                 <option></option>
-                <option value="1">@lang('messages.principal_investigator')</option>
-                <option value="2">@lang('messages.other_investigator')</option>
-                <option value="3">@lang('messages.crc')</option>
-                <option value="4">@lang('messages.nurse')</option>
-                <option value="5">@lang('messages.clinical_engineer')</option>
+                @foreach (OrgUserGate::AUTHORITIES as $key => $value)
+                <option value="{{$value['type']}}">@lang('messages.' . $key)</option>
+                @endforeach
             </select>
         </div>
 
@@ -126,11 +124,9 @@
             <label for="org_authority_type">@lang('messages.user_authority')</label>
             <select class="form-control select" name="org_authority_type">
                 <option></option>
-                <option value="1">@lang('messages.principal_investigator')</option>
-                <option value="2">@lang('messages.other_investigator')</option>
-                <option value="3">@lang('messages.crc')</option>
-                <option value="4">@lang('messages.nurse')</option>
-                <option value="5">@lang('messages.clinical_engineer')</option>
+                @foreach (OrgUserGate::AUTHORITIES as $key => $value)
+                <option value="{{$value['type']}}">@lang('messages.' . $key)</option>
+                @endforeach
             </select>
         </div>
 
