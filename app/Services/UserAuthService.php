@@ -194,7 +194,7 @@ class UserAuthService
      * @param  Form\UserResetPasswordForm $form [description]
      * @return [type]                           [description]
      */
-    public function resetPassword(Form\UserResetPasswordForm $form, string $user_auth_key)
+    public function resetPassword(Form\UserResetPasswordForm $form, string $user_auth_key, $guard)
     {
         $password_reset_token_provider = Password::broker($user_auth_key);
 
@@ -233,7 +233,7 @@ class UserAuthService
             });
 
         // ログイン
-        Auth::guard($user_auth_key)->login($entity);
+        $guard->login($entity);
 
         return Converter\UserResponseConverter::convertToPasswordResetResult();
     }
