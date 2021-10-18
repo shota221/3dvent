@@ -6,30 +6,30 @@ const
     $cancelModal                            = $('button.modal-cancel'),
     $clearSearchForm                        = $('#clear-search-form'),
     $editModal                              = $('#edit-modal'),
-    $editModalDisabledFlgInput              = $editModal.find('[name=disabled_flg]'),
-    $editModalEmailInput                    = $editModal.find('[name=email]'),
-    $editModalIdInput                       = $editModal.find('[name=id]'),
-    $editModalCodeInput                     = $editModal.find('[name=code]'),
-    $editModalNameInput                     = $editModal.find('[name=name]'),
-    $editModalPasswordInput                 = $editModal.find('[name=password]'),
-    $editModalPasswordConfirmationInput     = $editModal.find('[name=password_confirmation]'),
-    $editModalPasswordChangedInput          = $editModal.find('[name=password_changed]'),
+    $editModalDisabledFlgInput              = $editModal.find('[name="disabled_flg"]'),
+    $editModalEmailInput                    = $editModal.find('[name="email"]'),
+    $editModalIdInput                       = $editModal.find('[name="id"]'),
+    $editModalCodeInput                     = $editModal.find('[name="code"]'),
+    $editModalNameInput                     = $editModal.find('[name="name"]'),
+    $editModalPasswordInput                 = $editModal.find('[name="password"]'),
+    $editModalPasswordConfirmationInput     = $editModal.find('[name="password_confirmation"]'),
+    $editModalPasswordChangedInput          = $editModal.find('[name="password_changed"]'),
     $editModalPasswordChangeField           = $editModal.find('.password-change-field'),
     $datepicker                             = $('input.form-control.date'),
     $paginatedList                          = $('#paginated-list'),
     $registerModal                          = $('#register-modal'),
-    $registerModalCodeInput                 = $registerModal.find('[name=code]'),
-    $registerModalDisabledFlgInput          = $registerModal.find('[name=disabled_flg]'),
-    $registerModalEmailInput                = $registerModal.find('[name=email]'),
-    $registerModalNameInput                 = $registerModal.find('[name=name]'),
-    $registerModalPasswordInput             = $registerModal.find('[name=password]'),
-    $registerModalPasswordConfirmationInput = $registerModal.find('[name=password_confirmation]'),
+    $registerModalCodeInput                 = $registerModal.find('[name="code"]'),
+    $registerModalDisabledFlgInput          = $registerModal.find('[name="disabled_flg"]'),
+    $registerModalEmailInput                = $registerModal.find('[name="email"]'),
+    $registerModalNameInput                 = $registerModal.find('[name="name"]'),
+    $registerModalPasswordInput             = $registerModal.find('[name="password"]'),
+    $registerModalPasswordConfirmationInput = $registerModal.find('[name="password_confirmation"]'),
     $searchForm                             = $('#async-search-form'),
     $searchFormAllInput                     = $searchForm.find('input'),
-    $searchFormNameInput                    = $searchForm.find('[name=name]'),
-    $searchFormOrganizationInput            = $searchForm.find('[name=organization_name]'),
-    $searchFormRegisteredAtFromInput        = $searchForm.find('[name=registered_at_from]'),    
-    $searchFormRegisteredAtToInput          = $searchForm.find('[name=registered_at_to]'),
+    $searchFormNameInput                    = $searchForm.find('[name="name"]'),
+    $searchFormOrganizationInput            = $searchForm.find('[name="organization_name"]'),
+    $searchFormRegisteredAtFromInput        = $searchForm.find('[name="registered_at_from"]'),    
+    $searchFormRegisteredAtToInput          = $searchForm.find('[name="registered_at_to"]'),
     $select2OrganizationName                = $('#select2-organization-name'),
     $showRegisterModal                      = $('#show-register-modal');
 
@@ -140,11 +140,11 @@ $asyncUpdate.on(
         parameters['code']                  = $editModalCodeInput.val();
         parameters['name']                  = $editModalNameInput.val();
         parameters['email']                 = $editModalEmailInput.val();
-        parameters['disabled_flg']          = $editModal.find('[name=disabled_flg]:checked').val();
+        parameters['disabled_flg']          = $editModal.find('[name="disabled_flg"]:checked').val();
         parameters['password']              = $editModalPasswordInput.val();
         parameters['password_confirmation'] = $editModalPasswordConfirmationInput.val();
         
-        if ($modal.find('[name=password_changed]:checked').val() === undefined) {
+        if ($modal.find('[name="password_changed"]:checked').val() === undefined) {
             parameters['password_changed'] = "0";    
         } else {
             parameters['password_changed'] = "1";    
@@ -185,7 +185,7 @@ $asyncCreate.on(
         parameters['code']                  = $registerModalCodeInput.val();
         parameters['name']                  = $registerModalNameInput.val();
         parameters['email']                 = $registerModalEmailInput.val();
-        parameters['disabled_flg']          = $registerModal.find('[name=disabled_flg]:checked').val();
+        parameters['disabled_flg']          = $registerModal.find('[name="disabled_flg"]:checked').val();
         parameters['password']              = $registerModalPasswordInput.val();
         parameters['password_confirmation'] = $registerModalPasswordConfirmationInput.val();
         
@@ -241,7 +241,7 @@ function buildSearchParameters($form) {
     parameters['registered_at_from'] = $searchFormRegisteredAtFromInput.val()
     parameters['registered_at_to']   = $searchFormRegisteredAtToInput.val()
      
-    $disabled_flg = $searchForm.find('[name=disabled_flg]:checked');
+    $disabled_flg = $searchForm.find('[name="disabled_flg"]:checked');
 
     if ($disabled_flg.length == 1) {
         parameters['disabled_flg'] = $disabled_flg.val();

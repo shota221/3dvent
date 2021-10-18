@@ -1,33 +1,33 @@
 const
-    $asyncUpdate = $('#async-update'),
-    $asyncSearch = $('#async-search'),
-    $bulkCheck = $('#bulk-check'),
-    $cancelModal = $('button.modal-cancel'),
-    $clearSearchForm = $('#clear-search-form'),
-    $editModal = $('#edit-modal'),
-    $editModalAdverseEventContentsInput = $('#edit-modal').find('[name=adverse_event_contents]'),
-    $editModalAgeInput = $('#edit-modal').find('[name=age]'),
-    $editModalDiscontinuationAtInput = $('#edit-modal').find('[name=discontinuation_at]'),
-    $editModalHospitalInput = $('#edit-modal').find('[name=hospital]'),
-    $editModalIdInput = $('#edit-modal').find('[name=id]'),
-    $editModalNationalInput = $('#edit-modal').find('[name=national]'),
-    $editModalOtherDiseaseName1Input = $('#edit-modal').find('[name=other_disease_name_1]'),
-    $editModalOtherDiseaseName2Input = $('#edit-modal').find('[name=other_disease_name_2]'),
-    $editModalOutcomeInput = $('#edit-modal').find('[name=outcome]'),
-    $editModalPatientCodeInput = $('#edit-modal').find('[name=patient_code]'),
-    $editModalTreatmentInput = $('#edit-modal').find('[name=treatment]'),
-    $editModalUsedPlaceInput = $('#edit-modal').find('[name=used_place]'),
-    $editModalVentDiseaseNameInput = $('#edit-modal').find('[name=vent_disease_name]'),
-    $datepicker = $('input.form-control.date'),
-    $datetimepicker = $('input.form-control.datetime'),
-    $paginatedList = $('#paginated-list'),
-    $patientCode = $('#patient_code'),
-    $searchForm = $('#async-search-form'),
-    $searchFormAllInput = $('#async-search-form').find('input'),
-    $searchFormPatientCodeInput = $('#async-search-form').find('[name=patient_code]'),
-    $searchFormRegisteredAtFromInput = $('#async-search-form').find('[name=registered_at_from]'),    
-    $searchFormRegisteredAtToInput = $('#async-search-form').find('[name=registered_at_to]'),
-    $searchFormRegisteredUserNameInput = $('#async-search-form').find('[name=registered_user_name]');
+    $asyncUpdate                        = $('#async-update'),
+    $asyncSearch                        = $('#async-search'),
+    $bulkCheck                          = $('#bulk-check'),
+    $cancelModal                        = $('button.modal-cancel'),
+    $clearSearchForm                    = $('#clear-search-form'),
+    $editModal                          = $('#edit-modal'),
+    $editModalAdverseEventContentsInput = $('#edit-modal').find('[name="adverse_event_contents"]'),
+    $editModalAgeInput                  = $('#edit-modal').find('[name="age"]'),
+    $editModalDiscontinuationAtInput    = $('#edit-modal').find('[name="discontinuation_at"]'),
+    $editModalHospitalInput             = $('#edit-modal').find('[name="hospital"]'),
+    $editModalIdInput                   = $('#edit-modal').find('[name="id"]'),
+    $editModalNationalInput             = $('#edit-modal').find('[name="national"]'),
+    $editModalOtherDiseaseName1Input    = $('#edit-modal').find('[name="other_disease_name_1"]'),
+    $editModalOtherDiseaseName2Input    = $('#edit-modal').find('[name="other_disease_name_2"]'),
+    $editModalOutcomeInput              = $('#edit-modal').find('[name="outcome"]'),
+    $editModalPatientCodeInput          = $('#edit-modal').find('[name="patient_code"]'),
+    $editModalTreatmentInput            = $('#edit-modal').find('[name="treatment"]'),
+    $editModalUsedPlaceInput            = $('#edit-modal').find('[name="used_place"]'),
+    $editModalVentDiseaseNameInput      = $('#edit-modal').find('[name="vent_disease_name"]'),
+    $datepicker                         = $('input.form-control.date'),
+    $datetimepicker                     = $('input.form-control.datetime'),
+    $paginatedList                      = $('#paginated-list'),
+    $patientCode                        = $('#patient_code'),
+    $searchForm                         = $('#async-search-form'),
+    $searchFormAllInput                 = $('#async-search-form').find('input'),
+    $searchFormPatientCodeInput         = $('#async-search-form').find('[name="patient_code"]'),
+    $searchFormRegisteredAtFromInput    = $('#async-search-form').find('[name="registered_at_from"]'),    
+    $searchFormRegisteredAtToInput      = $('#async-search-form').find('[name="registered_at_to"]'),
+    $searchFormRegisteredUserNameInput  = $('#async-search-form').find('[name="registered_user_name"]');
     
 // show edit modal
 $paginatedList.on(
@@ -102,7 +102,7 @@ $asyncUpdate.on(
         var parameters = {};
         parameters['id'] = $editModalIdInput.val();
         parameters['patient_code'] = $editModalPatientCodeInput.val();
-        parameters['opt_out_flg'] = $editModal.find('[name=opt_out_flg]:checked').val();
+        parameters['opt_out_flg'] = $editModal.find('[name="opt_out_flg"]:checked').val();
         parameters['age'] = $editModalAgeInput.val();
         parameters['vent_disease_name'] = $editModalVentDiseaseNameInput.val();
         parameters['other_disease_name_1'] = $editModalOtherDiseaseName1Input.val();
@@ -113,7 +113,7 @@ $asyncUpdate.on(
         parameters['discontinuation_at'] = $editModalDiscontinuationAtInput.val();
         parameters['outcome'] = $editModalOutcomeInput.val();
         parameters['treatment'] = $editModalTreatmentInput.val();
-        parameters['adverse_event_flg'] = $editModal.find('[name=adverse_event_flg]:checked').val();
+        parameters['adverse_event_flg'] = $editModal.find('[name="adverse_event_flg"]:checked').val();
         parameters['adverse_event_contents'] = $editModalAdverseEventContentsInput.val();
 
 

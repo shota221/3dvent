@@ -2,11 +2,11 @@ const
     $asyncProfileUpdate                        = $('#async-profile-update'),
     $showProfileEditModal                      = $('#show-profile-edit-modal'),
     $profileEditModal　　　　　　　　　　　      = $('#profile-edit-modal'),
-    $profileEditModalEmailInput                = $profileEditModal.find('[name=email]'),
-    $profileEditModalNameInput                 = $profileEditModal.find('[name=name]'),
-    $profileEditModalPasswordInput             = $profileEditModal.find('[name=password]'),
-    $profileEditModalPasswordConfirmationInput = $profileEditModal.find('[name=password_confirmation]'),
-    $profileEditModalPasswordChangedInput      = $profileEditModal.find('[name=password_changed]'),
+    $profileEditModalEmailInput                = $profileEditModal.find('[name="email"]'),
+    $profileEditModalNameInput                 = $profileEditModal.find('[name="name"]'),
+    $profileEditModalPasswordInput             = $profileEditModal.find('[name="password"]'),
+    $profileEditModalPasswordConfirmationInput = $profileEditModal.find('[name="password_confirmation"]'),
+    $profileEditModalPasswordChangedInput      = $profileEditModal.find('[name="password_changed"]'),
     $profileEditModalPasswordChangeField       = $profileEditModal.find('.password-change-field');
 
 // 編集モーダル表示
@@ -54,7 +54,7 @@ $asyncProfileUpdate.on(
         parameters['password']              = $profileEditModalPasswordInput.val();
         parameters['password_confirmation'] = $profileEditModalPasswordConfirmationInput.val();
         
-        if ($profileEditModal.find('[name=password_changed]:checked').val() === undefined) {
+        if ($profileEditModal.find('[name="password_changed"]:checked').val() === undefined) {
             parameters['password_changed'] = "0";    
         } else {
             parameters['password_changed'] = "1";    
