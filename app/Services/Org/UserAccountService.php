@@ -3,6 +3,7 @@
 namespace App\Services\Org;
 
 use App\Exceptions;
+use App\Http\Auth;
 use App\Models;
 use App\Repositories as Repos;
 use App\Http\Forms\Org as Form;
@@ -45,7 +46,7 @@ class UserAccountService
             throw new Exceptions\InvalidFormException($form);
         }
 
-        $is_principal_investigator = $user->org_authority_type === Models\User::ORG_PRINCIPAL_INVESTIGATOR_TYPE;
+        $is_principal_investigator = $user->org_authority_type === Auth\OrgUserGate::AUTHORITIES['principal_investigator']['type'];
         
         // 組織管理アカウントの場合はメアド必須
         if($is_principal_investigator && empty($form->email)) {

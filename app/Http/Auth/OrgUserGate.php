@@ -7,6 +7,35 @@ use Illuminate\Support\Facades\Gate;
 
 class OrgUserGate
 {
+    const 
+        AUTHORITIES = [
+            // 医師（施設内研究代表者）
+            'principal_investigator' => [
+                'authority' => 32767,
+                'type'      => 1,
+            ],
+            // 医師（その他）
+            'other_investigator' => [
+                'authority' => 1365,
+                'type'      => 2,
+            ],
+            // CRC
+            'crc' => [
+                'authority' => 16383,
+                'type'      => 3,
+            ],
+            // 看護師
+            'nurse' => [
+                'authority' => 1365,
+                'type'      => 4,
+            ],
+            // 臨床工学士
+            'clinical_engineer' => [
+                'authority' => 1365,
+                'type'      => 5,
+            ],
+        ];
+
     const
         /**
          * 呼吸器閲覧・編集権限

@@ -3,9 +3,9 @@
 namespace App\Http\Forms\Org;
 
 use App\Exceptions;
+use App\Http\Auth;
 use App\Http\Forms\BaseForm;
 use App\Http\Forms\ValidationRule as Rule;
-use App\Models;
 use App\Services\Support;
 
 
@@ -40,7 +40,7 @@ class UserCreateForm extends BaseForm
     }
 
     protected function validateAfterBinding() {
-        if ($this->org_authority_type === Models\User::ORG_PRINCIPAL_INVESTIGATOR_TYPE) {
+        if ($this->org_authority_type === Auth\OrgUserGate::AUTHORITIES['principal_investigator']['type']) {
             if (empty($this->email)) {
                 $this->addError('email', 'validation.required_for_principal_investigator');
             }

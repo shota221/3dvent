@@ -2,7 +2,7 @@
 
 namespace App\Services\Support\Converter\Lang;
 
-use App\Models;
+use App\Http\Auth;
 
 class Authority 
 {
@@ -10,19 +10,19 @@ class Authority
     public static function convertToAdminAuthorityName(int $admin_authority_type)
     {
         switch ($admin_authority_type) {
-            case Models\User::ADMIN_PROJETCT_MANAGER_TYPE:
+            case Auth\AdminUserGate::AUTHORITIES['project_manager']['type']:
                 return __('messages.project_manager');
                 break;
-            case Models\User::ADMIN_DATA_MANAGER_TYPE:
+            case Auth\AdminUserGate::AUTHORITIES['data_manager']['type']:
                 return __('messages.data_manager');
                 break;
-            case Models\User::ADMIN_DATA_MONITOR_TYPE:
+            case Auth\AdminUserGate::AUTHORITIES['data_monitor']['type']:
                 return __('messages.data_monitor');
                 break;
-            case Models\User::ADMIN_PRINCIPAL_INVESTIGATOR_TYPE:
+            case Auth\AdminUserGate::AUTHORITIES['overall_principal_investigator']['type']:
                 return __('messages.overall_principal_investigator');
                 break;
-            case Models\User::ADMIN_COMPANY_TYPE:
+            case Auth\AdminUserGate::AUTHORITIES['company']['type']:
                 return __('messages.company');
                 break;
             default:
@@ -33,19 +33,19 @@ class Authority
     public static function convertToOrgAuthorityName(int $org_authority_type)
     {
         switch ($org_authority_type) {
-            case Models\User::ORG_PRINCIPAL_INVESTIGATOR_TYPE:
+            case Auth\OrgUserGate::AUTHORITIES['principal_investigator']['type']:
                 return __('messages.principal_investigator');
                 break;
-            case Models\User::ORG_OTHRE_INVESTIGATOR_TYPE:
+            case Auth\OrgUserGate::AUTHORITIES['other_investigator']['type']:
                 return __('messages.other_investigator');
                 break;
-            case Models\User::ORG_CRC_TYPE:
+            case Auth\OrgUserGate::AUTHORITIES['crc']['type']:
                 return __('messages.crc');
                 break;
-            case Models\User::ORG_NURSE_TYPE:
+            case Auth\OrgUserGate::AUTHORITIES['nurse']['type']:
                 return __('messages.nurse');
                 break;
-            case Models\User::ORG_CLINICAL_ENGINEER_TYPE:
+            case Auth\OrgUserGate::AUTHORITIES['clinical_engineer']['type']:
                 return __('messages.clinical_engineer');
                 break;
             default:

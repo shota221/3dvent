@@ -7,6 +7,35 @@ use Illuminate\Support\Facades\Gate;
 
 class AdminUserGate
 {
+    const 
+        AUTHORITIES = [
+            // プロジェクト運営者
+            'project_manager' => [
+                'authority' => 16383,
+                'type'      => 1,
+            ],
+            // データマネージャー
+            'data_manager' => [
+                'authority' => 16383,
+                'type'      => 2,
+            ],
+            // データモニター
+            'data_monitor' => [
+                'authority' => 4915,
+                'type'      => 3,
+            ],
+            // 医師（全体研究代表者）
+            'overall_principal_investigator' => [
+                'authority' => 4403,
+                'type'      => 4,
+            ],
+            // 企業管理ユーザー
+            'company' => [
+                'authority' => 4099,
+                'type'      => 5,
+            ],
+        ];
+
     const
         /**
          * 呼吸器閲覧・編集権限
