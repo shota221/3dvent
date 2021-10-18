@@ -152,7 +152,7 @@ return [
     'invalid_sound' => '雑音が大きいため測定できませんでした。手動測定に切り替えてください。',
     'not_enough_recording_time' => '録音時間が短すぎます。再度録音してください。',
     'not_enough_pulses' => '十分なパルスが検出できませんでした。呼吸器に近づけて再度録音してください。',
-    'required_for_principal_investigator' => '医師（施設内研究代表者の場合メールアドレスは必須です）',
+    'required_for_principal_investigator' => '医師（施設内研究代表者）の場合メールアドレスは必須です。',
     'organization_mismatch' => '組織情報が一致しません。',
     'unauthenticated' => '認証エラー',
     'user_token_required' => 'ユーザートークンは必須です。',
