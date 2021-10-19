@@ -58,9 +58,6 @@ Route::group(['middleware' => ['routetype:admin']], function () {
         'AuthController@asyncResetPassword'
     )->name('admin.auth.async.reset_password');
     
-
-    // TODO　パスワードリセット
-
     Route::group(['middleware' => ['auth:admin']], function () {
 
         // 認証が必要なルート

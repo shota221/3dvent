@@ -135,21 +135,21 @@ $('#async-update').on(
     function(e) {
 
         var parameters = {};
-        parameters['id'] = $editModalIdInput.val();
-        parameters['organization_id'] = $editModalOrganizationIdInput.val();
-        parameters['patient_code'] = $editModalPatientCodeInput.val();
-        parameters['opt_out_flg'] = $editModal.find('[name="opt_out_flg"]:checked').val();
-        parameters['age'] = $editModalAgeInput.val();
-        parameters['vent_disease_name'] = $editModalVentDiseaseNameInput.val();
-        parameters['other_disease_name_1'] = $editModalOtherDiseaseName1Input.val();
-        parameters['other_disease_name_2'] = $editModalOtherDiseaseName2Input.val();
-        parameters['used_place'] =$editModalUsedPlaceInput.val();
-        parameters['hospital'] = $editModalHospitalInput.val();
-        parameters['national'] = $editModalNationalInput.val();
-        parameters['discontinuation_at'] = $editModalDiscontinuationAtInput.val();
-        parameters['outcome'] = $editModalOutcomeInput.val();
-        parameters['treatment'] = $editModalTreatmentInput.val();
-        parameters['adverse_event_flg'] = $editModal.find('[name="adverse_event_flg"]:checked').val();
+        parameters['id']                     = $editModalIdInput.val();
+        parameters['organization_id']        = $editModalOrganizationIdInput.val();
+        parameters['patient_code']           = $editModalPatientCodeInput.val();
+        parameters['opt_out_flg']            = $editModal.find('[name="opt_out_flg"]:checked').val();
+        parameters['age']                    = $editModalAgeInput.val();
+        parameters['vent_disease_name']      = $editModalVentDiseaseNameInput.val();
+        parameters['other_disease_name_1']   = $editModalOtherDiseaseName1Input.val();
+        parameters['other_disease_name_2']   = $editModalOtherDiseaseName2Input.val();
+        parameters['used_place']             = $editModalUsedPlaceInput.val();
+        parameters['hospital']               = $editModalHospitalInput.val();
+        parameters['national']               = $editModalNationalInput.val();
+        parameters['discontinuation_at']     = $editModalDiscontinuationAtInput.val();
+        parameters['outcome']                = $editModalOutcomeInput.val();
+        parameters['treatment']              = $editModalTreatmentInput.val();
+        parameters['adverse_event_flg']      = $editModal.find('[name="adverse_event_flg"]:checked').val();
         parameters['adverse_event_contents'] = $editModalAdverseEventContentsInput.val();
         
         var successCallback = function (data) {
@@ -260,11 +260,11 @@ $paginatedList.on(
 function buildSearchParameters() {
     var parameters = {};
 
-    parameters['organization_id'] = $searchFormOrganizationInput.val();
-    parameters['patient_code'] = $searchFormPatientCodeInput.val();
+    parameters['organization_id']      = $searchFormOrganizationInput.val();
+    parameters['patient_code']         = $searchFormPatientCodeInput.val();
     parameters['registered_user_name'] = $searchFormRegisteredUserNameInput.val();
-    parameters['registered_at_from'] = $searchFormRegisteredAtFromInput.val();
-    parameters['registered_at_to'] = $searchFormRegisteredAtToInput.val();
+    parameters['registered_at_from']   = $searchFormRegisteredAtFromInput.val();
+    parameters['registered_at_to']     = $searchFormRegisteredAtToInput.val();
 
     return parameters;
 }

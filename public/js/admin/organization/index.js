@@ -1,16 +1,16 @@
 const
-    $registerModal = $('#modal-organization-create'),
-    $showRegisterModalBtn = $('#show-register-modal'),
+    $registerModal         = $('#modal-organization-create'),
+    $showRegisterModalBtn  = $('#show-register-modal'),
     $organizationCreateBtn = $('#async-organization-create'),
-    $modalCancelBtn = $('button.modal-cancel'),
-    $editModal = $('#modal-organization-update'),
-    $paginatedList = $('#paginated-list'),
-    $userList = $('#user-list'),
+    $modalCancelBtn        = $('button.modal-cancel'),
+    $editModal             = $('#modal-organization-update'),
+    $paginatedList         = $('#paginated-list'),
+    $userList              = $('#user-list'),
     $organizationUpdateBtn = $('#async-organization-update'),
-    $searchForm = $('#async-search-form'),
-    $searchBtn = $('#async-search'),
-    $clearSearchFormBtn = $('#clear-search-form'),
-    $userListModal = $('#modal-user-list')
+    $searchForm            = $('#async-search-form'),
+    $searchBtn             = $('#async-search'),
+    $clearSearchFormBtn    = $('#clear-search-form'),
+    $userListModal         = $('#modal-user-list')
     ;
 
 $showRegisterModalBtn.on(
@@ -31,12 +31,12 @@ $organizationCreateBtn.on(
 
         var $targetForm = $('form[name="organization-create"]');
 
-        parameters['organization_name'] = $targetForm.find('input[name="organization_name"]').val();
-        parameters['representative_name'] = $targetForm.find('input[name="representative_name"]').val();
-        parameters['representative_email'] = $targetForm.find('input[name="representative_email"]').val();
-        parameters['organization_code'] = $targetForm.find('input[name="organization_code"]').val();
-        parameters['disabled_flg'] = $targetForm.find('input[name="disabled_flg"]:checked').val();
-        parameters['edcid'] = $targetForm.find('input[name="edcid"]').val();
+        parameters['organization_name']        = $targetForm.find('input[name="organization_name"]').val();
+        parameters['representative_name']      = $targetForm.find('input[name="representative_name"]').val();
+        parameters['representative_email']     = $targetForm.find('input[name="representative_email"]').val();
+        parameters['organization_code']        = $targetForm.find('input[name="organization_code"]').val();
+        parameters['disabled_flg']             = $targetForm.find('input[name="disabled_flg"]:checked').val();
+        parameters['edcid']                    = $targetForm.find('input[name="edcid"]').val();
         parameters['patient_obs_approved_flg'] = $targetForm.find('input[name="patient_obs_approved_flg"]:checked').val();
 
         var successCallback = function (data) {
