@@ -38,6 +38,7 @@ class UserAuthService
             'name'            => $form->name,
             'organization_id' => $organization->id,
             'password'        => $form->password,
+            'disabled_flg'    => Models\User::ENABLED,
         ];
 
         $session_guard = $guard;
