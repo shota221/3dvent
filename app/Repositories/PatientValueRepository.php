@@ -93,6 +93,19 @@ class PatientValueRepository
             ->pluck('patient_values.id');
     }
 
+    public static function getIdsWithPatientAndOrganizationByOrganizationIdAndUserIdAndIds(
+        int $organization_id, 
+        int $user_id,
+        array $ids) 
+    {
+        $query = self::joinPatientAndOrganization(static::query());
+        return $query
+            ->where('organizations.id', $organization_id)
+            ->where('patient_values.patient_obs_user_id', $user_id)
+            ->whereIn('patient_values.id', $ids)
+            ->pluck('patient_values.id');
+    }
+
     public static function findOneWithPatientAndOrganizationById(int $id)
     {
         $query = self::joinPatientAndOrganization(static::query());
@@ -167,9 +180,38 @@ class PatientValueRepository
             ->get();
     }
 
+    public static function searchWithPatientAndUserAndOrganizationByOrganizationIdAndUserId(
+        array $search_values,
+        int $organization_id,
+        int $user_id,
+        int $limit,
+        int $offset)
+    {
+        $query = self::createWhereClauseFromOrganizationId(static::query(), $organization_id);
+        $query = self::createWhereClauseFromUserId($query, $user_id);
+        $query = self::queryWithPatientAndUserAndOrganizationBySearchValues($query, $search_values, $organization_id);
+        $query->select([
+            'patient_values.*',
+            'patients.patient_code',
+            'organizations.name AS organization_name',
+            'users.name AS registered_user_name',
+        ]);
+
+        return $query
+            ->limit($limit)
+            ->offset($offset)
+            ->orderBy('created_at', 'DESC')
+            ->get();
+    }
+
     private static function createWhereClauseFromOrganizationId($query, int $organization_id)
     {
         return $query->where('organizations.id', $organization_id);
+    }
+
+    private static function createWhereClauseFromUserId($query, int $user_id)
+    {
+        return $query->where('patient_values.patient_obs_user_id', $user_id);
     }
 
     public static function logicalDeleteByIds(array $ids)
@@ -192,6 +234,20 @@ class PatientValueRepository
         $query = static::query();
         $query = self::joinPatientAndOrganization($query);
         $query = self::joinUser($query);
+        $query = self::createWhereClauseFromSearchValues($query, $search_values, $organization_id);
+
+        return $query->count();
+    }
+
+    public static function countByOrganizationIdAndUserIdAndSearchValues(
+        int $organization_id, 
+        int $user_id, 
+        array $search_values)
+    {
+        $query = static::query();
+        $query = self::joinPatientAndOrganization($query);
+        $query = self::joinUser($query);
+        $query = self::createWhereClauseFromUserId($query, $user_id);
         $query = self::createWhereClauseFromSearchValues($query, $search_values, $organization_id);
 
         return $query->count();
