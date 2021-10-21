@@ -7,6 +7,8 @@
         </p>
     </a>
 </li>
+
+@if (OrgUserGate::canReadUser(Auth::user()))
 <li class="nav-item">
     <a href="{{ route('org.user.index') }}"
         class="nav-link {{ is_current_route('org.user.*') ? 'active' : '' }}">
@@ -16,6 +18,8 @@
         </p>
     </a>
 </li>
+@endif
+
 <li class="nav-item">
     <a href="{{ route('org.ventilator.index') }}"
         class="nav-link {{ is_current_route('org.ventilator.*') ? 'active' : '' }}">
