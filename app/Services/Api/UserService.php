@@ -3,6 +3,7 @@
 namespace App\Services\Api;
 
 use App\Exceptions;
+use App\Http\Auth;
 use App\Repositories as Repos;
 use App\Services\Support as Support;
 use App\Services\Support\Converter;
@@ -19,12 +20,34 @@ class UserService
 
     public function update($form, $user)
     {
-        //フォームとアップデート先両方にユーザ名があり、それらが同一でないかつ、同一組織内に同じユーザ名が存在するかどうか
-        $exists =  !is_null($form->name) && !is_null($user->name) && $form->name !== $user->name && Repos\UserRepository::existsByNameAndOrganizationId($form->name, $user->organization_id);
-        //ユーザー名は組織内にて一意
-        if ($exists) {
-            $form->addError('user_name', 'validation.duplicated_user_name');
-            return false;
+        if ($form->name !== $user->name) {
+            // ユーザー名を変更する場合には組織内で一意であるかどうか確認
+            $exists =  Repos\UserRepository::existsByNameAndOrganizationId($form->name, $user->organization_id);
+
+            if ($exists) {
+                $form->addError('user_name', 'validation.duplicated_user_name');
+                throw new Exceptions\InvalidFormException($form);
+            }
+        }
+
+        // 権限タイプが医師（施設内研究代表者）だった場合にはメアド必須
+        if ($user->org_authority_type === Auth\OrgUserGate::AUTHORITIES['principal_investigator']['type']) {
+            if (empty($form->email)) {
+                $form->addError('email', 'validation.required_for_principal_investigator');
+                throw new Exceptions\InvalidFormException($form);
+            }
+        }
+
+        // メールの入力がある場合は組織内重複チェック
+        if (! empty($form->email)) {
+            $registered_user = Repos\UserRepository::findOneByOrganizationIdAndEmail($user->organization_id, $form->email);
+
+            $is_duplicated_email = ! is_null($registered_user) && $registered_user->id !== $user->id;
+    
+            if ($is_duplicated_email) {
+                $form->addError('email', 'validation.duplicated_registration');
+                throw new Exceptions\InvalidFormException($form);
+            }
         }
 
         $entity = Converter\UserConverter::convertToUserUpdateEntity($user, $form->name, $user->id, $form->email);

@@ -244,7 +244,6 @@ return [
         'representative_name'=>'代表者名',
         'representative_email'=>'メールアドレス',
         'organization_code'=>'組織コード',
-        'user_name'=>'組織管理者ユーザー名',
         'status'=>'ステータス',
         'edcid'=>'EDC施設ID',
         'patient_observation_status'=>'患者観察研究ステータス',
