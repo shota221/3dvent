@@ -34,6 +34,12 @@ class UserAuthService
             throw new Exceptions\InvalidFormException($form);
         }
 
+        // 組織ステータスが無効の場合ログインさせない
+        if ($organization->disabled_flg) {
+            $form->addError('accountOrPassword', 'validation.account_or_password_incorrect');
+            throw new Exceptions\InvalidFormException($form);
+        }
+
         $credentials = [
             'name'            => $form->name,
             'organization_id' => $organization->id,
