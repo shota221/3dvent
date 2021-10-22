@@ -5,6 +5,7 @@ namespace App\Services\Support\Converter;
 use App\Http\Response\Admin\OrganizationData;
 use App\Http\Response\Admin\OrganizationResult;
 use App\Http\Response\Admin\UserResult;
+use App\Services\Support\Converter;
 use App\Models\Organization;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
@@ -101,7 +102,14 @@ class OrganizationConverter
     $user_result = new UserResult;
 
     $user_result->name = $entity->name;
-    $user_result->authority = $entity->authority;
+    // $user_result->authority = $entity->authority;
+    
+    if ($entity->admin_flg) {
+      $user_result->authority = Converter\Lang\Authority::convertToAdminAuthorityName($entity->admin_authority_type);
+    } else {
+      $user_result->authority = Converter\Lang\Authority::convertToOrgAuthorityName($entity->org_authority_type);
+    }
+    
     $user_result->disabled_flg = $entity->disabled_flg;
 
     return $user_result;
