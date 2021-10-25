@@ -32,20 +32,20 @@ class AppkeyGate
     {
         $request = request();
 
-        $inputedAppkeyStr = $request->header(self::APPKEY_HEADER);
+        $inputAppkeyStr = $request->header(self::APPKEY_HEADER);
 
         if (!is_null($inputKey)) {
-            if (empty($inputedAppkeyStr)) {
+            if (empty($inputAppkeyStr)) {
                 // GET
-                $inputedAppkeyStr = $request->query($inputKey);
+                $inputAppkeyStr = $request->query($inputKey);
             }
-            if (empty($inputedAppkeyStr)) {
+            if (empty($inputAppkeyStr)) {
                 // POST
-                $inputedAppkeyStr = $request->input($inputKey);
+                $inputAppkeyStr = $request->input($inputKey);
             }
         }
 
-        if (is_null($inputedAppkeyStr) || is_null($appkey = Repos\AppkeyRepository::findOneByAppkey($inputedAppkeyStr))) {
+        if (is_null($inputAppkeyStr) || is_null($appkey = Repos\AppkeyRepository::findOneByAppkey($inputAppkeyStr))) {
             return false;
         }
 
@@ -56,9 +56,9 @@ class AppkeyGate
     {
         $request = request();
 
-        $inputedAppkeyStr = $request->header(self::APPKEY_HEADER);
+        $inputAppkeyStr = $request->header(self::APPKEY_HEADER);
 
-        if (is_null($inputedAppkeyStr) || is_null($appkey = Repos\AppkeyRepository::findOneByAppkey($inputedAppkeyStr))) {
+        if (is_null($inputAppkeyStr) || is_null($appkey = Repos\AppkeyRepository::findOneByAppkey($inputAppkeyStr))) {
             return null;
         }
 
