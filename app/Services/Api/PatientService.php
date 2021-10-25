@@ -240,19 +240,19 @@ class PatientService
             return false;
         }
 
-        $patient_value = Repos\PatientValueRepository::findOneByPatientId($form->id);
+        // 編集元データ取得
+        $old_patient_value = Repos\PatientValueRepository::findOneByPatientId($form->id);
 
-        if (is_null($patient_value)) {
+        if (is_null($old_patient_value)) {
             $form->addError('id', 'validation.has_not_been_observed');
             return false;
         }
 
-        //編集前データの複製
-        $patient_value_copy = $patient_value->replicate();
-
-        $entity = Converter\PatientConverter::convertToPatientValueUpdateEntity(
-            $patient_value_copy,
-            $user->id,
+        // 編集後データ作成
+        $new_patient_value = Converter\PatientConverter::convertToPatientValueEntity(
+            $old_patient_value->patient_id,
+            $old_patient_value->patient_obs_user_id,
+            $old_patient_value->registered_at,
             $form->opt_out_flg,
             $form->age,
             $form->vent_disease_name,
@@ -265,25 +265,34 @@ class PatientService
             $form->outcome,
             $form->treatment,
             $form->adverse_event_flg,
-            $form->adverse_event_contents,
+            $form->adverse_event_contents
         );
 
         //編集元にdeleted_atを記録
-        $patient_value->deleted_at = DateUtil::toDatetimeStr(DateUtil::now());
+        $old_patient_value->deleted_at = DateUtil::toDatetimeStr(DateUtil::now());
 
         DBUtil::Transaction(
             '編集後データの挿入',
-            function () use ($entity, $patient_value, $user) {
-                //編集前データ削除
-                $patient_value->save();
+            function () use ($new_patient_value, $old_patient_value, $user) {
+                //編集元データ論理削除
+                $old_patient_value->save();
+
                 //削除履歴追加
-                $delete_history = Converter\HistoryConverter::convertToHistoryEntity($patient_value, HistoryBaseModel::DELETE, $user->id);
+                $delete_history = Converter\HistoryConverter::convertToHistoryEntity(
+                    $old_patient_value, 
+                    HistoryBaseModel::DELETE, 
+                    $user->id);
                 $delete_history->save();
 
                 //編集後データ登録
-                $entity->save();
+                $new_patient_value->save();
+
                 //登録履歴追加
-                $create_history = Converter\HistoryConverter::convertToHistoryEntity($entity, HistoryBaseModel::CREATE, $user->id);
+                $create_history = Converter\HistoryConverter::convertToHistoryEntity(
+                    $new_patient_value,
+                     HistoryBaseModel::CREATE,
+                      $user->id);
+                      
                 $create_history->save();
             }
         );

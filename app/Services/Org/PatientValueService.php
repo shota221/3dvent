@@ -151,7 +151,7 @@ class PatientValueService
         // 編集後データ作成
         $new_patient_value = Converter\PatientConverter::convertToPatientValueEntity(
             $old_patient_value->patient_id,
-            $user->id,
+            $old_patient_value->patient_obs_user_id,
             $old_patient_value->registered_at,
             $form->opt_out_flg,
             $form->age,
