@@ -59,7 +59,7 @@ class VentilatorValueService
             return false;
         }
 
-        $appkey_id = Repos\AppkeyRepository::findOneByAppkey($appkey)->id;
+        $appkey_id = $appkey->id;
 
         $registered_user_id = !is_null($user) ? $user->id : null;
 

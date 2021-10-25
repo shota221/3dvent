@@ -3,7 +3,6 @@
 namespace App\Services\Api;
 
 use App\Exceptions;
-use App\Http\Auth\AppkeyGate;
 use App\Repositories as Repos;
 use App\Services\Support\Converter;
 use App\Services\Support\DateUtil;
@@ -13,7 +12,7 @@ use function PHPUnit\Framework\isJson;
 
 class BugReportService
 {
-    public function create($form, $user = null)
+    public function create($form, $appkey, $user = null)
     {
         $ventilator_id = $form->ventilator_id;
 
@@ -23,9 +22,6 @@ class BugReportService
             $form->addError('ventilator_id', 'validation.id_not_found');
             throw new Exceptions\InvalidFormException($form);
         }
-
-        //AppkeyGate通過済みであるためnot null
-        $appkey = AppkeyGate::getValidAppkey();
 
         $appkey_id = $appkey->id;
 
