@@ -34,10 +34,17 @@ class UserAuthService
             throw new Exceptions\InvalidFormException($form);
         }
 
+        // 組織ステータスが無効の場合ログインさせない
+        if ($organization->disabled_flg) {
+            $form->addError('accountOrPassword', 'validation.account_or_password_incorrect');
+            throw new Exceptions\InvalidFormException($form);
+        }
+
         $credentials = [
             'name'            => $form->name,
             'organization_id' => $organization->id,
             'password'        => $form->password,
+            'disabled_flg'    => Models\User::ENABLED,
         ];
 
         $session_guard = $guard;
@@ -53,23 +60,31 @@ class UserAuthService
         return Converter\UserResponseConverter::convertToUserAuthResult($redirect_to);
     }
 
-    public function generateToken($form)
+    public function generateToken($form, $guard)
     {
         //単にトークンを発行するのみ
         $organization = Repos\OrganizationRepository::findOneByCode($form->organization_code);
 
         if (is_null($organization)) {
             $form->addError('organization_code', 'validation.account_not_found');
-            return false;
+            throw new Exceptions\InvalidFormException($form);
+        }
+
+        // 組織ステータスが無効の場合ログインさせない
+        if ($organization->disabled_flg) {
+            $form->addError('organization_code', 'validation.account_or_password_incorrect');
+            throw new Exceptions\InvalidException('auth.failed');
         }
 
         $credentials = [
-            'name' => $form->name,
+            'name'            => $form->name,
             'organization_id' => $organization->id,
-            'password' => $form->password
+            'password'        => $form->password,
+            'admin_flg'       => Models\User::ROLE_ORG,
+            'disabled_flg'    => Models\User::ENABLED,
         ];
 
-        $userGuard = Auth::guard('user');
+        $userGuard = $guard;
 
         if (!$userGuard->attempt($credentials)) {
             throw new Exceptions\InvalidException('auth.failed');
@@ -77,7 +92,7 @@ class UserAuthService
 
         $user = $userGuard->user();
 
-        $token = $this->regenerateToken($user,true);
+        $token = $this->regenerateToken($user, true);
 
         return Converter\UserConverter::convertToLoginUserResult($user->id, $token, $user->name, $organization->name);
     }

@@ -3,6 +3,7 @@
 namespace App\Services\Org;
 
 use App\Exceptions;
+use App\Http\Auth;
 use App\Http\Forms\Org as Form;
 use App\Http\Response;
 use App\Models;
@@ -24,7 +25,7 @@ class PatientValueService
      */
     public function getPaginatedPatientValueData(
         string $path,
-        int $organization_id,
+        Models\User $user,
         Form\PatientValueSearchForm $form = null)
     {
         $limit = config('view.items_per_page');
@@ -38,22 +39,38 @@ class PatientValueService
             $http_query = '?' . http_build_query($search_values);
         }
         
-        $patient_values = Repos\PatientValueRepository::searchWithPatientAndUserAndOrganizationByOrganizationId(
-            $search_values,
-            $organization_id,
-            $limit,
-            $offset);
-        
-        $total_count = Repos\PatientValueRepository::countByOrganizationIdAndSearchValues($organization_id, $search_values);
+        if (Auth\OrgUserGate::canReadAllPatientValue($user)) {
+            $patient_values = Repos\PatientValueRepository::searchWithPatientAndUserAndOrganizationByOrganizationId(
+                $search_values,
+                $user->organization_id,
+                $limit,
+                $offset);
+            
+            $total_count = Repos\PatientValueRepository::countByOrganizationIdAndSearchValues(
+                $user->organization_id, 
+                $search_values);
 
+        } else {
+            $patient_values = Repos\PatientValueRepository::searchWithPatientAndUserAndOrganizationByOrganizationIdAndUserId(
+                $search_values,
+                $user->organization_id,
+                $user->id,
+                $limit,
+                $offset);
+            
+            $total_count = Repos\PatientValueRepository::countByOrganizationIdAndUserIdAndSearchValues(
+                $user->organization_id,
+                $user->id, 
+                $search_values);
+        }
+        
         $item_per_page = $limit;
 
         return Converter\PatientValueConverter::convertToPaginatedPatientValueData(
             $patient_values,
             $total_count,
             $item_per_page,
-            $path.$http_query
-        );
+            $path.$http_query);
     }
 
     /**
@@ -63,14 +80,23 @@ class PatientValueService
      * @return type
      */
     public function getOnePatientValueData(
-        Form\PatientValueDetailForm $form, 
-        int $organization_id)
+        Form\PatientValueDetailForm $form,
+        Models\User $user)
     {
-        $patient_value = Repos\PatientValueRepository::findOneWithPatientAndOrganizationByOrganizationIdAndId($organization_id, $form->id);
+        $patient_value = Repos\PatientValueRepository::findOneWithPatientAndOrganizationByOrganizationIdAndId($user->organization_id, $form->id);
 
         if (is_null($patient_value)) {
             $form->addError('id', 'validation.id_not_found');
             throw new Exceptions\InvalidFormException($form);
+        }
+        
+        if (! Auth\OrgUserGate::canReadAllPatientValue($user)) {
+            $is_match = $patient_value->patient_obs_user_id === $user->id;
+            
+            if (! $is_match) {
+                $form->addError('id', 'validation.id_not_found');
+                throw new Exceptions\InvalidFormException($form);
+            }
         }
 
         return Converter\PatientValueConverter::convertToPatientValueDetailData($patient_value);
@@ -83,23 +109,32 @@ class PatientValueService
      * @return type
      */
     public function update(
-        Form\PatientValueUpdateForm $form, 
-        int $organization_id, 
-        int $user_id)
+        Form\PatientValueUpdateForm $form,
+        Models\User $user)
     {
         // 患者コード重複確認用患者データ格納用
         $confirmation_patient = null;
 
         if (! is_null($form->patient_code)) {
-            $confirmation_patient = Repos\PatientRepository::findOneByOrganizationIdAndPatientCode($organization_id, $form->patient_code);
+            $confirmation_patient = Repos\PatientRepository::findOneByOrganizationIdAndPatientCode($user->organization_id, $form->patient_code);
         }
 
         // 編集元データ取得
-        $old_patient_value = Repos\PatientValueRepository::findOneWithPatientAndOrganizationByOrganizationIdAndId($organization_id, $form->id);
+        $old_patient_value = Repos\PatientValueRepository::findOneWithPatientAndOrganizationByOrganizationIdAndId($user->organization_id, $form->id);
 
         if (is_null($old_patient_value)) {
             $form->addError('id', 'validation.id_not_found');
             throw new Exceptions\InvalidFormException($form);
+        }
+
+        // 全編集権限が無い場合には、観察者idが一致しているか確認
+        if (! Auth\OrgUserGate::canEditAllPatientValue($user)) {
+            $is_match = $old_patient_value->patient_obs_user_id === $user->id;
+            
+            if (! $is_match) {
+                $form->addError('id', 'validation.id_not_found');
+                throw new Exceptions\InvalidFormException($form);
+            }
         }
         
         $is_duplicated = ! is_null($confirmation_patient) && $confirmation_patient->id !== $old_patient_value->patient_id;
@@ -109,13 +144,14 @@ class PatientValueService
             throw new Exceptions\InvalidFormException($form);
         }
 
-        $patient_entity = Repos\PatientRepository::findOneByOrganizationIdAndId($organization_id, $old_patient_value->patient_id);
+        $patient_entity = Repos\PatientRepository::findOneByOrganizationIdAndId($user->organization_id, $old_patient_value->patient_id);
+
         $patient_entity->patient_code = $form->patient_code;
 
         // 編集後データ作成
         $new_patient_value = Converter\PatientConverter::convertToPatientValueEntity(
             $old_patient_value->patient_id,
-            $user_id,
+            $old_patient_value->patient_obs_user_id,
             $old_patient_value->registered_at,
             $form->opt_out_flg,
             $form->age,
@@ -134,6 +170,8 @@ class PatientValueService
 
         // 編集後データにdeleted_atを記録
         $old_patient_value->deleted_at = DateUtil::toDateTimeStr(DateUtil::now());
+
+        $user_id = $user->id;
 
         DBUtil::Transaction(
             '編集元データ論理削除、編集後データ登録、ヒストリーテーブル登録、患者コード更新',
@@ -174,8 +212,7 @@ class PatientValueService
      */
     public function logicalDelete(
         Form\PatientValueLogicalDeleteForm $form, 
-        int $organization_id, 
-        int $user_id)
+        Models\User $user)
     {
         $ids = $form->ids;
 
@@ -187,9 +224,17 @@ class PatientValueService
         }
         
         // 削除済み、または不正なリクエストidを考慮しid再取得
-        $target_ids = Repos\PatientValueRepository::getIdsWithPatientAndOrganizationByOrganizationIdAndIds($organization_id, $ids);
+        if (Auth\OrgUserGate::canEditAllPatientValue($user)) {
+            $target_ids = Repos\PatientValueRepository::getIdsWithPatientAndOrganizationByOrganizationIdAndIds($user->organization_id, $ids);
+        } else {
+            // 全編集権限が無い場合には、観察者idも含めて再取得
+            $target_ids = Repos\PatientValueRepository::getIdsWithPatientAndOrganizationByOrganizationIdAndUserIdAndIds($user->organization_id, $user->id, $ids);
+
+        }
 
         if (! empty($target_ids)) {
+            $user_id = $user->id;
+
             DBUtil::Transaction(
                 '患者観察研究データ論理削除、ヒストリーテーブル登録',
                 function () use ($target_ids, $user_id) {

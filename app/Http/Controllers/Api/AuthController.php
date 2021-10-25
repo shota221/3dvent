@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 
 use App\Services as Service;
 
+use Illuminate\Support\Facades\Auth;
+
 use Illuminate\Http\Request;
 
 use App\Http\Forms as Form;
@@ -25,9 +27,9 @@ class AuthController extends ApiController
     {
         $form = new Form\UserAuthForm($request->all());
 
-        if ($form->hasError() || !$response = $this->service->generateToken($form)) {
-            throw new Exceptions\InvalidFormException($form);
-        }
+        if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
+        
+        $response = $this->service->generateToken($form, Auth::guard('user'));
 
         return $response;
     }

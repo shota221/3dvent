@@ -35,9 +35,9 @@ class UserController extends ApiController
 
         $user = $this->getUser();
 
-        if ($form->hasError() || !$response = $this->service->update($form, $user)) {
-            throw new Exceptions\InvalidFormException($form);
-        }
+        if ($form->hasError()) { throw new Exceptions\InvalidFormException($form); }
+
+        $response = $this->service->update($form, $user);
 
         return $response;
     }

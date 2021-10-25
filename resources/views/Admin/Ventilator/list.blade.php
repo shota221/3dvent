@@ -22,8 +22,10 @@
         <th>@lang('messages.ventilator_value_list')</th>
     </tr>
     @foreach ($ventilator_paginator as $ventilator)
-        <tr data-id="{{ $ventilator->id }}" data-serial_number="{{ $ventilator->serial_number }}"
+        <tr data-id="{{ $ventilator->id }}" 
+            data-serial_number="{{ $ventilator->serial_number }}"
             data-gs1_code="{{ $ventilator->gs1_code }}"
+            data-nearest_city="{{ $ventilator->nearest_city }}"
             data-organization_name="{{ $ventilator->organization_name }}"
             data-registered_user_name="{{ $ventilator->registered_user_name }}"
             data-expiration_date="{{ $ventilator->expiration_date }}"

@@ -86,6 +86,7 @@ return [
     'mri' => 'MRI室',
     // n
     'national_name' => '国名',
+    'nearest_city' => '最寄りの都市',
     'new_password' => '新パスワード',
     'none' => '無',
     'non_icu' => 'ICU以外の病室',

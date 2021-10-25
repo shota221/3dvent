@@ -26,6 +26,14 @@
                 </div>
             </div>
 
+            {{-- 最寄りの都市 --}}
+            <div class="form-group">
+                <label for="nearest_city">@lang('messages.nearest_city')</span></label>
+                <div>
+                    <input class="form-control" type="text" name="nearest_city" readonly>
+                </div>
+            </div>
+
             {{-- 登録者 --}}
             <div class="form-group">
                 <label for="registered_user_name">@lang('messages.registered_user_name')</span></label>

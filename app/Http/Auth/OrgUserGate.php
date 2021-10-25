@@ -188,4 +188,14 @@ class OrgUserGate
     {
         return 0 < ($user->authority & self::PATIENT_VALUE_EDITABLE_ALL);
     }
+
+    public static function canReadUser(User $user)
+    {
+        return 0 < ($user->authority & self::USER_READABLE);
+    }
+
+    public static function canEditUser(User $user)
+    {
+        return 0 < ($user->authority & self::USER_EDITABLE);
+    }
 }

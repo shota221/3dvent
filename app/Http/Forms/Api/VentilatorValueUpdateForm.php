@@ -62,7 +62,7 @@ class VentilatorValueUpdateForm extends BaseForm
 
         $this->height = $input['height'];
 
-        $this->weight = $input['weight'] ?? null;
+        $this->weight = $input['weight'] ?? '';
 
         $this->airway_pressure = $input['airway_pressure'];
 
@@ -72,14 +72,14 @@ class VentilatorValueUpdateForm extends BaseForm
 
         $this->status_use = $input['status_use'] ?? null;
 
-        $this->status_use_other = $input['status_use_other'] ?? null;
+        $this->status_use_other = $input['status_use_other'] ?? '';
 
-        $this->spo2 = $input['spo2'] ?? null;
+        $this->spo2 = $input['spo2'] ?? '';
 
-        $this->etco2 = $input['etco2'] ?? null;
+        $this->etco2 = $input['etco2'] ?? '';
 
-        $this->pao2 = $input['pao2'] ?? null;
+        $this->pao2 = $input['pao2'] ?? '';
 
-        $this->paco2 = $input['paco2'] ?? null;
+        $this->paco2 = $input['paco2'] ?? '';
     }
 }
