@@ -130,6 +130,7 @@ class VentilatorConverter
     $ventilator_result->id = $entity->id;
     $ventilator_result->gs1_code = $entity->gs1_code;
     $ventilator_result->serial_number = $entity->serial_number;
+    $ventilator_result->nearest_city = ! is_null($entity->city) ? $entity->city : "";
     $ventilator_result->organization_name = $entity->organization_name;
     $ventilator_result->registered_user_name = $entity->registered_user_name;
     $ventilator_result->expiration_date = $entity->expiration_date;
@@ -223,6 +224,7 @@ class VentilatorConverter
     $ventilator_result->id = $entity->id;
     $ventilator_result->gs1_code = $entity->gs1_code;
     $ventilator_result->serial_number = $entity->serial_number;
+    $ventilator_result->nearest_city = ! is_null($entity->city) ? $entity->city : "";
     $ventilator_result->registered_user_name = $entity->registered_user_name;
     $ventilator_result->expiration_date = $entity->expiration_date;
     $ventilator_result->start_using_at = $entity->start_using_at;

@@ -8,6 +8,8 @@ class VentilatorResult
 
     public $gs1_code;
 
+    public $nearest_city;
+
     public $patient_code;
 
     public $organization_name;
