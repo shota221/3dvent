@@ -29,9 +29,7 @@ class BugReportController extends ApiController
 
         $user = $this->getUser();
 
-        $appkey = $request->header('X-App-Key');
-
-        $response = $this->service->create($form, $appkey, $user);
+        $response = $this->service->create($form, $user);
 
         return $response;
     }

@@ -9,7 +9,7 @@ use App\Services\Support\CryptUtil;
 
 class AppkeyGate
 {
-    const APPKEY_HEADER = 'X-App-Key';
+    private const APPKEY_HEADER = 'X-App-Key';
 
 
     public static function define()
@@ -32,23 +32,36 @@ class AppkeyGate
     {
         $request = request();
 
-        $appkey = $request->header(self::APPKEY_HEADER);
+        $inputedAppkeyStr = $request->header(self::APPKEY_HEADER);
 
         if (!is_null($inputKey)) {
-            if (empty($appkey)) {
+            if (empty($inputedAppkeyStr)) {
                 // GET
-                $appkey = $request->query($inputKey);
+                $inputedAppkeyStr = $request->query($inputKey);
             }
-            if (empty($appkey)) {
+            if (empty($inputedAppkeyStr)) {
                 // POST
-                $appkey = $request->input($inputKey);
+                $inputedAppkeyStr = $request->input($inputKey);
             }
         }
 
-        if (is_null($appkey) || is_null($appkey = Repos\AppkeyRepository::findOneByAppkey($appkey))) {
+        if (is_null($inputedAppkeyStr) || is_null($appkey = Repos\AppkeyRepository::findOneByAppkey($inputedAppkeyStr))) {
             return false;
         }
 
         return true;
+    }
+
+    public static function getValidAppkey()
+    {
+        $request = request();
+
+        $inputedAppkeyStr = $request->header(self::APPKEY_HEADER);
+
+        if (is_null($inputedAppkeyStr) || is_null($appkey = Repos\AppkeyRepository::findOneByAppkey($inputedAppkeyStr))) {
+            return null;
+        }
+
+        return $appkey;
     }
 }
