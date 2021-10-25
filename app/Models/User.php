@@ -19,7 +19,8 @@ class User extends Authenticatable
         TOKEN_COLUMN_NAME = 'api_token',
         DISABLED = 1,
         ENABLED = 0,
-        ROLE_ADMIN = 1
+        ROLE_ADMIN = 1,
+        ROLE_ORG = 0
     ;
 
     /**
