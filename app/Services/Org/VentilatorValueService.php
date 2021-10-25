@@ -3,6 +3,7 @@
 namespace App\Services\Org;
 
 use App\Exceptions;
+use App\Http\Auth;
 use App\Http\Forms\Org as Form;
 use App\Http\Response;
 use App\Models;
@@ -43,17 +44,36 @@ class VentilatorValueService
 
         $organization_id = $user->organization_id;
 
-        $ventilator_value = Repos\VentilatorValueRepository::searchWithUsersAndVentilatorsAndPatientsAndOrganizationsByOrganizationId(
-            $organization_id,
-            $search_values,
-            $item_per_page,
-            $offset
-        );
+        if (Auth\OrgUserGate::canReadAllVentilator($user)) {
+            $ventilator_values = Repos\VentilatorValueRepository::searchWithUsersAndVentilatorsAndPatientsAndOrganizationsByOrganizationId(
+                $organization_id,
+                $search_values,
+                $item_per_page,
+                $offset
+            );
+    
+            $total_count = Repos\VentilatorValueRepository::countByOrganizationIdAndSearchValues(
+                $organization_id,
+                $search_values);
 
-        $total_count = Repos\VentilatorValueRepository::countByOrganizationIdAndSearchValues($organization_id, $search_values);
+        } else {
+            $ventilator_values = Repos\VentilatorValueRepository::searchWithUsersAndVentilatorsAndPatientsAndOrganizationsByOrganizationIdAndRegisteredUserId(
+                $organization_id,
+                $user->id,
+                $search_values,
+                $item_per_page,
+                $offset
+            );
+    
+            $total_count = Repos\VentilatorValueRepository::countByOrganizationIdAndUserIdAndSearchValues(
+                $organization_id,
+                $user->id,
+                $search_values);
+        }
+
 
         return Converter\VentilatorValueConverter::convertToOrgPaginate(
-            $ventilator_value,
+            $ventilator_values,
             $total_count,
             $item_per_page,
             $path . $http_query
@@ -77,6 +97,16 @@ class VentilatorValueService
             throw new Exceptions\InvalidFormException($form);
         }
 
+        // 全閲覧権限が無い場合には登録者idが一致しているか確認
+        if (! Auth\OrgUserGate::canReadAllVentilatorValue($user)) {
+            $is_match = $ventilator_value->registered_user_id === $user->id;
+            
+            if (! $is_match) {
+                $form->addError('id', 'validation.id_not_found');
+                throw new Exceptions\InvalidFormException($form);
+            }
+        }
+
         return Converter\VentilatorValueConverter::convertToOrgVentilatorValueDetail($ventilator_value);
     }
 
@@ -95,6 +125,17 @@ class VentilatorValueService
         if (is_null($ventilator_value)) {
             $form->addError('ventilator_value_id', 'validation.id_not_found');
             throw new Exceptions\InvalidFormException($form);
+        }
+
+        
+        // 全編集権限が無い場合には、登録者idが一致しているか確認
+        if (! Auth\OrgUserGate::canEditAllVentilatorValue($user)) {
+            $is_matched = $ventilator_value->registered_user_id === $user->id;
+            
+            if (! $is_matched) {
+                $form->addError('id', 'validation.id_not_found');
+                throw new Exceptions\InvalidFormException($form);
+            }
         }
 
         $user_id = $user->id;
@@ -226,7 +267,18 @@ class VentilatorValueService
         $operated_user_id = $user->id;
         $organization_id = $user->organization_id;
 
-        $target_ids = Repos\VentilatorValueRepository::getIdsByOrganizationIdAndIds($organization_id, $ids);
+        // 削除済み、または不正なリクエストidを考慮し、id再取得
+        if (Auth\OrgUserGate::canEditAllVentilatorValue($user)) {
+            $target_ids = Repos\VentilatorValueRepository::getIdsByOrganizationIdAndIds(
+                $organization_id, 
+                $ids);
+        } else {
+            // 全編集権限が無い場合には、登録者idも含めて再取得
+            $target_ids = Repos\VentilatorValueRepository::getIdsByOrganizationIdAndRegisteredUserIdAndIds(
+                $organization_id,
+                $user->id,
+                $ids);
+        }
 
         if (!empty($target_ids)) {
             DBUtil::Transaction(

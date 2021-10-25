@@ -327,6 +327,33 @@ class VentilatorValueRepository
             ->get();
     }
 
+    public static function searchWithUsersAndVentilatorsAndPatientsAndOrganizationsByOrganizationIdAndRegisteredUserId(
+        int $organization_id,
+        int $registered_user_id,  
+        array $search_values, 
+        int $limit, 
+        int $offset)
+    {
+        $query = self::queryByOrganizationIdAndSearchValues($organization_id, $search_values)
+        ->select(
+            'ventilator_values.*',
+            'ventilators.gs1_code AS gs1_code',
+            'patients.patient_code AS patient_code',
+            'users.name AS registered_user_name'
+        );
+
+        $query = self::createWhereClauseFromRegisteredUserId($query, $registered_user_id);
+
+        return self::createLimitOffsetClause($query, $limit, $offset)
+            ->orderBy('ventilator_values.created_at', 'DESC')
+            ->get();
+    }
+
+    private static function createWhereClauseFromRegisteredUserId($query, int $registered_user_id)
+    {
+        return $query->where('ventilator_values.registered_user_id', $registered_user_id);
+    }
+
     public static function countBySearchValues(array $search_values)
     {
         return self::queryBySearchValues($search_values)->count();
@@ -335,6 +362,17 @@ class VentilatorValueRepository
     public static function countByOrganizationIdAndSearchValues($organization_id, array $search_values)
     {
         return self::queryByOrganizationIdAndSearchValues($organization_id, $search_values)->count();
+    }
+
+    public static function countByOrganizationIdAndUserIdAndSearchValues(
+        int $organization_id,
+        int $registered_user_id,
+        array $search_values)
+    {
+        $query = self::queryByOrganizationIdAndSearchValues($organization_id, $search_values);
+        $query = self::createWhereClauseFromRegisteredUserId($query, $registered_user_id);
+        
+        return $query->count();
     }
 
     private static function queryBySearchValues(array $search_values)
@@ -472,6 +510,16 @@ class VentilatorValueRepository
     public static function getIdsByOrganizationIdAndIds(int $organization_id, array $ids)
     {
         return self::queryWithVentilatorsByOrganizationId($organization_id)->whereIn('ventilator_values.id', $ids)->pluck('ventilator_values.id');
+    }
+
+    public static function getIdsByOrganizationIdAndRegisteredUserIdAndIds(
+        int $organization_id,
+        int $registered_user_id, 
+        array $ids)
+    {
+        return self::queryWithVentilatorsByOrganizationId($organization_id)
+            ->where('ventilator_values.registered_user_id', $registered_user_id)
+            ->whereIn('ventilator_values.id', $ids)->pluck('ventilator_values.id');
     }
 
     public static function getIdsByIds(array $ids)
