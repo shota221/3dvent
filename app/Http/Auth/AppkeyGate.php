@@ -14,38 +14,38 @@ class AppkeyGate
 
     public static function define()
     {
-        $inputKey = config('auth.appkey_input_key', null);
+        $input_key = config('auth.appkey_input_key', null);
 
         // appkeyが登録されていればAPIへのアクセスを認可する
-        Gate::define('appkey_accessable', function ($user = null) use ($inputKey) {
-            return self::isValidAppkey($inputKey);
+        Gate::define('appkey_accessable', function ($user = null) use ($input_key) {
+            return self::isValidAppkey($input_key);
         });
     }
 
     /**
      * アプリキーの正当性を確認してアプリキーをバインド
      *
-     * @param string|null $inputKey
+     * @param string|null $input_key
      * @return boolean
      */
-    private static function isValidAppkey(?string $inputKey)
+    private static function isValidAppkey(?string $input_key)
     {
         $request = request();
 
-        $inputAppkeyStr = $request->header(self::APPKEY_HEADER);
+        $input_appkey_str = $request->header(self::APPKEY_HEADER);
 
-        if (!is_null($inputKey)) {
-            if (empty($inputAppkeyStr)) {
+        if (!is_null($input_key)) {
+            if (empty($input_appkey_str)) {
                 // GET
-                $inputAppkeyStr = $request->query($inputKey);
+                $input_appkey_str = $request->query($input_key);
             }
-            if (empty($inputAppkeyStr)) {
+            if (empty($input_appkey_str)) {
                 // POST
-                $inputAppkeyStr = $request->input($inputKey);
+                $input_appkey_str = $request->input($input_key);
             }
         }
 
-        if (is_null($inputAppkeyStr) || is_null($appkey = Repos\AppkeyRepository::findOneByAppkey($inputAppkeyStr))) {
+        if (is_null($input_appkey_str) || is_null($appkey = Repos\AppkeyRepository::findOneByAppkey($input_appkey_str))) {
             return false;
         }
 
@@ -56,9 +56,9 @@ class AppkeyGate
     {
         $request = request();
 
-        $inputAppkeyStr = $request->header(self::APPKEY_HEADER);
+        $input_appkey_str = $request->header(self::APPKEY_HEADER);
 
-        if (is_null($inputAppkeyStr) || is_null($appkey = Repos\AppkeyRepository::findOneByAppkey($inputAppkeyStr))) {
+        if (is_null($input_appkey_str) || is_null($appkey = Repos\AppkeyRepository::findOneByAppkey($input_appkey_str))) {
             return null;
         }
 
