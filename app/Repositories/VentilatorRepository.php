@@ -160,7 +160,7 @@ class VentilatorRepository
             ->get();
     }
 
-    public static function findByOrganizationIdAndSearchValuesAndOffsetAndLimit(int $organization_id, array $search_values, int $offset, int $limit)
+    public static function searchByOrganizationId(int $organization_id, array $search_values, int $offset, int $limit)
     {
         return self::queryByOrganizationIdAndSearchValues($organization_id, $search_values)
             ->select([
@@ -168,6 +168,31 @@ class VentilatorRepository
                 'users.name AS registered_user_name',
                 'ventilator_bugs.ventilator_id AS bug_ventialtor_id'
             ])
+            ->distinct()
+            ->limit($limit)
+            ->offset($offset)
+            ->orderBy('created_at', 'DESC')
+            ->orderBy('gs1_code', 'ASC')
+            ->get();
+    }
+
+    public static function searchByOrganizationIdAndRegisteredUserId(
+        int $organization_id,
+        int $registered_user_id, 
+        array $search_values, 
+        int $offset, 
+        int $limit)
+    {
+        $query = self::queryByOrganizationIdAndSearchValues($organization_id, $search_values)
+        ->select([
+            'ventilators.*',
+            'users.name AS registered_user_name',
+            'ventilator_bugs.ventilator_id AS bug_ventialtor_id'
+        ]);
+        
+        $query = self::createWhereClauseFromRegisteredUserId($query, $registered_user_id);
+
+        return $query
             ->distinct()
             ->limit($limit)
             ->offset($offset)
@@ -189,9 +214,9 @@ class VentilatorRepository
             ->count();
     }
 
-    public static function countByOrganizationIdAndSearchValues(int $organizaiton_id, array $search_values)
+    public static function countByOrganizationIdAndSearchValues(int $organization_id, array $search_values)
     {
-        return self::queryByOrganizationIdAndSearchValues($organizaiton_id, $search_values)
+        return self::queryByOrganizationIdAndSearchValues($organization_id, $search_values)
             ->select([
                 'ventilators.*',
                 'users.name AS registered_user_name',
@@ -199,6 +224,30 @@ class VentilatorRepository
             ])
             ->distinct()
             ->count();
+    }
+
+    public static function countByOrganizationIdAndRegisteredUserIdSearchValues(
+        int $organization_id,
+        int $registered_user_id, 
+        array $search_values)
+    {
+        $query = self::queryByOrganizationIdAndSearchValues($organization_id, $search_values)
+        ->select([
+            'ventilators.*',
+            'users.name AS registered_user_name',
+            'ventilator_bugs.ventilator_id AS bug_ventialtor_id'
+        ]);
+        
+        $query = self::createWhereClauseFromRegisteredUserId($query, $registered_user_id);
+
+        return $query
+            ->distinct()
+            ->count();
+    }
+
+    private static function createWhereClauseFromRegisteredUserId($query, int $registered_user_id)
+    {
+        return $query->where('ventilators.registered_user_id', $registered_user_id);
     }
 
     private static function createWhereClauseFromSearchValues($query, array $search_values)

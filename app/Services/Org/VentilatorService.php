@@ -3,6 +3,7 @@
 namespace App\Services\Org;
 
 use App\Exceptions;
+use App\Http\Auth;
 use App\Http\Forms\Org as Form;
 use App\Http\Response as Response;
 use App\Repositories as Repos;
@@ -28,11 +29,31 @@ class VentilatorService
             $http_query = '?' . http_build_query($search_values);
         }
 
-        $organization_id = $user->organization_id;
 
-        $ventilators = Repos\VentilatorRepository::findByOrganizationIdAndSearchValuesAndOffsetAndLimit($organization_id, $search_values, $offset, $items_per_page);
+        if (Auth\OrgUserGate::canReadAllVentilator($user)) {
+            $ventilators = Repos\VentilatorRepository::searchByOrganizationId(
+                $user->organization_id, 
+                $search_values, 
+                $offset, 
+                $items_per_page);
+    
+            $total_count = Repos\VentilatorRepository::countByOrganizationIdAndSearchValues(
+                $user->organization_id, 
+                $search_values);
+        } else {
+            $ventilators = Repos\VentilatorRepository::searchByOrganizationIdAndRegisteredUserId(
+                $user->organization_id,
+                $user->id, 
+                $search_values, 
+                $offset, 
+                $items_per_page);
+    
+            $total_count = Repos\VentilatorRepository::countByOrganizationIdAndRegisteredUserIdSearchValues(
+                $user->organization_id, 
+                $user->id,
+                $search_values);
+        }
 
-        $total_count = Repos\VentilatorRepository::countByOrganizationIdAndSearchValues($organization_id, $search_values);
 
         return Converter\VentilatorConverter::convertToOrgPaginate($ventilators, $total_count, $items_per_page, $path . $http_query);
     }
@@ -55,6 +76,16 @@ class VentilatorService
         if (is_null($ventilator)) {
             $form->addError('id', 'validation.id_not_found');
             throw new Exceptions\InvalidFormException($form);
+        }
+
+        // 全編集権限が無い場合には、登録者idが一致しているか確認
+        if (! Auth\OrgUserGate::canEditAllVentilator($user)) {
+            $is_matched = $ventilator->registered_user_id === $user->id;
+            
+            if (! $is_matched) {
+                $form->addError('id', 'validation.id_not_found');
+                throw new Exceptions\InvalidFormException($form);
+            }
         }
 
         $ventilator->start_using_at = $form->start_using_at;
