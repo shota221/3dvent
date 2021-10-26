@@ -67,6 +67,10 @@ class OrganizationService
             '組織登録',
             function () use ($organization) {
                 $organization->save();
+
+                $organization_setting = Converter\OrganizationSettingConverter::convertToEntity($organization->id);
+
+                $organization_setting->save();
             }
         );
 

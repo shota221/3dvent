@@ -9,46 +9,46 @@ use App\Services\Support\CryptUtil;
 
 class AppkeyGate
 {
-    const APPKEY_HEADER = 'X-App-Key';
+    private const APPKEY_HEADER = 'X-App-Key';
 
 
     public static function define()
     {
-        $inputKey = config('auth.appkey_input_key', null);
+        $input_key = config('auth.appkey_input_key', null);
 
         // appkeyが登録されていればAPIへのアクセスを認可する
-        Gate::define('appkey_accessable', function ($user = null) use ($inputKey) {
-            return self::isValidAppkey($inputKey);
+        Gate::define('appkey_accessable', function ($user = null) use ($input_key) {
+            return !is_null(self::getValidAppKey($input_key));
         });
     }
 
     /**
      * アプリキーの正当性を確認してアプリキーをバインド
      *
-     * @param string|null $inputKey
+     * @param string|null $input_key
      * @return boolean
      */
-    private static function isValidAppkey(?string $inputKey)
+    public static function getValidAppkey(?string $input_key = null)
     {
         $request = request();
 
-        $appkey = $request->header(self::APPKEY_HEADER);
+        $input_appkey_str = $request->header(self::APPKEY_HEADER);
 
-        if (!is_null($inputKey)) {
-            if (empty($appkey)) {
+        if (!is_null($input_key)) {
+            if (empty($input_appkey_str)) {
                 // GET
-                $appkey = $request->query($inputKey);
+                $input_appkey_str = $request->query($input_key);
             }
-            if (empty($appkey)) {
+            if (empty($input_appkey_str)) {
                 // POST
-                $appkey = $request->input($inputKey);
+                $input_appkey_str = $request->input($input_key);
             }
         }
 
-        if (is_null($appkey) || is_null($appkey = Repos\AppkeyRepository::findOneByAppkey($appkey))) {
-            return false;
+        if (is_null($input_appkey_str) || is_null($appkey = Repos\AppkeyRepository::findOneByAppkey($input_appkey_str))) {
+            return null;
         }
 
-        return true;
+        return $appkey;
     }
 }

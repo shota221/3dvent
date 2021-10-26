@@ -23,7 +23,7 @@ class BugReportService
             throw new Exceptions\InvalidFormException($form);
         }
 
-        $appkey_id = Repos\AppkeyRepository::findOneByAppkey($appkey)->id;
+        $appkey_id = $appkey->id;
 
         $bug_registered_user_id = null;
 
