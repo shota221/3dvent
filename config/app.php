@@ -15,6 +15,8 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
 
+    'project' => env('PROJECT_NAME', 'microvent'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment

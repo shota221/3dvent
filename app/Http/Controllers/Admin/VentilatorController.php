@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Exceptions\InvalidFormException;
+use App\Exceptions;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Support\CsvLoader;
 use App\Http\Forms\Admin as Form;
@@ -31,7 +31,7 @@ class VentilatorController extends Controller
     {
         $form = new Form\VentilatorSearchForm($request->all());
 
-        if ($form->hasError()) throw new InvalidFormException($form);
+        if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
 
         $path = $request->path();
         $ventilator_paginator = $this->service->getVentilatorData($path, $form);
@@ -42,7 +42,7 @@ class VentilatorController extends Controller
     {
         $form = new Form\VentilatorUpdateForm($request->all());
 
-        if ($form->hasError()) throw new InvalidFormException($form);
+        if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
 
         return $this->service->update($form);
     }
@@ -51,7 +51,7 @@ class VentilatorController extends Controller
     {
         $form = new Form\VentilatorPatientForm($request->all());
 
-        if ($form->hasError()) throw new InvalidFormException($form);
+        if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
 
         return $this->service->getPatient($form);
     }
@@ -60,7 +60,7 @@ class VentilatorController extends Controller
     {
         $form = new Form\VentilatorBulkDeleteForm($request->all());
 
-        if ($form->hasError()) throw new InvalidFormException($form);
+        if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
 
         return $this->service->bulkDelete($form);;
     }
@@ -69,37 +69,77 @@ class VentilatorController extends Controller
     {
         $form = new Form\VentilatorBugsForm($request->all());
 
-        if ($form->hasError()) throw new InvalidFormException($form);
+        if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
 
         $bugs = $this->service->getBugList($form);
 
         return view('ventilatorBugList', compact('bugs'));
     }
 
-    public function exportCsv(Request $request)
+    // public function importCsv(Request $request)
+    // {
+    //     $form = new Form\VentilatorCsvImportForm($request->all());
+
+    //     if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
+
+    //     $file = $request->file('csv_file');
+
+    //     $response = $this->service->create($form, $file);
+
+    //     return $response;
+    // }
+
+    /**
+     * ジョブにキューを登録
+     *
+     * @param Request $request
+     */
+    public function asyncQueueOutputVentilatorData(Request $request)
     {
         $form = new Form\VentilatorCsvExportForm($request->all());
 
-        if ($form->hasError()) throw new InvalidFormException($form);
+        if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
 
-        return response()->streamDownload(
-            function () use ($form) {
-                $this->service->createVentilatorCsv($form);
-            },
-            config('ventilator_csv.filename')
-        );
-    }
+        $response = $this->service->startQueueVentilatorDataCsvJob($form);
 
-    public function importCsv(Request $request)
-    {
-        $form = new Form\VentilatorCsvImportForm($request->all());
-
-        if ($form->hasError()) throw new InvalidFormException($form);
-
-        $file = $request->file('csv_file');
-
-        $response = $this->service->create($form, $file);
+        \Log::debug($response->queue);
 
         return $response;
+    }
+
+    /**
+     * キューの状況を確認
+     *
+     * @param Request $request
+     */
+    public function asyncQueueStatusOutputVentilatorData(Request $request)
+    {
+        $form = new Form\QueueStatusCheckForm($request->all());
+
+        if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
+
+        $response = $this->service->checkStatusVentilatorDataCsvJob($form);
+
+        \Log::debug($response->is_finished);
+
+        return $response;
+    }
+
+    /**
+     * キューが完了していればCSV出力
+     *
+     * @param Request $request
+     */
+    public function exportCsv(Request $request)
+    {
+        $form = new Form\QueueStatusCheckForm($request->all());
+
+        if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
+
+        $file_path = $this->service->getCreatedVentilatorDataCsvFilePath($form);
+
+        \Log::debug($file_path);
+
+        return response()->download($file_path);
     }
 }

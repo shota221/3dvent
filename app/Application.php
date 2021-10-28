@@ -50,6 +50,11 @@ class Application extends BaseApplication
         }
     }
 
+    public function getProject()
+    {
+        return config('app.project');
+    }
+
     public function getTld()
     {
         return parse_url(config('app.url'))['host'];

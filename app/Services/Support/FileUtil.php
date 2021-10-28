@@ -272,7 +272,22 @@ class FileUtil
         return self::storageUrl($path, 's3');
     }
 
+    public static function tmpUrl(string $path)
+    {
+        ///storage/tmp
+        $tmp_dir = self::storageUrl('tmp', 'local');
 
+        if (!self::exists($tmp_dir) && !BaseFile::makeDirectory($tmp_dir, 0755, true, true)) {
+            throw new Exceptions\UtilFileException('ディレクトリ作成に失敗しました。 dir=' . $tmp_dir);
+        }
+
+        $file_path = $tmp_dir . DIRECTORY_SEPARATOR . $path;
+
+        \Log::debug($tmp_dir);
+        \Log::debug(self::exists($tmp_dir));
+
+        return $file_path;
+    }
 
     /**
      * S3ファイルのメタデータを取得

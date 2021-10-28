@@ -7,9 +7,11 @@ use App\Exceptions\InvalidCsvException;
 use App\Exceptions\InvalidFormException;
 use App\Http\Forms\Admin as Form;
 use App\Http\Response as Response;
+use App\Jobs\Admin as Jobs;
 use App\Models\HistoryBaseModel;
 use App\Models\Patient;
 use App\Repositories as Repos;
+use App\Services\Support;
 use App\Services\Support\Converter;
 use App\Services\Support\CryptUtil;
 use App\Services\Support\DateUtil;
@@ -22,7 +24,7 @@ class VentilatorService
 {
     use CsvLogic;
 
-    function getVentilatorData($path, $form = null)
+    public function getVentilatorData($path, $form = null)
     {
         $items_per_page = config('view.items_per_page');
 
@@ -46,14 +48,14 @@ class VentilatorService
         return Converter\VentilatorConverter::convertToAdminPaginate($ventilators, $total_count, $items_per_page, $path . $http_query);
     }
 
-    function getPatient(Form\VentilatorPatientForm $form)
+    public function getPatient(Form\VentilatorPatientForm $form)
     {
         $patient_code = Repos\VentilatorRepository::getPatientCodeById($form->id);
 
         return Converter\VentilatorConverter::convertToPatientResult($patient_code);
     }
 
-    function create(Form\VentilatorCsvImportForm $form, $file)
+    public function create(Form\VentilatorCsvImportForm $form, $file)
     {
         $file_extension = pathinfo($file->getClientOriginalName(), PATHINFO_EXTENSION);
 
@@ -464,7 +466,7 @@ class VentilatorService
         return new Response\SuccessJsonResult;
     }
 
-    function update(Form\VentilatorUpdateForm $form)
+    public function update(Form\VentilatorUpdateForm $form)
     {
         $ventilator = Repos\VentilatorRepository::findOneById($form->id);
 
@@ -487,7 +489,7 @@ class VentilatorService
      * @param Form\VentilatorBulkDeleteForm $form
      * @return void
      */
-    function bulkDelete(Form\VentilatorBulkDeleteForm $form)
+    public function bulkDelete(Form\VentilatorBulkDeleteForm $form)
     {
         $ids = $form->ids;
         $deletable_row_limit = 50;//現在のデリート方式での仮の処理上限
@@ -514,7 +516,7 @@ class VentilatorService
         return new Response\SuccessJsonResult;
     }
 
-    function buildVentilatorSearchValues(Form\VentilatorSearchForm $form)
+    public function buildVentilatorSearchValues(Form\VentilatorSearchForm $form)
     {
         $search_values = [];
 
@@ -530,20 +532,24 @@ class VentilatorService
         return $search_values;
     }
 
-    function getBugList(Form\VentilatorBugsForm $form)
+    public function getBugList(Form\VentilatorBugsForm $form)
     {
         $bugs = Repos\VentilatorBugRepository::findByVentilatorId($form->id);
 
         return Converter\VentilatorConverter::convertToBugListData($bugs);
     }
 
-    function createVentilatorCsv(Form\VentilatorCsvExportForm $form)
+    public function createVentilatorCsvByIds(string $queue, array $ids)
     {
-        $query = Repos\VentilatorRepository::queryWithVentilatorValuesAndPatientsAndPatientValuesByids($form->ids);
+        $query = Repos\VentilatorRepository::queryWithVentilatorValuesAndPatientsAndPatientValuesByids($ids);
 
         $filename = config('ventilator_csv.filename');
 
         $header = config('ventilator_csv.header');
+
+        $file_path = Support\FileUtil::tmpUrl($queue);
+
+        \Log::debug($file_path);
 
         $this->createSearchDataCsv(
             $filename,
@@ -557,10 +563,12 @@ class VentilatorService
                 );
             },
             $query,
+            500,
+            $file_path
         );
     }
 
-    function buildVentilatorCsvRow($entity)
+    public function buildVentilatorCsvRow($entity)
     {
         $row = [];
 
@@ -582,5 +590,72 @@ class VentilatorService
             }
         }
         return $row;
+    }
+
+    /**
+     * ジョブにキューを登録
+     *
+     * @param Form\VentilatorCsvExportForm $form
+     */
+    public function startQueueVentilatorDataCsvJob(Form\VentilatorCsvExportForm $form)
+    {
+        $now = Support\DateUtil::now();
+
+        //キュー命名
+        $queue = Support\DateUtil::toDatetimeChar($now) . '_ventilator_data.csv';
+
+        //ジョブにキューを登録。キュー処理開始
+        Jobs\CreateVentilatorDataCsv::dispatchToHandle($queue, $form->ids);
+
+        return Converter\QueueConverter::convertToQueueStatusResult($queue);
+    }
+
+    /**
+     * キューの状況を確認
+     *
+     * @param Form\QueueStatusCheckForm $form
+     */
+    public function checkStatusVentilatorDataCsvJob(Form\QueueStatusCheckForm $form)
+    {
+        $queue = $form->queue;
+
+        $is_finished = Jobs\CreateVentilatorDataCsv::isQueueFinished($queue);
+
+        $has_error = false;
+
+        if ($is_finished) {
+            $file_path = Support\FileUtil::tmpUrl($queue);
+
+            if (! Support\FileUtil::exists($file_path)) {
+                // 作成失敗時
+                $has_error = true;
+                \Log::debug("not_exists");
+            }
+        }
+
+        return Converter\QueueConverter::convertToQueueStatusResult($queue, $is_finished, $has_error);
+    }
+
+    /** 
+     * CSVファイル情報を取得
+     * 
+     * @param  Form\Admin\QueueStatusCheckForm $form [description]
+     * @return [type]                                [description]
+     */
+    public function getCreatedVentilatorDataCsvFilePath(Form\QueueStatusCheckForm $form)
+    {
+        $queue = $form->queue;
+
+        //実際にCSV作成キューが完了しているかどうか
+        $is_finished = Jobs\CreateVentilatorDataCsv::isQueueFinished($queue);
+
+        if (! $is_finished) throw new Exceptions\HttpNotFoundException('');
+
+        $file_path = Support\FileUtil::tmpUrl($queue);
+
+        //作成されたCSVが存在しているはずのパスに存在しているかどうか
+        if (! Support\FileUtil::exists($file_path)) throw new Exceptions\HttpNotFoundException('');
+
+        return $file_path;
     }
 }

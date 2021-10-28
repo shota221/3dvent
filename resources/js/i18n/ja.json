@@ -7,7 +7,7 @@
         "applied": "申請しました。",
         "confirm": "上記、機器観察研究データを確認しました。",
         "confirmed": "確認済",
-        "csv_download_faild": "CSVファイル作成に失敗しました。管理者にお問い合わせください。",
+        "csv_download_failed": "CSVファイル作成に失敗しました。再度生じる場合は管理者まで報告をお願いします。",
         "deleted": "削除しました。",
         "delete_confirm": "データの復帰はできません。削除を実行しますか。",
         "delete_count_confirm":"データの復帰はできません。選択済みの{{count}}件を削除しますか？",

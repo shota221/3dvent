@@ -210,6 +210,16 @@ Route::group(['middleware' => ['routetype:admin']], function () {
                 '/ventilator',
                 'VentilatorController@asyncBulkDelete'
             )->name('admin.ventilator.bulk_delete');
+
+            Route::post(
+                '/ventilator/async/queue_output_ventilator_data',
+                'VentilatorController@asyncQueueOutputVentilatorData'
+            )->name('admin.ventilator.async.queue-output-ventilator-data');
+
+            Route::get(
+                '/ventilator/async/queue_output_ventilator_data',
+                'VentilatorController@asyncQueueStatusOutputVentilatorData'
+            )->name('admin.ventilator.async.queue-status-output-ventilator-data');
         });
 
         /**

@@ -14,8 +14,10 @@ const
     $searchBtn = $('#async-search'),
     $clearSearchFormBtn = $('#clear-search-form'),
     $select2OrganizationName = $('#search-organization-name'),
-    $ventilatorBugList = $('#ventilator-bug-list')
-    ;
+    $ventilatorBugList = $('#ventilator-bug-list'),
+    $checkQueueStatusElm = $('#check-queue-status'),
+    $exportCsvElm = $('#export-csv');
+;
 
 
 $showRegisterModalBtn.on(
@@ -213,21 +215,86 @@ $paginatedList.on(
 $exportCsvBtn.on(
     'click',
     function () {
+        //何も選択されていなければアラート表示
         var selectedCount = $('.item-check:checked').length;
 
         if (selectedCount > 0) {
-            var $form = $(this).closest('form');
+            var withMessage = false;
 
-            $form.find('input').remove();
+            var $startQueueElm = $(this);
 
-            console.log($form.html());
+            var startQueueParams = { 'ids': [] }
+
             $('.item-check:checked').each(function (i, elm) {
-                $("<input>", {
-                    type: "hidden",
-                    name: "ids[]",
-                    value: $(elm).val()
-                }).appendTo($form);
+                startQueueParams['ids'].push($(elm).val());
             });
+
+
+            var startQueueSuccessCallback = function (data) {
+                var ladda =  Ladda.create($startQueueElm.get(0));
+
+                ladda.start();
+
+                var queue = data.result.queue;
+                console.log("start");
+
+                var checkQueueStatusParams = { 'queue': queue };
+
+
+                //キューのステータスを確認した回数
+                var pollingCount = 0;
+                //キューのステータスを確認する回数上限
+                var limitedPollingCount = 18
+                //キューのステータスを確認する頻度（ms）
+                var pollingInterval = 10000;
+
+                var polling = function () {
+                    pollingCount++
+                    console.log(pollingCount);
+
+                    if (pollingCount > limitedPollingCount) {
+                        alert(i18n('message.csv_download_failed'));
+                        return false;
+                    }
+
+                    setTimeout(
+                        function () {
+                            var checkQueueStatusSuccessCallback = function (data) {
+                                var isFinished = data.result.is_finished;
+                                var hasError = data.result.has_error;
+            
+                                if (hasError) {
+                                    alert(i18n('message.csv_download_failed'));
+                                    return false;
+                                }
+            
+                                if (isFinished) {
+                                    location.href = $exportCsvElm.data('url') + '?queue=' + queue;
+                                    ladda.stop();
+                                } else {
+                                    polling();
+                                }
+                            }
+
+                            utilAsyncExecuteAjax($checkQueueStatusElm, checkQueueStatusParams, withMessage, checkQueueStatusSuccessCallback)
+
+                        }
+                        , pollingInterval
+                    )
+
+                }
+
+                polling();
+            };
+
+            var badRequestCallback = function (error) {
+
+            };
+
+            utilAsyncExecuteAjax($startQueueElm, startQueueParams, withMessage, startQueueSuccessCallback)
+
+            //ポーリング開始
+
         } else {
             alert(i18n('message.object_unselected'));
             return false;
@@ -249,43 +316,43 @@ $showImportModalBtn.on(
     });
 
 // //importイベント
-// $importCsvBtn.on(
-//     'click',
-//     function () {
-//         var $targetForm = $('form[name="ventilator-import"]');
+$importCsvBtn.on(
+    'click',
+    function () {
+        var $targetForm = $('form[name="ventilator-import"]');
 
-//         var parameters = new FormData($targetForm[0]);
+        var parameters = new FormData($targetForm[0]);
 
-//         var successCallback = function (data) {
-//             var $featureElement = $('.page-item' + '.active').children('button');
+        var successCallback = function (data) {
+            var $featureElement = $('.page-item' + '.active').children('button');
 
-//             var parameters = {};
+            var parameters = {};
 
-//             if (!$featureElement.length) {
-//                 $featureElement = $searchBtn;
-//                 parameters = buildSearchParameters($searchForm);
-//             }
+            if (!$featureElement.length) {
+                $featureElement = $searchBtn;
+                parameters = buildSearchParameters($searchForm);
+            }
 
-//             var successCallback = function (paginated_list) {
-//                 $paginatedList.html(paginated_list);
-//             }
+            var successCallback = function (paginated_list) {
+                $paginatedList.html(paginated_list);
+            }
 
-//             utilAsyncExecuteAjax($featureElement, parameters, false, successCallback);
+            utilAsyncExecuteAjax($featureElement, parameters, false, successCallback);
 
-//             $importModal.modal('hide');
-//         }
+            $importModal.modal('hide');
+        }
 
-//         var extraSettings = {
-//             processData: false,
-//             contentType: false
-//         }
+        var extraSettings = {
+            processData: false,
+            contentType: false
+        }
 
-//         var badRequestCallback = function (error) { }
+        var badRequestCallback = function (error) { }
 
-//         utilAsyncExecuteAjax($importCsvBtn, parameters, true, successCallback, badRequestCallback, extraSettings);
+        utilAsyncExecuteAjax($importCsvBtn, parameters, true, successCallback, badRequestCallback, extraSettings);
 
-//         return false;
-//     });
+        return false;
+    });
 
 // build select2(organization)
 function buildSelect2() {
