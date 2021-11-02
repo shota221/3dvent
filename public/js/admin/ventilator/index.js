@@ -15,7 +15,8 @@ const
     $clearSearchFormBtn = $('#clear-search-form'),
     $select2OrganizationName = $('#search-organization-name'),
     $ventilatorBugList = $('#ventilator-bug-list'),
-    $checkQueueStatusElm = $('#check-queue-status'),
+    $checkExportQueueStatusElm = $('#check-export-queue-status'),
+    $checkImportQueueStatusElm = $('#check-import-queue-status'),
     $exportCsvElm = $('#export-csv');
 ;
 
@@ -231,22 +232,20 @@ $exportCsvBtn.on(
 
 
             var startQueueSuccessCallback = function (data) {
-                var ladda =  Ladda.create($startQueueElm.get(0));
+                var ladda = Ladda.create($startQueueElm.get(0));
 
                 ladda.start();
 
                 var queue = data.result.queue;
-                console.log("start");
 
                 var checkQueueStatusParams = { 'queue': queue };
-
 
                 //キューのステータスを確認した回数
                 var pollingCount = 0;
                 //キューのステータスを確認する回数上限
-                var limitedPollingCount = 18
+                var limitedPollingCount = 180
                 //キューのステータスを確認する頻度（ms）
-                var pollingInterval = 10000;
+                var pollingInterval = 1000;
 
                 var polling = function () {
                     pollingCount++
@@ -257,27 +256,26 @@ $exportCsvBtn.on(
                         return false;
                     }
 
+                    var checkQueueStatusSuccessCallback = function (data) {
+                        var isFinished = data.result.is_finished;
+                        var hasError = data.result.has_error;
+
+                        if (hasError) {
+                            alert(i18n('message.csv_download_failed'));
+                            return false;
+                        }
+
+                        if (isFinished) {
+                            location.href = $exportCsvElm.data('url') + '?queue=' + queue;
+                            ladda.stop();
+                        } else {
+                            polling();
+                        }
+                    }
+
                     setTimeout(
                         function () {
-                            var checkQueueStatusSuccessCallback = function (data) {
-                                var isFinished = data.result.is_finished;
-                                var hasError = data.result.has_error;
-            
-                                if (hasError) {
-                                    alert(i18n('message.csv_download_failed'));
-                                    return false;
-                                }
-            
-                                if (isFinished) {
-                                    location.href = $exportCsvElm.data('url') + '?queue=' + queue;
-                                    ladda.stop();
-                                } else {
-                                    polling();
-                                }
-                            }
-
-                            utilAsyncExecuteAjax($checkQueueStatusElm, checkQueueStatusParams, withMessage, checkQueueStatusSuccessCallback)
-
+                            utilAsyncExecuteAjax($checkExportQueueStatusElm, checkQueueStatusParams, withMessage, checkQueueStatusSuccessCallback);
                         }
                         , pollingInterval
                     )
@@ -305,7 +303,7 @@ $exportCsvBtn.on(
 /**
  * CSVインポート
  */
-//import-modal
+//import-modal表示
 $showImportModalBtn.on(
     'click',
     function () {
@@ -315,31 +313,70 @@ $showImportModalBtn.on(
         return false;
     });
 
-// //importイベント
+//importイベント
 $importCsvBtn.on(
     'click',
     function () {
+        /**
+         * 与えられたCSVのバリデーションチェック・重複チェックしジョブをキューに登録
+         */
+        var $startQueueElm = $(this);
+
         var $targetForm = $('form[name="ventilator-import"]');
 
-        var parameters = new FormData($targetForm[0]);
+        var startQueueParams = new FormData($targetForm[0]);
 
-        var successCallback = function (data) {
-            var $featureElement = $('.page-item' + '.active').children('button');
-
-            var parameters = {};
-
-            if (!$featureElement.length) {
-                $featureElement = $searchBtn;
-                parameters = buildSearchParameters($searchForm);
-            }
-
-            var successCallback = function (paginated_list) {
-                $paginatedList.html(paginated_list);
-            }
-
-            utilAsyncExecuteAjax($featureElement, parameters, false, successCallback);
+        /**
+         * ジョブがキューに登録され次第、ポーリング開始。
+         * サーバーを10秒ごとに見に行き、キューが処理されていれば
+         * アラートを表示し、ページリロード。
+         */
+        var startQueueSuccessCallback = function (data) {
 
             $importModal.modal('hide');
+
+            var ladda = Ladda.create($startQueueElm.get[0]);
+
+            ladda.start();
+
+            var queue = data.result.queue;
+
+            var checkQueueStatusParams = { 'queue': queue };
+
+            //キューのステータスを確認した回数
+            var pollingCount = 0;
+            //キューのステータスを確認する回数上限
+            var limitedPollingCount = 18
+            //キューのステータスを確認する頻度（ms）
+            var pollingInterval = 10000;
+
+            //キューの様子を定期取得
+            var polling = function () {
+                pollingCount++
+
+                if (pollingCount > limitedPollngCount) {
+                    alert(i18n('message.csv_import_failed'));
+                    return false;
+                }
+
+                var checkQueueStatusSuccessCallback = function (data) {
+                    var isFinished = data.result.is_finished;
+
+                    if (isFinished) {
+                        ladda.stop();
+                        confirm(i18n('message.csv_imported')) && location.reload();
+                    } else {
+                        polling();
+                    }
+                }
+
+                setTimeout(
+                    function () {
+                        utilAsyncExecuteAjax($checkImportQueueStatusElm, checkQueueStatusParams, false, checkQueueStatusSuccessCallback)
+                    }
+                    , pollingInterval
+                )
+            }
         }
 
         var extraSettings = {
@@ -349,7 +386,7 @@ $importCsvBtn.on(
 
         var badRequestCallback = function (error) { }
 
-        utilAsyncExecuteAjax($importCsvBtn, parameters, true, successCallback, badRequestCallback, extraSettings);
+        utilAsyncExecuteAjax($startQueueElm, startQueueParams, true, startQueueSuccessCallback, badRequestCallback, extraSettings);
 
         return false;
     });

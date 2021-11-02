@@ -629,7 +629,6 @@ class VentilatorService
             if (! Support\FileUtil::exists($file_path)) {
                 // 作成失敗時
                 $has_error = true;
-                \Log::debug("not_exists");
             }
         }
 
@@ -658,4 +657,6 @@ class VentilatorService
 
         return $file_path;
     }
+
+
 }

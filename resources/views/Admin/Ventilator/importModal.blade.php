@@ -1,6 +1,6 @@
     @component('components.modal', [
         'id' => 'modal-ventilator-import',
-        'form' => ['method' => 'POST', 'action' => route('admin.ventilator.import_csv'), 'name' => 'ventilator-import'],
+        'form' => ['method' => 'POST', 'action' => route('admin.ventilator.async.queue_input_ventilator_data'), 'name' => 'ventilator-import'],
         ])
         @slot('title')
             {{-- インポート --}}

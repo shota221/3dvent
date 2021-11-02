@@ -120,8 +120,6 @@ class VentilatorController extends Controller
 
         $response = $this->service->checkStatusVentilatorDataCsvJob($form);
 
-        \Log::debug($response->is_finished);
-
         return $response;
     }
 
@@ -138,8 +136,28 @@ class VentilatorController extends Controller
 
         $file_path = $this->service->getCreatedVentilatorDataCsvFilePath($form);
 
-        \Log::debug($file_path);
-
         return response()->download($file_path);
     }
-}
+
+    /**
+     * キューに詰める
+     */
+    public function asyncQueueInputVentilatorData(Request $request)
+    {
+        $form = new Form\VentilatorCsvImportForm($request->all());
+
+        if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
+
+        $file = $request->file('csv_file');
+
+        $response = $this->service->create($form, $file);
+
+        return $response;
+    }
+
+    /**
+     * キューの状況確認
+     */
+    public function asyncQueueStatusInputVentilatorData(Request $request)
+    {
+    }
