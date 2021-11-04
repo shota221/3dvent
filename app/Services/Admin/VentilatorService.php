@@ -539,15 +539,13 @@ class VentilatorService
         return Converter\VentilatorConverter::convertToBugListData($bugs);
     }
 
-    public function createVentilatorCsvByIds(string $queue, array $ids)
+    public function createVentilatorCsvByIds(string $filename, array $ids)
     {
         $query = Repos\VentilatorRepository::queryWithVentilatorValuesAndPatientsAndPatientValuesByids($ids);
 
-        $filename = config('ventilator_csv.filename');
-
         $header = config('ventilator_csv.header');
 
-        $file_path = Support\FileUtil::tmpUrl($queue);
+        $file_path = Support\FileUtil::tmpUrl($filename);
 
         \Log::debug('test='.$file_path);
 
@@ -602,7 +600,7 @@ class VentilatorService
         $now = Support\DateUtil::now();
 
         //キュー命名
-        $queue = Support\DateUtil::toDatetimeChar($now) . '_ventilator_data.csv';
+        $queue = Support\DateUtil::toDatetimeChar($now) . '_ventilator_data';
 
         //ジョブにキューを登録。キュー処理開始
         Jobs\CreateVentilatorDataCsv::dispatchToHandle($queue, $form->ids);
@@ -624,7 +622,9 @@ class VentilatorService
         $has_error = false;
 
         if ($is_finished) {
-            $file_path = Support\FileUtil::tmpUrl($queue);
+            $filename = Jobs\CreateVentilatorDataCsv::guessFilename($queue);
+            //ファイルの存在確認
+            $file_path = Support\FileUtil::tmpUrl($filename);
 
             if (! Support\FileUtil::exists($file_path)) {
                 // 作成失敗時
@@ -650,7 +650,9 @@ class VentilatorService
 
         if (! $is_finished) throw new Exceptions\HttpNotFoundException('');
 
-        $file_path = Support\FileUtil::tmpUrl($queue);
+        $filename = Jobs\CreateVentilatorDataCsv::guessFilename($queue);
+
+        $file_path = Support\FileUtil::tmpUrl($filename);
 
         //作成されたCSVが存在しているはずのパスに存在しているかどうか
         if (! Support\FileUtil::exists($file_path)) throw new Exceptions\HttpNotFoundException('');

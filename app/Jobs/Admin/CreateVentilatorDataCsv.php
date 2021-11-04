@@ -2,23 +2,15 @@
 
 namespace App\Jobs\Admin;
 
-use App\Jobs\CreateSearchDataCsv;
 use App\Jobs\JobHandler;
 use App\Services\Admin\VentilatorService;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Foundation\Bus\PendingDispatch;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 
 class CreateVentilatorDataCsv extends JobHandler
 {
     private $ids;
 
     /**
-     * Create a new job instance.
+     * JobHandler::dispatchToHandleを通じて初期化される
      *
      * @return void
      */
@@ -30,12 +22,18 @@ class CreateVentilatorDataCsv extends JobHandler
     /**
      * @override
      *
-     * @param string $queue
+     * @param string $filename
      * @param array $ids
      * @return void
      */
     protected function process()
     {
-        (new VentilatorService)->createVentilatorCsvByIds($this->queue, $this->ids);
+        $filename = self::guessFilename($this->queue);
+        (new VentilatorService)->createVentilatorCsvByIds($filename, $this->ids);
+    }
+
+    public static function guessFilename(string $queue)
+    {
+        return $queue.'.csv';
     }
 }
