@@ -549,7 +549,7 @@ class VentilatorService
 
         $file_path = Support\FileUtil::tmpUrl($queue);
 
-        \Log::debug($file_path);
+        \Log::debug('test='.$file_path);
 
         $this->createSearchDataCsv(
             $filename,
@@ -658,5 +658,37 @@ class VentilatorService
         return $file_path;
     }
 
+    /**
+     * Csvジョブにキューを登録
+     *
+     * @param Form\VentilatorCsvImportForm $form
+     */
+    public function startQueueVentilatorDataImportJob(Form\VentilatorCsvImportForm $form, $file)
+    {
+        $now = Support\DateUtil::now();
 
+        //キュー命名
+        $queue = Support\DateUtil::toDatetimeChar($now) . '_ventilator_data_import';
+
+        //ジョブにキューを登録。キュー処理開始
+        // Jobs\CreateVentilatorDataCsv::dispatchToHandle($queue, $form->ids);
+
+        return Converter\QueueConverter::convertToQueueStatusResult($queue);
+    }
+
+    /**
+     * キューの状況を確認
+     *
+     * @param Form\QueueStatusCheckForm $form
+     */
+    public function checkStatusVentilatorDataImportJob(Form\QueueStatusCheckForm $form)
+    {
+        $queue = $form->queue;
+
+        $is_finished = Jobs\CreateVentilatorDataCsv::isQueueFinished($queue);
+
+        $has_error = false;
+
+        return Converter\QueueConverter::convertToQueueStatusResult($queue, $is_finished, $has_error);
+    }
 }

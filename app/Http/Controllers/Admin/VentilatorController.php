@@ -150,7 +150,7 @@ class VentilatorController extends Controller
 
         $file = $request->file('csv_file');
 
-        $response = $this->service->create($form, $file);
+        $response = $this->service->startQueueVentilatorDataImportJob($form, $file);
 
         return $response;
     }
@@ -160,4 +160,12 @@ class VentilatorController extends Controller
      */
     public function asyncQueueStatusInputVentilatorData(Request $request)
     {
+        $form = new Form\QueueStatusCheckForm($request->all());
+
+        if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
+
+        $response = $this->service->checkStatusVentilatorDataImportJob($form);
+
+        return $response;
     }
+}

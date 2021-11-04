@@ -11,23 +11,22 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Foundation\Bus\PendingDispatch;
 use Illuminate\Support\Facades\Artisan;
 
-abstract class CreateSearchDataCsv implements ShouldQueue
+abstract class JobHandler implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     const CONNECTION = 'database';
 
-    public $search_values;
-
     /**
-     * ジョブをキューに登録して実行処理
+     * ジョブをキューに登録して実行処理 
+     * @param string $queue //キュー名
+     * @param ...$args //ジョブのコンストラクタ引数
      */
-    public static function dispatchToHandle(string $queue, array $search_values)
+    public static function dispatchToHandle(string $queue, ...$args)
     {
-        self::pendingDispatch($queue, $search_values);
+        //$queue以降の引数を受け取り、ジョブを初期化しディスパッチ
+        self::pendingDispatch($queue, ...$args);
 
-        \Log::debug($queue);
-        \Log::debug(config('app.env'));
         //artisanでhandle実行
         Artisan::call(
             'queue:work',
@@ -60,22 +59,16 @@ abstract class CreateSearchDataCsv implements ShouldQueue
     /**
      *  非同期ディスパッチ（ジョブをキューに登録）
      * @param string $queue //キュー名
-     * @param mixed $job
-     * @return void
+     * @param ...$args //ジョブのコンストラクタ引数
      */
-    protected static function pendingDispatch(string $queue, array $search_values)
+    protected static function pendingDispatch($queue, ...$args)
     {
-        
-        \Log::debug("ok");
-
         $connection = self::CONNECTION;
 
-        $job = new static($search_values);
+        //ジョブ初期化
+        $pending_dispatch = self::dispatch(...$args);
 
-        //実行キューの名称等を指定できるラッパー
-        $pending_dispatch = new PendingDispatch($job);
-
-        //jobsテーブルのqueueにつめてjobを格納
+        //jobsテーブルのqueueにjobを格納
         $dispatch = $pending_dispatch->onConnection($connection)->onQueue($queue);
 
         return $dispatch;
@@ -90,12 +83,11 @@ abstract class CreateSearchDataCsv implements ShouldQueue
     {
         try {
             \Log::info(
-                'CSV作成非同期JOB 実行 class=' . get_class($this)
+                '非同期JOB 実行 class=' . get_class($this)
                     . ' queue=' . $this->queue
-                    . ' params='  . var_export($this->search_values, true)
             );
 
-            $this->create($this->queue, $this->search_values);
+            $this->process();
         } catch (\Exception $e) {
             // エクセプションは握りつぶす（失敗処理に入るとレコードが削除されないため）
 
@@ -107,7 +99,7 @@ abstract class CreateSearchDataCsv implements ShouldQueue
     }
 
     /**
-     * CSV作成
+     * 実際の処理
      */
-    abstract protected function create(string $queue, array $search_values);
+    abstract protected function process();
 }

@@ -283,9 +283,6 @@ class FileUtil
 
         $file_path = $tmp_dir . DIRECTORY_SEPARATOR . $path;
 
-        \Log::debug($tmp_dir);
-        \Log::debug(self::exists($tmp_dir));
-
         return $file_path;
     }
 

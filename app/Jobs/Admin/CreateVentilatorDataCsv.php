@@ -3,6 +3,7 @@
 namespace App\Jobs\Admin;
 
 use App\Jobs\CreateSearchDataCsv;
+use App\Jobs\JobHandler;
 use App\Services\Admin\VentilatorService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -12,38 +13,29 @@ use Illuminate\Foundation\Bus\PendingDispatch;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class CreateVentilatorDataCsv extends CreateSearchDataCsv
+class CreateVentilatorDataCsv extends JobHandler
 {
+    private $ids;
+
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(array $search_values)
+    public function __construct(array $ids)
     {
-        $this->search_values = $search_values;
-    }
-
-    /**
-     *  非同期ディスパッチ（ジョブをキューに登録）、処理
-     * @param string $queue //キュー名
-     * @param array $ids
-     * @return void
-     */
-    public static function dispatchToHandle(string $queue, array $ids)
-    {
-        parent::dispatchToHandle($queue, compact('ids'));
+        $this->ids = $ids;
     }
 
     /**
      * @override
      *
      * @param string $queue
-     * @param array $search_values
+     * @param array $ids
      * @return void
      */
-    protected function create(string $queue, array $search_values)
+    protected function process()
     {
-        (new VentilatorService)->createVentilatorCsvByIds($queue, $search_values['ids']);
+        (new VentilatorService)->createVentilatorCsvByIds($this->queue, $this->ids);
     }
 }

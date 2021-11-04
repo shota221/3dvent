@@ -47,7 +47,6 @@
                             data-method="GET">
                         <input type="hidden" id="export-csv" data-url="{{ route('admin.ventilator.export_csv') }}"
                             data-method="GET">
-                        s
                     </div>
                 </div>
                 {{-- 絞り込み検索 --}}

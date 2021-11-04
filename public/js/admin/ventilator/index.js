@@ -13,7 +13,9 @@ const
     $searchForm = $('#async-search-form'),
     $searchBtn = $('#async-search'),
     $clearSearchFormBtn = $('#clear-search-form'),
-    $select2OrganizationName = $('#search-organization-name'),
+    $select2OrganizationName = $('.select2-organization-name'),
+    $searchOrganizationName = $('#search-organization-name'),
+    $importOrganizationName = $('#import-organization-name'),
     $ventilatorBugList = $('#ventilator-bug-list'),
     $checkExportQueueStatusElm = $('#check-export-queue-status'),
     $checkImportQueueStatusElm = $('#check-import-queue-status'),
@@ -307,8 +309,6 @@ $exportCsvBtn.on(
 $showImportModalBtn.on(
     'click',
     function () {
-        // buildSelect2();
-
         $importModal.modal();
         return false;
     });
@@ -335,7 +335,7 @@ $importCsvBtn.on(
 
             $importModal.modal('hide');
 
-            var ladda = Ladda.create($startQueueElm.get[0]);
+            var ladda = Ladda.create($showImportModalBtn.get(0));
 
             ladda.start();
 
@@ -353,13 +353,14 @@ $importCsvBtn.on(
             //キューの様子を定期取得
             var polling = function () {
                 pollingCount++
-
-                if (pollingCount > limitedPollngCount) {
+                console.log(pollingCount);
+                if (pollingCount > limitedPollingCount) {
                     alert(i18n('message.csv_import_failed'));
                     return false;
                 }
 
                 var checkQueueStatusSuccessCallback = function (data) {
+                    console.log(data);
                     var isFinished = data.result.is_finished;
 
                     if (isFinished) {
@@ -377,6 +378,8 @@ $importCsvBtn.on(
                     , pollingInterval
                 )
             }
+
+            polling();
         }
 
         var extraSettings = {
@@ -456,7 +459,7 @@ $clearSearchFormBtn.on(
     'click',
     function (e) {
         $searchForm[0].reset();
-        $select2OrganizationName.val(null).trigger('change');
+        $searchOrganizationName.val(null).trigger('change');
     }
 )
 
