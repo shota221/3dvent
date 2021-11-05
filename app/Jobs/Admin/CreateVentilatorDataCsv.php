@@ -22,8 +22,6 @@ class CreateVentilatorDataCsv extends JobHandler
     /**
      * @override
      *
-     * @param string $filename
-     * @param array $ids
      * @return void
      */
     protected function process()

@@ -9,6 +9,7 @@ use App\Http\Forms\Admin as Form;
 use App\Services\Admin as Service;
 use App\Services\Support\Gs1Util;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class VentilatorController extends Controller
 {
@@ -148,7 +149,7 @@ class VentilatorController extends Controller
 
         if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
 
-        $response = $this->service->startQueueVentilatorDataImportJob($form);
+        $response = $this->service->startQueueVentilatorDataImportJob($form, Auth::user());
 
         return $response;
     }
