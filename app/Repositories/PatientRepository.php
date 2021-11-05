@@ -44,4 +44,9 @@ class PatientRepository
     {
         return static::query()->where('id', $id)->value('organization_id');
     }
+
+    public static function getPatientCodesByOrganizationIdAndPatientCodes($organziation_id, $patient_codes)
+    {
+        return static::query()->where('organization_id',$organziation_id)->whereIn('patient_code',$patient_codes)->pluck('patient_code');
+    }
 }

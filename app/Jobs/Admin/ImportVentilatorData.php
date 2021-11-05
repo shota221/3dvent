@@ -5,18 +5,20 @@ namespace App\Jobs\Admin;
 use App\Jobs\JobHandler;
 use App\Services\Admin\VentilatorService;
 
-class CreateVentilatorDataCsv extends JobHandler
+class ImportVentilatorData extends JobHandler
 {
-    private $ids;
+    private $organization_id;
+    private $file;
 
     /**
      * JobHandler::dispatchToHandleを通じて初期化される
      *
      * @return void
      */
-    public function __construct(array $ids)
+    public function __construct(int $organization_id, $file)
     {
-        $this->ids = $ids;
+        $this->organization_id = $organization_id;
+        $this->file = $file;
     }
 
     /**
@@ -28,12 +30,6 @@ class CreateVentilatorDataCsv extends JobHandler
      */
     protected function process()
     {
-        $filename = self::guessFilename($this->queue);
-        (new VentilatorService)->createVentilatorDataCsvByIds($filename, $this->ids);
-    }
-
-    public static function guessFilename(string $queue)
-    {
-        return $queue.'.csv';
+        (new VentilatorService)->importVentilatorData($this->organization_id, $this->file);
     }
 }

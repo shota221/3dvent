@@ -16,6 +16,11 @@ class OrganizationRepository
         return !is_null($query) ? $query->count() : static::query()->count();
     }
 
+    public static function existsById(int $id)
+    {
+        return static::query()->where('id',$id)->exists();
+    }
+
     public static function existsByCode(string $code)
     {
         return static::query()->where('code', $code)->exists();

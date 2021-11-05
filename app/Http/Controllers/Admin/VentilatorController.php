@@ -148,9 +148,7 @@ class VentilatorController extends Controller
 
         if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
 
-        $file = $request->file('csv_file');
-
-        $response = $this->service->startQueueVentilatorDataImportJob($form, $file);
+        $response = $this->service->startQueueVentilatorDataImportJob($form);
 
         return $response;
     }
