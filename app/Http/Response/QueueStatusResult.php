@@ -8,7 +8,7 @@ class QueueStatusResult extends SuccessJsonResult
 {
     public $queue;
     
-    public $is_finished = false;
+    public $is_finished;
 
-    public $has_error = false;
+    public $has_error;
 }

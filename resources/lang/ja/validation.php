@@ -140,6 +140,7 @@ return [
     'duplicated_patient_id' => 'すでに登録済みです。',
     'duplicated_registration' => 'すでに登録されています。',
     'id_not_found'=>'削除されているか、存在しないIDです。',
+    'id_not_found_contained'=>'削除されているIDか存在しないIDが含まれています。',
     'code_not_found'=>'削除されているか、存在しない組織コードです。',
     'account_not_found'=>'削除されているか、存在しないアカウント名です。',
     'account_or_password_incorrect'=>'アカウント名またはパスワードが違います。',

@@ -185,13 +185,24 @@ class VentilatorService
      */
     public function startQueueVentilatorDataCsvJob(Form\VentilatorCsvExportForm $form)
     {
+        $ventialtor_ids = $form->ids;
+        
+        //リクエストされたventilator_idがすべて存在している（削除されていない）ことを確認
+        $ventilators_exist = (Repos\VentilatorRepository::getIdsByIds($ventialtor_ids)->count() === count($ventialtor_ids));
+
+        if (! $ventilators_exist) {
+            $form->addError('ids', 'validation.id_not_found_contained');
+            throw new Exceptions\InvalidFormException($form);
+        }
+
+
         $now = Support\DateUtil::now();
 
         //キュー命名
         $queue = Support\DateUtil::toDatetimeChar($now) . '_ventilator_data';
 
         //ジョブにキューを登録。キュー処理開始
-        Jobs\CreateVentilatorDataCsv::dispatchToHandle($queue, $form->ids);
+        Jobs\CreateVentilatorDataCsv::dispatchToHandle($queue, $ventialtor_ids);
 
         return Converter\QueueConverter::convertToQueueStatusResult($queue);
     }
@@ -236,14 +247,14 @@ class VentilatorService
         //実際にCSV作成キューが完了しているかどうか
         $is_finished = Jobs\CreateVentilatorDataCsv::isQueueFinished($queue);
 
-        if (!$is_finished) throw new Exceptions\HttpNotFoundException('');
+        if (! $is_finished) throw new Exceptions\HttpNotFoundException('');
 
         $filename = Jobs\CreateVentilatorDataCsv::guessFilename($queue);
 
         $file_path = Support\FileUtil::tmpUrl($filename);
 
         //作成されたCSVが存在しているはずのパスに存在しているかどうか
-        if (!Support\FileUtil::exists($file_path)) throw new Exceptions\HttpNotFoundException('');
+        if (! Support\FileUtil::exists($file_path)) throw new Exceptions\HttpNotFoundException('');
 
         return $file_path;
     }
@@ -431,10 +442,11 @@ class VentilatorService
         foreach ($valid_rows as $row) {
             //呼吸器データ移行用準備
             //現在行のventilatorが登録またはsave対象となっているかどうか。
-            if (!key_exists($row['ventilator_id'], $map_old_ventilator_id_to_new) && !key_exists($row['ventilator_id'], $map_old_ventilator_id_to_ventilators)) {
-                $ventilator_copy = Repos\VentilatorRepository::findOneById($row['ventilator_id'])->replicate();
+            $is_ventilator_for_save = ! key_exists($row['ventilator_id'], $map_old_ventilator_id_to_new) && ! key_exists($row['ventilator_id'], $map_old_ventilator_id_to_ventilators);
+            if ($is_ventilator_for_save) {
+                $ventilator_exists = Repos\VentilatorRepository::existsByOrganizationIdAndId($organization_id, $row['ventilator_id']);
 
-                if ($organization_id === $ventilator_copy->organization_id) {
+                if ($ventilator_exists) {
                     //インポート先の組織に登録済みの場合はスキップ
                     continue;
                 }
@@ -445,17 +457,18 @@ class VentilatorService
                 $qr_read_at = DateUtil::parseToDatetime($row['qr_read_at']);
                 $expiration_date = !empty($row['expiration_date']) ? DateUtil::parseToDate($row['expiration_date']) : null;
                 $start_using_at = DateUtil::parseToDatetime($row['start_using_at']);
+                $patient_id = $row['patient_exists'] ? intval($row['patient_id']) : null;
 
                 //save予約
-                $map_old_ventilator_id_to_ventilators[$row['ventilator_id']] = Converter\VentilatorConverter::convertToImportedVentilatorEntity($ventilator_copy, $organization_id, $registered_user_id, $gs1_code, $serial_number, $city, $qr_read_at, $expiration_date, $start_using_at);
+                $map_old_ventilator_id_to_ventilators[$row['ventilator_id']] = Converter\VentilatorConverter::convertToVentilatorEntity($gs1_code, $serial_number, $expiration_date, $qr_read_at, null, null, $city, $organization_id, $registered_user_id, $start_using_at, $patient_id);
             }
 
             //患者データ・患者観察研究データ移行(エクスポート/インポート対象の患者観察研究データは1患者につき最大1つ)
-            if ($row['patient_exists'] && !key_exists($row['patient_id'], $map_old_patient_id_to_new) && !key_exists($row['patient_id'], $map_old_patient_id_to_patients)) {
+            $is_patient_for_save = $row['patient_exists'] && ! key_exists($row['patient_id'], $map_old_patient_id_to_new) && !key_exists($row['patient_id'], $map_old_patient_id_to_patients);
+            if ($is_patient_for_save) {
+                $patient_exists = Repos\PatientRepository::existsByOrganizationIdAndId($organization_id, $row['patient_id']);
 
-                $patient_copy = Repos\PatientRepository::findOneById($row['patient_id'])->replicate();
-
-                if ($organization_id === $patient_copy->organization_id) {
+                if ($patient_exists) {
                     //インポート先の組織に登録済みの場合はスキップ
                     continue;
                 }
@@ -464,8 +477,8 @@ class VentilatorService
                 $patient_height = strval($row['patient_height']);
                 $patient_weight = strval($row['patient_weight']);
                 $patient_gender = intval($row['patient_gender']);
-            
-                $map_old_patient_id_to_patients[$row['patient_id']] = Converter\PatientConverter::convertToImportedPatientEntity($patient_copy, $organization_id, $patient_height, $patient_weight, $patient_gender, $patient_code);
+
+                $map_old_patient_id_to_patients[$row['patient_id']] = Converter\PatientConverter::convertToEntity($patient_height, $patient_gender, $patient_weight, $patient_code, $organization_id);
 
                 //患者観察研究データ移行準備
                 if ($row['patient_value_exists']) {
@@ -580,7 +593,7 @@ class VentilatorService
                 $insert_target_confirmed_at,
                 $registered_user_id,
                 &$map_old_ventilator_id_to_new,
-                &$map_old_patient_id_to_new,
+                &$map_old_patient_id_to_new
             ) {
                 $update_target_ventilator_id = [];
                 $update_target_ventilator_patient_id = [];

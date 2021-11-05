@@ -77,19 +77,6 @@ class VentilatorController extends Controller
         return view('ventilatorBugList', compact('bugs'));
     }
 
-    // public function importCsv(Request $request)
-    // {
-    //     $form = new Form\VentilatorCsvImportForm($request->all());
-
-    //     if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
-
-    //     $file = $request->file('csv_file');
-
-    //     $response = $this->service->create($form, $file);
-
-    //     return $response;
-    // }
-
     /**
      * ジョブにキューを登録
      *
@@ -102,9 +89,7 @@ class VentilatorController extends Controller
         if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
 
         $response = $this->service->startQueueVentilatorDataCsvJob($form);
-
-        \Log::debug($response->queue);
-
+        
         return $response;
     }
 

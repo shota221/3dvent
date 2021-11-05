@@ -53,7 +53,7 @@ abstract class JobHandler implements ShouldQueue
 
         $the_queue_exists = \DB::table($jobs_table)->where('queue', $queue)->exists();
 
-        return !$the_queue_exists;
+        return ! $the_queue_exists;
     }
 
     /**
