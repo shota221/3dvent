@@ -7,6 +7,7 @@
       @foreach (Config::get('languages') as $language_code => $language)
         @if ($language_code != App::getLocale())
           <li 
+            class="text-center"
             data-url="{{ route('org.swich_language', $language_code) }}"            
             data-method="GET"
           >

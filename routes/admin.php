@@ -25,7 +25,7 @@ Route::group(['middleware' => ['routetype:admin']], function () {
     // 言語切替
     Route::get(
         'language/{language_code}',
-        'LanguageController@switchLanguage'
+        'LanguageController@asyncSwitchLanguage'
     )->name('admin.swich_language');
 
     // ログイン画面

@@ -17,7 +17,7 @@ class LanguageController extends Controller
         $this->service = new Service\LanguageService;
     }
 
-    public function switchLanguage(string $language_code)
+    public function asyncSwitchLanguage(string $language_code)
     {
         $form = new Form\LanguageCodeSelectForm(compact('language_code'));
 
