@@ -18,33 +18,35 @@ class ValidationRule
 
         VALUE_CODE              = 'string|max:100|regex:/^[A-Za-z\d_-]+$/',
 
+        VALUE_LANGUAGE_CODE     = 'string|size:2',
+
         VALUE_STRING            = 'string|max:250',
 
         VALUE_TEXT              = 'string|max:500',
 
         PROBABILITY             = 'numeric|min:0|max:100',
 
-        PASSWORD          = 'string|min:8|max:32',
+        PASSWORD                = 'string|min:8|max:32',
 
-        EMAIL               = 'string|max:100|email',
+        EMAIL                   = 'string|max:100|email',
 
-        VALUE_BOOLEAN   = 'boolean',
+        VALUE_BOOLEAN           = 'boolean',
 
-        FLG_INTEGER = 'integer|min:0|max:1',
+        FLG_INTEGER             = 'integer|min:0|max:1',
 
-        USED_PLACE_INTEGER = 'integer|min:1|max:8', // 使用場所 
+        USED_PLACE_INTEGER      = 'integer|min:1|max:8', // 使用場所 
 
-        OUTCOME_INTEGER = 'integer|min:1|max:4', //　使用中止時の転帰
+        OUTCOME_INTEGER         = 'integer|min:1|max:4', //　使用中止時の転帰
 
-        TREATMENT_INTEGER = 'integer|min:1|max:6', // 使用中止後の呼吸不全治療
+        TREATMENT_INTEGER       = 'integer|min:1|max:6', // 使用中止後の呼吸不全治療
 
-        GENDER_INTEGER = 'integer|min:1|max:2',  
+        GENDER_INTEGER          = 'integer|min:1|max:2',  
 
-        STATUS_USE_INTEGER = 'integer|min:1|max:4',
+        STATUS_USE_INTEGER      = 'integer|min:1|max:4',
 
-        ORG_AUTHORITY_TYPE = 'integer|min:1|max:5',
+        ORG_AUTHORITY_TYPE      = 'integer|min:1|max:5',
 
-        CSV_FILE = 'max:1024|file|mimes:csv,txt'; //　laravelだとtxtの指定が必要
+        CSV_FILE                = 'max:1024|file|mimes:csv,txt'; //　laravelだとtxtの指定が必要
 
     /**
      * ある文字列が含まれない正規表現を返す

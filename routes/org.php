@@ -21,6 +21,12 @@
 Route::group(['middleware' => ['routetype:org']], function () {
 
     // ログイン、ログアウト等認証不要ルート
+    
+    // 言語切替
+    Route::get(
+        'language/{language_code}',
+        'LanguageController@switchLanguage'
+    )->name('org.swich_language');
 
     // ログイン画面
     Route::get(
