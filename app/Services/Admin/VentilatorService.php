@@ -185,12 +185,14 @@ class VentilatorService
      */
     public function startQueueVentilatorDataCsvJob(Form\VentilatorCsvExportForm $form)
     {
-        $ventialtor_ids = $form->ids;
+        $ventilator_ids = $form->ids;
         
         //リクエストされたventilator_idがすべて存在している（削除されていない）ことを確認
-        $ventilators_exist = (Repos\VentilatorRepository::getIdsByIds($ventialtor_ids)->count() === count($ventialtor_ids));
+        $count_request_ventilator_ids = count($ventilator_ids);
+        $count_available_ventilator_ids = Repos\VentilatorRepository::countByIds($ventilator_ids);
+        $all_ventilators_exist = ($count_request_ventilator_ids === $count_available_ventilator_ids);
 
-        if (! $ventilators_exist) {
+        if (! $all_ventilators_exist) {
             $form->addError('ids', 'validation.id_not_found_contained');
             throw new Exceptions\InvalidFormException($form);
         }
@@ -202,7 +204,7 @@ class VentilatorService
         $queue = Support\DateUtil::toDatetimeChar($now) . '_ventilator_data';
 
         //ジョブにキューを登録。キュー処理開始
-        Jobs\CreateVentilatorDataCsv::dispatchToHandle($queue, $ventialtor_ids);
+        Jobs\CreateVentilatorDataCsv::dispatchToHandle($queue, $ventilator_ids);
 
         return Converter\QueueConverter::convertToQueueStatusResult($queue);
     }
@@ -279,13 +281,6 @@ class VentilatorService
         $exists_organization = Repos\OrganizationRepository::existsById($target_organization_id);
         if (!$exists_organization) {
             $form->addError('organization_id', 'validation.id_not_found');
-            throw new Exceptions\InvalidFormException($form);
-        }
-
-        //.csvファイルのみを受け付ける
-        $file_extension = FileUtil::getUploadedFileOriginalExtension($file);
-        if ($file_extension !== 'csv') {
-            $form->addError('csv_file', 'validation.csv_required');
             throw new Exceptions\InvalidFormException($form);
         }
 
@@ -386,63 +381,63 @@ class VentilatorService
         // $saved_patient_value_id = [];
 
         //save対象のventilator列
-        $map_old_ventilator_id_to_ventilators = [];
+        $map_old_ventilator_id_to_ventilator = [];
         //save対象のpatient列
-        $map_old_patient_id_to_patients = [];
+        $map_old_patient_id_to_patient = [];
 
         //bulk insert対象のpatient_value情報
-        $insert_target_org_patient_id = [];
-        $insert_target_patient_value_registered_at = [];
-        $insert_target_opt_out_flg = [];
-        $insert_target_age = [];
-        $insert_target_vent_disease_name = [];
-        $insert_target_other_disease_name_1 = [];
-        $insert_target_other_disease_name_2 = [];
-        $insert_target_used_place = [];
-        $insert_target_hospital = [];
-        $insert_target_national = [];
-        $insert_target_discontinuation_at = [];
-        $insert_target_outcome = [];
-        $insert_target_treatment = [];
-        $insert_target_adverse_event_flg = [];
-        $insert_target_adverse_event_contents = [];
+        $list_old_patient_id_for_save = [];
+        $list_patient_value_registered_at_for_save = [];
+        $list_opt_out_flg_for_save = [];
+        $list_age_for_save = [];
+        $list_vent_disease_name_for_save = [];
+        $list_other_disease_name_1_for_save = [];
+        $list_other_disease_name_2_for_save = [];
+        $list_used_place_for_save = [];
+        $list_hospital_for_save = [];
+        $list_national_for_save = [];
+        $list_discontinuation_at_for_save = [];
+        $list_outcome_for_save = [];
+        $list_treatment_for_save = [];
+        $list_adverse_event_flg_for_save = [];
+        $list_adverse_event_contents_for_save = [];
 
         //bulk insert対象のventilator_value情報
-        $insert_target_org_ventilator_id = [];
-        $insert_target_appkey_id = [];
-        $insert_target_ventilator_value_registered_at = [];
-        $insert_target_height = [];
-        $insert_target_weight = [];
-        $insert_target_gender = [];
-        $insert_target_ideal_weight = [];
-        $insert_target_airway_pressure = [];
-        $insert_target_total_flow = [];
-        $insert_target_air_flow = [];
-        $insert_target_o2_flow = [];
-        $insert_target_rr = [];
-        $insert_target_expiratory_time = [];
-        $insert_target_inspiratory_time = [];
-        $insert_target_vt_per_kg = [];
-        $insert_target_predicted_vt = [];
-        $insert_target_estimated_vt = [];
-        $insert_target_estimated_mv = [];
-        $insert_target_estimated_peep = [];
-        $insert_target_fio2 = [];
-        $insert_target_status_use = [];
-        $insert_target_status_use_other = [];
-        $insert_target_spo2 = [];
-        $insert_target_etco2 = [];
-        $insert_target_pao2 = [];
-        $insert_target_paco2 = [];
-        $insert_target_fixed_flg = [];
-        $insert_target_fixed_at = [];
-        $insert_target_confirmed_flg = [];
-        $insert_target_confirmed_at = [];
+        $list_org_ventilator_id_for_save = [];
+        $list_appkey_id_for_save = [];
+        $list_ventilator_value_registered_at_for_save = [];
+        $list_height_for_save = [];
+        $list_weight_for_save = [];
+        $list_gender_for_save = [];
+        $list_ideal_weight_for_save = [];
+        $list_airway_pressure_for_save = [];
+        $list_total_flow_for_save = [];
+        $list_air_flow_for_save = [];
+        $list_o2_flow_for_save = [];
+        $list_rr_for_save = [];
+        $list_expiratory_time_for_save = [];
+        $list_inspiratory_time_for_save = [];
+        $list_vt_per_kg_for_save = [];
+        $list_predicted_vt_for_save = [];
+        $list_estimated_vt_for_save = [];
+        $list_estimated_mv_for_save = [];
+        $list_estimated_peep_for_save = [];
+        $list_fio2_for_save = [];
+        $list_status_use_for_save = [];
+        $list_status_use_other_for_save = [];
+        $list_spo2_for_save = [];
+        $list_etco2_for_save = [];
+        $list_pao2_for_save = [];
+        $list_paco2_for_save = [];
+        $list_fixed_flg_for_save = [];
+        $list_fixed_at_for_save = [];
+        $list_confirmed_flg_for_save = [];
+        $list_confirmed_at_for_save = [];
 
         foreach ($valid_rows as $row) {
             //呼吸器データ移行用準備
             //現在行のventilatorが登録またはsave対象となっているかどうか。
-            $is_ventilator_for_save = ! key_exists($row['ventilator_id'], $map_old_ventilator_id_to_new) && ! key_exists($row['ventilator_id'], $map_old_ventilator_id_to_ventilators);
+            $is_ventilator_for_save = ! key_exists($row['ventilator_id'], $map_old_ventilator_id_to_new) && ! key_exists($row['ventilator_id'], $map_old_ventilator_id_to_ventilator);
             if ($is_ventilator_for_save) {
                 $ventilator_exists = Repos\VentilatorRepository::existsByOrganizationIdAndId($organization_id, $row['ventilator_id']);
 
@@ -460,11 +455,11 @@ class VentilatorService
                 $patient_id = $row['patient_exists'] ? intval($row['patient_id']) : null;
 
                 //save予約
-                $map_old_ventilator_id_to_ventilators[$row['ventilator_id']] = Converter\VentilatorConverter::convertToVentilatorEntity($gs1_code, $serial_number, $expiration_date, $qr_read_at, null, null, $city, $organization_id, $registered_user_id, $start_using_at, $patient_id);
+                $map_old_ventilator_id_to_ventilator[$row['ventilator_id']] = Converter\VentilatorConverter::convertToVentilatorEntity($gs1_code, $serial_number, $expiration_date, $qr_read_at, null, null, $city, $organization_id, $registered_user_id, $start_using_at, $patient_id);
             }
 
             //患者データ・患者観察研究データ移行(エクスポート/インポート対象の患者観察研究データは1患者につき最大1つ)
-            $is_patient_for_save = $row['patient_exists'] && ! key_exists($row['patient_id'], $map_old_patient_id_to_new) && !key_exists($row['patient_id'], $map_old_patient_id_to_patients);
+            $is_patient_for_save = $row['patient_exists'] && ! key_exists($row['patient_id'], $map_old_patient_id_to_new) && !key_exists($row['patient_id'], $map_old_patient_id_to_patient);
             if ($is_patient_for_save) {
                 $patient_exists = Repos\PatientRepository::existsByOrganizationIdAndId($organization_id, $row['patient_id']);
 
@@ -478,60 +473,60 @@ class VentilatorService
                 $patient_weight = strval($row['patient_weight']);
                 $patient_gender = intval($row['patient_gender']);
 
-                $map_old_patient_id_to_patients[$row['patient_id']] = Converter\PatientConverter::convertToEntity($patient_height, $patient_gender, $patient_weight, $patient_code, $organization_id);
+                $map_old_patient_id_to_patient[$row['patient_id']] = Converter\PatientConverter::convertToEntity($patient_height, $patient_gender, $patient_weight, $patient_code, $organization_id);
 
                 //患者観察研究データ移行準備
                 if ($row['patient_value_exists']) {
-                    $insert_target_org_patient_id[] = $row['patient_id'];
-                    $insert_target_patient_value_registered_at[] = !empty($row['patient_value_registered_at']) ? DateUtil::parseToDatetime($row['patient_value_registered_at']) : null;
-                    $insert_target_age[] = isset($row['age']) ? strval($row['age']) : null;
-                    $insert_target_vent_disease_name[] = isset($row['vent_disease_name']) ? strval($row['vent_disease_name']) : null;
-                    $insert_target_other_disease_name_1[] = isset($row['other_disease_name_1']) ? strval($row['other_disease_name_1']) : null;
-                    $insert_target_other_disease_name_2[] = isset($row['other_disease_name_2']) ? strval($row['other_disease_name_2']) : null;
-                    $insert_target_used_place[] = isset($row['used_place']) ? intval($row['used_place']) : null;
-                    $insert_target_hospital[] = isset($row['hospital']) ? strval($row['hospital']) : null;
-                    $insert_target_national[] = isset($row['national']) ? strval($row['national']) : null;
-                    $insert_target_discontinuation_at[] = !empty($row['discontinuation_at']) ? DateUtil::parseToDatetime($row['discontinuation_at']) : null;
-                    $insert_target_outcome[] = isset($row['outcome']) ? intval($row['outcome']) : null;
-                    $insert_target_treatment[] = isset($row['treatment']) ? intval($row['treatment']) : null;
-                    $insert_target_adverse_event_flg[] = isset($row['adverse_event_flg']) ? intval($row['adverse_event_flg']) : null;
-                    $insert_target_adverse_event_contents[] = isset($row['adverse_event_contents']) ? strval($row['adverse_event_contents']) : null;
-                    $insert_target_opt_out_flg[] = isset($row['opt_out_flg']) ? intval($row['opt_out_flg']) : null;
+                    $list_old_patient_id_for_save[] = $row['patient_id'];
+                    $list_patient_value_registered_at_for_save[] = !empty($row['patient_value_registered_at']) ? DateUtil::parseToDatetime($row['patient_value_registered_at']) : null;
+                    $list_age_for_save[] = isset($row['age']) ? strval($row['age']) : null;
+                    $list_vent_disease_name_for_save[] = isset($row['vent_disease_name']) ? strval($row['vent_disease_name']) : null;
+                    $list_other_disease_name_1_for_save[] = isset($row['other_disease_name_1']) ? strval($row['other_disease_name_1']) : null;
+                    $list_other_disease_name_2_for_save[] = isset($row['other_disease_name_2']) ? strval($row['other_disease_name_2']) : null;
+                    $list_used_place_for_save[] = isset($row['used_place']) ? intval($row['used_place']) : null;
+                    $list_hospital_for_save[] = isset($row['hospital']) ? strval($row['hospital']) : null;
+                    $list_national_for_save[] = isset($row['national']) ? strval($row['national']) : null;
+                    $list_discontinuation_at_for_save[] = !empty($row['discontinuation_at']) ? DateUtil::parseToDatetime($row['discontinuation_at']) : null;
+                    $list_outcome_for_save[] = isset($row['outcome']) ? intval($row['outcome']) : null;
+                    $list_treatment_for_save[] = isset($row['treatment']) ? intval($row['treatment']) : null;
+                    $list_adverse_event_flg_for_save[] = isset($row['adverse_event_flg']) ? intval($row['adverse_event_flg']) : null;
+                    $list_adverse_event_contents_for_save[] = isset($row['adverse_event_contents']) ? strval($row['adverse_event_contents']) : null;
+                    $list_opt_out_flg_for_save[] = isset($row['opt_out_flg']) ? intval($row['opt_out_flg']) : null;
                 }
             }
 
             //機器観察研究データ移行準備
             if ($row['ventilator_value_exists']) {
-                $insert_target_org_ventilator_id[] = $row['ventilator_id'];
-                $insert_target_appkey_id[] = isset($row['appkey_id']) ? strval($row['appkey_id']) : null;
-                $insert_target_ventilator_value_registered_at[] = !empty($row['ventilator_value_registered_at']) ? DateUtil::parseToDatetime($row['ventilator_value_registered_at']) : null;
-                $insert_target_height[] = isset($row['height']) ? strval($row['height']) : null;
-                $insert_target_weight[] = isset($row['weight']) ? strval($row['weight']) : null;
-                $insert_target_gender[] = isset($row['gender']) ? strval($row['gender']) : null;
-                $insert_target_ideal_weight[] = isset($row['ideal_weight']) ? strval($row['ideal_weight']) : null;
-                $insert_target_airway_pressure[] = isset($row['airway_pressure']) ? strval($row['airway_pressure']) : null;
-                $insert_target_total_flow[] = isset($row['total_flow']) ? strval($row['total_flow']) : null;
-                $insert_target_air_flow[] = isset($row['air_flow']) ? strval($row['air_flow']) : null;
-                $insert_target_o2_flow[] = isset($row['o2_flow']) ? strval($row['o2_flow']) : null;
-                $insert_target_rr[] = isset($row['rr']) ? strval($row['rr']) : null;
-                $insert_target_expiratory_time[] = isset($row['expiratory_time']) ? strval($row['expiratory_time']) : null;
-                $insert_target_inspiratory_time[] = isset($row['inspiratory_time']) ? strval($row['inspiratory_time']) : null;
-                $insert_target_vt_per_kg[] = isset($row['vt_per_kg']) ? strval($row['vt_per_kg']) : null;
-                $insert_target_predicted_vt[] = isset($row['predicted_vt']) ? strval($row['predicted_vt']) : null;
-                $insert_target_estimated_vt[] = isset($row['estimated_vt']) ? strval($row['estimated_vt']) : null;
-                $insert_target_estimated_mv[] = isset($row['estimated_mv']) ? strval($row['estimated_mv']) : null;
-                $insert_target_estimated_peep[] = isset($row['estimated_peep']) ? strval($row['estimated_peep']) : null;
-                $insert_target_fio2[] = isset($row['fio2']) ? strval($row['fio2']) : null;
-                $insert_target_status_use[] = isset($row['status_use']) ? intval($row['status_use']) : null;
-                $insert_target_status_use_other[] = isset($row['status_use_other']) ? strval($row['status_use_other']) : null;
-                $insert_target_spo2[] = isset($row['spo2']) ? strval($row['spo2']) : null;
-                $insert_target_etco2[] = isset($row['etco2']) ? strval($row['etco2']) : null;
-                $insert_target_pao2[] = isset($row['pao2']) ? strval($row['pao2']) : null;
-                $insert_target_paco2[] = isset($row['paco2']) ? strval($row['paco2']) : null;
-                $insert_target_fixed_flg[] = isset($row['fixed_flg']) ? intval($row['fixed_flg']) : null;
-                $insert_target_fixed_at[] = !empty($row['fixed_at']) ? DateUtil::parseToDatetime($row['fixed_at']) : null;
-                $insert_target_confirmed_flg[] = isset($row['confirmed_flg']) ? intval($row['confirmed_flg']) : null;
-                $insert_target_confirmed_at[] = !empty($row['confirmed_at']) ? DateUtil::parseToDatetime($row['confirmed_at']) : null;
+                $list_org_ventilator_id_for_save[] = $row['ventilator_id'];
+                $list_appkey_id_for_save[] = isset($row['appkey_id']) ? strval($row['appkey_id']) : null;
+                $list_ventilator_value_registered_at_for_save[] = !empty($row['ventilator_value_registered_at']) ? DateUtil::parseToDatetime($row['ventilator_value_registered_at']) : null;
+                $list_height_for_save[] = isset($row['height']) ? strval($row['height']) : null;
+                $list_weight_for_save[] = isset($row['weight']) ? strval($row['weight']) : null;
+                $list_gender_for_save[] = isset($row['gender']) ? strval($row['gender']) : null;
+                $list_ideal_weight_for_save[] = isset($row['ideal_weight']) ? strval($row['ideal_weight']) : null;
+                $list_airway_pressure_for_save[] = isset($row['airway_pressure']) ? strval($row['airway_pressure']) : null;
+                $list_total_flow_for_save[] = isset($row['total_flow']) ? strval($row['total_flow']) : null;
+                $list_air_flow_for_save[] = isset($row['air_flow']) ? strval($row['air_flow']) : null;
+                $list_o2_flow_for_save[] = isset($row['o2_flow']) ? strval($row['o2_flow']) : null;
+                $list_rr_for_save[] = isset($row['rr']) ? strval($row['rr']) : null;
+                $list_expiratory_time_for_save[] = isset($row['expiratory_time']) ? strval($row['expiratory_time']) : null;
+                $list_inspiratory_time_for_save[] = isset($row['inspiratory_time']) ? strval($row['inspiratory_time']) : null;
+                $list_vt_per_kg_for_save[] = isset($row['vt_per_kg']) ? strval($row['vt_per_kg']) : null;
+                $list_predicted_vt_for_save[] = isset($row['predicted_vt']) ? strval($row['predicted_vt']) : null;
+                $list_estimated_vt_for_save[] = isset($row['estimated_vt']) ? strval($row['estimated_vt']) : null;
+                $list_estimated_mv_for_save[] = isset($row['estimated_mv']) ? strval($row['estimated_mv']) : null;
+                $list_estimated_peep_for_save[] = isset($row['estimated_peep']) ? strval($row['estimated_peep']) : null;
+                $list_fio2_for_save[] = isset($row['fio2']) ? strval($row['fio2']) : null;
+                $list_status_use_for_save[] = isset($row['status_use']) ? intval($row['status_use']) : null;
+                $list_status_use_other_for_save[] = isset($row['status_use_other']) ? strval($row['status_use_other']) : null;
+                $list_spo2_for_save[] = isset($row['spo2']) ? strval($row['spo2']) : null;
+                $list_etco2_for_save[] = isset($row['etco2']) ? strval($row['etco2']) : null;
+                $list_pao2_for_save[] = isset($row['pao2']) ? strval($row['pao2']) : null;
+                $list_paco2_for_save[] = isset($row['paco2']) ? strval($row['paco2']) : null;
+                $list_fixed_flg_for_save[] = isset($row['fixed_flg']) ? intval($row['fixed_flg']) : null;
+                $list_fixed_at_for_save[] = !empty($row['fixed_at']) ? DateUtil::parseToDatetime($row['fixed_at']) : null;
+                $list_confirmed_flg_for_save[] = isset($row['confirmed_flg']) ? intval($row['confirmed_flg']) : null;
+                $list_confirmed_at_for_save[] = !empty($row['confirmed_at']) ? DateUtil::parseToDatetime($row['confirmed_at']) : null;
             }
         }
 
@@ -544,63 +539,63 @@ class VentilatorService
         DBUtil::Transaction(
             'CSVインポート',
             function () use (
-                $map_old_ventilator_id_to_ventilators,
-                $map_old_patient_id_to_patients,
-                $insert_target_org_patient_id,
-                $insert_target_patient_value_registered_at,
-                $insert_target_opt_out_flg,
-                $insert_target_age,
-                $insert_target_vent_disease_name,
-                $insert_target_other_disease_name_1,
-                $insert_target_other_disease_name_2,
-                $insert_target_used_place,
-                $insert_target_hospital,
-                $insert_target_national,
-                $insert_target_discontinuation_at,
-                $insert_target_outcome,
-                $insert_target_treatment,
-                $insert_target_adverse_event_flg,
-                $insert_target_adverse_event_contents,
-                $insert_target_org_ventilator_id,
-                $insert_target_appkey_id,
-                $insert_target_ventilator_value_registered_at,
-                $insert_target_height,
-                $insert_target_weight,
-                $insert_target_gender,
-                $insert_target_ideal_weight,
-                $insert_target_airway_pressure,
-                $insert_target_total_flow,
-                $insert_target_air_flow,
-                $insert_target_o2_flow,
-                $insert_target_rr,
-                $insert_target_expiratory_time,
-                $insert_target_inspiratory_time,
-                $insert_target_vt_per_kg,
-                $insert_target_predicted_vt,
-                $insert_target_estimated_vt,
-                $insert_target_estimated_mv,
-                $insert_target_estimated_peep,
-                $insert_target_fio2,
-                $insert_target_status_use,
-                $insert_target_status_use_other,
-                $insert_target_spo2,
-                $insert_target_etco2,
-                $insert_target_pao2,
-                $insert_target_paco2,
-                $insert_target_fixed_flg,
-                $insert_target_fixed_at,
-                $insert_target_confirmed_flg,
-                $insert_target_confirmed_at,
+                $map_old_ventilator_id_to_ventilator,
+                $map_old_patient_id_to_patient,
+                $list_old_patient_id_for_save,
+                $list_patient_value_registered_at_for_save,
+                $list_opt_out_flg_for_save,
+                $list_age_for_save,
+                $list_vent_disease_name_for_save,
+                $list_other_disease_name_1_for_save,
+                $list_other_disease_name_2_for_save,
+                $list_used_place_for_save,
+                $list_hospital_for_save,
+                $list_national_for_save,
+                $list_discontinuation_at_for_save,
+                $list_outcome_for_save,
+                $list_treatment_for_save,
+                $list_adverse_event_flg_for_save,
+                $list_adverse_event_contents_for_save,
+                $list_org_ventilator_id_for_save,
+                $list_appkey_id_for_save,
+                $list_ventilator_value_registered_at_for_save,
+                $list_height_for_save,
+                $list_weight_for_save,
+                $list_gender_for_save,
+                $list_ideal_weight_for_save,
+                $list_airway_pressure_for_save,
+                $list_total_flow_for_save,
+                $list_air_flow_for_save,
+                $list_o2_flow_for_save,
+                $list_rr_for_save,
+                $list_expiratory_time_for_save,
+                $list_inspiratory_time_for_save,
+                $list_vt_per_kg_for_save,
+                $list_predicted_vt_for_save,
+                $list_estimated_vt_for_save,
+                $list_estimated_mv_for_save,
+                $list_estimated_peep_for_save,
+                $list_fio2_for_save,
+                $list_status_use_for_save,
+                $list_status_use_other_for_save,
+                $list_spo2_for_save,
+                $list_etco2_for_save,
+                $list_pao2_for_save,
+                $list_paco2_for_save,
+                $list_fixed_flg_for_save,
+                $list_fixed_at_for_save,
+                $list_confirmed_flg_for_save,
+                $list_confirmed_at_for_save,
                 $registered_user_id,
-                &$map_old_ventilator_id_to_new,
-                &$map_old_patient_id_to_new
+                $map_old_ventilator_id_to_new,
+                $map_old_patient_id_to_new
             ) {
                 $update_target_ventilator_id = [];
                 $update_target_ventilator_patient_id = [];
 
-                if (!empty($map_old_ventilator_id_to_ventilators)) {
+                if (!empty($map_old_ventilator_id_to_ventilator)) {
                     //insertするventilatorごとの新旧idの紐付けを行いたいので個別saveとする。
-                    foreach ($map_old_ventilator_id_to_ventilators as $org_ventilator_id => $ventilator) {
+                    foreach ($map_old_ventilator_id_to_ventilator as $org_ventilator_id => $ventilator) {
                         $ventilator->save();
 
                         //patient insert後に対応ventialtor.patient_idをbulk update
@@ -613,9 +608,9 @@ class VentilatorService
                     }
                 }
 
-                if (!empty($map_old_patient_id_to_patients)) {
+                if (!empty($map_old_patient_id_to_patient)) {
                     //ventilator同様、新旧idの紐付けのため個別にsave
-                    foreach ($map_old_patient_id_to_patients as $org_patient_id => $patient) {
+                    foreach ($map_old_patient_id_to_patient as $org_patient_id => $patient) {
 
                         $patient->save();
 
@@ -638,36 +633,36 @@ class VentilatorService
                 }
 
                 //patient_valueバルクインサート
-                if (!empty($insert_target_org_patient_id)) {
-                    $insert_target_patient_id = array_map(
+                if (!empty($list_old_patient_id_for_save)) {
+                    $list_patient_id_for_save = array_map(
                         function ($org_patient_id) use ($map_old_patient_id_to_new) {
                             return $map_old_patient_id_to_new[$org_patient_id];
                         },
-                        $insert_target_org_patient_id
+                        $list_old_patient_id_for_save
                     );
 
 
                     Repos\PatientValueRepository::insertBulk(
-                        $insert_target_patient_id,
-                        $insert_target_patient_value_registered_at,
-                        $insert_target_opt_out_flg,
-                        $insert_target_age,
-                        $insert_target_vent_disease_name,
-                        $insert_target_other_disease_name_1,
-                        $insert_target_other_disease_name_2,
-                        $insert_target_used_place,
-                        $insert_target_hospital,
-                        $insert_target_national,
-                        $insert_target_discontinuation_at,
-                        $insert_target_outcome,
-                        $insert_target_treatment,
-                        $insert_target_adverse_event_flg,
-                        $insert_target_adverse_event_contents,
+                        $list_patient_id_for_save,
+                        $list_patient_value_registered_at_for_save,
+                        $list_opt_out_flg_for_save,
+                        $list_age_for_save,
+                        $list_vent_disease_name_for_save,
+                        $list_other_disease_name_1_for_save,
+                        $list_other_disease_name_2_for_save,
+                        $list_used_place_for_save,
+                        $list_hospital_for_save,
+                        $list_national_for_save,
+                        $list_discontinuation_at_for_save,
+                        $list_outcome_for_save,
+                        $list_treatment_for_save,
+                        $list_adverse_event_flg_for_save,
+                        $list_adverse_event_contents_for_save,
                         $registered_user_id
                     );
 
                     //patient_value_historiesバルクインサート
-                    $saved_patient_value_id = Repos\PatientValueRepository::listIdByPatientIds($insert_target_patient_id)->toArray();
+                    $saved_patient_value_id = Repos\PatientValueRepository::listIdByPatientIds($list_patient_id_for_save)->toArray();
 
                     Repos\PatientValueHistoryRepository::insertBulk(
                         $saved_patient_value_id,
@@ -678,50 +673,50 @@ class VentilatorService
 
 
                 //ventilator_valueバルクインサート
-                if (!empty($insert_target_org_ventilator_id)) {
-                    $insert_target_ventilator_id = array_map(
+                if (!empty($list_org_ventilator_id_for_save)) {
+                    $list_ventilator_id_for_save = array_map(
                         function ($org_ventilator_id) use ($map_old_ventilator_id_to_new) {
                             return $map_old_ventilator_id_to_new[$org_ventilator_id];
                         },
-                        $insert_target_org_ventilator_id
+                        $list_org_ventilator_id_for_save
                     );
 
                     Repos\VentilatorValueRepository::insertBulk(
-                        $insert_target_ventilator_id,
-                        $insert_target_appkey_id,
-                        $insert_target_ventilator_value_registered_at,
-                        $insert_target_height,
-                        $insert_target_weight,
-                        $insert_target_gender,
-                        $insert_target_ideal_weight,
-                        $insert_target_airway_pressure,
-                        $insert_target_total_flow,
-                        $insert_target_air_flow,
-                        $insert_target_o2_flow,
-                        $insert_target_rr,
-                        $insert_target_expiratory_time,
-                        $insert_target_inspiratory_time,
-                        $insert_target_vt_per_kg,
-                        $insert_target_predicted_vt,
-                        $insert_target_estimated_vt,
-                        $insert_target_estimated_mv,
-                        $insert_target_estimated_peep,
-                        $insert_target_fio2,
-                        $insert_target_status_use,
-                        $insert_target_status_use_other,
-                        $insert_target_spo2,
-                        $insert_target_etco2,
-                        $insert_target_pao2,
-                        $insert_target_paco2,
-                        $insert_target_fixed_flg,
-                        $insert_target_fixed_at,
-                        $insert_target_confirmed_flg,
-                        $insert_target_confirmed_at,
+                        $list_ventilator_id_for_save,
+                        $list_appkey_id_for_save,
+                        $list_ventilator_value_registered_at_for_save,
+                        $list_height_for_save,
+                        $list_weight_for_save,
+                        $list_gender_for_save,
+                        $list_ideal_weight_for_save,
+                        $list_airway_pressure_for_save,
+                        $list_total_flow_for_save,
+                        $list_air_flow_for_save,
+                        $list_o2_flow_for_save,
+                        $list_rr_for_save,
+                        $list_expiratory_time_for_save,
+                        $list_inspiratory_time_for_save,
+                        $list_vt_per_kg_for_save,
+                        $list_predicted_vt_for_save,
+                        $list_estimated_vt_for_save,
+                        $list_estimated_mv_for_save,
+                        $list_estimated_peep_for_save,
+                        $list_fio2_for_save,
+                        $list_status_use_for_save,
+                        $list_status_use_other_for_save,
+                        $list_spo2_for_save,
+                        $list_etco2_for_save,
+                        $list_pao2_for_save,
+                        $list_paco2_for_save,
+                        $list_fixed_flg_for_save,
+                        $list_fixed_at_for_save,
+                        $list_confirmed_flg_for_save,
+                        $list_confirmed_at_for_save,
                         $registered_user_id
                     );
 
                     //ventilator_value_historiesバルクインサート
-                    $saved_ventilator_value_id = Repos\VentilatorValueRepository::listIdByVentilatorIds($insert_target_ventilator_id)->toArray();
+                    $saved_ventilator_value_id = Repos\VentilatorValueRepository::listIdByVentilatorIds($list_ventilator_id_for_save)->toArray();
 
                     Repos\VentilatorValueHistoryRepository::insertBulk(
                         $saved_ventilator_value_id,

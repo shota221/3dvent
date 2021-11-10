@@ -374,8 +374,8 @@ class VentilatorRepository
             ->value('patient_code');
     }
 
-    public static function getIdsByIds(array $ids)
+    public static function countByIds(array $ids)
     {
-        return self::query()->whereIn('id',$ids)->pluck('id');
+        return self::query()->whereIn('id',$ids)->count();
     }
 }

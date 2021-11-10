@@ -26,6 +26,7 @@ class CreateVentilatorDataCsv extends JobHandler
      */
     protected function process()
     {
+        sleep(10);
         $filename = self::guessFilename($this->queue);
         (new VentilatorService)->createVentilatorDataCsvByIds($filename, $this->ids);
     }

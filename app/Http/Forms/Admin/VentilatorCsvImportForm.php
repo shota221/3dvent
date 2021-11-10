@@ -25,4 +25,14 @@ class VentilatorCsvImportForm extends BaseForm
         $this->organization_id = intval($input['organization_id']);
         $this->csv_file = $input['csv_file'];
     }
+
+    protected function validateAfterBinding()
+    {
+        //LaravelValidatorでのmimeタイプ指定では.csvと.txtは区別できないので、.csvのみを受け付けるために別途処理
+        $file_extension = Support\FileUtil::getUploadedFileOriginalExtension($this->csv_file);
+
+        if($file_extension !== 'csv') {
+            $this->addError('csv_file', 'validation.csv_required');
+        }
+    }
 }

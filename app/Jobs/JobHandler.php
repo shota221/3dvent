@@ -3,19 +3,54 @@
 namespace App\Jobs;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Foundation\Bus\PendingDispatch;
-use Illuminate\Support\Facades\Artisan;
+use Symfony\Component\Process\Process;
 
 abstract class JobHandler implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     const CONNECTION = 'database';
+
+    /**
+     * 別プロセスで即時実行
+     *
+     * @param string $queue
+     * @param integer $timeout
+     * @return void
+     */
+    private static function processStart(string $queue, int $timeout = 12000)
+    {
+        //別プロセスを建ててartisan queue:work非同期実行
+        $artisan = base_path() . DIRECTORY_SEPARATOR . 'artisan';
+
+        $command = 'queue:work';
+
+        $timeout = '--timeout=' . $timeout;
+
+        $connection = static::CONNECTION;
+
+        $env_option = '--env=' . app('config')->get('app.env');
+
+        $once_option = '--once';
+
+        $queue_option = '--queue=' . $queue;
+
+        $exec_command = "{$artisan} {$command} {$timeout} {$connection} {$env_option} {$once_option} {$queue_option} > /dev/null &";
+
+        exec($exec_command, $output, $code);
+
+        $result = Process::$exitCodes[$code];
+
+        if (0 !== $code) {
+            \Log::error('exec async process command=' . $exec_command . ' error=' . $result);
+        } else {
+            \Log::debug('exec async proccess command=' . $exec_command . ' result=' . $result);
+        }
+    }
 
     /**
      * ジョブをキューに登録して実行処理 
@@ -27,15 +62,8 @@ abstract class JobHandler implements ShouldQueue
         //$queue以降の引数を受け取り、ジョブを初期化しディスパッチ
         self::pendingDispatch($queue, ...$args);
 
-        //artisanでhandle実行
-        Artisan::call(
-            'queue:work',
-            [
-                '--once'      => true,
-                '--queue'     => $queue,
-                '--env'       => config('app.env')
-            ]
-        );
+        //別プロセスを建ててartisan queue:work非同期実行
+        self::processStart($queue);
     }
 
 
@@ -53,7 +81,7 @@ abstract class JobHandler implements ShouldQueue
 
         $the_queue_exists = \DB::table($jobs_table)->where('queue', $queue)->exists();
 
-        return ! $the_queue_exists;
+        return !$the_queue_exists;
     }
 
     /**

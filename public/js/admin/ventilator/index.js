@@ -277,7 +277,10 @@ $exportCsvBtn.on(
 
                     setTimeout(
                         function () {
+                            //非同期処理に伴うローディング表示を発生させないために要素を一時削除
+                            var $detachedOverlay = $('#overlay').detach();
                             utilAsyncExecuteAjax($checkExportQueueStatusElm, checkQueueStatusParams, withMessage, checkQueueStatusSuccessCallback);
+                            $paginatedList.append($detachedOverlay);
                         }
                         , pollingInterval
                     )
