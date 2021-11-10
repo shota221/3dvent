@@ -1,10 +1,10 @@
 <!-- 言語切り替え -->
 <li class="dropdown" id="nav-lang">
     <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
-      {{ Config::get('languages')[App::getLocale()] }}
+      {{ config('languages')[App::getLocale()] }}
     </a>
     <ul class="dropdown-menu">
-      @foreach (Config::get('languages') as $language_code => $language)
+      @foreach (config('languages') as $language_code => $language)
         @if ($language_code != App::getLocale())
           <li 
             class="text-center"

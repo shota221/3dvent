@@ -14,7 +14,7 @@ class LanguageCodeSelectForm extends BaseForm
     protected function validationRule()
     {
         return [
-            'language_code' => 'required|' . Rule::VALUE_LANGUAGE_CODE,
+            'language_code' => 'required|' . Rule::valueLanguageCode(),
         ];
     }
 

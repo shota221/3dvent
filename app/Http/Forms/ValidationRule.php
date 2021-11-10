@@ -18,8 +18,6 @@ class ValidationRule
 
         VALUE_CODE              = 'string|max:100|regex:/^[A-Za-z\d_-]+$/',
 
-        VALUE_LANGUAGE_CODE     = 'string|size:2',
-
         VALUE_STRING            = 'string|max:250',
 
         VALUE_TEXT              = 'string|max:500',
@@ -65,5 +63,18 @@ class ValidationRule
     public static function intRange(int $i, int $j)
     {
         return  'integer|min:'.$i.'|max:'.$j;
+    }
+
+    /**
+     * configに設定した言語コードに含まれているかのバリデーション
+     *
+     * @return $string
+     */
+    public static function valueLanguageCode()
+    {
+        $language_code_keys   = array_keys(config('languages'));
+        $language_code_string = implode(",", $language_code_keys);
+ 
+        return 'string|in:' . $language_code_string;
     }
 }

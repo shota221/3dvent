@@ -11,11 +11,7 @@ use Illuminate\Support\Facades\Session;
 class LanguageService
 {
     public function setLanguageCode(Form\LanguageCodeSelectForm $form)
-    {
-        $key_exists = array_key_exists($form->language_code, config('languages')); 
-
-        if (! $key_exists) throw new Exceptions\InvalidFormException($form);
-        
+    {   
         $language_key = config('session.language_key');
 
         Session::put($language_key, $form->language_code);
