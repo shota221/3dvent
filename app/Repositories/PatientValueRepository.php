@@ -26,26 +26,14 @@ class PatientValueRepository
     }
 
     public static function insertBulk(
-        array $patient_id_arr,
-        array $registered_at_arr,
-        array $opt_out_flg_arr,
-        array $age_arr,
-        array $vent_disease_name_arr,
-        array $other_disease_name_1_arr,
-        array $other_disease_name_2_arr,
-        array $used_place_arr,
-        array $hospital_arr,
-        array $national_arr,
-        array $discontinuation_at_arr,
-        array $outcome_arr,
-        array $treatment_arr,
-        array $adverse_event_flg_arr,
-        array $adverse_event_contents_arr,
+        array $list_patient_value_for_bulk_insert,
         $user_id
     ) {
         $table = PatientValue::tableName();
 
-        $count = count($patient_id_arr);
+        $count = count($list_patient_value_for_bulk_insert['patient_id']);
+
+        \Log::debug($count);
 
         $placeholder = substr(str_repeat(',(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', $count), 1);
 
@@ -53,21 +41,21 @@ class PatientValueRepository
 
         for ($i = 0; $i < $count; $i++) {
             $record = [
-                $patient_id_arr[$i],
-                $registered_at_arr[$i],
-                $opt_out_flg_arr[$i],
-                $age_arr[$i],
-                $vent_disease_name_arr[$i],
-                $other_disease_name_1_arr[$i],
-                $other_disease_name_2_arr[$i],
-                $used_place_arr[$i],
-                $hospital_arr[$i],
-                $national_arr[$i],
-                $discontinuation_at_arr[$i],
-                $outcome_arr[$i],
-                $treatment_arr[$i],
-                $adverse_event_flg_arr[$i],
-                $adverse_event_contents_arr[$i],
+                $list_patient_value_for_bulk_insert['patient_id'][$i],
+                $list_patient_value_for_bulk_insert['registered_at'][$i],
+                $list_patient_value_for_bulk_insert['opt_out_flg'][$i],
+                $list_patient_value_for_bulk_insert['age'][$i],
+                $list_patient_value_for_bulk_insert['vent_disease_name'][$i],
+                $list_patient_value_for_bulk_insert['other_disease_name_1'][$i],
+                $list_patient_value_for_bulk_insert['other_disease_name_2'][$i],
+                $list_patient_value_for_bulk_insert['used_place'][$i],
+                $list_patient_value_for_bulk_insert['hospital'][$i],
+                $list_patient_value_for_bulk_insert['national'][$i],
+                $list_patient_value_for_bulk_insert['discontinuation_at'][$i],
+                $list_patient_value_for_bulk_insert['outcome'][$i],
+                $list_patient_value_for_bulk_insert['treatment'][$i],
+                $list_patient_value_for_bulk_insert['adverse_event_flg'][$i],
+                $list_patient_value_for_bulk_insert['adverse_event_contents'][$i],
                 $user_id
             ];
 
@@ -324,7 +312,7 @@ class PatientValueRepository
         return $query;
     }
 
-    public static function listIdByPatientIds(array $patient_ids)
+    public static function getIdsByPatientIds(array $patient_ids)
     {
         return static::query()->whereIn('patient_id',$patient_ids)->pluck('id');
     }

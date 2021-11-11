@@ -122,7 +122,7 @@ class VentilatorController extends Controller
 
         $file_path = $this->service->getCreatedVentilatorDataCsvFilePath($form);
 
-        return response()->download($file_path);
+        return response()->download($file_path)->deleteFileAfterSend(true);
     }
 
     /**

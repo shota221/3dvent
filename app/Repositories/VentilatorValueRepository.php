@@ -202,41 +202,12 @@ class VentilatorValueRepository
     }
 
     public static function insertBulk(
-        array $ventilator_id_arr,
-        array $appkey_id_arr,
-        array $registered_at_arr,
-        array $height_arr,
-        array $weight_arr,
-        array $gender_arr,
-        array $ideal_weight_arr,
-        array $airway_pressure_arr,
-        array $total_flow_arr,
-        array $air_flow_arr,
-        array $o2_flow_arr,
-        array $rr_arr,
-        array $expiratory_time_arr,
-        array $inspiratory_time_arr,
-        array $vt_per_kg_arr,
-        array $predicted_vt_arr,
-        array $estimated_vt_arr,
-        array $estimated_mv_arr,
-        array $estimated_peep_arr,
-        array $fio2_arr,
-        array $status_use_arr,
-        array $status_use_other_arr,
-        array $spo2_arr,
-        array $etco2_arr,
-        array $pao2_arr,
-        array $paco2_arr,
-        array $fixed_flg_arr,
-        array $fixed_at_arr,
-        array $confirmed_flg_arr,
-        array $confirmed_at_arr,
+        array $list_ventilator_value_for_bulk_insert,
         $user_id
     ) {
         $table = VentilatorValue::tableName();
 
-        $count = count($ventilator_id_arr);
+        $count = count($list_ventilator_value_for_bulk_insert['ventilator_id']);
 
         $placeholder = substr(str_repeat(',(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', $count), 1);
 
@@ -244,36 +215,36 @@ class VentilatorValueRepository
 
         for ($i = 0; $i < $count; $i++) {
             $record = [
-                $ventilator_id_arr[$i],
-                $appkey_id_arr[$i],
-                $registered_at_arr[$i],
-                $height_arr[$i],
-                $weight_arr[$i],
-                $gender_arr[$i],
-                $ideal_weight_arr[$i],
-                $airway_pressure_arr[$i],
-                $total_flow_arr[$i],
-                $air_flow_arr[$i],
-                $o2_flow_arr[$i],
-                $rr_arr[$i],
-                $expiratory_time_arr[$i],
-                $inspiratory_time_arr[$i],
-                $vt_per_kg_arr[$i],
-                $predicted_vt_arr[$i],
-                $estimated_vt_arr[$i],
-                $estimated_mv_arr[$i],
-                $estimated_peep_arr[$i],
-                $fio2_arr[$i],
-                $status_use_arr[$i],
-                $status_use_other_arr[$i],
-                $spo2_arr[$i],
-                $etco2_arr[$i],
-                $pao2_arr[$i],
-                $paco2_arr[$i],
-                $fixed_flg_arr[$i],
-                $fixed_at_arr[$i],
-                $confirmed_flg_arr[$i],
-                $confirmed_at_arr[$i],
+                $list_ventilator_value_for_bulk_insert['ventilator_id'][$i],
+                $list_ventilator_value_for_bulk_insert['appkey_id'][$i],
+                $list_ventilator_value_for_bulk_insert['registered_at'][$i],
+                $list_ventilator_value_for_bulk_insert['height'][$i],
+                $list_ventilator_value_for_bulk_insert['weight'][$i],
+                $list_ventilator_value_for_bulk_insert['gender'][$i],
+                $list_ventilator_value_for_bulk_insert['ideal_weight'][$i],
+                $list_ventilator_value_for_bulk_insert['airway_pressure'][$i],
+                $list_ventilator_value_for_bulk_insert['total_flow'][$i],
+                $list_ventilator_value_for_bulk_insert['air_flow'][$i],
+                $list_ventilator_value_for_bulk_insert['o2_flow'][$i],
+                $list_ventilator_value_for_bulk_insert['rr'][$i],
+                $list_ventilator_value_for_bulk_insert['expiratory_time'][$i],
+                $list_ventilator_value_for_bulk_insert['inspiratory_time'][$i],
+                $list_ventilator_value_for_bulk_insert['vt_per_kg'][$i],
+                $list_ventilator_value_for_bulk_insert['predicted_vt'][$i],
+                $list_ventilator_value_for_bulk_insert['estimated_vt'][$i],
+                $list_ventilator_value_for_bulk_insert['estimated_mv'][$i],
+                $list_ventilator_value_for_bulk_insert['estimated_peep'][$i],
+                $list_ventilator_value_for_bulk_insert['fio2'][$i],
+                $list_ventilator_value_for_bulk_insert['status_use'][$i],
+                $list_ventilator_value_for_bulk_insert['status_use_other'][$i],
+                $list_ventilator_value_for_bulk_insert['spo2'][$i],
+                $list_ventilator_value_for_bulk_insert['etco2'][$i],
+                $list_ventilator_value_for_bulk_insert['pao2'][$i],
+                $list_ventilator_value_for_bulk_insert['paco2'][$i],
+                $list_ventilator_value_for_bulk_insert['fixed_flg'][$i],
+                $list_ventilator_value_for_bulk_insert['fixed_at'][$i],
+                $list_ventilator_value_for_bulk_insert['confirmed_flg'][$i],
+                $list_ventilator_value_for_bulk_insert['confirmed_at'][$i],
                 $user_id
             ];
 
@@ -291,7 +262,7 @@ class VentilatorValueRepository
         \DB::insert($query, $records);
     }
 
-    public static function listIdByVentilatorIds(array $ventilator_ids)
+    public static function getIdsByVentilatorIds(array $ventilator_ids)
     {
         return static::query()->whereIn('ventilator_id', $ventilator_ids)->pluck('id');
     }

@@ -169,8 +169,7 @@ trait CsvLogic
         array  $dupulicate_confirmation_targets = null,
         \Closure $procedure_function,
         int $chunk_size = 5000
-    )
-    {
+    ) {
         \Log::info('CSV読み込み処理を実行します。file_url=' . $file_url);
 
         \Log::debug('START MEMORY=' . memory_get_usage(FALSE));
@@ -178,7 +177,7 @@ trait CsvLogic
         $file = null;
 
         //　重複確認格納配列
-        if (! is_null($dupulicate_confirmation_targets)) $dupulicate_confirmation_list = [];
+        if (!is_null($dupulicate_confirmation_targets)) $dupulicate_confirmation_list = [];
 
         // 処理完了件数
         $finished_row_count = 0;
@@ -190,9 +189,9 @@ trait CsvLogic
 
                 $file->setFlags(
                     \SplFileObject::READ_CSV |       // CSV 列として行を読み込む
-                    \SplFileObject::READ_AHEAD |     // 先読み/巻き戻しで読み出す。
-                    \SplFileObject::SKIP_EMPTY |     // 空行は読み飛ばす
-                    \SplFileObject::DROP_NEW_LINE    // 行末の改行を読み飛ばす
+                        \SplFileObject::READ_AHEAD |     // 先読み/巻き戻しで読み出す。
+                        \SplFileObject::SKIP_EMPTY |     // 空行は読み飛ばす
+                        \SplFileObject::DROP_NEW_LINE    // 行末の改行を読み飛ばす
                 );
             } catch (\Exception $e) {
                 throw new Exceptions\LogicException('ファイル読み込みに失敗');
@@ -203,7 +202,7 @@ trait CsvLogic
             $first_row = $this->sjisToUtf8($file->current());
             $header    = array_values($map_attribute_to_header);
 
-            if (! empty(array_diff($header, $first_row))) {
+            if (!empty(array_diff($header, $first_row))) {
                 throw new Exceptions\InvalidCsvException('validation.csv_header_error');
             }
 
@@ -219,7 +218,7 @@ trait CsvLogic
 
                 foreach (array_keys($map_attribute_to_header) as $key => $attr) {
                     $map_attribute_to_row[$attr] = $row[$key];
-                } 
+                }
 
                 // 行バリデーション
                 $validation = Validator::make($map_attribute_to_row, $map_attribute_to_validation_rule);
@@ -231,27 +230,26 @@ trait CsvLogic
 
 
                 // 重複確認
-                if (! is_null($dupulicate_confirmation_targets)) {                      
+                if (!is_null($dupulicate_confirmation_targets)) {
                     foreach ($dupulicate_confirmation_targets as $dupulicate_confirmation_target) {
 
-                        if (! array_key_exists($dupulicate_confirmation_target, $dupulicate_confirmation_list)) {
+                        if (!array_key_exists($dupulicate_confirmation_target, $dupulicate_confirmation_list)) {
                             $dupulicate_confirmation_list[$dupulicate_confirmation_target] = [];
                         }
-                        
+
                         if (in_array($map_attribute_to_row[$dupulicate_confirmation_target], $dupulicate_confirmation_list[$dupulicate_confirmation_target])) {
                             $error_row = $file->key();
                             $attribute = $map_attribute_to_header[$dupulicate_confirmation_target];
 
                             throw new Exceptions\InvalidCsvException('validation.csv_duplicated_row', compact('error_row', 'attribute'), $finished_row_count);
+                        }
 
-                        } 
-                        
-                        if (! empty($map_attribute_to_row[$dupulicate_confirmation_target])) {
+                        if (!empty($map_attribute_to_row[$dupulicate_confirmation_target])) {
                             $dupulicate_confirmation_list[$dupulicate_confirmation_target][] = $map_attribute_to_row[$dupulicate_confirmation_target];
                         }
                     }
                 }
-                
+
                 $rows[] = $map_attribute_to_row;
 
                 if (count($rows) === $chunk_size) {
@@ -259,7 +257,7 @@ trait CsvLogic
                     $procedure_function($rows);
                     // 処理済み件数に追加
                     $finished_row_count = $finished_row_count + $chunk_size;
-        
+
                     $rows = [];
                 }
 
@@ -267,14 +265,14 @@ trait CsvLogic
             }
 
             // 残りを処理
-            if (! empty($rows)) {
+            if (!empty($rows)) {
                 $procedure_function($rows);
                 // 処理済み件数に追加
                 $finished_row_count = $finished_row_count + count($rows);
             }
 
             \Log::info('処理完了行数(ヘッダ行含む)=' . $finished_row_count);
-            
+
             return;
         } catch (Exceptions\LogicException $e) {
             $message = 'processCsv CSV処理に失敗しました。 previous message=' . $e->getMessage();
@@ -289,36 +287,30 @@ trait CsvLogic
 
             \Log::debug('END MEMORY=' . memory_get_usage(FALSE));
         }
-
     }
 
     /** 
-     * CSV処理(先にすべてバリデーションする場合)
+     * CSV処理(すべての行バリデーション済)
      * 
      * ClosureのExceptionはキャッチしていない
      *
-     * @param  string      $fileUrl           [description]
-     * @param  array|null  $header            [description]
-     * @param  array       $validationRule    [0 => 'required|string', 1 => 'required|numeric'] 列値のバリデーション
-     * @param  \Closure    $procedureFunction [description]
-     * @param  int|integer $chunkSize         [description]
+     * @param  string      $file_url           [description]
+     * @param  array       $header             [description]
+     * @param  \Closure    $procedure_function [description]
+     * @param  int|integer $chunk_size         [description]
      * @return [type]                         [description]
      */
-    public function processCsvAfterValidateAll(
-        string $fileUrl,
-        array $mapAttributeToHeader,
-        array $mapAttributeToValidationRule,
-        \Closure $procedureFunction,
-        int $chunkSize = 5000
+    public function processValidatedCsv(
+        string $file_url,
+        array $header,
+        \Closure $procedure_function,
+        int $chunk_size = 5000
     ) {
-        \Log::info('CSV読み込み処理を実行します。fileUrl=' . $fileUrl);
+        \Log::info('CSV読み込み処理を実行します。file_url=' . $file_url);
 
         \Log::debug('START MEMORY=' . memory_get_usage(FALSE));
 
         $file = null;
-
-        // バリデエラー行
-        $errorRows = [];
 
         // 処理完了行数
         $finishedRowCount = 0;
@@ -326,7 +318,7 @@ trait CsvLogic
         try {
             try {
                 // ファイルの読み込み throwable RuntimeException
-                $file = new \SplFileObject($fileUrl);
+                $file = new \SplFileObject($file_url);
 
                 $file->setFlags(
                     \SplFileObject::READ_CSV |           // CSV 列として行を読み込む
@@ -340,87 +332,51 @@ trait CsvLogic
 
             $file->next();
 
-            if (!is_null($mapAttributeToHeader)) {
-                $firstRow = $this->sjisToUtf8($file->current());
+            // ヘッダ行処理済み
+            $finishedRowCount ++;
 
-                if (!empty(array_diff(array_values($mapAttributeToHeader), $firstRow))) {
-                    throw new Exceptions\InvalidCsvException('validation.csv_header_error');
-                }
-
-                // 処理済み件数に追加
-                $finishedRowCount = $finishedRowCount + 1;
-
-                $file->next();
-            }
+            $file->next();
 
             while ($file->valid()) {
                 $row = $this->sjisToUtf8($file->current());
 
-                $mapAttributeToRow = [];
+                $map_attribute_to_row = [];
 
-                foreach (array_keys($mapAttributeToHeader) as $key => $attr) {
-                    $mapAttributeToRow[$attr] = $row[$key];
+                foreach ($header as $key => $attr) {
+                    $map_attribute_to_row[$attr] = $row[$key];
                 }
 
-                // 行バリーデーション
-                $validation = Validator::make($mapAttributeToRow, $mapAttributeToValidationRule);
+                $rows[] = $map_attribute_to_row;
 
-                if ($validation->fails()) {
-                    $errorRows[] = $file->key();
+                if (count($rows) === $chunk_size) {
+                    // 一旦処理 処理完了行数更新
+                    $procedure_function($rows);
+
+                    // 処理済み件数に追加
+                    $finishedRowCount = $finishedRowCount + $chunk_size;
+
+                    $rows = [];
                 }
 
                 $file->next();
             }
 
-            if (!empty($errorRows)) {
-                $row_nums = implode(',', $errorRows);
-                throw new Exceptions\InvalidCsvException('validation.csv_row_error', compact('row_nums'));
-            } else {
-                $file->rewind();
+            // 残りを処理
+            if (!empty($rows)) {
+                // throws Exceptions\LogicException
+                $procedure_function($rows);
 
-                if (!is_null($mapAttributeToHeader)) $file->next();
-
-                while ($file->valid()) {
-                    $row = $this->sjisToUtf8($file->current());
-
-                    $mapAttributeToRow = [];
-
-                    foreach (array_keys($mapAttributeToHeader) as $key => $attr) {
-                        $mapAttributeToRow[$attr] = $row[$key];
-                    }
-
-                    $rows[] = $mapAttributeToRow;
-
-                    if (count($rows) === $chunkSize) {
-                        // 一旦処理 処理完了行数更新
-                        $procedureFunction($rows);
-
-                        // 処理済み件数に追加
-                        $finishedRowCount = $finishedRowCount + $chunkSize;
-
-                        $rows = [];
-                    }
-
-                    $file->next();
-                }
-
-                // 残りを処理
-                if (!empty($rows)) {
-                    // throws Exceptions\LogicException
-                    $procedureFunction($rows);
-
-                    // 処理済み件数に追加
-                    $finishedRowCount = $finishedRowCount + count($rows);
-                }
-
-                \Log::info('処理完了行数(ヘッダ行含む)=' . $finishedRowCount);
-
-                return;
+                // 処理済み件数に追加
+                $finishedRowCount = $finishedRowCount + count($rows);
             }
+
+            \Log::info('処理完了行数(ヘッダ行含む)=' . $finishedRowCount);
+
+            return;
         } catch (Exceptions\LogicException $e) {
             $message = 'processCsv CSV処理に失敗しました。 previous message=' . $e->getMessage();
 
-            throw new Exceptions\CsvLogicException($message, $fileUrl, $finishedRowCount, $e);
+            throw new Exceptions\CsvLogicException($message, $file_url, $finishedRowCount, $e);
         } finally {
             $file = null;
 

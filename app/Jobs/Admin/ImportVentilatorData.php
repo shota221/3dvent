@@ -4,11 +4,12 @@ namespace App\Jobs\Admin;
 
 use App\Jobs\JobHandler;
 use App\Services\Admin\VentilatorService;
+use App\Exceptions;
 
 class ImportVentilatorData extends JobHandler
 {
     private $organization_id;
-    private $valid_rows;
+    private $file_path;
     private $registered_user_id;
 
     /**
@@ -16,10 +17,10 @@ class ImportVentilatorData extends JobHandler
      *
      * @return void
      */
-    public function __construct(int $organization_id, array $valid_rows, int $registered_user_id)
+    public function __construct(int $organization_id, string $file_path, int $registered_user_id)
     {
         $this->organization_id = $organization_id;
-        $this->valid_rows = $valid_rows;
+        $this->file_path = $file_path;
         $this->registered_user_id = $registered_user_id;
     }
 
@@ -30,6 +31,6 @@ class ImportVentilatorData extends JobHandler
      */
     protected function process()
     {
-        (new VentilatorService)->importVentilatorData($this->organization_id, $this->valid_rows, $this->registered_user_id);
+        (new VentilatorService)->importVentilatorData($this->organization_id, $this->file_path, $this->registered_user_id);
     }
 }
