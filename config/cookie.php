@@ -9,4 +9,7 @@ return [
     */
 
     'language_key' => 'applocale',
+    'domain'       => env('COOKIE_DOMAIN'),
+    'path'         => env('COOKIE_PATH'),
+    'max_age'      => env('COOKIE_MAX_AGE'),
 ];

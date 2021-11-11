@@ -6,6 +6,9 @@ use App\Http\Response\SuccessJsonResult;
 
 class CookieSettingResult extends SuccessJsonResult
 {
-    public $language_code;
     public $cookie_key;
+    public $language_code;
+    public $domain;
+    public $path;
+    public $max_age;
 }

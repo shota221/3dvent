@@ -11,11 +11,11 @@ class LanguageService
 {
     public function getLanguageCodeSetting(Form\LanguageCodeSelectForm $form)
     {   
-        $language_code = $form->language_code;
-        $cookie_key    = 'applocale';
-        
         return Converter\CookieConverter::convertToLanguageCookieSetting(
             $form->language_code,
-            $cookie_key);
+            config('cookie.language_key'), 
+            config('cookie.domain'), 
+            config('cookie.path'), 
+            config('cookie.max_age'));
     }
 }
