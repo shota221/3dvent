@@ -6,7 +6,6 @@ use Closure;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Session;
 
 class Language
 {
@@ -20,15 +19,16 @@ class Language
     public function handle(Request $request, Closure $next)
     {
 
-        $language_key = config('session.language_key');
-        $applocale    = Session::get($language_key);
-        $key_exists   = array_key_exists($applocale, config('languages')); 
+        $language_key  = config('cookie.language_key');
+        $language_code = $request->cookie($language_key);
+        $key_exists    = array_key_exists($language_code, config('languages')); 
 
         if ($key_exists) {
-            App::setLocale($applocale);
+            App::setLocale($language_code);
         } else {
             App::setLocale(config('app.fallback_locale'));
         }
+
         return $next($request);
     }
 }

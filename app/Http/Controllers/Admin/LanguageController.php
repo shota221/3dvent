@@ -23,6 +23,6 @@ class LanguageController extends Controller
 
         if ($form->hasError()) throw new Exceptions\InvalidFormException($form);
 
-        return $this->service->setLanguageCode($form);
+        return $this->service->getLanguageCodeSetting($form);
     }
 }
