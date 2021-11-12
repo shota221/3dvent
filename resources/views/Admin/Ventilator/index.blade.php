@@ -32,13 +32,21 @@
                     </div>
                     <div class="col-sm-8 pull-right">
                         {{-- CSVインポート --}}
-                        <button type="button" class="btn btn-primary float-right"
+                        <button type="button" class="btn btn-primary float-right ladda-button"
                             id="show-import-modal">@lang('messages.csv_import')</button>
+                        <input type="hidden" id="check-import-queue-status"
+                            data-url="{{ route('admin.ventilator.async.queue_status_input_ventilator_data') }}"
+                            data-method="GET">
                         {{-- CSVエクスポート --}}
-                        <form id="csv-export" method="get" action="{{ route('admin.ventilator.export_csv') }}">
-                            <button type="submit" class="btn btn-success mr-1 float-right"
-                                id="btn-csv-export">@lang('messages.csv_export')</button>
-                        </form>
+                        <button type="button" class="btn btn-success mr-1 float-right ladda-button" id="btn-csv-export"
+                            data-url="{{ route('admin.ventilator.async.queue_output_ventilator_data') }}"
+                            data-method="POST">@lang('messages.csv_export')
+                        </button>
+                        <input type="hidden" id="check-export-queue-status"
+                            data-url="{{ route('admin.ventilator.async.queue_status_output_ventilator_data') }}"
+                            data-method="GET">
+                        <input type="hidden" id="export-csv" data-url="{{ route('admin.ventilator.export_csv') }}"
+                            data-method="GET">
                     </div>
                 </div>
                 {{-- 絞り込み検索 --}}

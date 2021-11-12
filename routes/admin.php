@@ -210,6 +210,26 @@ Route::group(['middleware' => ['routetype:admin']], function () {
                 '/ventilator',
                 'VentilatorController@asyncBulkDelete'
             )->name('admin.ventilator.bulk_delete');
+
+            Route::post(
+                '/ventilator/async/queue_output_ventilator_data',
+                'VentilatorController@asyncQueueOutputVentilatorData'
+            )->name('admin.ventilator.async.queue_output_ventilator_data');
+
+            Route::get(
+                '/ventilator/async/queue_output_ventilator_data',
+                'VentilatorController@asyncQueueStatusOutputVentilatorData'
+            )->name('admin.ventilator.async.queue_status_output_ventilator_data');
+
+            Route::post(
+                '/ventilator/async/queue_input_ventilator_data',
+                'VentilatorController@asyncQueueInputVentilatorData'
+            )->name('admin.ventilator.async.queue_input_ventilator_data');
+
+            Route::get(
+                '/ventilator/async/queue_input_ventilator_data',
+                'VentilatorController@asyncQueueStatusInputVentilatorData'
+            )->name('admin.ventilator.async.queue_status_input_ventilator_data');
         });
 
         /**

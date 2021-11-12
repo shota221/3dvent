@@ -13,9 +13,14 @@ const
     $searchForm = $('#async-search-form'),
     $searchBtn = $('#async-search'),
     $clearSearchFormBtn = $('#clear-search-form'),
-    $select2OrganizationName = $('#search-organization-name'),
-    $ventilatorBugList = $('#ventilator-bug-list')
-    ;
+    $select2OrganizationName = $('.select2-organization-name'),
+    $searchOrganizationName = $('#search-organization-name'),
+    $importOrganizationName = $('#import-organization-name'),
+    $ventilatorBugList = $('#ventilator-bug-list'),
+    $checkExportQueueStatusElm = $('#check-export-queue-status'),
+    $checkImportQueueStatusElm = $('#check-import-queue-status'),
+    $exportCsvElm = $('#export-csv');
+;
 
 
 $showRegisterModalBtn.on(
@@ -213,21 +218,87 @@ $paginatedList.on(
 $exportCsvBtn.on(
     'click',
     function () {
+        //何も選択されていなければアラート表示
         var selectedCount = $('.item-check:checked').length;
 
         if (selectedCount > 0) {
-            var $form = $(this).closest('form');
+            var withMessage = false;
 
-            $form.find('input').remove();
+            var $startQueueElm = $(this);
 
-            console.log($form.html());
+            var startQueueParams = { 'ids': [] }
+
             $('.item-check:checked').each(function (i, elm) {
-                $("<input>", {
-                    type: "hidden",
-                    name: "ids[]",
-                    value: $(elm).val()
-                }).appendTo($form);
+                startQueueParams['ids'].push($(elm).val());
             });
+
+
+            var startQueueSuccessCallback = function (data) {
+                var ladda = Ladda.create($startQueueElm.get(0));
+
+                ladda.start();
+
+                var queue = data.result.queue;
+
+                var checkQueueStatusParams = { 'queue': queue };
+
+                //キューのステータスを確認した回数
+                var pollingCount = 0;
+                //キューのステータスを確認する回数上限
+                var limitedPollingCount = 180
+                //キューのステータスを確認する頻度（ms）
+                var pollingInterval = 1000;
+
+                var polling = function () {
+                    pollingCount++
+                    console.log(pollingCount);
+
+                    if (pollingCount > limitedPollingCount) {
+                        alert(i18n('message.csv_download_failed'));
+                        return false;
+                    }
+
+                    var checkQueueStatusSuccessCallback = function (data) {
+                        var isFinished = data.result.is_finished;
+                        var hasError = data.result.has_error;
+
+                        if (hasError) {
+                            ladda.stop();
+                            alert(i18n('message.csv_download_failed'));
+                            return false;
+                        }
+
+                        if (isFinished) {
+                            location.href = $exportCsvElm.data('url') + '?queue=' + queue;
+                            ladda.stop();
+                        } else {
+                            polling();
+                        }
+                    }
+
+                    setTimeout(
+                        function () {
+                            //非同期処理に伴うローディング表示を発生させないために要素を一時削除
+                            var $detachedOverlay = $('#overlay').detach();
+                            utilAsyncExecuteAjax($checkExportQueueStatusElm, checkQueueStatusParams, withMessage, checkQueueStatusSuccessCallback);
+                            $paginatedList.append($detachedOverlay);
+                        }
+                        , pollingInterval
+                    )
+
+                }
+
+                polling();
+            };
+
+            var badRequestCallback = function (error) {
+
+            };
+
+            utilAsyncExecuteAjax($startQueueElm, startQueueParams, withMessage, startQueueSuccessCallback)
+
+            //ポーリング開始
+
         } else {
             alert(i18n('message.object_unselected'));
             return false;
@@ -238,54 +309,101 @@ $exportCsvBtn.on(
 /**
  * CSVインポート
  */
-//import-modal
+//import-modal表示
 $showImportModalBtn.on(
     'click',
     function () {
-        // buildSelect2();
-
         $importModal.modal();
         return false;
     });
 
-// //importイベント
-// $importCsvBtn.on(
-//     'click',
-//     function () {
-//         var $targetForm = $('form[name="ventilator-import"]');
+//importイベント
+$importCsvBtn.on(
+    'click',
+    function () {
+        /**
+         * 与えられたCSVのバリデーションチェック・重複チェックしジョブをキューに登録
+         */
+        var $startQueueElm = $(this);
 
-//         var parameters = new FormData($targetForm[0]);
+        var $targetForm = $('form[name="ventilator-import"]');
 
-//         var successCallback = function (data) {
-//             var $featureElement = $('.page-item' + '.active').children('button');
+        var startQueueParams = new FormData($targetForm[0]);
 
-//             var parameters = {};
+        /**
+         * ジョブがキューに登録され次第、ポーリング開始。
+         * サーバーを10秒ごとに見に行き、キューが処理されていれば
+         * アラートを表示し、ページリロード。
+         */
+        var startQueueSuccessCallback = function (data) {
 
-//             if (!$featureElement.length) {
-//                 $featureElement = $searchBtn;
-//                 parameters = buildSearchParameters($searchForm);
-//             }
+            $importModal.modal('hide');
 
-//             var successCallback = function (paginated_list) {
-//                 $paginatedList.html(paginated_list);
-//             }
+            var ladda = Ladda.create($showImportModalBtn.get(0));
 
-//             utilAsyncExecuteAjax($featureElement, parameters, false, successCallback);
+            ladda.start();
 
-//             $importModal.modal('hide');
-//         }
+            var queue = data.result.queue;
 
-//         var extraSettings = {
-//             processData: false,
-//             contentType: false
-//         }
+            var checkQueueStatusParams = { 'queue': queue };
 
-//         var badRequestCallback = function (error) { }
+            //キューのステータスを確認した回数
+            var pollingCount = 0;
+            //キューのステータスを確認する回数上限
+            var limitedPollingCount = 18
+            //キューのステータスを確認する頻度（ms）
+            var pollingInterval = 10000;
 
-//         utilAsyncExecuteAjax($importCsvBtn, parameters, true, successCallback, badRequestCallback, extraSettings);
+            //キューの様子を定期取得
+            var polling = function () {
+                pollingCount++
+                console.log(pollingCount);
+                if (pollingCount > limitedPollingCount) {
+                    alert(i18n('message.csv_import_failed'));
+                    return false;
+                }
 
-//         return false;
-//     });
+                var checkQueueStatusSuccessCallback = function (data) {
+                    console.log(data);
+                    var isFinished = data.result.is_finished;
+                    var hasError = data.result.has_error;
+
+                    if (hasError) {
+                        ladda.stop();
+                        alert(i18n('message.csv_import_canceled'));
+                        return false;
+                    }
+
+                    if (isFinished) {
+                        ladda.stop();
+                        confirm(i18n('message.csv_imported')) && location.reload();
+                    } else {
+                        polling();
+                    }
+                }
+
+                setTimeout(
+                    function () {
+                        utilAsyncExecuteAjax($checkImportQueueStatusElm, checkQueueStatusParams, false, checkQueueStatusSuccessCallback)
+                    }
+                    , pollingInterval
+                )
+            }
+
+            polling();
+        }
+
+        var extraSettings = {
+            processData: false,
+            contentType: false
+        }
+
+        var badRequestCallback = function (error) { }
+
+        utilAsyncExecuteAjax($startQueueElm, startQueueParams, true, startQueueSuccessCallback, badRequestCallback, extraSettings);
+
+        return false;
+    });
 
 // build select2(organization)
 function buildSelect2() {
@@ -352,7 +470,7 @@ $clearSearchFormBtn.on(
     'click',
     function (e) {
         $searchForm[0].reset();
-        $select2OrganizationName.val(null).trigger('change');
+        $searchOrganizationName.val(null).trigger('change');
     }
 )
 

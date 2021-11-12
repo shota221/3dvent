@@ -373,4 +373,14 @@ class VentilatorRepository
             ->orderBy('ventilators.created_at', 'DESC')
             ->value('patient_code');
     }
+
+    public static function countByIds(array $ids)
+    {
+        return self::query()->whereIn('id',$ids)->count();
+    }
+
+    public static function getPatientIdsByIds(array $ids)
+    {
+        return self::query()->whereIn('id',$ids)->pluck('patient_id');
+    }
 }

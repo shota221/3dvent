@@ -11,7 +11,7 @@
                     <div class="form-group">
                         <label for="organization_id">@lang('messages.organization_name')</label>
                         <div>
-                            <select class="form-control form-control-sm select" name="organization_id"
+                            <select class="select2-organization-name form-control form-control-sm select" name="organization_id"
                                 id="search-organization-name">
                                 <option></option>
                             </select>

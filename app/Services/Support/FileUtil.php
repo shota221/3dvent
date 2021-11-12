@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Models;
 
 use Illuminate\Support\Facades\File as BaseFile;
-
+use League\CommonMark\Inline\Element\Strong;
 use ZipArchive;
 
 /**
@@ -223,6 +223,47 @@ class FileUtil
         return $dir;
     }
 
+    /**
+     * job処理用TEMPファイルURLを取得・保存・削除
+     */
+    public static function jobTempFileUrl(string $filename)
+    {
+        return self::jobTempDir() . DIRECTORY_SEPARATOR . $filename;
+    }
+
+    public static function putJobTemp(string $filename, $stream)
+    {
+        $path = self::jobTempFilePath($filename);
+        return self::putLocal($path, $stream);
+    }
+
+    public static function deleteJobTemp(string $filename)
+    {
+        $path = self::jobTempFilePath($filename);
+        self::deleteLocal($path);
+    }
+
+    private static function jobTempFilePath(string $filename)
+    {
+        return self::jobTempDirBasePath(). DIRECTORY_SEPARATOR . $filename;
+    }
+
+    private static function jobTempDirBasePath()
+    {
+        return self::basename(self::jobTempDir());
+    }
+
+    private static function jobTempDir()
+    {
+        $dir = self::localUrl('job_tmp');
+
+        if (!self::exists($dir) && !BaseFile::makeDirectory($dir, 0755, true, true)) {
+            throw new Exceptions\UtilFileException('ディレクトリ作成に失敗しました。 dir=' . $dir);
+        }
+
+        return $dir;
+    }
+
     /**********************************************
      *  取得
      * 
@@ -271,8 +312,6 @@ class FileUtil
     {
         return self::storageUrl($path, 's3');
     }
-
-
 
     /**
      * S3ファイルのメタデータを取得
