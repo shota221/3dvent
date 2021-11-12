@@ -3,9 +3,12 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use App\Repositories as Repos;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class Language
 {
@@ -26,7 +29,14 @@ class Language
         if ($key_exists) {
             App::setLocale($language_code);
         } else {
-            App::setLocale(config('app.fallback_locale'));
+            if (! is_null(Auth::user())) {
+                $organization_id = Auth::user()->organization_id;
+                $language_code   = Repos\OrganizationRepository::getLocaleById($organization_id);
+                
+                App::setLocale($language_code);
+            } else {
+                App::setLocale(config('app.fallback_locale'));
+            }
         }
 
         return $next($request);

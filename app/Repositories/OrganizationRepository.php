@@ -57,6 +57,11 @@ class OrganizationRepository
         return static::query()->get();
     }
 
+    public static function getLocalebyId(int $id)
+    {
+        return static::query()->where('id', $id)->value('locale');
+    }
+
     public static function countBySearchValues($search_values)
     {
         return self::createWhereClauseFromSearchValues(static::query(), $search_values)->count();
