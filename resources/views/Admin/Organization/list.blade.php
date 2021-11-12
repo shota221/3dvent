@@ -23,7 +23,8 @@
             data-representative_name="{{ $organization->representative_name }}"
             data-representative_email="{{ $organization->representative_email }}"
             data-disabled_flg="{{ $organization->disabled_flg }}" data-edcid="{{ $organization->edcid }}"
-            data-patient_obs_approved_flg="{{ $organization->patient_obs_approved_flg }}">
+            data-patient_obs_approved_flg="{{ $organization->patient_obs_approved_flg }}"
+            data-language_code="{{ $organization->language_code }}">
             <td class="align-middle"><a href="#" class="show-edit-modal">{{ $organization->organization_name }}</a>
             </td>
             <td class="align-middle">{{ $organization->organization_code }}</td>

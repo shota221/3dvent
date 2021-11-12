@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Form;
 
 use App\Exceptions\InvalidFormException;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Services\Form as Service;
 use App\Http\Forms\Form as Form;
+use App\Services\Form as Service;
+use Illuminate\Http\Request;
 
 class OrganizationRegistrationController extends Controller
 {

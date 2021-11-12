@@ -22,6 +22,9 @@ function utilFormInputParameters($form, data) {
                         if (parseInt($option.val()) === data[$elm.attr('name')]) {
                             $elm.val($option.val());
                         }
+                        if (($option.val()) === data[$elm.attr('name')]) {
+                            $elm.val($option.val());
+                        }
                     });
                 }
                 break;

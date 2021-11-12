@@ -3,6 +3,7 @@
 namespace App\Services\Form;
 
 use App\Exceptions;
+use App\Http\Forms\Form as Form;
 use App\Services\Support\Converter;
 use App\Services\Support\DBUtil;
 use App\Repositories as Repos;
@@ -10,7 +11,7 @@ use App\Http\Response as Response;
 
 class OrganizationRegistrationService
 {
-    public function create($form)
+    public function create(Form\OrganizationRegistrationForm $form)
     {
         $exists_by_code = Repos\OrganizationRepository::existsByCode($form->organization_code);
 
@@ -33,6 +34,7 @@ class OrganizationRegistrationService
             $form->organization_code,
             $form->representative_name,
             $form->representative_email,
+            $form->language_code,
         );
         
         DBUtil::Transaction(

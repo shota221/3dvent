@@ -253,6 +253,7 @@ return [
         'password_confirmation'=>'パスワード(確認用)',
         'bug_name'=>'不具合名',
         'request_improvement'=>'改善要望',
+        'language_code'=>'言語',
     ],
 
 ];
