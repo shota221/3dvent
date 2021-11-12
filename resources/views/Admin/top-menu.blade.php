@@ -1,3 +1,22 @@
+<!-- 言語切り替え -->
+<li class="dropdown" id="nav-lang">
+    <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
+      {{ config('languages')[App::getLocale()] }}
+    </a>
+    <ul class="dropdown-menu">
+      @foreach (config('languages') as $language_code => $language)
+        @if ($language_code != App::getLocale())
+          <li 
+            class="text-center"
+            data-url="{{ route('admin.swich_language', $language_code) }}"            
+            data-method="GET"
+          >
+            <a href="#">{{ $language }}</a>
+          </li>
+        @endif
+      @endforeach
+    </ul>
+</li>
 <!-- User Account Menu -->
 <li class="dropdown user user-menu">
   <!-- Menu Toggle Button -->

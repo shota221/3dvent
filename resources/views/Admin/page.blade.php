@@ -18,6 +18,7 @@
     <script src="js/common/util/form.js"></script>
     <script src="js/common/util/async.js"></script>
     <script src="js/account.js"></script>
+    <script src="js/switch_language.js"></script>
     @yield('js')
 @stop
 

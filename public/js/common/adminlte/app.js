@@ -1625,15 +1625,19 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
 ;
 
 (function (factory) {
-  module.exports = factory(__webpack_require__(/*! i18next */ "./node_modules/i18next/dist/es/index.js"), __webpack_require__(/*! ../i18n/ja.json */ "./resources/js/i18n/ja.json"));
-})(function (i18n, langJaJson) {
+  module.exports = factory(__webpack_require__(/*! i18next */ "./node_modules/i18next/dist/es/index.js"), __webpack_require__(/*! ../i18n/ja.json */ "./resources/js/i18n/ja.json"), __webpack_require__(/*! ../i18n/en.json */ "./resources/js/i18n/en.json"));
+})(function (i18n, langJaJson, langEnJson) {
   return function (lang) {
     // i18n init
     i18n.init({
+      lng: $('html')[0].lang,
       fallbackLng: lang,
       resources: {
         ja: {
           translation: langJaJson
+        },
+        en: {
+          translation: langEnJson
         }
       }
     });
@@ -52957,6 +52961,17 @@ function _unsupportedIterableToArray(o, minLen) {
   if (n === "Map" || n === "Set") return Array.from(o);
   if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return (0,_arrayLikeToArray_js__WEBPACK_IMPORTED_MODULE_0__.default)(o, minLen);
 }
+
+/***/ }),
+
+/***/ "./resources/js/i18n/en.json":
+/*!***********************************!*\
+  !*** ./resources/js/i18n/en.json ***!
+  \***********************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = JSON.parse('{"message":{"$commnet":"TODO 新潟病院から言語定義共有後設定","accept_password_reset":"accept_password_reset","accept_password_reset_application":"accept_password_reset_application","admin_user_login_lock":"admin_user_login_lock","admin_user_login_unlock":"admin_user_login_unlock","applied":"applied","confirm":"confirm","confirmed":"confirmed","csv_download_faild":"csv_download_faild","deleted":"deleted","delete_confirm":"delete_confirm","delete_count_confirm":"delete_count_confirm{{count}}件を削除しますか？","fixed_value":"fixed_value","internal_server_error":"internal_server_error","invalid_form_inputs":"invalid_form_inputs","no_data":"no_data","object_unselected":"object_unselected","reflected":"reflected","registered":"registered","registered_reload":"registered_reload","timeout":"timeout","updated":"updated","unauthorized_operation":"unauthorized_operation"},"validate":{"length":"{{max}}以下で入力してください。","numeric":"半角数字で入力してください","over_max_safe_interger":"数値が大きすぎます","required":"必須項目です","positive_num":"正の数で入力してください","date":"正しい日付で入力してください","digits_greater_than_equal_to":"{{min}}以上の数で入力してください","digits_less_than_equal_to":"{{max}}以下の数で入力してください","digits_greater_than":"{{min}}より大きい数で入力してください","digits_less_than":"{{max}}より小さい数で入力してください","decimal_digits_in_range":"小数点以下{{digits}}桁までで入力してください","duplicated":"重複した登録です","unmatched":"入力値が一致していません","over_upload_file_count_limit_at_once":"一度に処理できるファイル数は{{limit}}までです"}}');
 
 /***/ }),
 

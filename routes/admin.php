@@ -22,6 +22,12 @@ Route::group(['middleware' => ['routetype:admin']], function () {
 
     // ログイン、ログアウト等認証不要ルート
 
+    // 言語切替
+    Route::get(
+        'language/{language_code}',
+        'LanguageController@asyncSwitchLanguage'
+    )->name('admin.swich_language');
+
     // ログイン画面
     Route::get(
         'auth',
