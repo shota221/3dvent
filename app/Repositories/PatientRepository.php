@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Patient;
+use App\Services\Support\DateUtil;
 
 class PatientRepository
 {
@@ -55,6 +56,11 @@ class PatientRepository
 
     public static function getPatientCodesByOrganizationIdAndPatientCodes($organziation_id, $patient_codes)
     {
-        return static::query()->where('organization_id',$organziation_id)->whereIn('patient_code',$patient_codes)->pluck('patient_code');
+        return static::query()->where('organization_id', $organziation_id)->whereIn('patient_code', $patient_codes)->pluck('patient_code');
+    }
+
+    public static function logicalDeleteByIds(array $ids)
+    {
+        return  static::query()->whereIn('id', $ids)->update(['deleted_at' => DateUtil::now(), 'active' => null]);
     }
 }

@@ -3,24 +3,19 @@
 namespace App\Services\Admin;
 
 use App\Exceptions;
-use App\Exceptions\InvalidFormException;
 use App\Http\Forms\Admin as Form;
 use App\Http\Response as Response;
 use App\Jobs\Admin as Jobs;
 use App\Models\HistoryBaseModel;
-use App\Models\Patient;
 use App\Models\User;
 use App\Repositories as Repos;
 use App\Services\Support;
 use App\Services\Support\Converter;
-use App\Services\Support\CryptUtil;
 use App\Services\Support\DateUtil;
 use App\Services\Support\DBUtil;
 use App\Services\Support\FileUtil;
 use App\Services\Support\Logic\CsvLogic;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Log;
 
 class VentilatorService
 {
@@ -97,10 +92,14 @@ class VentilatorService
             throw new Exceptions\InvalidFormException($form);
         }
 
+        $patient_ids = Repos\VentilatorRepository::getPatientIdsByIds($ids)->all();
+
         DBUtil::Transaction(
-            'MicroVent削除',
-            function () use ($ids) {
+            'MicroVentおよび紐づく患者の論理削除',
+            function () use ($ids, $patient_ids) {
                 Repos\VentilatorRepository::logicalDeleteByIds($ids);
+
+                Repos\PatientRepository::logicalDeleteByIds($patient_ids);
             }
         );
 
@@ -228,7 +227,9 @@ class VentilatorService
             //ファイルの存在確認
             $file_path = Support\FileUtil::jobTempFileUrl($filename);
 
-            if (!Support\FileUtil::exists($file_path)) {
+            $file_exists = Support\FileUtil::exists($file_path);
+
+            if (!$file_exists) {
                 // 作成失敗時
                 $has_error = true;
             }
@@ -256,8 +257,9 @@ class VentilatorService
 
         $file_path = Support\FileUtil::jobTempFileUrl($filename);
 
+        $file_exists = Support\FileUtil::exists($file_path);
         //作成されたCSVが存在しているはずのパスに存在しているかどうか
-        if (!Support\FileUtil::exists($file_path)) throw new Exceptions\HttpNotFoundException('');
+        if (!$file_exists) throw new Exceptions\HttpNotFoundException('');
 
         return $file_path;
     }
@@ -344,6 +346,7 @@ class VentilatorService
 
         Support\FileUtil::putJobTemp($filename, $file);
 
+        //絶対パス
         $file_path = Support\FileUtil::jobTempFileUrl($filename);
         //ジョブにキューを登録。キュー処理開始
         Jobs\ImportVentilatorData::dispatchToHandle($queue, $target_organization_id, $file_path, $registered_user_id);
@@ -362,20 +365,29 @@ class VentilatorService
 
         $is_finished = Jobs\ImportVentilatorData::isQueueFinished($queue);
 
+        $has_error = false;
+
         if ($is_finished) {
             $filename = Jobs\CreateVentilatorDataCsv::guessFilename($queue);
 
-            Support\FileUtil::deleteJobTemp($filename);
-        }
+            $file_path = Support\FileUtil::jobTempFileUrl($filename);
 
-        $has_error = false;
+            $file_exists = Support\FileUtil::exists($file_path);
+            //ジョブ終了にもかかわらずインポート用ファイルが存在している場合、正常終了していない
+            if ($file_exists) {
+                // 作成失敗時
+                $has_error = true;
+                Support\FileUtil::deleteJobTemp($filename);
+            }
+        }
 
         return Converter\QueueConverter::convertToQueueStatusResult($queue, $is_finished, $has_error);
     }
 
     /**
      * バリデーション処理実施済みのインポート。
-     * チャンク処理にて実行
+     * チャンク処理にて実行。
+     * 処理後、インポート用ファイルを削除。
      *
      * @param integer $organization_id
      * @param string $file_path
@@ -398,144 +410,146 @@ class VentilatorService
             $file_path,
             array_keys(config('ventilator_csv.header')),
             function ($rows) use ($organization_id, $registered_user_id, &$map_old_ventilator_id_to_new, &$map_old_patient_id_to_new, &$saved_ventilator_value_ids, &$saved_patient_value_ids) {
+                try {
+                    //save対象のventilator列
+                    $map_old_ventilator_id_to_ventilator = $this->prepareVentilatorsForSave($rows, $organization_id, $registered_user_id, array_keys($map_old_ventilator_id_to_new));
+                    //save対象のpatient列
+                    $map_old_patient_id_to_patient = $this->preparePatientsForSave($rows, $organization_id, array_keys($map_old_patient_id_to_new));
+                    //bulk insert対象のpatient_value列
+                    $list_patient_value_for_bulk_insert = $this->preparePatientValuesForBulkInsert($rows, array_keys($map_old_patient_id_to_new));
+                    //bulk insert対象のventilator_value列
+                    $list_ventilator_value_for_bulk_insert = $this->prepareVentilatorValuesForBulkInsert($rows);
 
-                \Log::debug('CHUNK START MEMORY=' . memory_get_usage(FALSE));
+                    /**
+                     * トランザクション
+                     * 1,patientsおよびventilatorsを個別にsaveし、新旧idのマッピングを作成
+                     * 2,1のマッピングをもとにventialtor_valueおよびpatient_valueをバルクインサート
+                     * 3,各種historyをバルクインサート
+                     */
+                    DBUtil::Transaction(
+                        'CSVインポート',
+                        function () use (
+                            $map_old_ventilator_id_to_ventilator,
+                            $map_old_patient_id_to_patient,
+                            $list_patient_value_for_bulk_insert,
+                            $list_ventilator_value_for_bulk_insert,
+                            $registered_user_id,
+                            &$map_old_ventilator_id_to_new,
+                            &$map_old_patient_id_to_new,
+                            &$saved_ventilator_value_ids,
+                            &$saved_patient_value_ids
+                        ) {
+                            $update_target_ventilator_ids = [];
+                            $update_target_ventilator_patient_ids = [];
 
-                //save対象のventilator列
-                $map_old_ventilator_id_to_ventilator = $this->prepareVentilatorsForSave($rows, $organization_id, $registered_user_id, array_keys($map_old_ventilator_id_to_new));
-                //save対象のpatient列
-                $map_old_patient_id_to_patient = $this->preparePatientsForSave($rows, $organization_id, array_keys($map_old_patient_id_to_new));
-                //bulk insert対象のpatient_value列
-                $list_patient_value_for_bulk_insert = $this->preparePatientValuesForBulkInsert($rows, array_keys($map_old_patient_id_to_new));
-                //bulk insert対象のventilator_value列
-                $list_ventilator_value_for_bulk_insert = $this->prepareVentilatorValuesForBulkInsert($rows);
+                            if (!empty($map_old_ventilator_id_to_ventilator)) {
+                                //insertするventilatorごとの新旧idの紐付けを行いたいので個別saveとする。
+                                foreach ($map_old_ventilator_id_to_ventilator as $old_ventilator_id => $ventilator) {
+                                    $ventilator->save();
 
-                /**
-                 * トランザクション
-                 * 1,patientsおよびventilatorsを個別にsaveし、新旧idのマッピングを作成
-                 * 2,1のマッピングをもとにventialtor_valueおよびpatient_valueをバルクインサート
-                 * 3,各種historyをバルクインサート
-                 */
-                DBUtil::Transaction(
-                    'CSVインポート',
-                    function () use (
-                        $map_old_ventilator_id_to_ventilator,
-                        $map_old_patient_id_to_patient,
-                        $list_patient_value_for_bulk_insert,
-                        $list_ventilator_value_for_bulk_insert,
-                        $registered_user_id,
-                        &$map_old_ventilator_id_to_new,
-                        &$map_old_patient_id_to_new,
-                        &$saved_ventilator_value_ids,
-                        &$saved_patient_value_ids,
-                    ) {
-                        $update_target_ventilator_ids = [];
-                        $update_target_ventilator_patient_ids = [];
+                                    //patient insert後に対応ventialtor.patient_idをbulk update
+                                    if (!is_null($ventilator->patient_id)) {
+                                        $update_target_ventilator_ids[] = $ventilator->id;
+                                        $update_target_ventilator_patient_ids[] = $ventilator->patient_id;
+                                    }
 
-                        if (!empty($map_old_ventilator_id_to_ventilator)) {
-                            //insertするventilatorごとの新旧idの紐付けを行いたいので個別saveとする。
-                            foreach ($map_old_ventilator_id_to_ventilator as $old_ventilator_id => $ventilator) {
-                                $ventilator->save();
+                                    $map_old_ventilator_id_to_new[$old_ventilator_id] = $ventilator->id;
+                                }
+                            }
 
-                                //patient insert後に対応ventialtor.patient_idをbulk update
-                                if (!is_null($ventilator->patient_id)) {
-                                    $update_target_ventilator_ids[] = $ventilator->id;
-                                    $update_target_ventilator_patient_ids[] = $ventilator->patient_id;
+                            if (!empty($map_old_patient_id_to_patient)) {
+                                //ventilator同様、新旧idの紐付けのため個別にsave
+                                foreach ($map_old_patient_id_to_patient as $old_patient_id => $patient) {
+
+                                    $patient->save();
+
+                                    $map_old_patient_id_to_new[$old_patient_id] = $patient->id;
                                 }
 
-                                $map_old_ventilator_id_to_new[$old_ventilator_id] = $ventilator->id;
+                                //以下バルクupdate/insert処理
+                                //ventilator bulk update
+                                $update_target_ventilator_patient_ids = array_map(
+                                    function ($old_patient_id) use ($map_old_patient_id_to_new) {
+                                        return $map_old_patient_id_to_new[$old_patient_id];
+                                    },
+                                    $update_target_ventilator_patient_ids
+                                );
+
+                                Repos\VentilatorRepository::updateBulkForPatientId(
+                                    $update_target_ventilator_ids,
+                                    $update_target_ventilator_patient_ids
+                                );
+                            }
+
+                            //patient_valueバルクインサート
+                            if (!empty($list_patient_value_for_bulk_insert['old_patient_id'])) {
+                                $list_patient_value_for_bulk_insert['patient_id'] = array_map(
+                                    function ($old_patient_id) use ($map_old_patient_id_to_new) {
+                                        return $map_old_patient_id_to_new[$old_patient_id];
+                                    },
+                                    $list_patient_value_for_bulk_insert['old_patient_id']
+                                );
+
+                                Repos\PatientValueRepository::insertBulk(
+                                    $list_patient_value_for_bulk_insert,
+                                    $registered_user_id
+                                );
+
+                                //patient_value_historiesバルクインサート
+                                //現在のchunkで新たに挿入されたpatient_valueのpatient_id列でpatient_value_idをselect(これらpatient_idは必ずこのインポートで挿入されたものである)
+                                //$saved_patient_value_idに含まれていないものを抽出→バルクインサート
+                                //$saved_patient_value_idを更新
+                                $chunk_saved_patient_value_ids = Repos\PatientValueRepository::getIdsByPatientIds($list_patient_value_for_bulk_insert['patient_id'])->all();
+                                $chunk_saved_patient_value_ids = array_diff($chunk_saved_patient_value_ids, $saved_patient_value_ids);
+                                Repos\PatientValueHistoryRepository::insertBulk(
+                                    $chunk_saved_patient_value_ids,
+                                    $registered_user_id,
+                                    HistoryBaseModel::CREATE
+                                );
+
+                                $saved_patient_value_ids = array_merge($saved_patient_value_ids, $chunk_saved_patient_value_ids);
+                            }
+
+                            //ventilator_valueバルクインサート
+                            if (!empty($list_ventilator_value_for_bulk_insert['old_ventilator_id'])) {
+                                $list_ventilator_value_for_bulk_insert['ventilator_id'] = array_map(
+                                    function ($old_ventilator_id) use ($map_old_ventilator_id_to_new) {
+                                        return $map_old_ventilator_id_to_new[$old_ventilator_id];
+                                    },
+                                    $list_ventilator_value_for_bulk_insert['old_ventilator_id']
+                                );
+
+                                Repos\VentilatorValueRepository::insertBulk(
+                                    $list_ventilator_value_for_bulk_insert,
+                                    $registered_user_id
+                                );
+
+                                //ventilator_value_historiesバルクインサート
+                                //現在のchunkで新たに挿入されたventilator_valueのventilator_id列でventilator_value_idをselect(これらventilator_idは必ずこのインポートで挿入されたものである)
+                                //$saved_ventilator_value_idsに含まれていないものを抽出→バルクインサート
+                                //$saved_ventialtor_value_idsを更新
+                                $chunk_saved_ventilator_value_ids = Repos\VentilatorValueRepository::getIdsByVentilatorIds($list_ventilator_value_for_bulk_insert['ventilator_id'])->all();
+                                $chunk_saved_ventilator_value_ids = array_diff($chunk_saved_ventilator_value_ids, $saved_ventilator_value_ids);
+                                Repos\VentilatorValueHistoryRepository::insertBulk(
+                                    $chunk_saved_ventilator_value_ids,
+                                    $registered_user_id,
+                                    HistoryBaseModel::CREATE
+                                );
+
+                                $saved_ventilator_value_ids = array_merge($saved_ventilator_value_ids, $chunk_saved_ventilator_value_ids);
                             }
                         }
+                    );
+                } catch (Exceptions\InvalidCsvException $e) {
 
-                        if (!empty($map_old_patient_id_to_patient)) {
-                            //ventilator同様、新旧idの紐付けのため個別にsave
-                            foreach ($map_old_patient_id_to_patient as $old_patient_id => $patient) {
-
-                                $patient->save();
-
-                                $map_old_patient_id_to_new[$old_patient_id] = $patient->id;
-                            }
-
-                            //以下バルクupdate/insert処理
-                            //ventilator bulk update
-                            $update_target_ventilator_patient_ids = array_map(
-                                function ($old_patient_id) use ($map_old_patient_id_to_new) {
-                                    return $map_old_patient_id_to_new[$old_patient_id];
-                                },
-                                $update_target_ventilator_patient_ids
-                            );
-
-                            Repos\VentilatorRepository::updateBulkForPatientId(
-                                $update_target_ventilator_ids,
-                                $update_target_ventilator_patient_ids
-                            );
-                        }
-
-                        //patient_valueバルクインサート
-                        if (!empty($list_patient_value_for_bulk_insert['old_patient_id'])) {
-                            $list_patient_value_for_bulk_insert['patient_id'] = array_map(
-                                function ($old_patient_id) use ($map_old_patient_id_to_new) {
-                                    return $map_old_patient_id_to_new[$old_patient_id];
-                                },
-                                $list_patient_value_for_bulk_insert['old_patient_id']
-                            );
-
-
-                            Repos\PatientValueRepository::insertBulk(
-                                $list_patient_value_for_bulk_insert,
-                                $registered_user_id
-                            );
-
-                            //patient_value_historiesバルクインサート
-                            //現在のchunkで新たに挿入されたpatient_valueのpatient_id列でpatient_value_idをselect(これらpatient_idは必ずこのインポートで挿入されたものである)
-                            //$saved_patient_value_idに含まれていないものを抽出→バルクインサート
-                            //$saved_patient_value_idを更新
-                            $chunk_saved_patient_value_ids = Repos\PatientValueRepository::getIdsByPatientIds($list_patient_value_for_bulk_insert['patient_id'])->all();
-                            $chunk_saved_patient_value_ids = array_diff($chunk_saved_patient_value_ids, $saved_patient_value_ids);
-                            Repos\PatientValueHistoryRepository::insertBulk(
-                                $chunk_saved_patient_value_ids,
-                                $registered_user_id,
-                                HistoryBaseModel::CREATE
-                            );
-
-                            $saved_patient_value_ids = array_merge($saved_patient_value_ids, $chunk_saved_patient_value_ids);
-                        }
-
-                        //ventilator_valueバルクインサート
-                        if (!empty($list_ventilator_value_for_bulk_insert['old_ventilator_id'])) {
-                            $list_ventilator_value_for_bulk_insert['ventilator_id'] = array_map(
-                                function ($old_ventilator_id) use ($map_old_ventilator_id_to_new) {
-                                    return $map_old_ventilator_id_to_new[$old_ventilator_id];
-                                },
-                                $list_ventilator_value_for_bulk_insert['old_ventilator_id']
-                            );
-
-                            Repos\VentilatorValueRepository::insertBulk(
-                                $list_ventilator_value_for_bulk_insert,
-                                $registered_user_id
-                            );
-
-                            //ventilator_value_historiesバルクインサート
-                            //現在のchunkで新たに挿入されたventilator_valueのventilator_id列でventilator_value_idをselect(これらventilator_idは必ずこのインポートで挿入されたものである)
-                            //$saved_ventilator_value_idsに含まれていないものを抽出→バルクインサート
-                            //$saved_ventialtor_value_idsを更新
-                            $chunk_saved_ventilator_value_ids = Repos\VentilatorValueRepository::getIdsByVentilatorIds($list_ventilator_value_for_bulk_insert['ventilator_id'])->all();
-                            $chunk_saved_ventilator_value_ids = array_diff($chunk_saved_ventilator_value_ids, $saved_ventilator_value_ids);
-                            Repos\VentilatorValueHistoryRepository::insertBulk(
-                                $chunk_saved_ventilator_value_ids,
-                                $registered_user_id,
-                                HistoryBaseModel::CREATE
-                            );
-
-                            $saved_ventilator_value_ids = array_merge($saved_ventilator_value_ids, $chunk_saved_ventilator_value_ids);
-                        }
-                    }
-                );
-
-                \Log::debug('CHUNK END MEMORY=' . memory_get_usage(FALSE));
+                    throw new Exceptions\LogicException('インポート処理に失敗');
+                }
             },
             $chunk_size
         );
+        //インポート済みCSVを削除
+        $filename = Support\FileUtil::basename($file_path);
+        Support\FileUtil::deleteJobTemp($filename);
     }
 
     private function prepareVentilatorsForSave(array $csv_rows, int $organization_id, int $registered_user_id, array $exceptive_ventilator_ids = [])

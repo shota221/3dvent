@@ -5,6 +5,7 @@ namespace App\Jobs;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Symfony\Component\Process\Process;
@@ -93,13 +94,12 @@ abstract class JobHandler implements ShouldQueue
     {
         $connection = self::CONNECTION;
 
-        //ジョブ初期化
-        $pending_dispatch = self::dispatch(...$args);
-
         //jobsテーブルのqueueにjobを格納
-        $dispatch = $pending_dispatch->onConnection($connection)->onQueue($queue);
+        //Dispatchableを使うとデストラクタでキューイングされるが、GCが走るまでにラグがあるため
+        //Dispatcherを
+        $job = (new static(...$args))->onConnection($connection)->onQueue($queue);
 
-        return $dispatch;
+        app(Dispatcher::class)->dispatch($job);
     }
 
     /**

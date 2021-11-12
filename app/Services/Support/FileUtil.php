@@ -225,9 +225,6 @@ class FileUtil
 
     /**
      * job処理用TEMPファイルURLを取得・保存・削除
-     *
-     * @param string $path
-     * @return void
      */
     public static function jobTempFileUrl(string $filename)
     {

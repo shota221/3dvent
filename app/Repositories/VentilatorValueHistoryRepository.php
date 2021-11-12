@@ -138,19 +138,19 @@ class VentilatorValueHistoryRepository
 
     public static function insertBulk(array $ventilator_value_ids, $operated_user_id, $operation)
     {
+
         $count = count($ventilator_value_ids);
 
         $placeholder = substr(str_repeat(',(?,?,?)', $count), 1);
 
         $records = [];
 
-        for ($i = 0; $i < $count; $i++) {
+        foreach($ventilator_value_ids as $ventilator_value_id){
             $record = [
-                $ventilator_value_ids[$i],
+                $ventilator_value_id,
                 $operated_user_id,
                 $operation
             ];
-
             $records = array_merge($records, $record);
         }
 

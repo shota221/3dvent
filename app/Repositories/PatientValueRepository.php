@@ -33,8 +33,6 @@ class PatientValueRepository
 
         $count = count($list_patient_value_for_bulk_insert['patient_id']);
 
-        \Log::debug($count);
-
         $placeholder = substr(str_repeat(',(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', $count), 1);
 
         $records = [];

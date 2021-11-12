@@ -263,6 +263,7 @@ $exportCsvBtn.on(
                         var hasError = data.result.has_error;
 
                         if (hasError) {
+                            ladda.stop();
                             alert(i18n('message.csv_download_failed'));
                             return false;
                         }
@@ -365,6 +366,13 @@ $importCsvBtn.on(
                 var checkQueueStatusSuccessCallback = function (data) {
                     console.log(data);
                     var isFinished = data.result.is_finished;
+                    var hasError = data.result.has_error;
+
+                    if (hasError) {
+                        ladda.stop();
+                        alert(i18n('message.csv_import_canceled'));
+                        return false;
+                    }
 
                     if (isFinished) {
                         ladda.stop();
