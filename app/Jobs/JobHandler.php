@@ -95,8 +95,7 @@ abstract class JobHandler implements ShouldQueue
         $connection = self::CONNECTION;
 
         //jobsテーブルのqueueにjobを格納
-        //Dispatchableを使うとデストラクタでキューイングされるが、GCが走るまでにラグがあるため
-        //Dispatcherを
+        //Dispatchableを使うとデストラクタでキューイングされるが、GCが走るまでにラグが生じる
         $job = (new static(...$args))->onConnection($connection)->onQueue($queue);
 
         app(Dispatcher::class)->dispatch($job);
