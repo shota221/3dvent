@@ -14,45 +14,49 @@ use Illuminate\Pagination\LengthAwarePaginator;
 class OrganizationConverter
 {
   public static function convertToEntity(
-    $name,
-    $code,
-    $representative_name,
-    $representative_email,
-    $status = Organization::DISABLED,
-    $patient_obs_approved_flg = Organization::PATIENT_OBS_UNAPPROVED,
-    $edcid = null
+    string $name,
+    string $code,
+    string $representative_name,
+    string $representative_email,
+    string $language_code,
+    int    $status = Organization::DISABLED,
+    int    $patient_obs_approved_flg = Organization::PATIENT_OBS_UNAPPROVED,
+    string $edcid = null
   ) {
     $entity = new Organization;
 
-    $entity->name = $name;
-    $entity->code = $code;
-    $entity->representative_name = $representative_name;
-    $entity->representative_email = $representative_email;
-    $entity->disabled_flg = $status;
+    $entity->name                     = $name;
+    $entity->code                     = $code;
+    $entity->representative_name      = $representative_name;
+    $entity->representative_email     = $representative_email;
+    $entity->disabled_flg             = $status;
     $entity->patient_obs_approved_flg = $patient_obs_approved_flg;
-    $entity->edcid = $edcid;
+    $entity->locale                   = $language_code;
+    $entity->edcid                    = $edcid;
 
     return $entity;
   }
 
   public static function convertToUpdateEntity(
     Organization $entity,
-    $name,
-    $code,
-    $representative_name,
-    $representative_email,
-    $status,
-    $patient_obs_approved_flg,
-    $edcid
+    string $name,
+    string $code,
+    string $representative_name,
+    string $representative_email,
+    int    $status,
+    int    $patient_obs_approved_flg,
+    string $edcid = null,
+    string $language_code
   ) {
 
-    $entity->name = $name;
-    $entity->code = $code;
-    $entity->representative_name = $representative_name;
-    $entity->representative_email = $representative_email;
-    $entity->disabled_flg = $status;
+    $entity->name                     = $name;
+    $entity->code                     = $code;
+    $entity->representative_name      = $representative_name;
+    $entity->representative_email     = $representative_email;
+    $entity->disabled_flg             = $status;
     $entity->patient_obs_approved_flg = $patient_obs_approved_flg;
-    $entity->edcid = $edcid;
+    $entity->edcid                    = $edcid;
+    $entity->locale                   = $language_code;
 
     return $entity;
   }
@@ -74,16 +78,17 @@ class OrganizationConverter
   {
     $organization_result = new OrganizationResult;
 
-    $organization_result->id = $entity->id;
-    $organization_result->organization_name = $entity->name;
-    $organization_result->organization_code = $entity->code;
-    $organization_result->representative_name = $entity->representative_name;
-    $organization_result->representative_email = $entity->representative_email;
-    $organization_result->edc_linked_flg = $entity->edc_linked_flg;
-    $organization_result->edcid = $entity->edcid;
+    $organization_result->id                       = $entity->id;
+    $organization_result->organization_name        = $entity->name;
+    $organization_result->organization_code        = $entity->code;
+    $organization_result->representative_name      = $entity->representative_name;
+    $organization_result->representative_email     = $entity->representative_email;
+    $organization_result->edc_linked_flg           = $entity->edc_linked_flg;
+    $organization_result->edcid                    = $entity->edcid;
     $organization_result->patient_obs_approved_flg = $entity->patient_obs_approved_flg;
-    $organization_result->registered_at = $entity->created_at;
-    $organization_result->disabled_flg = $entity->disabled_flg;
+    $organization_result->registered_at            = $entity->created_at;
+    $organization_result->disabled_flg             = $entity->disabled_flg;
+    $organization_result->language_code            = $entity->locale;
 
     return $organization_result;
   }

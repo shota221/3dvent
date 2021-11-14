@@ -76,6 +76,16 @@
                             value="0" checked>@lang('messages.unapproved')</label>
                 </div>
             </div>
+
+            {{-- 言語 --}}
+            <div class="form-group">
+                <label for="language_code">@lang('messages.language')<span class="required"></label>
+                <select class="form-control select" name="language_code">
+                    @foreach (config('languages') as $language_code => $language)
+                        <option value="{{ $language_code }}">{{ $language }}</option>
+                    @endforeach
+                </select>
+            </div>
         @endslot
 
     @endcomponent

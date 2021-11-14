@@ -14,4 +14,5 @@ class OrganizationResult
     public $patient_obs_approved_flg;
     public $registered_at;
     public $disabled_flg;
+    public $language_code;
 }

@@ -81,6 +81,7 @@ return [
     'linked' => '連携済',
     'list' => '一覧',
     'login' => 'ログイン',
+    'language' => '言語',
     // m
     'male' => '男性',
     'mri' => 'MRI室',

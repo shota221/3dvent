@@ -35,7 +35,7 @@ class OrganizationService
         return Converter\OrganizationConverter::convertToPaginate($organizations, $total_count, $items_per_page, $path . $http_query);
     }
 
-    function create($form)
+    function create(Form\OrganizationForm $form)
     {
         $exists_by_code = Repos\OrganizationRepository::existsByCode($form->organization_code);
 
@@ -58,6 +58,7 @@ class OrganizationService
             $form->organization_code,
             $form->representative_name,
             $form->representative_email,
+            $form->language_code,
             $form->disabled_flg,
             $form->patient_obs_approved_flg,
             $form->edcid
@@ -78,7 +79,7 @@ class OrganizationService
     }
 
 
-    function update($form)
+    function update(Form\OrganizationUpdateForm $form)
     {
         $organization = Repos\OrganizationRepository::findOneById($form->id);
 
@@ -119,7 +120,8 @@ class OrganizationService
             $form->representative_email,
             $form->disabled_flg,
             $form->patient_obs_approved_flg,
-            $form->edcid
+            $form->edcid,
+            $form->language_code
         );
 
         DBUtil::Transaction(
