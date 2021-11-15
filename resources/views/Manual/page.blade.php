@@ -9,7 +9,7 @@
     <!-- csrf token -->
     <meta content="{{ csrf_token() }}" name="csrf-token">
 
-    <link rel="stylesheet" href="css/common/adminlte/app.css">
+    <link rel="stylesheet" href="{{ mix('css/common/adminlte/app.css') }}">
 
     @yield('css')
 
@@ -36,7 +36,7 @@
     </div>
 </div>
 
-<script src="js/common/adminlte/app.js"></script>
+<script src="{{ mix('js/common/adminlte/app.js') }}"></script>
 
 @yield('js')
 
