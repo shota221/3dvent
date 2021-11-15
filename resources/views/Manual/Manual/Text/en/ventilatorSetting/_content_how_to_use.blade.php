@@ -1,27 +1,4 @@
-@extends('Manual.page')
-
-{{-- 
-/***********************
-    CSS
-************************/ 
---}}
-@section('css')
-@stop
-
-{{-- 
-
-/***********************
-    JS
-************************/ 
---}}
-@section('js')
-@stop
-
-@section('title', '機器設定値入力')
-
-@section('parent_content')
-
-@include('Manual._content_top',['title' => '初回入力'])
+@include('Manual.Manual.Text._content_top', ['title' => $title1])
 <div class="card-body">
     <p>
         1，MicroVentをテストラングから切り離し、患者の気管チューブに以下の設定のまま接続してください。<br>（設定圧20cm/H20、空気流量9L/分、酸素流量3L/分)
@@ -48,9 +25,9 @@
         7，「呼吸器時間測定」の画面に遷移されます。　
     </p>
 </div>
-@include('Manual._content_bottom')
+@include('Manual.Manual.Text._content_bottom')
 
-@include('Manual._content_top',['title' => '入力2回目以降（1回換気量の決定）'])
+@include('Manual.Manual.Text._content_top',['title' => $title2])
 <div class="card-body">
     <div>1，以下を参考に設定圧を調整してください。
         <ul>
@@ -73,9 +50,9 @@
         6，「呼吸器時間測定」の画面に遷移されます。　
     </p>
 </div>
-@include('Manual._content_bottom')
+@include('Manual.Manual.Text._content_bottom')
 
-@include('Manual._content_top',['title' => '入力2回目以降（1回換気量決定後の呼吸器回数の決定）'])
+@include('Manual.Manual.Text._content_top',['title' => $title3])
 <div class="card-body">
     <div>1，以下を参考に供給気量（酸素流量、空気流量）を調整してください。
         <ul>
@@ -98,11 +75,8 @@
         6，「呼吸器時間測定」の画面に遷移されます。　
     </p>
 </div>
-@include('Manual._content_bottom')
+@include('Manual.Manual.Text._content_bottom')
 
-
-
-@stop
 
 
 

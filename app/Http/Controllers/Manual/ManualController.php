@@ -3,36 +3,76 @@
 namespace App\Http\Controllers\Manual;
 
 use App\Http\Controllers\Controller;
+use App\Http\Forms\Manual as Form;
 use Illuminate\Http\Request;
 
+/**
+ * アプリに定義されていない言語コードがリクエストとして来た場合には、
+ * アプリのデフォルト言語をフォームオブジェクトにセット
+ */
 class ManualController extends Controller
 {
-    public function showQrManual() {
-        return view('/Manual/qrManual');
+    public function showQrTextManual(string $language_code) 
+    {
+        $form = new Form\LanguageCodeForm(compact('language_code'));
+
+        return view('Text/' . $form->language_code . '/qr/manual');
     }
 
-    public function showAuthManual() {
-        return view('/Manual/authManual');
+    public function showAuthTextManual(string $language_code) 
+    {
+        $form = new Form\LanguageCodeForm(compact('language_code'));
+
+        return view('Text/' . $form->language_code . '/auth/manual');
     }
 
-    public function showPatientSetting() {
-        return view('/Manual/patientSettingManual');
+    public function showPatientSettingTextManual(string $language_code) 
+    {
+        $form = new Form\LanguageCodeForm(compact('language_code'));
+
+        return view('Text/' . $form->language_code . '/patientSetting/manual');
     }
 
-    public function showVentilatorSetting() {
-        return view('/Manual/ventilatorSettingManual');
+    public function showVentilatorSettingTextManual(string $language_code) 
+    {
+        $form = new Form\LanguageCodeForm(compact('language_code'));
+
+        return view('Text/' . $form->language_code . '/ventilatorSetting/manual');
     }
 
-    public function showManualMeasurement() {
-        return view('/Manual/manualMeasurementManual');
+    public function showManualMeasurementTextManual(string $language_code) 
+    {
+        $form = new Form\LanguageCodeForm(compact('language_code'));
+        
+        return view('Text/' . $form->language_code . '/manualMeasurement/manual');
     }
 
-    public function showSoundMeasurement() {
-        return view('/Manual/soundMeasurementManual');
+    public function showSoundMeasurementTextManual(string $language_code) 
+    {
+        $form = new Form\LanguageCodeForm(compact('language_code'));
+        
+        return view('Text/' . $form->language_code . '/soundMeasurement/manual');
     }
 
-    public function showVentilatorResult() {
-        return view('/Manual/ventilatorResultManual');
+    public function showVentilatorResultTextManual(string $language_code) 
+    {
+        $form = new Form\LanguageCodeForm(compact('language_code'));
+        
+        return view('Text/' . $form->language_code . '/ventilatorResult/manual');
+    }
+
+    public function showTextManualAll(string $language_code) 
+    {
+        $form = new Form\LanguageCodeForm(compact('language_code'));
+        
+        return view('Text/' . $form->language_code . '/manual');
+    }
+
+    public function showVideoManual(string $language_code)
+    {
+        $form = new Form\LanguageCodeForm(compact('language_code'));
+        
+        return view('Video/' .$form->language_code . '/manual');
     }
 
 }
