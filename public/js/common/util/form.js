@@ -1,7 +1,7 @@
 function utilFormInputParameters($form, data) {
     $form[0].reset();
     $.each($form.find('input, select, textarea'), function (i, elm) {
-        $elm = $(elm);
+        var $elm = $(elm);
 
         switch ($elm.prop('tagName')) {
             case 'INPUT':
