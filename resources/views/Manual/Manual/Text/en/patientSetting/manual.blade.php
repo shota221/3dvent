@@ -21,12 +21,7 @@
 
 @section('parent_content')
 
-    @include(
-        'Manual.Manual.Text.ja.patientSetting._content_how_to_use', 
-        [
-            'title' => '利用方法'
-        ]
-    )
+    @include('Manual.Manual.Text.en.patientSetting._content_how_to_use')
 
 @stop
 

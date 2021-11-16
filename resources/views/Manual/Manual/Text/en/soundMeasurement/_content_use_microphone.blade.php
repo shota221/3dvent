@@ -1,4 +1,4 @@
-@include('Manual.Manual.Text._content_top', ['title' => $title])
+@include('Manual.Manual.Text._content_top', ['title' => 'マイクの利用を拒否した場合の再設定方法'])
 <div class="card-body">
     <div>
         <p>

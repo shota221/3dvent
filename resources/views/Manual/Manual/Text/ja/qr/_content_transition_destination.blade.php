@@ -1,4 +1,4 @@
-@include('Manual.Manual.Text._content_top', ['title' => $title])
+@include('Manual.Manual.Text._content_top', ['title' => '二次元コード読込後の遷移先'])
 <div class="card-body">
     <div>
         <p><b>・未ログインユーザーもしくはMicroVent所属組織とログインユーザー所属組織に齟齬がある場合</b><br>→「利用規約」画面に遷移</p>

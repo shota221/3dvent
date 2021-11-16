@@ -1,4 +1,4 @@
-@include('Manual.Manual.Text._content_top', ['title' => $title])
+@include('Manual.Manual.Text._content_top', ['title' => '音声測定利用方法'])
 <div class="card-body">
     <p>
         1，スマートフォンをMicroVentに近づけて、「録音」を押下してください。
