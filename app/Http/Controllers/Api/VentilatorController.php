@@ -43,14 +43,16 @@ class VentilatorController extends ApiController
 
         $user = $this->getUser();
 
-        if ($form->hasError() || !$response = $this->service->create($form, $user)) {
+        if ($form->hasError()) {
             throw new Exceptions\InvalidFormException($form);
         }
+
+        $response = $this->service->create($form, $user);
 
         return $response;
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id)
     {
         $request->merge(['id' => $id]);
         
@@ -58,9 +60,26 @@ class VentilatorController extends ApiController
 
         $user = $this->getUser();
 
-        if ($form->hasError() || !$response = $this->service->update($form, $user)) {
+        if ($form->hasError()) {
             throw new Exceptions\InvalidFormException($form);
         }
+
+        $response = $this->service->update($form, $user);
+
+        return $response;
+    }
+
+    public function deactivate(Request $request, int $id)
+    {
+        $form = new Form\VentilatorDeactivateForm(compact('id'));
+
+        $user = $this->getUser();
+
+        if ($form->hasError()) {
+            throw new Exceptions\InvalidFormException($form);
+        }
+
+        $response = $this->service->deactivate($form ,$user);
 
         return $response;
     }

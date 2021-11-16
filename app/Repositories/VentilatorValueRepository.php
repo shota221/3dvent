@@ -21,15 +21,25 @@ class VentilatorValueRepository
         return self::joinVentilators()->where('ventilators.organization_id', $organization_id);
     }
 
-    public static function findOneById($id)
+    private static function queryByRegisteredUserId(int $registered_user_id)
+    {
+        return static::query()->where('registered_user_id', $registered_user_id);
+    }
+
+    public static function findOneById(int $id)
     {
         return static::query()->where('id', $id)->first();
     }
 
-    public static function findOneByOrganizationIdAndId($organization_id, $id)
+    public static function findOneByOrganizationIdAndId(int $organization_id, int $id)
     {
         return self::queryWithVentilatorsByOrganizationId($organization_id)->where('ventilator_values.id', $id)
             ->select('ventilator_values.*')->first();
+    }
+
+    public static function findOneByRegisteredUserIdAndId(int $registered_user_id, int $id)
+    {
+        return static::queryByRegisteredUserId($registered_user_id)->where('id', $id)->first();
     }
 
     public static function findOneWithPatientAndOrganizationAndRegisteredUserById($id)

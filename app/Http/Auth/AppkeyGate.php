@@ -26,7 +26,7 @@ class AppkeyGate
      * アプリキーの正当性を確認してアプリキーをバインド
      *
      * @param string|null $input_key
-     * @return boolean
+     * @return Appkey|null
      */
     public static function getValidAppkey(?string $input_key = null)
     {

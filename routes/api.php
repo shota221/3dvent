@@ -85,9 +85,10 @@ Route::group(['middleware' => ['routetype:api']], function () {
          **************/
         //呼吸器情報取得（GS1コード読み込み）
         Route::get('/ventilator/no_auth', 'VentilatorController@show')->name('api.ventilator.show.no_auth');
-
         //呼吸器情報登録
         Route::post('/ventilator/no_auth', 'VentilatorController@create')->name('api.ventilator.create.no_auth');
+        //呼吸器非活性化
+        Route::delete('/ventilator/{id}/no_auth', 'VentilatorController@deactivate')->name('api.ventilator.deactivate.no_auth');
 
 
         /********************
@@ -130,9 +131,11 @@ Route::group(['middleware' => ['routetype:api']], function () {
             Route::get('/patient/{id}/detail', 'PatientController@showDetail')->name('api.patient.show_detail');
             //患者観察研究データの登録
             Route::post('/patient/{id}/detail', 'PatientController@createDetail')->name('api.patient.create_detail');
-            //患者観察研究データの更新
-            Route::put('/patient/{id}/detail', 'PatientController@updateDetail')->name('api.patient.update_detail');
-
+            
+            Route::group(['middleware' => ['can:patient_value_editable']], function(){
+                //患者観察研究データの更新
+                Route::put('/patient/{id}/detail', 'PatientController@updateDetail')->name('api.patient.update_detail');
+            });
 
             /********
              * user *
@@ -151,6 +154,10 @@ Route::group(['middleware' => ['routetype:api']], function () {
             Route::post('/ventilator', 'VentilatorController@create')->name('api.ventilator.create');
             //呼吸器情報更新
             Route::put('/ventilator/{id}', 'VentilatorController@update')->name('api.ventilator.update');
+            //呼吸器非活性化
+            Route::group(['middleware' => ['can:ventilator_initializable']], function(){
+                Route::delete('/ventilator/{id}', 'VentilatorController@deactivate')->name('api.ventilator.deactivate');
+            });
 
 
             /********************
@@ -158,8 +165,10 @@ Route::group(['middleware' => ['routetype:api']], function () {
              ********************/
             //測定時機器関連値登録
             Route::post('/ventilator_value', 'VentilatorValueController@create')->name('api.ventilator_value.create');
-            //機器観察研究データの更新
-            Route::put('/ventilator_value/{id}', 'VentilatorValueController@update')->name('api.ventilator_value.update');
+            Route::group(['middleware' => ['can:ventilator_value_editable']], function(){
+                //機器観察研究データの更新
+                Route::put('/ventilator_value/{id}', 'VentilatorValueController@update')->name('api.ventilator_value.update');
+            });
 
 
             /*******

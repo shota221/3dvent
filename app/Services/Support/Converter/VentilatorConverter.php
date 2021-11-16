@@ -82,6 +82,15 @@ class VentilatorConverter
     return $res;
   }
 
+  public static function convertToVentilatorDeactivateResult(Models\Ventilator $ventilator)
+  {
+    $res = new Response\Api\VentilatorResult;
+
+    $res->ventilator_id = $ventilator->id;
+
+    return $res;
+  }
+
   public static function convertToVentilatorEntity($gs1_code, $serial_number, $expiration_date, $qr_read_at, $latitude = null, $longitude = null, $city = null, $organization_id = null, $registered_user_id = null, $start_using_at = null, $patient_id = null) 
   {
     $entity = new Ventilator;

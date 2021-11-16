@@ -15,6 +15,16 @@ class PatientValueRepository
         return PatientValue::query();
     }
 
+    private static function queryWithPatientByOrganizationId(int $organization_id)
+    {
+        return self::joinPatient(static::query())->where('patients.organization_id', $organization_id);
+    }
+
+    private static function queryByPatientObsUserId(int $patient_obs_user_id)
+    {
+        return static::query()->where('patient_obs_user_id', $patient_obs_user_id);
+    }
+
     public static function findOneById(int $id)
     {
         return static::query()->where('id', $id)->first();
@@ -23,6 +33,16 @@ class PatientValueRepository
     public static function findOneByPatientId($patient_id)
     {
         return static::query()->where('patient_id', $patient_id)->orderBy('registered_at', 'DESC')->first();
+    }
+
+    public static function findOneByOrganizationIdAndPatientId(int $organization_id, int $patient_id)
+    {
+        return static::queryWithPatientByOrganizationId($organization_id)->where('patient_id', $patient_id)->orderBy('patient_values.registered_at', 'DESC')->select('patient_values.*')->first();
+    }
+
+    public static function findOneByPatientObsUserIdAndPatientId(int $patient_obs_user_id, int $patient_id)
+    {
+        return static::queryByPatientObsUserId($patient_obs_user_id)->where('patient_id', $patient_id)->orderBy('registered_at', 'DESC')->first();
     }
 
     public static function insertBulk(

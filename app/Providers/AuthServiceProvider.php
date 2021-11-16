@@ -51,6 +51,8 @@ class AuthServiceProvider extends ServiceProvider
             ApiTokenGate::define();
 
             AppkeyGate::define();
+
+            OrgUserGate::define();
         }
 
         if ($this->app->isHttpRouteTypeAdmin()) {

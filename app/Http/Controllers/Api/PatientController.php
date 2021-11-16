@@ -27,10 +27,12 @@ class PatientController extends ApiController
 
         $user = $this->getUser();
 
-        if ($form->hasError() || !$response = $this->service->create($form, $user)) {
+        if ($form->hasError()) {
             throw new Exceptions\InvalidFormException($form);
         }
-
+        
+        $response = $this->service->create($form, $user);
+        
         return $response;
     }
 
@@ -40,9 +42,11 @@ class PatientController extends ApiController
 
         $form = new Form\PatientShowForm($request->all());
 
-        if ($form->hasError() || !$response = $this->service->getPatientResult($form)) {
+        if ($form->hasError()) {
             throw new Exceptions\InvalidFormException($form);
         }
+
+        $response = $this->service->getPatientResult($form);
 
         return $response;
     }
@@ -53,10 +57,12 @@ class PatientController extends ApiController
 
         $form = new Form\PatientUpdateForm($request->all());
 
-        if ($form->hasError() || !$response = $this->service->update($form)) {
+        if ($form->hasError()) {
             throw new Exceptions\InvalidFormException($form);
         }
-
+        
+        $response = $this->service->update($form);
+        
         return $response;
     }
 
@@ -66,10 +72,12 @@ class PatientController extends ApiController
 
         $form = new Form\PatientShowForm($request->all());
 
-        if ($form->hasError() || !$response = $this->service->getPatientValueResult($form)) {
+        if ($form->hasError()) {
             throw new Exceptions\InvalidFormException($form);
         }
-
+        
+        $response = $this->service->getPatientValueResult($form);
+        
         return $response;
     }
 
@@ -81,10 +89,12 @@ class PatientController extends ApiController
 
         $user = $this->getUser();
 
-        if ($form->hasError() || !$response = $this->service->createPatientValue($form, $user)) {
+        if ($form->hasError()) {
             throw new Exceptions\InvalidFormException($form);
         }
-
+        
+        $response = $this->service->createPatientValue($form, $user);
+        
         return $response;
     }
 
@@ -96,10 +106,12 @@ class PatientController extends ApiController
 
         $user = $this->getUser();
 
-        if ($form->hasError() || !$response = $this->service->updatePatientValue($form, $user)) {
+        if ($form->hasError()) {
             throw new Exceptions\InvalidFormException($form);
         }
-
+        
+        $response = $this->service->updatePatientValue($form, $user);
+        
         return $response;
     }
 }
