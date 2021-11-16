@@ -26,7 +26,7 @@
         'Manual.Manual.Video._content_top', 
             [
                 'title' => 'sample1', 
-                'url' => 'https://www.youtube.com/watch?v=pgj6esQUjE0'
+                'url' 　=> 'https://www.youtube.com/watch?v=pgj6esQUjE0'
             ]
         )
     
@@ -37,7 +37,7 @@
         'Manual.Manual.Video._content_top', 
         [
             'title' => 'sample2', 
-            'url' => 'https://www.youtube.com/watch?v=pgj6esQUjE0'
+            'url' 　=> 'https://www.youtube.com/watch?v=pgj6esQUjE0'
         ]
     )
     

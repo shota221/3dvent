@@ -1,4 +1,4 @@
-@include('Manual.Manual.Text._content_top', ['title' => $title])
+@include('Manual.Manual.Text._content_top', ['title' => '利用方法'])
 <div class="card-body">
     <p>
         1，身長、性別、患者番号（患者番号は未入力可。）を入力してください。

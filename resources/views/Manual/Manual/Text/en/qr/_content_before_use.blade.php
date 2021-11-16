@@ -1,4 +1,4 @@
-@include('Manual.Manual.Text._content_top', ['title' => $title])
+@include('Manual.Manual.Text._content_top', ['title' => 'MicroVent使用前に'])
 <div class="card-body">
     <p>
         MicroVentをテストラングに装着し動作させ、呼吸動作が安定していることを確認してください。   

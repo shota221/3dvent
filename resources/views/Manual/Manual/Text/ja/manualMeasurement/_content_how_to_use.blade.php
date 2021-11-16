@@ -1,4 +1,4 @@
-@include('Manual.Manual.Text._content_top', ['title' => $title])
+@include('Manual.Manual.Text._content_top', ['title' => '手動測定利用方法'])
 <div class="card-body">
     <p>
         1，吸気1回目、呼気1回目、吸気2回目、呼気2回目に手動にて測定した結果を入力してください。
