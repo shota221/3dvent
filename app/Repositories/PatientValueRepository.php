@@ -25,6 +25,11 @@ class PatientValueRepository
         return static::query()->where('patient_obs_user_id', $patient_obs_user_id);
     }
 
+    public static function existsByPatientId(int $patient_id)
+    {
+        return static::query()->where('patient_id', $patient_id)->exists();
+    }
+
     public static function findOneById(int $id)
     {
         return static::query()->where('id', $id)->first();

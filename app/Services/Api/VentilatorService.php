@@ -49,7 +49,7 @@ class VentilatorService
         //no_authの場合
         $is_no_auth = is_null($user);
         if ($is_no_auth) {
-            return  Converter\VentilatorConverter::convertToVentilatorResult($ventilator,$is_recommended_period);
+            return  Converter\VentilatorConverter::convertToVentilatorResult($ventilator, $is_recommended_period);
         }
 
         $is_match_organization_id = OrganizationCheckUtil::checkUserAgainstVentilator($user, $ventilator->id);
@@ -59,7 +59,7 @@ class VentilatorService
             throw new Exceptions\InvalidFormException($form);
         }
 
-        return Converter\VentilatorConverter::convertToVentilatorResult($ventilator,$is_recommended_period);
+        return Converter\VentilatorConverter::convertToVentilatorResult($ventilator, $is_recommended_period);
     }
 
     /**
@@ -112,7 +112,7 @@ class VentilatorService
         $ventilator_not_exists = is_null($ventilator);
 
         if ($ventilator_not_exists) {
-            $form->addError('id','validation.id_not_found');
+            $form->addError('id', 'validation.id_not_found');
             throw new Exceptions\InvalidFormException($form);
         }
 
@@ -132,7 +132,7 @@ class VentilatorService
 
         $patient = null;
 
-        $is_registered_patient = ! is_null($entity->patient_id);
+        $is_registered_patient = !is_null($entity->patient_id);
 
         if ($is_registered_patient) {
             $patient = Repos\PatientRepository::findOneById($entity->patient_id);
@@ -184,11 +184,11 @@ class VentilatorService
      * @param [type] $user
      * @return void
      */
-    public function deactivate(Form\VentilatorDeactivateForm $form, Models\User $user = null) 
+    public function deactivate(Form\VentilatorDeactivateForm $form, Models\User $user = null)
     {
         $id = $form->id;
         $ventilator = null;
-        $logged_in = ! is_null($user);
+        $logged_in = !is_null($user);
 
         if ($logged_in) {
             //ログインしている場合（ventialtor_initializable通過済）
@@ -201,7 +201,6 @@ class VentilatorService
                 $user_id = $user->id;
                 $ventilator = Repos\VentilatorRepository::findActiveOneByRegisteredUserIdAndId($user_id, $id);
             }
-
         } else {
             //ログインしていない場合は組織に属していないventilatorに対して非活性化可能
             //$form->idとorganization_id IS NULLで取得
@@ -211,16 +210,23 @@ class VentilatorService
         $ventilator_not_exists = is_null($ventilator);
 
         if ($ventilator_not_exists) {
-            $form->addError('id','validation.id_inaccessible');
+            $form->addError('id', 'validation.id_inaccessible');
             throw new Exceptions\InvalidFormException($form);
         }
 
-        $ventilator->active = Models\Ventilator::INACTIVE;
+        $patient = Repos\PatientRepository::findActiveOneById($ventilator->id);
 
         Support\DBUtil::Transaction(
             '呼吸器非活性化',
-            function () use ($ventilator) {
+            function () use ($ventilator, $patient) {
+                //ventilator非活性化時、patientが存在すればそれも非活性化する
+                $ventilator->active = Models\Ventilator::INACTIVE;
                 $ventilator->save();
+
+                if(! is_null($patient)) {
+                    $patient->active = Models\Patient::INACTIVE;
+                    $patient->save();
+                }
             }
         );
 

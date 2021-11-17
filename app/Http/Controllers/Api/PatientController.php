@@ -32,7 +32,7 @@ class PatientController extends ApiController
         }
         
         $response = $this->service->create($form, $user);
-        
+
         return $response;
     }
 
@@ -62,7 +62,7 @@ class PatientController extends ApiController
         }
         
         $response = $this->service->update($form);
-        
+
         return $response;
     }
 
@@ -72,12 +72,14 @@ class PatientController extends ApiController
 
         $form = new Form\PatientShowForm($request->all());
 
+        $user = $this->getUser();
+
         if ($form->hasError()) {
             throw new Exceptions\InvalidFormException($form);
         }
         
-        $response = $this->service->getPatientValueResult($form);
-        
+        $response = $this->service->getPatientValueResult($form, $user);
+
         return $response;
     }
 
@@ -94,7 +96,7 @@ class PatientController extends ApiController
         }
         
         $response = $this->service->createPatientValue($form, $user);
-        
+
         return $response;
     }
 
@@ -111,7 +113,7 @@ class PatientController extends ApiController
         }
         
         $response = $this->service->updatePatientValue($form, $user);
-        
+
         return $response;
     }
 }

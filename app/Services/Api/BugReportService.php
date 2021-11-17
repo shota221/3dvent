@@ -16,7 +16,7 @@ class BugReportService
     {
         $ventilator_id = $form->ventilator_id;
 
-        $ventilator_exists = Repos\VentilatorRepository::existsById($ventilator_id);
+        $ventilator_exists = Repos\VentilatorRepository::IsActiveById($ventilator_id);
 
         if (!$ventilator_exists) {
             $form->addError('ventilator_id', 'validation.id_not_found');

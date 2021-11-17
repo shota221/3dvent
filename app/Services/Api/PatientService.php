@@ -30,16 +30,17 @@ class PatientService
 
         $organization_id = null;
 
-        if(!is_null($user)) {
+        if (!is_null($user)) {
             $organization_id = $user->organization_id;
         }
 
-        if(!is_null($ventilator->organization_id)){
+        if (!is_null($ventilator->organization_id)) {
             $organization_id = $ventilator->organization_id;
         }
 
         //同一組織内に同じ患者コードが存在するかどうか
-        $exists = !is_null($organization_id) && !is_null($form->patient_code) && Repos\PatientRepository::existsByPatientCodeAndOrganizationId($form->patient_code, $organization_id);
+        $exists = !(is_null($organization_id) || is_null($form->patient_code))
+            && Repos\PatientRepository::IsActiveByPatientCodeAndOrganizationId($form->patient_code, $organization_id);
 
         if ($exists) {
             $form->addError('patient_code', 'validation.duplicated_patient_code');
@@ -84,10 +85,12 @@ class PatientService
 
     public function getPatientResult(Form\PatientShowForm $form)
     {
-        $patient = Repos\PatientRepository::findOneById($form->id);
+        $patient = Repos\PatientRepository::findActiveOneById($form->id);
 
-        if (is_null($patient)) {
-            $form->addError('id', 'validation.id_not_found');
+        $is_active_patient = !is_null($patient);
+
+        if (!$is_active_patient) {
+            $form->addError('id', 'validation.id_inaccessible');
             throw new Exceptions\InvalidFormException($form);
         }
 
@@ -110,12 +113,12 @@ class PatientService
 
     public function update(Form\PatientUpdateForm $form)
     {
-        $patient = Repos\PatientRepository::findOneById($form->id);
+        $patient = Repos\PatientRepository::findActiveOneById($form->id);
 
-        $isRegisteredPatient = !is_null($patient);
+        $is_active_patient = !is_null($patient);
 
-        if (!$isRegisteredPatient) {
-            $form->addError('id', 'validation.id_not_found');
+        if (!$is_active_patient) {
+            $form->addError('id', 'validation.id_inaccessible');
             throw new Exceptions\InvalidFormException($form);
         }
 
@@ -126,13 +129,13 @@ class PatientService
         // アップデート先の患者コードが存在せず、組織内にフォームと同じ患者コードが存在した場合
         if (!is_null($patient->organization_id)) {
             // フォームの患者コードが患者所属組織内に存在するかどうか
-            if(!is_null($form->patient_code)) {
+            if (!is_null($form->patient_code)) {
                 $is_match_patient_code = !is_null($patient->patient_code) && $form->patient_code === $patient->patient_code;
-                
-                $exists = !$is_match_patient_code && Repos\PatientRepository::existsByPatientCodeAndOrganizationId($form->patient_code, $patient->organization_id);
+
+                $exists = !$is_match_patient_code && Repos\PatientRepository::isActiveByPatientCodeAndOrganizationId($form->patient_code, $patient->organization_id);
             }
         }
-        
+
         if ($exists) {
             $form->addError('patient_code', 'validation.duplicated_patient_code');
             throw new Exceptions\InvalidFormException($form);
@@ -170,32 +173,45 @@ class PatientService
         return Converter\PatientConverter::convertToPatientResult($entity, $predicted_vt);
     }
 
-    public function getPatientValueResult(Form\PatientShowForm $form)
+    public function getPatientValueResult(Form\PatientShowForm $form, Models\User $user)
     {
-        $patient = Repos\PatientRepository::findOneById($form->id);
+        $patient_id = $form->id;
+        $organization_id = $user->organization_id;
 
-        if (is_null($patient)) {
-            $form->addError('id', 'validation.id_not_found');
+        //ユーザーの組織で患者IDからアクティブな患者を検索
+        $patient = Repos\PatientRepository::findActiveOneByOrganizationIdAndId($organization_id, $patient_id);
+
+        $patient_not_exists = is_null($patient);
+
+        if ($patient_not_exists) {
+            $form->addError('id', 'validation.id_inaccessible');
             throw new Exceptions\InvalidFormException($form);
         }
 
-        $patient_value = Repos\PatientValueRepository::findOneByPatientId($form->id);
+        $patient_value = Repos\PatientValueRepository::findOneByPatientId($patient_id);
 
         return Converter\PatientConverter::convertToPatientValueResult($patient->patient_code, $patient_value);
     }
 
     public function createPatientValue(Form\PatientValueForm $form, Models\User $user)
     {
-        $patient = Repos\PatientRepository::findOneById($form->id);
+        $patient_id = $form->id;
+        $organization_id = $user->organization_id;
 
-        if (is_null($patient)) {
-            $form->addError('id', 'validation.id_not_found');
+        //ユーザーの組織で患者IDからアクティブな患者を検索
+        $patient = Repos\PatientRepository::findActiveOneByOrganizationIdAndId($organization_id, $patient_id);
+
+        $patient_not_exists = is_null($patient);
+
+        if ($patient_not_exists) {
+            $form->addError('id', 'validation.id_inaccessible');
             throw new Exceptions\InvalidFormException($form);
         }
 
-        $patient_value = Repos\PatientValueRepository::findOneByPatientId($form->id);
+        //すでに登録済みでないか
+        $patient_value_exists = Repos\PatientValueRepository::existsByPatientId($patient_id);
 
-        if (!is_null($patient_value)) {
+        if ($patient_value_exists) {
             $form->addError('id', 'validation.duplicated_patient_id');
             throw new Exceptions\InvalidFormException($form);
         }
@@ -203,7 +219,7 @@ class PatientService
         $registered_at = DateUtil::toDatetimeStr(DateUtil::now());
 
         $entity = Converter\PatientConverter::convertToPatientValueEntity(
-            $form->id,
+            $patient_id,
             $user->id,
             $registered_at,
             $form->opt_out_flg,
@@ -237,11 +253,15 @@ class PatientService
     public function updatePatientValue(Form\PatientValueForm $form, Models\User $user)
     {
         $patient_id = $form->id;
+        $organization_id = $user->organization_id;
 
-        $patient = Repos\PatientRepository::findOneById($patient_id);
+        //ユーザーの組織で患者IDからアクティブな患者を検索
+        $patient = Repos\PatientRepository::findActiveOneByOrganizationIdAndId($organization_id, $patient_id);
 
-        if (is_null($patient)) {
-            $form->addError('id', 'validation.id_not_found');
+        $patient_not_exists = is_null($patient);
+
+        if ($patient_not_exists) {
+            $form->addError('id', 'validation.id_inaccessible');
             throw new Exceptions\InvalidFormException($form);
         }
 
@@ -295,9 +315,10 @@ class PatientService
 
                 //削除履歴追加
                 $delete_history = Converter\HistoryConverter::convertToHistoryEntity(
-                    $old_patient_value, 
-                    HistoryBaseModel::DELETE, 
-                    $user->id);
+                    $old_patient_value,
+                    HistoryBaseModel::DELETE,
+                    $user->id
+                );
                 $delete_history->save();
 
                 //編集後データ登録
@@ -306,9 +327,10 @@ class PatientService
                 //登録履歴追加
                 $create_history = Converter\HistoryConverter::convertToHistoryEntity(
                     $new_patient_value,
-                     HistoryBaseModel::CREATE,
-                      $user->id);
-                      
+                    HistoryBaseModel::CREATE,
+                    $user->id
+                );
+
                 $create_history->save();
             }
         );

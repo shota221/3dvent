@@ -12,9 +12,19 @@ class PatientRepository
         return Patient::query();
     }
 
-    public static function findOneById(int $patient_id)
+    private static function queryActive()
     {
-        return static::query()->where('id', $patient_id)->first();
+        return static::query()->where('active', Patient::ACTIVE);
+    }
+
+    public static function findOneById(int $id)
+    {
+        return static::query()->where('id', $id)->first();
+    }
+
+    public static function findActiveOneById(int $id)
+    {
+        return static::queryActive()->where('id', $id)->first();
     }
 
     public static function findOneByOrganizationIdAndPatientCode(int $organization_id, string $patient_code)
@@ -33,6 +43,15 @@ class PatientRepository
             ->first();
     }
 
+    public static function findActiveOneByOrganizationIdAndId(int $organization_id, int $id)
+    {
+        return static::queryActive()
+            ->where('organization_id', $organization_id)
+            ->where('id', $id)
+            ->first();
+    }
+
+
     public static function existsByOrganizationIdAndId(int $organization_id, int $id)
     {
         return static::query()
@@ -44,6 +63,14 @@ class PatientRepository
     public static function existsByPatientCodeAndOrganizationId($patient_code, $organization_id)
     {
         return static::query()
+            ->where('organization_id', $organization_id)
+            ->where('patient_code', $patient_code)
+            ->exists();
+    }
+
+    public static function IsActiveByPatientCodeAndOrganizationId($patient_code, $organization_id)
+    {
+        return static::queryActive()
             ->where('organization_id', $organization_id)
             ->where('patient_code', $patient_code)
             ->exists();
