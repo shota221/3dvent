@@ -54,12 +54,12 @@ class VentilatorValueService
 
         $is_active_ventilator = Repos\VentilatorRepository::IsActiveById($ventilator_id);
 
-        if (! $is_active_ventilator) {
+        if (!$is_active_ventilator) {
             $form->addError('ventilator_id', 'validation.id_not_found');
             throw new Exceptions\InvalidFormException($form);
         }
 
-        $patient = Repos\PatientRepository::findOneById($form->patient_id);
+        $patient = Repos\PatientRepository::findActiveOneById($form->patient_id);
 
         if (is_null($patient)) {
             $form->addError('patient_id', 'validation.id_not_found');
@@ -157,9 +157,7 @@ class VentilatorValueService
             $ventilator_value = Repos\VentilatorValueRepository::findOneByRegisteredUserIdAndId($user_id, $form->id);
         }
 
-        $ventilator_value_not_exists = is_null($ventilator_value);
-
-        if ($ventilator_value_not_exists) {
+        if (is_null($ventilator_value)) {
             $form->addError('ventilator_value_id', 'validation.id_inaccessible');
             throw new Exceptions\InvalidFormException($form);
         }
@@ -241,7 +239,7 @@ class VentilatorValueService
 
         $is_active_ventilator = Repos\VentilatorRepository::IsActiveById($ventilator_id);
 
-        if (! $is_active_ventilator) {
+        if (!$is_active_ventilator) {
             $form->addError('ventilator_id', 'validation.id_not_found');
             throw new Exceptions\InvalidFormException($form);
         }

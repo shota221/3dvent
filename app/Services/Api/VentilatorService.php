@@ -109,9 +109,7 @@ class VentilatorService
     {
         $ventilator = Repos\VentilatorRepository::findActiveOneById($form->id);
 
-        $ventilator_not_exists = is_null($ventilator);
-
-        if ($ventilator_not_exists) {
+        if (is_null($ventilator)) {
             $form->addError('id', 'validation.id_not_found');
             throw new Exceptions\InvalidFormException($form);
         }
@@ -198,8 +196,7 @@ class VentilatorService
                 $ventilator = Repos\VentilatorRepository::findActiveOneByOrganizationIdAndId($organization_id, $id);
             } else {
                 //そうでない場合は自身の登録したのventilatorに対して非活性化可能
-                $user_id = $user->id;
-                $ventilator = Repos\VentilatorRepository::findActiveOneByRegisteredUserIdAndId($user_id, $id);
+                $ventilator = Repos\VentilatorRepository::findActiveOneByRegisteredUserIdAndId($user->id, $id);
             }
         } else {
             //ログインしていない場合は組織に属していないventilatorに対して非活性化可能
@@ -207,9 +204,7 @@ class VentilatorService
             $ventilator = Repos\VentilatorRepository::findActiveOneHasNoOrganizationIdById($id);
         }
 
-        $ventilator_not_exists = is_null($ventilator);
-
-        if ($ventilator_not_exists) {
+        if (is_null($ventilator)) {
             $form->addError('id', 'validation.id_inaccessible');
             throw new Exceptions\InvalidFormException($form);
         }

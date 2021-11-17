@@ -39,12 +39,12 @@ class PatientService
         }
 
         //同一組織内に同じ患者コードが存在するかどうか
-        $exists = !(is_null($organization_id) || is_null($form->patient_code))
-            && Repos\PatientRepository::IsActiveByPatientCodeAndOrganizationId($form->patient_code, $organization_id);
-
-        if ($exists) {
-            $form->addError('patient_code', 'validation.duplicated_patient_code');
-            throw new Exceptions\InvalidFormException($form);
+        if (!is_null($organization_id) && !is_null($form->patient_code)) {
+            $exists = Repos\PatientRepository::IsActiveByPatientCodeAndOrganizationId($form->patient_code, $organization_id);
+            if ($exists) {
+                    $form->addError('patient_code', 'validation.duplicated_patient_code');
+                    throw new Exceptions\InvalidFormException($form);
+                }
         }
 
 
@@ -87,9 +87,7 @@ class PatientService
     {
         $patient = Repos\PatientRepository::findActiveOneById($form->id);
 
-        $is_active_patient = !is_null($patient);
-
-        if (!$is_active_patient) {
+        if (is_null($patient)) {
             $form->addError('id', 'validation.id_inaccessible');
             throw new Exceptions\InvalidFormException($form);
         }
@@ -115,44 +113,32 @@ class PatientService
     {
         $patient = Repos\PatientRepository::findActiveOneById($form->id);
 
-        $is_active_patient = !is_null($patient);
-
-        if (!$is_active_patient) {
+        if (is_null($patient)) {
             $form->addError('id', 'validation.id_inaccessible');
             throw new Exceptions\InvalidFormException($form);
         }
 
-        $exists = false;
+        // アップデート先の患者に組織IDがあり、フォームに患者コードがあれば患者コードの重複確認
+        // フォームとアップデート先の患者コードが同一ではなく、組織内にフォームと同じ患者コードをもつアクティブなpatientが存在した場合
+        if (!is_null($patient->organization_id) && !is_null($form->patient_code)) {
+            $has_different_patient_code = $form->patient_code !== $patient->patient_code;
 
-        // $exists = true の場合（前提：患者組織ID有）
-        // フォームとアップデート先の患者コードが同一ではなく、組織内に同じ患者コードが存在した場合
-        // アップデート先の患者コードが存在せず、組織内にフォームと同じ患者コードが存在した場合
-        if (!is_null($patient->organization_id)) {
-            // フォームの患者コードが患者所属組織内に存在するかどうか
-            if (!is_null($form->patient_code)) {
-                $is_match_patient_code = !is_null($patient->patient_code) && $form->patient_code === $patient->patient_code;
-
-                $exists = !$is_match_patient_code && Repos\PatientRepository::isActiveByPatientCodeAndOrganizationId($form->patient_code, $patient->organization_id);
-            }
+            $exists = $has_different_patient_code && Repos\PatientRepository::IsActiveByPatientCodeAndOrganizationId($form->patient_code, $patient->organization_id);
+            if ($exists) {
+                    $form->addError('patient_code', 'validation.duplicated_patient_code');
+                    throw new Exceptions\InvalidFormException($form);
+                }
         }
 
-        if ($exists) {
-            $form->addError('patient_code', 'validation.duplicated_patient_code');
-            throw new Exceptions\InvalidFormException($form);
-        }
+        $patient->patient_code = $form->patinet_code;
+        $patient->height = $form->height;
+        $patient->gender = $form->gender;
+        $patient->weight = $form->weight;
 
-        $entity = Converter\PatientConverter::convertToUpdateEntity(
-            $patient,
-            $form->patient_code,
-            $form->height,
-            $form->gender,
-            $form->weight
-        );
-
-        DBUtil::Transaction(
+        Support\DBUtil::Transaction(
             '患者情報更新',
-            function () use ($entity) {
-                $entity->save();
+            function () use ($patient) {
+                $patient->save();
             }
         );
 
@@ -170,7 +156,7 @@ class PatientService
 
         $predicted_vt = $this->calcPredictedVt(floatval($ideal_weight), $vt_per_kg);
 
-        return Converter\PatientConverter::convertToPatientResult($entity, $predicted_vt);
+        return Converter\PatientConverter::convertToPatientResult($patient, $predicted_vt);
     }
 
     public function getPatientValueResult(Form\PatientShowForm $form, Models\User $user)
@@ -181,9 +167,7 @@ class PatientService
         //ユーザーの組織で患者IDからアクティブな患者を検索
         $patient = Repos\PatientRepository::findActiveOneByOrganizationIdAndId($organization_id, $patient_id);
 
-        $patient_not_exists = is_null($patient);
-
-        if ($patient_not_exists) {
+        if (is_null($patient)) {
             $form->addError('id', 'validation.id_inaccessible');
             throw new Exceptions\InvalidFormException($form);
         }
@@ -201,9 +185,7 @@ class PatientService
         //ユーザーの組織で患者IDからアクティブな患者を検索
         $patient = Repos\PatientRepository::findActiveOneByOrganizationIdAndId($organization_id, $patient_id);
 
-        $patient_not_exists = is_null($patient);
-
-        if ($patient_not_exists) {
+        if (is_null($patient)) {
             $form->addError('id', 'validation.id_inaccessible');
             throw new Exceptions\InvalidFormException($form);
         }
@@ -258,9 +240,7 @@ class PatientService
         //ユーザーの組織で患者IDからアクティブな患者を検索
         $patient = Repos\PatientRepository::findActiveOneByOrganizationIdAndId($organization_id, $patient_id);
 
-        $patient_not_exists = is_null($patient);
-
-        if ($patient_not_exists) {
+        if (is_null($patient)) {
             $form->addError('id', 'validation.id_inaccessible');
             throw new Exceptions\InvalidFormException($form);
         }
@@ -273,13 +253,10 @@ class PatientService
             $old_patient_value = Repos\PatientValueRepository::findOneByOrganizationIdAndPatientId($organization_id, $patient_id);
         } else {
             //そうでない場合は自身の登録したpatient_valueに対して編集可能
-            $user_id = $user->id;
-            $old_patient_value = Repos\PatientValueRepository::findOneByPatientObsUserIdAndPatientId($user_id, $patient_id);
+            $old_patient_value = Repos\PatientValueRepository::findOneByPatientObsUserIdAndPatientId($user->id, $patient_id);
         }
 
-        $patient_value_not_exists = is_null($old_patient_value);
-
-        if ($patient_value_not_exists) {
+        if (is_null($old_patient_value)) {
             $form->addError('id', 'validation.id_innaccessible');
             throw new Exceptions\InvalidFormException($form);
         }

@@ -28,7 +28,7 @@ class AppkeyGate
      * @param string|null $input_key
      * @return Appkey|null
      */
-    public static function getValidAppkey(?string $input_key = null)
+    public static function getValidAppkey(string $input_key = null)
     {
         $request = request();
 

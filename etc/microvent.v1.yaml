@@ -818,9 +818,16 @@ paths:
                   value:
                     result:
                       start_using_at: '2021-04-22 13:09:04'
-    delete:
+  '/ventilator/{ventilator_id}/init':
+    parameters:
+      - schema:
+          type: string
+        name: ventilator_id
+        in: path
+        required: true
+    put:
       summary: ''
-      operationId: delete-ventilator-ventilator_id
+      operationId: put-ventilator-ventilator_id-init
       responses:
         '200':
           description: OK
@@ -2578,10 +2585,10 @@ paths:
           name: gs1_code
           description: QR読み取りにより取得される識別コード
           required: true
-  '/ventilator/{ventilator_id}/no_auth':
-    delete:
+  '/ventilator/{ventilator_id}/init/no_auth':
+    put:
       summary: ''
-      operationId: delete-ventilator-ventilator_id-no_auth
+      operationId: put-ventilator-ventilator_id-init-no_auth
       responses:
         '200':
           description: OK

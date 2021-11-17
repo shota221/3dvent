@@ -22,9 +22,6 @@ class Patient extends BaseModel
      * 2.非活性          | NULL    | NULL       | 1つのgs1_codeに対して複数のpatientを紐付ける際（microventの多数回利用時）にスマートフォンアプリから"初期化"が行われた状態。スマートフォンアプリからの閲覧不可。
      * 3.削除            | NULL    | NOT NULL   |組織移動等の際にadmin管理画面から"削除"が行われた状態。どの端末からも閲覧不可。
      * 
-     * すなわち、activeはスマートフォンアプリからの閲覧に係る値（1:閲覧可能, NULL:閲覧不可）
-     * であり、deleted_atは管理画面からの閲覧に係る値（NULL:閲覧可能, NOT NULL:閲覧不可）
-     * である。
      */
     const ACTIVE = 1,
         INACTIVE = null;

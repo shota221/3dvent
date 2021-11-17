@@ -87,8 +87,8 @@ Route::group(['middleware' => ['routetype:api']], function () {
         Route::get('/ventilator/no_auth', 'VentilatorController@show')->name('api.ventilator.show.no_auth');
         //呼吸器情報登録
         Route::post('/ventilator/no_auth', 'VentilatorController@create')->name('api.ventilator.create.no_auth');
-        //呼吸器非活性化
-        Route::delete('/ventilator/{id}/no_auth', 'VentilatorController@deactivate')->name('api.ventilator.deactivate.no_auth');
+        //呼吸器初期化（非活性化）
+        Route::put('/ventilator/{id}/init/no_auth', 'VentilatorController@deactivate')->name('api.ventilator.deactivate.no_auth');
 
 
         /********************
@@ -156,7 +156,7 @@ Route::group(['middleware' => ['routetype:api']], function () {
             Route::put('/ventilator/{id}', 'VentilatorController@update')->name('api.ventilator.update');
             //呼吸器非活性化
             Route::group(['middleware' => ['can:ventilator_initializable']], function(){
-                Route::delete('/ventilator/{id}', 'VentilatorController@deactivate')->name('api.ventilator.deactivate');
+                Route::put('/ventilator/{id}/init', 'VentilatorController@deactivate')->name('api.ventilator.deactivate');
             });
 
 
