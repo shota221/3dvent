@@ -66,7 +66,7 @@ class PatientController extends ApiController
         return $response;
     }
 
-    public function showDetail(Request $request, $id)
+    public function showValue(Request $request, $id)
     {
         $request->merge(['id' => $id]);
 
@@ -83,7 +83,7 @@ class PatientController extends ApiController
         return $response;
     }
 
-    public function createDetail(Request $request, $id)
+    public function createValue(Request $request, $id)
     {
         $request->merge(['id' => $id]);
 
@@ -100,7 +100,7 @@ class PatientController extends ApiController
         return $response;
     }
 
-    public function updateDetail(Request $request, $id)
+    public function updateValue(Request $request, $id)
     {
         $request->merge(['id' => $id]);
 

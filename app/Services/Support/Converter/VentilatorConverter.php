@@ -146,7 +146,7 @@ class VentilatorConverter
     $ventilator_result->registered_user_name = $entity->registered_user_name;
     $ventilator_result->expiration_date = $entity->expiration_date;
     $ventilator_result->start_using_at = $entity->start_using_at;
-    $ventilator_result->has_bug = !is_null($entity->bug_ventialtor_id);
+    $ventilator_result->has_bug = !is_null($entity->bug_ventilator_id);
 
     return $ventilator_result;
   }
@@ -223,7 +223,7 @@ class VentilatorConverter
     $ventilator_result->registered_user_name = $entity->registered_user_name;
     $ventilator_result->expiration_date = $entity->expiration_date;
     $ventilator_result->start_using_at = $entity->start_using_at;
-    $ventilator_result->has_bug = !is_null($entity->bug_ventialtor_id);
+    $ventilator_result->has_bug = !is_null($entity->bug_ventilator_id);
 
     return $ventilator_result;
   }

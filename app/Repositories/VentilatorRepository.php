@@ -187,7 +187,7 @@ class VentilatorRepository
                 'ventilators.*',
                 'organizations.name AS organization_name',
                 'users.name AS registered_user_name',
-                'ventilator_bugs.ventilator_id AS bug_ventialtor_id'
+                'ventilator_bugs.ventilator_id AS bug_ventilator_id'
             ])
             ->distinct()
             ->limit($limit)
@@ -203,7 +203,7 @@ class VentilatorRepository
             ->select([
                 'ventilators.*',
                 'users.name AS registered_user_name',
-                'ventilator_bugs.ventilator_id AS bug_ventialtor_id'
+                'ventilator_bugs.ventilator_id AS bug_ventilator_id'
             ])
             ->distinct()
             ->limit($limit)
@@ -224,7 +224,7 @@ class VentilatorRepository
         ->select([
             'ventilators.*',
             'users.name AS registered_user_name',
-            'ventilator_bugs.ventilator_id AS bug_ventialtor_id'
+            'ventilator_bugs.ventilator_id AS bug_ventilator_id'
         ]);
         
         $query = self::createWhereClauseFromRegisteredUserId($query, $registered_user_id);
@@ -245,7 +245,7 @@ class VentilatorRepository
                 'ventilators.*',
                 'organizations.name AS organization_name',
                 'users.name AS registered_user_name',
-                'ventilator_bugs.ventilator_id AS bug_ventialtor_id'
+                'ventilator_bugs.ventilator_id AS bug_ventilator_id'
             ])
             ->distinct()
             ->count();
@@ -257,7 +257,7 @@ class VentilatorRepository
             ->select([
                 'ventilators.*',
                 'users.name AS registered_user_name',
-                'ventilator_bugs.ventilator_id AS bug_ventialtor_id'
+                'ventilator_bugs.ventilator_id AS bug_ventilator_id'
             ])
             ->distinct()
             ->count();
@@ -272,7 +272,7 @@ class VentilatorRepository
         ->select([
             'ventilators.*',
             'users.name AS registered_user_name',
-            'ventilator_bugs.ventilator_id AS bug_ventialtor_id'
+            'ventilator_bugs.ventilator_id AS bug_ventilator_id'
         ]);
         
         $query = self::createWhereClauseFromRegisteredUserId($query, $registered_user_id);

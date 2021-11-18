@@ -818,7 +818,7 @@ paths:
                   value:
                     result:
                       start_using_at: '2021-04-22 13:09:04'
-  '/ventilator/{ventilator_id}/init':
+  '/ventilator/{ventilator_id}/deactivation':
     parameters:
       - schema:
           type: string
@@ -1460,7 +1460,7 @@ paths:
       tags:
         - user
     parameters: []
-  '/patient/{patient_id}/detail':
+  '/patient/{patient_id}/value':
     parameters:
       - schema:
           type: string
@@ -1853,7 +1853,7 @@ paths:
         例1）ventilator_id = 1 のfixed_flgが立っているventilat_valueのidを取得したい場合
         　?ventilator_id=1&fixed_flg=1
         例2）ventilator_id = 1 の最新のventilator_valueのidを取得したい場合
-         ?ventilator_id=1&limit=1
+        ?ventilator_id=1&limit=1
       parameters:
         - schema:
             type: string
@@ -2585,7 +2585,7 @@ paths:
           name: gs1_code
           description: QR読み取りにより取得される識別コード
           required: true
-  '/ventilator/{ventilator_id}/init/no_auth':
+  '/ventilator/{ventilator_id}/deactivation/no_auth':
     put:
       summary: ''
       operationId: put-ventilator-ventilator_id-init-no_auth

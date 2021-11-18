@@ -88,7 +88,7 @@ Route::group(['middleware' => ['routetype:api']], function () {
         //呼吸器情報登録
         Route::post('/ventilator/no_auth', 'VentilatorController@create')->name('api.ventilator.create.no_auth');
         //呼吸器初期化（非活性化）
-        Route::put('/ventilator/{id}/init/no_auth', 'VentilatorController@deactivate')->name('api.ventilator.deactivate.no_auth');
+        Route::put('/ventilator/{id}/deactivation/no_auth', 'VentilatorController@deactivate')->name('api.ventilator.deactivate.no_auth');
 
 
         /********************
@@ -128,13 +128,13 @@ Route::group(['middleware' => ['routetype:api']], function () {
             //患者情報更新
             Route::put('/patient/{id}', 'PatientController@update')->name('api.patient.update');
             //患者観察研究データの存在確認および取得
-            Route::get('/patient/{id}/detail', 'PatientController@showDetail')->name('api.patient.show_detail');
+            Route::get('/patient/{id}/value', 'PatientController@showValue')->name('api.patient.show_value');
             //患者観察研究データの登録
-            Route::post('/patient/{id}/detail', 'PatientController@createDetail')->name('api.patient.create_detail');
+            Route::post('/patient/{id}/value', 'PatientController@createValue')->name('api.patient.create_value');
             
             Route::group(['middleware' => ['can:patient_value_editable']], function(){
                 //患者観察研究データの更新
-                Route::put('/patient/{id}/detail', 'PatientController@updateDetail')->name('api.patient.update_detail');
+                Route::put('/patient/{id}/value', 'PatientController@updateValue')->name('api.patient.update_value');
             });
 
             /********
@@ -156,7 +156,7 @@ Route::group(['middleware' => ['routetype:api']], function () {
             Route::put('/ventilator/{id}', 'VentilatorController@update')->name('api.ventilator.update');
             //呼吸器非活性化
             Route::group(['middleware' => ['can:ventilator_initializable']], function(){
-                Route::put('/ventilator/{id}/init', 'VentilatorController@deactivate')->name('api.ventilator.deactivate');
+                Route::put('/ventilator/{id}/deactivation', 'VentilatorController@deactivate')->name('api.ventilator.deactivate');
             });
 
 

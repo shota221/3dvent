@@ -423,7 +423,7 @@ class VentilatorService
                     /**
                      * トランザクション
                      * 1,patientsおよびventilatorsを個別にsaveし、新旧idのマッピングを作成
-                     * 2,1のマッピングをもとにventialtor_valueおよびpatient_valueをバルクインサート
+                     * 2,1のマッピングをもとにventilator_valueおよびpatient_valueをバルクインサート
                      * 3,各種historyをバルクインサート
                      */
                     DBUtil::Transaction(
@@ -447,7 +447,7 @@ class VentilatorService
                                 foreach ($map_old_ventilator_id_to_ventilator as $old_ventilator_id => $ventilator) {
                                     $ventilator->save();
 
-                                    //patient insert後に対応ventialtor.patient_idをbulk update
+                                    //patient insert後に対応ventilator.patient_idをbulk update
                                     if (!is_null($ventilator->patient_id)) {
                                         $update_target_ventilator_ids[] = $ventilator->id;
                                         $update_target_ventilator_patient_ids[] = $ventilator->patient_id;
@@ -527,7 +527,7 @@ class VentilatorService
                                 //ventilator_value_historiesバルクインサート
                                 //現在のchunkで新たに挿入されたventilator_valueのventilator_id列でventilator_value_idをselect(これらventilator_idは必ずこのインポートで挿入されたものである)
                                 //$saved_ventilator_value_idsに含まれていないものを抽出→バルクインサート
-                                //$saved_ventialtor_value_idsを更新
+                                //$saved_ventilator_value_idsを更新
                                 $chunk_saved_ventilator_value_ids = Repos\VentilatorValueRepository::getIdsByVentilatorIds($list_ventilator_value_for_bulk_insert['ventilator_id'])->all();
                                 $chunk_saved_ventilator_value_ids = array_diff($chunk_saved_ventilator_value_ids, $saved_ventilator_value_ids);
                                 Repos\VentilatorValueHistoryRepository::insertBulk(

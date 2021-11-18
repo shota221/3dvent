@@ -34,9 +34,8 @@ class VentilatorService
     {
         $ventilator = Repos\VentilatorRepository::findActiveOneByGs1Code($form->gs1_code);
 
-        $is_unregistered = is_null($ventilator);
-
-        if ($is_unregistered) {
+        //アクティブなgs1Codeが登録されていない場合
+        if (is_null($ventilator)) {
             return Converter\VentilatorConverter::convertToVentilatorResult();
         }
 
@@ -176,11 +175,11 @@ class VentilatorService
     }
 
     /**
-     * Undocumented function
+     * 非活性化。Models\Ventilator参照
      *
-     * @param [type] $form
-     * @param [type] $user
-     * @return void
+     * @param Form\VentilatorDeactivateForm $form
+     * @param Models\User $user
+     * @return \App\Http\Response\Api\VentilatorResult
      */
     public function deactivate(Form\VentilatorDeactivateForm $form, Models\User $user = null)
     {
@@ -189,7 +188,7 @@ class VentilatorService
         $logged_in = !is_null($user);
 
         if ($logged_in) {
-            //ログインしている場合（ventialtor_initializable通過済）
+            //ログインしている場合（ventilator_initializable通過済）
             if (Auth\OrgUserGate::canInitializeAllVentilator($user)) {
                 //全体権限を有している場合は組織内ventilatorに対して非活性化可能
                 $organization_id = $user->organization_id;
@@ -209,19 +208,10 @@ class VentilatorService
             throw new Exceptions\InvalidFormException($form);
         }
 
-        $patient = Repos\PatientRepository::findActiveOneById($ventilator->id);
-
         Support\DBUtil::Transaction(
             '呼吸器非活性化',
-            function () use ($ventilator, $patient) {
-                //ventilator非活性化時、patientが存在すればそれも非活性化する
-                $ventilator->active = Models\Ventilator::INACTIVE;
-                $ventilator->save();
-
-                if(! is_null($patient)) {
-                    $patient->active = Models\Patient::INACTIVE;
-                    $patient->save();
-                }
+            function () use ($ventilator) {
+                $ventilator->deactivate();
             }
         );
 

@@ -15,7 +15,6 @@ class Ventilator extends BaseModel
     /**
      * 備考：ventilatorの"状態"について
      * ventilatorには以下の3つの状態がある。
-     * また、ventilatorの状態変化に伴い、紐づくpatientの状態も変化する。
      * 
      *  状態名           | active  | deleted_at | 説明
      * 1.活性(デフォルト) | 1       | NULL       | 以下の2でも3でもない状態。ユーザーが権限を満たしている限り、どの端末からも閲覧可能
@@ -40,5 +39,10 @@ class Ventilator extends BaseModel
     public function getLngAttribute()
     {
         return $this->attributes['lng'];
+    }
+
+    public function deactivate() {
+        $this->active = self::INACTIVE;
+        $this->save();
     }
 }
