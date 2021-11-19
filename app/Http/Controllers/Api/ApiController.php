@@ -11,7 +11,7 @@ abstract class ApiController extends BaseController
     /**
      * user tokenがあればそこからユーザーを取得
      * 
-     * @return [type] [description]
+     * @return \Illuminate\Contracts\Auth\Authenticatable|null
      */
     protected function getUser()
     {

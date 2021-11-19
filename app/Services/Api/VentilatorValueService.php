@@ -3,7 +3,10 @@
 namespace App\Services\Api;
 
 use App\Exceptions;
+use App\Http\Auth;
+use App\Http\Forms\Api as Form;
 use App\Http\Response as Response;
+use App\Models;
 use App\Models\HistoryBaseModel;
 use App\Repositories as Repos;
 use App\Services\Support as Support;
@@ -21,13 +24,13 @@ class VentilatorValueService
      * @param [type] $form
      * @return void
      */
-    public function getVentilatorValueResult($form)
+    public function getVentilatorValueResult(Form\VentilatorValueShowForm $form)
     {
         $ventilator_value = Repos\VentilatorValueRepository::findOneById($form->id);
 
         if (is_null($ventilator_value)) {
             $form->addError('ventilator_value_id', 'validation.id_not_found');
-            return false;
+            throw new Exceptions\InvalidFormException($form);
         }
 
         $registered_user_id = $ventilator_value->registered_user_id;
@@ -45,18 +48,22 @@ class VentilatorValueService
      * @param [type] $appkey
      * @return void
      */
-    public function create($form, $user, $appkey)
+    public function create(Form\VentilatorValueCreateForm $form, Models\User $user, Models\Appkey $appkey)
     {
-        if (!Repos\VentilatorRepository::existsById($form->ventilator_id)) {
+        $ventilator_id = $form->ventilator_id;
+
+        $ventilator_exists = Repos\VentilatorRepository::existsById($ventilator_id);
+
+        if (!$ventilator_exists) {
             $form->addError('ventilator_id', 'validation.id_not_found');
-            return false;
+            throw new Exceptions\InvalidFormException($form);
         }
 
         $patient = Repos\PatientRepository::findOneById($form->patient_id);
 
         if (is_null($patient)) {
             $form->addError('patient_id', 'validation.id_not_found');
-            return false;
+            throw new Exceptions\InvalidFormException($form);
         }
 
         $appkey_id = $appkey->id;
@@ -93,7 +100,7 @@ class VentilatorValueService
         $ideal_weight = $this->calcIdealWeight($height, $gender);
 
         $entity = Converter\VentilatorValueConverter::convertToVentilatorValueEntity(
-            $form->ventilator_id,
+            $ventilator_id,
             $height,
             $weight,
             $gender,
@@ -135,13 +142,24 @@ class VentilatorValueService
      * @param [type] $form
      * @return void
      */
-    public function update($form, $user)
+    public function update(Form\VentilatorValueUpdateForm $form, Models\User $user)
     {
-        $ventilator_value = Repos\VentilatorValueRepository::findOneById($form->id);
+        $id = $form->id;
+        $ventilator_value = null;
+
+        if (Auth\OrgUserGate::canEditAllVentilatorValue($user)) {
+            //全体権限を有している場合は組織内ventilator_valueに対して編集可能
+            $organization_id = $user->organization_id;
+            $ventilator_value = Repos\VentilatorValueRepository::findOneByOrganizationIdAndId($organization_id, $id);
+        } else {
+            //そうでない場合は自身の登録したventilator_valueに対して編集可能
+            $user_id = $user->id;
+            $ventilator_value = Repos\VentilatorValueRepository::findOneByRegisteredUserIdAndId($user_id, $form->id);
+        }
 
         if (is_null($ventilator_value)) {
-            $form->addError('ventilator_value_id', 'validation.id_not_found');
-            return false;
+            $form->addError('ventilator_value_id', 'validation.id_inaccessible');
+            throw new Exceptions\InvalidFormException($form);
         }
 
         //編集前データの複製
@@ -215,9 +233,18 @@ class VentilatorValueService
         return Converter\VentilatorValueConverter::convertToVentilatorValueUpdateResult($entity->id, DateUtil::toDatetimeStr($entity->created_at));
     }
 
-    public function getVentilatorValueListResult($form)
+    public function getVentilatorValueListResult(Form\VentilatorValueListForm $form)
     {
-        $search_values = $this->buildVentilatorValueSearchValues($form->ventilator_id, $form->fixed_flg);
+        $ventilator_id = $form->ventilator_id;
+
+        $is_active_ventilator = Repos\VentilatorRepository::IsActiveById($ventilator_id);
+
+        if (!$is_active_ventilator) {
+            $form->addError('ventilator_id', 'validation.id_not_found');
+            throw new Exceptions\InvalidFormException($form);
+        }
+
+        $search_values = $this->buildVentilatorValueSearchValues($ventilator_id, $form->fixed_flg);
 
         $ventilator_values = Repos\VentilatorValueRepository::findBySeachValuesAndLimitOffsetOrderByRegisteredAtDesc($search_values, $form->limit, $form->offset);
 

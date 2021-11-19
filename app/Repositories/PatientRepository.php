@@ -12,9 +12,9 @@ class PatientRepository
         return Patient::query();
     }
 
-    public static function findOneById(int $patient_id)
+    public static function findOneById(int $id)
     {
-        return static::query()->where('id', $patient_id)->first();
+        return static::query()->where('id', $id)->first();
     }
 
     public static function findOneByOrganizationIdAndPatientCode(int $organization_id, string $patient_code)
@@ -49,6 +49,15 @@ class PatientRepository
             ->exists();
     }
 
+    public static function existsByPatientCodeAndOrganizationIdExceptId($patient_code, $organization_id, $id)
+    {
+        return static::query()
+            ->where('organization_id', $organization_id)
+            ->where('patient_code', $patient_code)
+            ->where('id', '<>', $id)
+            ->exists();
+    }
+
     public static function getOrganizationIdById(int $id)
     {
         return static::query()->where('id', $id)->value('organization_id');
@@ -61,6 +70,6 @@ class PatientRepository
 
     public static function logicalDeleteByIds(array $ids)
     {
-        return  static::query()->whereIn('id', $ids)->update(['deleted_at' => DateUtil::now(), 'active' => null]);
+        return  static::query()->whereIn('id', $ids)->update(['deleted_at' => DateUtil::now()]);
     }
 }

@@ -139,6 +139,7 @@ return [
     'duplicated_patient_code' => '同一組織内ですでに使われている患者番号です。',
     'duplicated_patient_id' => 'すでに登録済みです。',
     'duplicated_registration' => 'すでに登録されています。',
+    'id_inaccessible'=>'操作対象外のIDです。',
     'id_not_found'=>'削除されているか、存在しないIDです。',
     'id_not_found_contained'=>'削除されているIDか存在しないIDが含まれています。',
     'code_not_found'=>'削除されているか、存在しない組織コードです。',

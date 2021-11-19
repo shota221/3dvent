@@ -10,7 +10,7 @@ class PatientUpdateForm extends BaseForm
 {
     public $id;
 
-    public $patinet_code;
+    public $patient_code;
 
     public $height;
 
@@ -23,7 +23,7 @@ class PatientUpdateForm extends BaseForm
         return [
             'id' => 'required|'.Rule::VALUE_INTEGER,
 
-            'patinet_code' => 'nullable|'.Rule::VALUE_STRING,
+            'patient_code' => 'nullable|'.Rule::VALUE_STRING,
         
             'height' => 'required|'.Rule::VALUE_POSITIVE.'|max:999',
         

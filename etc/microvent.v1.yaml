@@ -818,6 +818,71 @@ paths:
                   value:
                     result:
                       start_using_at: '2021-04-22 13:09:04'
+  '/ventilator/{ventilator_id}/deactivation':
+    parameters:
+      - schema:
+          type: string
+        name: ventilator_id
+        in: path
+        required: true
+    put:
+      summary: ''
+      operationId: put-ventilator-ventilator_id-init
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                x-examples:
+                  example-1:
+                    result:
+                      id: 1
+                properties:
+                  result:
+                    type: object
+                    required:
+                      - ventilator_id
+                    properties:
+                      ventilator_id:
+                        type: number
+                required:
+                  - result
+              examples:
+                example-1:
+                  value:
+                    result:
+                      ventilator_id: 1
+      description: |-
+        ventilatorの非活性化、アプリからの取得が不可となる。
+        多数回利用時を想定。
+        ログイン済=X-User-Tokenを有する場合はventilatorが読み込まれる段階で、ventilatorは組織に紐付いているため、
+        権限を有してさえいればすべてのventilaorに対して非活性化可能
+      tags:
+        - ventilator
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: X-App-Key
+          description: 疎通用トークン
+        - schema:
+            type: string
+          in: header
+          name: Accept
+          description: application/json
+        - schema:
+            type: string
+          in: header
+          description: application/json; charset=UTF-8
+          name: Content-Type
+        - schema:
+            type: string
+          in: header
+          name: X-User-Token
+          description: ユーザー識別用トークン
   '/patient/{patient_id}':
     parameters:
       - schema:
@@ -1395,7 +1460,7 @@ paths:
       tags:
         - user
     parameters: []
-  '/patient/{patient_id}/detail':
+  '/patient/{patient_id}/value':
     parameters:
       - schema:
           type: string
@@ -1788,7 +1853,7 @@ paths:
         例1）ventilator_id = 1 のfixed_flgが立っているventilat_valueのidを取得したい場合
         　?ventilator_id=1&fixed_flg=1
         例2）ventilator_id = 1 の最新のventilator_valueのidを取得したい場合
-         ?ventilator_id=1&limit=1
+        ?ventilator_id=1&limit=1
       parameters:
         - schema:
             type: string
@@ -2520,6 +2585,69 @@ paths:
           name: gs1_code
           description: QR読み取りにより取得される識別コード
           required: true
+  '/ventilator/{ventilator_id}/deactivation/no_auth':
+    put:
+      summary: ''
+      operationId: put-ventilator-ventilator_id-init-no_auth
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                    required:
+                      - id
+                required:
+                  - result
+                x-examples:
+                  example-1:
+                    result:
+                      id: 1
+              examples:
+                example-1:
+                  value:
+                    result:
+                      id: 1
+      description: |-
+        microventの非活性化、アプリからの取得が不可となる。
+        多数回利用時を想定。
+        no_authすなわちX-User-Tokenを持たない場合は、
+        ventilator_idが組織に紐付いていない場合に限り誰でも実行可能。
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: X-App-Key
+          description: 疎通用トークン
+          required: true
+        - schema:
+            type: string
+          in: header
+          required: true
+          name: Accept
+          description: application/json
+        - schema:
+            type: string
+          in: header
+          required: true
+          description: application/json; charset=UTF-8
+          name: Content-Type
+      tags:
+        - ventilator
+    parameters:
+      - schema:
+          type: string
+        name: ventilator_id
+        in: path
+        required: true
   /patient/no_auth:
     post:
       summary: 患者情報を新しく登録する

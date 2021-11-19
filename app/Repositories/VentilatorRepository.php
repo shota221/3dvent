@@ -23,6 +23,21 @@ class VentilatorRepository
         return static::query()->where('ventilators.organization_id', $organization_id);
     }
 
+    private static function queryByRegisteredUserId(int $registered_user_id)
+    {
+        return static::query()->where('ventilators.registered_user_id', $registered_user_id);
+    }
+
+    /**
+     * activeの定義、扱いについてはModels\Ventialtor参照
+     */
+    private static function queryActive($query = null)
+    {
+        $query = $query ?? static::query();
+        return $query->where('active', Ventilator::ACTIVE);
+    }
+
+
     private static function querySelectGeom()
     {
         return static::query()->select([
@@ -43,6 +58,11 @@ class VentilatorRepository
         return static::query()->where('id', $id)->exists();
     }
 
+    public static function IsActiveById(int $id)
+    {
+        return static::queryActive()->where('id', $id)->exists();
+    }
+
     public static function existsByOrganizationIdAndId(int $organization_id, int $id)
     {
         return static::queryByOrganizationId($organization_id)->where('id', $id)->exists();
@@ -50,8 +70,12 @@ class VentilatorRepository
 
     public static function findOneById(int $id)
     {
-        $table = Ventilator::tableName();
         return static::query()->where('id', $id)->first();
+    }
+
+    public static function findActiveOneById(int $id)
+    {
+        return static::queryActive()->where('id', $id)->first();
     }
 
     public static function logicalDeleteByIds(array $ids)
@@ -62,6 +86,19 @@ class VentilatorRepository
     public static function findOneByGs1Code($gs1_code)
     {
         return static::leftJoinOrganization()
+            ->addSelect([
+                'ventilators.*',
+                'organizations.name AS organization_name',
+                'organizations.code AS organization_code'
+            ])
+            ->where('gs1_code', $gs1_code)
+            ->orderBy('ventilators.created_at', 'DESC')
+            ->first();
+    }
+
+    public static function findActiveOneByGs1Code($gs1_code)
+    {
+        return static::leftJoinOrganization(self::queryActive())
             ->addSelect([
                 'ventilators.*',
                 'organizations.name AS organization_name',
@@ -150,7 +187,7 @@ class VentilatorRepository
                 'ventilators.*',
                 'organizations.name AS organization_name',
                 'users.name AS registered_user_name',
-                'ventilator_bugs.ventilator_id AS bug_ventialtor_id'
+                'ventilator_bugs.ventilator_id AS bug_ventilator_id'
             ])
             ->distinct()
             ->limit($limit)
@@ -166,7 +203,7 @@ class VentilatorRepository
             ->select([
                 'ventilators.*',
                 'users.name AS registered_user_name',
-                'ventilator_bugs.ventilator_id AS bug_ventialtor_id'
+                'ventilator_bugs.ventilator_id AS bug_ventilator_id'
             ])
             ->distinct()
             ->limit($limit)
@@ -187,7 +224,7 @@ class VentilatorRepository
         ->select([
             'ventilators.*',
             'users.name AS registered_user_name',
-            'ventilator_bugs.ventilator_id AS bug_ventialtor_id'
+            'ventilator_bugs.ventilator_id AS bug_ventilator_id'
         ]);
         
         $query = self::createWhereClauseFromRegisteredUserId($query, $registered_user_id);
@@ -208,7 +245,7 @@ class VentilatorRepository
                 'ventilators.*',
                 'organizations.name AS organization_name',
                 'users.name AS registered_user_name',
-                'ventilator_bugs.ventilator_id AS bug_ventialtor_id'
+                'ventilator_bugs.ventilator_id AS bug_ventilator_id'
             ])
             ->distinct()
             ->count();
@@ -220,7 +257,7 @@ class VentilatorRepository
             ->select([
                 'ventilators.*',
                 'users.name AS registered_user_name',
-                'ventilator_bugs.ventilator_id AS bug_ventialtor_id'
+                'ventilator_bugs.ventilator_id AS bug_ventilator_id'
             ])
             ->distinct()
             ->count();
@@ -235,7 +272,7 @@ class VentilatorRepository
         ->select([
             'ventilators.*',
             'users.name AS registered_user_name',
-            'ventilator_bugs.ventilator_id AS bug_ventialtor_id'
+            'ventilator_bugs.ventilator_id AS bug_ventilator_id'
         ]);
         
         $query = self::createWhereClauseFromRegisteredUserId($query, $registered_user_id);
@@ -355,6 +392,21 @@ class VentilatorRepository
     public static function findOneByOrganizationIdAndId(int $organization_id, int $id)
     {
         return self::queryByOrganizationId($organization_id)->where('id', $id)->first();
+    }
+
+    public static function findActiveOneByOrganizationIdAndId(int $organization_id, int $id)
+    {
+        return self::queryActive(self::queryByOrganizationId($organization_id))->where('id', $id)->first();
+    }
+
+    public static function findActiveOneByRegisteredUserIdAndId(int $registered_user_id, int $id)
+    {
+        return self::queryActive(self::queryByRegisteredUserId($registered_user_id))->where('id',$id)->first();
+    }
+
+    public static function findActiveOneHasNoOrganizationIdById(int $id)
+    {
+        return self::queryActive()->whereNull('organization_id')->where('id',$id)->first();
     }
 
     public static function logicalDeleteByOrganizationIdAndIds(int $organization_id, array $ids)

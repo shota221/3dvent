@@ -4,7 +4,9 @@ namespace App\Services\Api;
 
 use App\Exceptions;
 use App\Exceptions\HttpNotFoundException;
-use App\Http\Forms\Api\VentilatorShowForm;
+use App\Http\Auth;
+use App\Http\Forms\Api as Form;
+use App\Models;
 use App\Repositories as Repos;
 use App\Repositories\PatientRepository;
 use App\Services\Support as Support;
@@ -28,15 +30,14 @@ class VentilatorService
      * @param [type] $form
      * @return void
      */
-    public function getVentilatorResult(VentilatorShowForm $form, $user = null)
+    public function getVentilatorResult(Form\VentilatorShowForm $form, Models\User $user = null)
     {
-        //未登録の場合
-        $exists = Repos\VentilatorRepository::existsByGs1Code($form->gs1_code);
-        if (!$exists) {
+        $ventilator = Repos\VentilatorRepository::findActiveOneByGs1Code($form->gs1_code);
+
+        //アクティブなgs1Codeが登録されていない場合
+        if (is_null($ventilator)) {
             return Converter\VentilatorConverter::convertToVentilatorResult();
         }
-
-        $ventilator = Repos\VentilatorRepository::findOneByGs1Code($form->gs1_code);
 
         $from = DateUtil::parseToDatetime($ventilator->start_using_at);
 
@@ -47,7 +48,7 @@ class VentilatorService
         //no_authの場合
         $is_no_auth = is_null($user);
         if ($is_no_auth) {
-            return  Converter\VentilatorConverter::convertToVentilatorResult($ventilator,$is_recommended_period);
+            return  Converter\VentilatorConverter::convertToVentilatorResult($ventilator, $is_recommended_period);
         }
 
         $is_match_organization_id = OrganizationCheckUtil::checkUserAgainstVentilator($user, $ventilator->id);
@@ -57,7 +58,7 @@ class VentilatorService
             throw new Exceptions\InvalidFormException($form);
         }
 
-        return Converter\VentilatorConverter::convertToVentilatorResult($ventilator,$is_recommended_period);
+        return Converter\VentilatorConverter::convertToVentilatorResult($ventilator, $is_recommended_period);
     }
 
     /**
@@ -67,7 +68,7 @@ class VentilatorService
      * @param [type] $user
      * @return void
      */
-    public function create($form, $user = null)
+    public function create(Form\VentilatorCreateForm $form, Models\User $user = null)
     {
         $registered_user_id = null;
         $organization_id = null;
@@ -98,19 +99,19 @@ class VentilatorService
         );
 
         //組織名込の情報を際取得
-        $ventilator = Repos\VentilatorRepository::findOneByGs1Code($entity->gs1_code);
+        $ventilator = Repos\VentilatorRepository::findActiveOneByGs1Code($entity->gs1_code);
 
         return Converter\VentilatorConverter::convertToVentilatorRegistrationResult($ventilator);
     }
 
-    public function update($form, $user)
+    public function update(Form\VentilatorUpdateForm $form, Models\User $user)
     {
+        $ventilator = Repos\VentilatorRepository::findActiveOneById($form->id);
 
-        if (!Repos\VentilatorRepository::existsById($form->id)) {
-            throw new HttpNotFoundException();
+        if (is_null($ventilator)) {
+            $form->addError('id', 'validation.id_not_found');
+            throw new Exceptions\InvalidFormException($form);
         }
-
-        $ventilator = Repos\VentilatorRepository::findOneById($form->id);
 
         $v_org_id = $ventilator->organization_id;
 
@@ -121,16 +122,16 @@ class VentilatorService
         // 組織情報の整合チェック
         if ($is_match_organization_id) {
             $form->addError('id', 'validation.organization_mismatch');
-            return false;
+            throw new Exceptions\InvalidFormException($form);
         }
 
         $entity = Converter\VentilatorConverter::convertToVentilatorUpdateEntity($ventilator, $u_org_id, $form->start_using_at);
 
         $patient = null;
 
-        $isRegisteredPatient = !is_null($entity->patient_id);
+        $is_registered_patient = !is_null($entity->patient_id);
 
-        if ($isRegisteredPatient) {
+        if ($is_registered_patient) {
             $patient = Repos\PatientRepository::findOneById($entity->patient_id);
 
             // 現在の患者コード
@@ -153,7 +154,7 @@ class VentilatorService
 
                     if ($exists_new_organization_patient) {
                         $form->addError('patient_code', 'validation.duplicated_patient_code');
-                        return false;
+                        throw new Exceptions\InvalidFormException($form);
                     }
                 }
 
@@ -171,5 +172,49 @@ class VentilatorService
         );
 
         return Converter\VentilatorConverter::convertToVentilatorUpdateResult($entity);
+    }
+
+    /**
+     * 非活性化。Models\Ventilator参照
+     *
+     * @param Form\VentilatorDeactivateForm $form
+     * @param Models\User $user
+     * @return \App\Http\Response\Api\VentilatorResult
+     */
+    public function deactivate(Form\VentilatorDeactivateForm $form, Models\User $user = null)
+    {
+        $id = $form->id;
+        $ventilator = null;
+        $logged_in = !is_null($user);
+
+        if ($logged_in) {
+            //ログインしている場合（ventilator_initializable通過済）
+            if (Auth\OrgUserGate::canInitializeAllVentilator($user)) {
+                //全体権限を有している場合は組織内ventilatorに対して非活性化可能
+                $organization_id = $user->organization_id;
+                $ventilator = Repos\VentilatorRepository::findActiveOneByOrganizationIdAndId($organization_id, $id);
+            } else {
+                //そうでない場合は自身の登録したのventilatorに対して非活性化可能
+                $ventilator = Repos\VentilatorRepository::findActiveOneByRegisteredUserIdAndId($user->id, $id);
+            }
+        } else {
+            //ログインしていない場合は組織に属していないventilatorに対して非活性化可能
+            //$form->idとorganization_id IS NULLで取得
+            $ventilator = Repos\VentilatorRepository::findActiveOneHasNoOrganizationIdById($id);
+        }
+
+        if (is_null($ventilator)) {
+            $form->addError('id', 'validation.id_inaccessible');
+            throw new Exceptions\InvalidFormException($form);
+        }
+
+        Support\DBUtil::Transaction(
+            '呼吸器非活性化',
+            function () use ($ventilator) {
+                $ventilator->deactivate();
+            }
+        );
+
+        return Converter\VentilatorConverter::convertToVentilatorDeactivateResult($ventilator);
     }
 }
