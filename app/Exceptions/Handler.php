@@ -151,7 +151,7 @@ class Handler extends ExceptionHandler
         } else 
         if ($e instanceof SuspiciousOperationException) {
             $e = new NotFoundHttpException('不正なアクセスです。', $e); 
-        }
+        } 
 
         return $e;
     }
@@ -205,13 +205,32 @@ class Handler extends ExceptionHandler
             return response()->noContent(404);
         } else 
         if ($e instanceof AccessDeniedHttpException) {
-            return response()->noContent(401);
+           return $this->forbidden();
         } else
         if ($e instanceof CsrfTokenMismatchException) {
             return $this->csrfTokenMismatched($request);
         }
 
         return parent::prepareJsonResponse($request, $e);
+    }
+
+    private function forbidden()
+    {
+        if (app()->isHttpRouteTypeApi()) {
+            $messageKey = 'api.forbidden';
+
+            $messageCode = trans_code($messageKey);
+
+            $translated = trans($messageKey);
+
+            $error = new Response\Error(null, new Response\Message($messageCode, $translated));
+
+            $errorObj = new Response\ErrorJsonResult([$error]);
+
+            return response()->json($errorObj, 403);
+        } else {
+            return response()->noContent(403);
+        }
     }
 
     /**
