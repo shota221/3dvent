@@ -3084,6 +3084,52 @@ paths:
       tags:
         - bug
     parameters: []
+  /room:
+    get:
+      summary: Your GET endpoint
+      tags:
+        - room
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      uri:
+                        type: string
+                        minLength: 1
+                    required:
+                      - uri
+                required:
+                  - result
+                x-examples:
+                  example-1:
+                    result:
+                      uri: 'https://{nextcloud_basepath}/index.php/call/{token}'
+              examples:
+                example-1:
+                  value:
+                    result:
+                      uri: 'https://{nextcloud_basepath}/index.php/call/{token}'
+      operationId: get-room
+      description: チャットルームURI取得用API
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: X-App-Key
+          description: 疎通用トークン。ルームの識別にも用いる。
+        - schema:
+            type: string
+          in: header
+          name: Accept
+          description: application/json
 components:
   schemas: {}
 tags:
@@ -3092,6 +3138,7 @@ tags:
   - name: bug
   - name: calculate
   - name: patient
+  - name: room
   - name: user
   - name: ventilator
   - name: ventilator_value
