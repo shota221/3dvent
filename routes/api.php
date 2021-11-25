@@ -108,6 +108,13 @@ Route::group(['middleware' => ['routetype:api']], function () {
         //不具合報告
         Route::post('/bug_report/no_auth', 'BugReportController@create')->name('api.bug_report.create.no_auth');
 
+        
+        /********
+         * room
+         ********/
+        // チャットルームURI取得
+        Route::get('/room', 'RoomController@fetch')->name('api.room.fetch');
+
 
         /*************************
          * X-User-Token必須ルート *
