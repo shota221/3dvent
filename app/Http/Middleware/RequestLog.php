@@ -34,7 +34,6 @@ class RequestLog
             . 'METHOD=' . $request->method() . "\n" 
             . 'ACTION=' . $request->route()->getActionName() . "\n", 
             [ 
-                'HEADER' => $request->header(),
                 'BODY' => urldecode(http_build_query($query))
             ]
         );
