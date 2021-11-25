@@ -8,6 +8,7 @@ const
     $createFormOrganizationNameInput    = $createForm.find('input[name="organization_name"]'), 
     $createFormRepresentativeEmailInput = $createForm.find('input[name="representative_email"]'), 
     $createFormRepresentativeNameInput  = $createForm.find('input[name="representative_name"]'), 
+    $datepicker                         = $('input.form-control.date'),
     $updateForm                         = $('form[name="organization-update"]'), 
     $updateFormEdcIdInput               = $updateForm.find('input[name="edcid"]'), 
     $updateFormIdInput                  = $updateForm.find('input[name="id"]'), 
@@ -231,3 +232,9 @@ function buildSearchParameters($form) {
 
     return parameters;
 }
+
+// datepicker
+$datepicker.datetimepicker({
+    timepicker:false,
+    format:'Y-m-d'
+}) 

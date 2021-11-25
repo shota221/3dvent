@@ -31,17 +31,17 @@
                 </div>
 
 
-                {{-- 登録日時 --}}
+                {{-- 登録日 --}}
                 <div class="col-sm-4">
                     <div class="form-group">
-                        <label>@lang('messages.registered_at')</label>
+                        <label>@lang('messages.registered_date')</label>
                         <div class="row">
                             <div class="col-sm-5">
-                                <input type="date" class="form-control form-control-sm" name="registered_at_from">
+                                <input type="text" class="form-control form-control-sm date"　 name="registered_at_from">
                             </div>
                             &nbsp;〜&nbsp;
                             <div class="col-sm-5">
-                                <input type="date" class="form-control form-control-sm" name="registered_at_to">
+                                <input type="text" class="form-control form-control-sm date" name="registered_at_to">
                             </div>
                         </div>
                     </div>

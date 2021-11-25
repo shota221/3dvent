@@ -170,6 +170,7 @@ return [
     'sign_in' => 'サインイン',
     'spo2' => '経皮的酸素飽和度',
     'start_using_at' => '使用開始日時',
+    'start_using_date' => '使用開始日',
     'status' => 'ステータス',
     'status_use' => '使用状況',
     'status_use_other' => 'その他使用状況',
