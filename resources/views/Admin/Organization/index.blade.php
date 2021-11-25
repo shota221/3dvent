@@ -19,6 +19,7 @@
 
 @section('content')
     <div class="container-fluid">
+        <div id = "alert-message"></div>
         <div class="card card-default color-pallete-box">
             <div class="card-header">
                 {{-- 組織管理 --}}
