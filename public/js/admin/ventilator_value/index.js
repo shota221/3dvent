@@ -1,5 +1,6 @@
 const
     $editModal = $('#modal-ventilator_value-update'),
+    $editModalConfirmedFlgInput = $editModal.find('[name="confirmed_flg"]'),
     $showRegisterModalBtn = $('#show-register-modal'),
     $modalCancelBtn = $('button.modal-cancel'),
     $paginatedList = $('#paginated-list'),
@@ -40,11 +41,16 @@ $paginatedList.on(
             utilFormInputParameters($form, data['result']);
             $form.find('input[name="confirmed_flg"]').prop('checked',isConfirmed)
         
-            //バッジ表記
+            // 最終設定値バッジ表記と確認フラグ入力フォームの表示
             if (isFixed) {
                 var $fixedBadge = $('<div class="badge badge-primary mr-1">' + i18n('message.fixed_value') + '</div>');
                 $status.append($fixedBadge);
+                $editModalConfirmedFlgInput.parent().show();
+            } else {
+                $editModalConfirmedFlgInput.parent().hide();
             }
+
+            // 確認済みバッジ表記
             if (isConfirmed) {
                 var $confirmedBadge = $('<div class="badge badge-success">' + i18n('message.confirmed') + '</div>');
                 $status.append($confirmedBadge);
@@ -58,6 +64,20 @@ $paginatedList.on(
         utilAsyncExecuteAjax($element, {}, false, successCallback);
 
         return false;
+    }
+)
+
+// 確認済みにチェックが入った場合に確認ダイアログ表示
+$editModalConfirmedFlgInput.on(
+    'click',
+    function () {
+        if ($editModalConfirmedFlgInput.prop("checked")) {
+            var isOk = confirm(i18n('message.check_if_it_can_be_confirmed'));
+
+            if (!isOk) {
+                $editModalConfirmedFlgInput.prop("checked", false);
+            }
+        }
     }
 )
 
