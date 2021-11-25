@@ -220,7 +220,7 @@ $clearSearchForm.on(
     function (e) {
         $searchFormAllInput.not(':checkbox').val('');
         $select2OrganizationName.val(null).trigger('change');
-        $form.find(':checkbox').prop('checked', true);
+        $searchForm.find(':checkbox').prop('checked', true);
     }
 )
 
