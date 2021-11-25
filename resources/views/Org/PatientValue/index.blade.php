@@ -31,12 +31,12 @@ JS
             <h3>@lang('messages.patient_value_management')</h3>
         </div>
         <div class="card-body">
-            {{--絞込検索--}}
-            @include('Org.PatientValue.searchForm')
             {{--患者観察研究データ一覧--}}
             <div class="row d-flex justify-content-between my-3">
                 <h4>@lang('messages.patient_value_list')</h4>
             </div>
+            {{--絞込検索--}}
+            @include('Org.PatientValue.searchForm')
 
             <div id="paginated-list">
                 @include('Org.PatientValue.list')

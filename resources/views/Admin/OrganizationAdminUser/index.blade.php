@@ -25,6 +25,12 @@ JS
             <h3>@lang('messages.organization_admin_user_management')</h3>
         </div>
         <div class="card-body">
+            <div class="row d-flex justify-content-between my-3">
+                {{-- 組織管理者アカウント一覧 --}}
+                <h4>@lang('messages.organization_admin_user_list')</h4>
+                {{-- 新規登録 --}}
+                <button type="button" id="show-register-modal" class="btn btn-primary btn-sm mr-2">@lang('messages.register')</button>
+            </div>
             <h6>@lang('messages.refined_search')</h6>
             <div class="post">
                 <form id="async-search-form">
@@ -82,10 +88,6 @@ JS
                         <button class="btn btn-secondary btn-sm" data-url="{{ route('admin.org_admin_user.search') }}" data-method="GET" id="async-search">@lang('messages.search')</button>
                     </div>
                 </div>
-            </div>
-            <div class="row d-flex justify-content-between my-3">
-                <h4>@lang('messages.organization_admin_user_list')</h4>
-                <button type="button" id="show-register-modal" class="btn btn-primary btn-sm mr-2">@lang('messages.register')</button>
             </div>
             <div id="paginated-list">
                 @include('Admin.OrganizationAdminUser.list')

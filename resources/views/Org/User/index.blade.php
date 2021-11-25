@@ -26,8 +26,6 @@ JS
             <h3>@lang('messages.user_management')</h3>
         </div>
         <div class="card-body">
-            {{--絞込検索--}}
-            @include('Org.User.searchForm')
             <div class="row d-flex justify-content-between my-3">
                 {{--ユーザーデータ一覧--}}
                 <h4>@lang('messages.user_list')</h4>
@@ -39,6 +37,8 @@ JS
                     <button type="button" id="show-register-modal" class="btn btn-primary mr-2">@lang('messages.register')</button>
                 </div>
             </div>
+            {{--絞込検索--}}
+            @include('Org.User.searchForm')
             <div id="paginated-list">
                 @include('Org.User.list')
             </div>
