@@ -170,41 +170,36 @@ class NextcloudApiClient extends HttpClient
             $validator = Validator::make(
                 $check_room_result,
                 [
-                    'ocs'            => 'required'
+                    'ocs'            => 'required',
+                    'ocs.data'       => 'required'
                 ]
             );
 
             if ($validator->fails()) {
                 throw new HttpClientResponseException(200, $response, 'レスポンス内容が不正：DTO変換に失敗しました。');
             }
-
-            $has_room = !empty($check_room_result['ocs']['data']);
-
-            return $has_room;
+            //ステータスコード200で正常値が得られればnextcloudサーバーで実際にroom存在
+            return true;
         } catch (HttpClientResponseException $e) {
-            throw $e;
-        }
-    }
+            $status_code = $e->getStatusCode();
+            if ($status_code === 404) { //ステータスコード404で然るべき書式であればnextcloudサーバーにroom存在しないと判定
+                $response = $e->getResponseBody();
+                $check_room_result = json_decode($response, true);
+                $validator = Validator::make(
+                    $check_room_result,
+                    [
+                        'ocs'            => 'required'
+                    ]
+                );
+                
+                if ($validator->fails()) {
+                    throw $e;
+                }
 
-     /**
-     * Overriding
-     */
-    protected function handleResponse($statusCode, \GuzzleHttp\Psr7\Stream $stream, $headers, $method, $uri) 
-    {   
-        if ($this->isSuccessful($statusCode) || $statusCode===404) {
-            return $stream;
-        } else {
-            throw new HttpClientResponseException(
-                $statusCode,
-                $stream,
-                (
-                    'API通信エラー' 
-                    . ' host=' . $this->host() 
-                    . ' uri=' . $uri 
-                    . ' method=' . $method
-                    . ' client_class=' . get_class($this)
-                )
-            );
+                return false;
+            } else {
+                throw $e;
+            }
         }
     }
 }
