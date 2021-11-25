@@ -47,8 +47,6 @@ abstract class HttpClient {
                 CURLOPT_SSL_VERIFYPEER  => false, // TTSがおかしいため必須
                 // ログ
                 CURLOPT_VERBOSE         => $this->isDebug(),
-                //
-                CURLINFO_HEADER_OUT => true,
             ]
             //'debug'             => app('config')->get('app.debug'), // debugモードはcurlエラーの出力がSTDOUTとなり、jsonレスポンスに影響がでるため不可
         ];

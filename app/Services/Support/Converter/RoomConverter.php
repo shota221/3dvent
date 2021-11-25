@@ -9,7 +9,7 @@ use App\Services\Support\CryptUtil;
 
 class RoomConverter
 {
-    public static function convertToEntity($name, $token, $appkey_id)
+    public static function convertToEntity(string $name, string $token, int $appkey_id)
     {
         $entity = new Room;
 
@@ -22,7 +22,7 @@ class RoomConverter
         return $entity;
     }
 
-    public static function convertToRoomResult($uri)
+    public static function convertToRoomResult(string $uri)
     {
         $res = new Response\Api\RoomResult;
 

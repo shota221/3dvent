@@ -113,7 +113,7 @@ Route::group(['middleware' => ['routetype:api']], function () {
          * room
          ********/
         // チャットルームURI取得
-        Route::get('/room', 'RoomController@fetch')->name('api.room.fetch');
+        Route::get('/room', 'RoomController@fetchRoomUri')->name('api.room.fetch_room_uri');
 
 
         /*************************

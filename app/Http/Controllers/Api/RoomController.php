@@ -4,12 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Services\Api as Service;
 
-use Illuminate\Http\Request;
-
-use App\Http\Forms\Api as Form;
-
-use App\Exceptions;
-
 class RoomController extends ApiController
 {
     private $service;
@@ -19,11 +13,11 @@ class RoomController extends ApiController
         $this->service = new Service\RoomService;
     }
 
-    public function fetch()
+    public function fetchRoomUri()
     {
         $appkey = $this->getAppkey();
         
-        $response = $this->service->fetch($appkey);
+        $response = $this->service->fetchRoomUri($appkey);
 
         return $response;
     }

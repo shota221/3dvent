@@ -102,10 +102,10 @@ class NextcloudApiClient extends HttpClient
 
     /**
      * チャットルーム作成api
-     * /room@GET
+     * /room@POST
      *
      * @param string $room_name
-     * @param Response\CreateRoomResponse $created_room
+     * @return Response\CreateRoomResponse $created_room
      */
     public function createRoom(string $room_name)
     {
@@ -129,8 +129,7 @@ class NextcloudApiClient extends HttpClient
                 [
                     'ocs'            => 'required',
                     'ocs.data'       => 'required',
-                    'ocs.data.token' => 'required|' . Rule::VALUE_ROOM_TOKEN,
-                    'ocs.data.name'  => 'required|' . Rule::VALUE_ROOM_NAME
+                    'ocs.data.token' => 'required|' . Rule::VALUE_ROOM_TOKEN
                 ]
             );
 
@@ -145,6 +144,67 @@ class NextcloudApiClient extends HttpClient
             return $created_room;
         } catch (HttpClientResponseException $e) {
             throw $e;
+        }
+    }
+
+    /**
+     *  チャットルーム存在確認api
+     * /room/{token}@GET
+     *
+     * @param string $token
+     * @return boolean
+     */
+    public function hasRoom(string $token)
+    {
+        $content = [];
+
+        try {
+            $response = $this->request(self::METHOD_GET, $this->uri("/room/$token"), $content, $this->auth());
+
+            $check_room_result = json_decode($response, true);
+
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                throw new HttpClientResponseException(200, $response, 'レスポンスJSONが不正：パースに失敗しました。');
+            }
+
+            $validator = Validator::make(
+                $check_room_result,
+                [
+                    'ocs'            => 'required'
+                ]
+            );
+
+            if ($validator->fails()) {
+                throw new HttpClientResponseException(200, $response, 'レスポンス内容が不正：DTO変換に失敗しました。');
+            }
+
+            $has_room = !empty($check_room_result['ocs']['data']);
+
+            return $has_room;
+        } catch (HttpClientResponseException $e) {
+            throw $e;
+        }
+    }
+
+     /**
+     * Overriding
+     */
+    protected function handleResponse($statusCode, \GuzzleHttp\Psr7\Stream $stream, $headers, $method, $uri) 
+    {   
+        if ($this->isSuccessful($statusCode) || $statusCode===404) {
+            return $stream;
+        } else {
+            throw new HttpClientResponseException(
+                $statusCode,
+                $stream,
+                (
+                    'API通信エラー' 
+                    . ' host=' . $this->host() 
+                    . ' uri=' . $uri 
+                    . ' method=' . $method
+                    . ' client_class=' . get_class($this)
+                )
+            );
         }
     }
 }
