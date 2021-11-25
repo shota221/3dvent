@@ -34,6 +34,9 @@ $showRegisterModalBtn.on(
     function () {
         utilFormRemoveValidationErrorMessage()
 
+        $form = $createForm.eq(0);
+        $form[0].reset();
+
         $registerModal.modal();
 
         return false;
