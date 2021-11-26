@@ -1,12 +1,14 @@
 const
-    $editModal = $('#modal-ventilator_value-update'),
-    $editModalConfirmedFlgInput = $editModal.find('[name="confirmed_flg"]'),
-    $modalCancelBtn = $('button.modal-cancel'),
-    $paginatedList = $('#paginated-list'),
-    $ventilatorValueUpdateBtn = $('#async-ventilator_value-update'),
-    $searchForm = $('#async-search-form'),
-    $searchBtn = $('#async-search'),
-    $clearSearchFormBtn = $('#clear-search-form')
+    $editModal                    = $('#modal-ventilator_value-update'),
+    $editModalConfirmedFlgInput   = $editModal.find('[name="confirmed_flg"]'),
+    $editModalStatusUseInput      = $editModal.find('[name="status_use"]'),
+    $editModalStatusUseOtherInput = $editModal.find('[name="status_use_other"]'),
+    $modalCancelBtn               = $('button.modal-cancel'),
+    $paginatedList                = $('#paginated-list'),
+    $ventilatorValueUpdateBtn     = $('#async-ventilator_value-update'),
+    $searchForm                   = $('#async-search-form'),
+    $searchBtn                    = $('#async-search'),
+    $clearSearchFormBtn           = $('#clear-search-form')
     ;
 
 
@@ -75,6 +77,16 @@ $editModalConfirmedFlgInput.on(
             if (!isOk) {
                 $editModalConfirmedFlgInput.prop("checked", false);
             }
+        }
+    }
+)
+
+// 編集画面で使用状況がその他以外を選択した場合に、その他の使用状況の入力内容を初期化
+$editModalStatusUseInput.on(
+    'change',
+    function () {
+        if ($editModalStatusUseInput.val() !== '4') {
+            $editModalStatusUseOtherInput.val('');
         }
     }
 )
