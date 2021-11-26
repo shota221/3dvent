@@ -113,7 +113,7 @@
         
         {{--メールアドレス--}}
         <div class="form-group">
-            <label for="email">@lang('messages.email')<span class="required"></span></label>
+            <label for="email">@lang('messages.email')</label>
             <div>
                 <input type="text" class="form-control" name="email" required>
             </div>
