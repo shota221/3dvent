@@ -22,13 +22,14 @@
 {{-- TODO サンプル動画を変更する  --}}
 @section('parent_content')
 
+
     @include(
-        'Manual.Manual.Video._content_top', 
-            [
-                'title' => 'sample1', 
-                'url' 　=> 'https://www.youtube.com/watch?v=pgj6esQUjE0'
-            ]
-        )
+    'Manual.Manual.Video._content_top', 
+        [
+            'title' => 'sample1', 
+            'url'   => 'https://www.youtube.com/watch?v=pgj6esQUjE0'
+        ]
+    )
     
     @include('Manual.Manual.Video._content_bottom')
     
@@ -37,12 +38,11 @@
         'Manual.Manual.Video._content_top', 
         [
             'title' => 'sample2', 
-            'url' 　=> 'https://www.youtube.com/watch?v=pgj6esQUjE0'
+            'url'   => 'https://www.youtube.com/watch?v=pgj6esQUjE0'
         ]
     )
     
     @include('Manual.Manual.Video._content_bottom')
-    
 
 @stop
 
