@@ -37,10 +37,10 @@
                     </div>
                 </div>
 
-                {{-- 使用開始日時 --}}
+                {{-- 使用開始日 --}}
                 <div class="col-sm-4">
                     <div class="form-group">
-                        <label>@lang('messages.start_using_at')</label>
+                        <label>@lang('messages.start_using_date')</label>
                         <div class="row">
                             <div class="col-sm-5">
                                 <input type="text" class="form-control form-control-sm date" name="start_using_at_from">

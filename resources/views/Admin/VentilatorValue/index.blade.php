@@ -29,6 +29,7 @@
 
 @section('content')
     <div class="container-fluid">
+        <div id = "alert-message"></div>
         <div class="card card-default color-pallete-box">
             <div class="card-header">
                 {{-- 機器観察研究データ管理 --}}

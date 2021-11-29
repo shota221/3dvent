@@ -9,7 +9,7 @@
                 <div class="col-sm-4">
                     <div class="form-group" data-url="{{ route('admin.organization.search_list') }}" data-method="GET"
                         id="async-organization-data">
-                        <label for="organization_id">@lang('messages.organization_name')<span class="required"></span></label>
+                        <label for="organization_id">@lang('messages.organization_name')</label>
                         <div>
                             <select class="form-control form-control-sm select" name="organization_id"
                                 id="search-organization-name">

@@ -5,6 +5,7 @@
         "admin_user_login_lock": "ログインを禁止しました。",
         "admin_user_login_unlock": "ログイン禁止を解除しました。",
         "applied": "申請しました。",
+        "check_if_it_can_be_confirmed": "確認済みにしてよろしいですか？一度確認済みにすると未確認の状態には戻せません。",
         "confirm": "上記、機器観察研究データを確認しました。",
         "confirmed": "確認済",
         "csv_download_failed": "CSVファイル作成に失敗しました。再度生じる場合は管理者まで報告をお願いします。",
