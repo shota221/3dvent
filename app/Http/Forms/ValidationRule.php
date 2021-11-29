@@ -46,7 +46,11 @@ class ValidationRule
 
         CSV_FILE                 = 'max:1024|file|mimes:csv,txt', //　laravelだとtxtの指定が必要
 
-        VENTILATOR_DATA_CSV_FILE = 'max:10240|file|mimes:csv,txt'; //　同上
+        VENTILATOR_DATA_CSV_FILE = 'max:10240|file|mimes:csv,txt', //　同上
+
+        VALUE_ROOM_TOKEN         = 'string|max:32',
+
+        VALUE_ROOM_NAME          = 'string|max:100';
 
     /**
      * ある文字列が含まれない正規表現を返す

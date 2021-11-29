@@ -47,8 +47,6 @@ abstract class HttpClient {
                 CURLOPT_SSL_VERIFYPEER  => false, // TTSがおかしいため必須
                 // ログ
                 CURLOPT_VERBOSE         => $this->isDebug(),
-                //
-                CURLINFO_HEADER_OUT => true,
             ]
             //'debug'             => app('config')->get('app.debug'), // debugモードはcurlエラーの出力がSTDOUTとなり、jsonレスポンスに影響がでるため不可
         ];
@@ -138,17 +136,21 @@ abstract class HttpClient {
         return $this->execute($method, $uri, $options);
     }
 
-    protected function request($method, $uri, array $content = null) 
+    protected function request($method, $uri, array $content = null, array $auth = null) 
     {
-        if (is_null($content)) {
-            $options = $this->buildRequestOptions();
-        } else {
+        $params = [];
+        if (!is_null($content)) {
             if (self::METHOD_GET === $method) {
-                $options = $this->buildRequestOptions(['query' => $content]);
+                $params['query'] = $content;
             } else {
-                $options = $this->buildRequestOptions(['form_params' => $content]);
+                $params['form_params'] = $content;
             }
         }
+        if (!is_null($auth)) {
+            $params['auth'] = $auth;
+        }
+
+        $options = $this->buildRequestOptions($params);
 
         return $this->execute($method, $uri, $options);
     }
