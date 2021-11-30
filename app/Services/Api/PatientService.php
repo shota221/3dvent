@@ -13,8 +13,6 @@ use App\Services\Support\Converter;
 use App\Services\Support\DateUtil;
 use App\Services\Support\DBUtil;
 
-use function PHPUnit\Framework\isJson;
-
 class PatientService
 {
     use Support\Logic\CalculationLogic;
@@ -239,8 +237,7 @@ class PatientService
         $patient = Repos\PatientRepository::findOneByOrganizationIdAndId($organization_id, $patient_id);
 
         if (is_null($patient)) {
-            $form->addError('id', 'validation.id_inaccessible');
-            throw new Exceptions\InvalidFormException($form);
+            throw new Exceptions\AccessDeniedException();
         }
 
         $old_patient_value = null;
@@ -255,8 +252,7 @@ class PatientService
         }
 
         if (is_null($old_patient_value)) {
-            $form->addError('id', 'validation.id_inaccessible');
-            throw new Exceptions\InvalidFormException($form);
+            throw new Exceptions\AccessDeniedException();
         }
 
         // 編集後データ作成
