@@ -158,8 +158,7 @@ class VentilatorValueService
         }
 
         if (is_null($ventilator_value)) {
-            $form->addError('ventilator_value_id', 'validation.id_inaccessible');
-            throw new Exceptions\InvalidFormException($form);
+            throw new Exceptions\AccessDeniedException();
         }
 
         //編集前データの複製

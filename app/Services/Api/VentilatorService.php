@@ -3,21 +3,17 @@
 namespace App\Services\Api;
 
 use App\Exceptions;
-use App\Exceptions\HttpNotFoundException;
 use App\Http\Auth;
 use App\Http\Forms\Api as Form;
 use App\Models;
 use App\Repositories as Repos;
-use App\Repositories\PatientRepository;
 use App\Services\Support as Support;
-use App\Services\Support\Client\ReverseGeocodingClient;
 use App\Services\Support\Converter;
 use App\Services\Support\DBUtil;
 use App\Services\Support\DateUtil;
 use App\Services\Support\Gs1Util;
 use App\Services\Support\Logic as Logic;
 use App\Services\Support\OrganizationCheckUtil;
-use Illuminate\Validation\Rules\Exists;
 
 class VentilatorService
 {
@@ -204,8 +200,7 @@ class VentilatorService
         }
 
         if (is_null($ventilator)) {
-            $form->addError('id', 'validation.id_inaccessible');
-            throw new Exceptions\InvalidFormException($form);
+            throw new Exceptions\AccessDeniedException();
         }
 
         Support\DBUtil::Transaction(
