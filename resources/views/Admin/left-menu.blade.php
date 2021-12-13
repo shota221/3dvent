@@ -46,7 +46,7 @@
 <li class="nav-item">
     <a href="{{ config('nextcloud.host').config('nextcloud.chat_path') }}" target="_blank"
         class="nav-link">
-        <i class="far fa-list-alt"></i>
+        <i class="fas fa-comment-dots"></i>
         <p>
             @lang('messages.chat_support')
         </p>
