@@ -308,5 +308,15 @@ Route::group(['middleware' => ['routetype:admin']], function () {
                 'PatientValueController@asyncLogicalDelete'
             )->name('admin.patient_value.logical_delete');
         });
+
+        /**
+         * チャットサポート
+         */
+        Route::group(['middleware' => ['can:chat_operatable']], function () {
+            Route::get(
+                '/chat_support',
+                'ChatSupportController@index'
+            )->name('admin.chat_support.index');
+        });
     });
 });
