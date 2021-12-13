@@ -43,3 +43,11 @@
         </p>
     </a>
 </li>
+<li class="nav-item">
+    <a href="{{ route('admin.chat_support.index') }}" target="_blank" class="nav-link">
+        <i class="fas fa-comment-dots"></i>
+        <p>
+            @lang('messages.chat_support')
+        </p>
+    </a>
+</li>
