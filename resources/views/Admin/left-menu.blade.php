@@ -43,3 +43,12 @@
         </p>
     </a>
 </li>
+<li class="nav-item">
+    <a href="{{ config('nextcloud.host').config('nextcloud.chat_path') }}" target="_blank"
+        class="nav-link">
+        <i class="far fa-list-alt"></i>
+        <p>
+            @lang('messages.chat_support')
+        </p>
+    </a>
+</li>
