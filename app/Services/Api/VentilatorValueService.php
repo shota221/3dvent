@@ -48,7 +48,7 @@ class VentilatorValueService
      * @param [type] $appkey
      * @return void
      */
-    public function create(Form\VentilatorValueCreateForm $form, Models\User $user, Models\Appkey $appkey)
+    public function create(Form\VentilatorValueCreateForm $form, Models\User $user = null, Models\Appkey $appkey)
     {
         $ventilator_id = $form->ventilator_id;
 
