@@ -5,6 +5,7 @@ namespace App\Http\Forms\Api;
 use App\Http\Forms\ValidationRule as Rule;
 
 use App\Http\Forms\BaseForm;
+use App\Services\Support\Gs1Util;
 
 class VentilatorShowForm extends BaseForm
 {
@@ -19,6 +20,6 @@ class VentilatorShowForm extends BaseForm
 
     protected function bind($input)
     {
-        $this->gs1_code = $input['gs1_code'];
+        $this->gs1_code = Gs1Util::sanitizeGs1Code($input['gs1_code']);
     }
 }
