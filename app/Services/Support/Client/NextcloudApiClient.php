@@ -112,7 +112,6 @@ class NextcloudApiClient extends HttpClient
         $content = [];
 
         $content['roomType'] = 3;
-        $content['invite'] = config('nextcloud.username');
         $content['roomName'] = $room_name;
 
         try {

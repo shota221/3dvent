@@ -18,8 +18,8 @@ return [
             'request_timeout'   => env('API_CLIENT_NEXTCLOUD_REQUEST_TIMEOUT',  env('API_REQUEST_TIMEOUT',   60)), // sec
             'response_timeout'  => env('API_CLIENT_NEXTCLOUD_RESPONSE_TIMEOUT', env('API_RESPONSE_TIMEOUT',  60)), // sec
             'request_interval'  => env('API_CLIENT_NEXTCLOUD_REQUEST_INTERVAL', env('API_REQUEST_INTERVAL',  1000.0)), // msec
-            'username'          => env('API_CLIENT_NEXTCLOUD_ADMIN_USERNAME'),
-            'password'          => env('API_CLIENT_NEXTCLOUD_ADMIN_PASSWORD')
+            'username'          => env('API_CLIENT_NEXTCLOUD_USERNAME'),
+            'password'          => env('API_CLIENT_NEXTCLOUD_PASSWORD')
         ],
     ]
 ];
