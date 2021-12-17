@@ -35,4 +35,19 @@ class Gs1Util
 
         return $gs1_data;
     }
+
+    /**
+     * gs1コード読み取り時に含まれる余計な文字列を除去
+     *
+     * @param string $raw_gs1_code
+     * @return string $sanitized_gs1_code
+     */
+    public static function sanitizeGs1Code(string $raw_gs1_code)
+    {
+        //gs1コード宣言"]C1"があれば除去
+        $raw_gs1_code = str_replace(']C1', '', $raw_gs1_code);
+        //その他英数字以外の文字があれば除去
+        $sanitized_gs1_code = preg_replace('/[^0-9a-zA-Z]/', '', $raw_gs1_code);
+        return $sanitized_gs1_code;
+    }
 }
