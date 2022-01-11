@@ -677,6 +677,7 @@ paths:
                   type: number
               required:
                 - height
+                - weight
                 - gender
                 - ventilator_id
             examples:
@@ -1043,6 +1044,7 @@ paths:
                   type: number
               required:
                 - height
+                - weight
                 - gender
             examples:
               example-1:
@@ -2721,20 +2723,24 @@ paths:
                 height:
                   type: string
                   minLength: 1
+                weight:
+                  type: string
                 gender:
                   type: number
                 ventilator_id:
                   type: number
               required:
                 - height
+                - weight
                 - gender
                 - ventilator_id
             examples:
               example-1:
                 value:
                   patient_code: '999'
-                  height: string
+                  height: xxx
                   gender: 1
+                  weight: xxx
                   ventilator_id: 1
   '/patient/{patient_id}/no_auth':
     parameters:
@@ -2773,6 +2779,8 @@ paths:
                       height:
                         type: string
                         minLength: 1
+                      weight:
+                        type: string
                 required:
                   - result
               examples:
@@ -2816,16 +2824,20 @@ paths:
                 height:
                   type: string
                   minLength: 1
+                weight:
+                  type: string
                 gender:
                   type: number
               required:
                 - height
+                - weight
                 - gender
             examples:
               example-1:
                 value:
                   patient_code: '999'
                   height: '169.5'
+                  weight: '55.5'
                   gender: 1
       description: 患者データを更新する
   /ventilator_value/no_auth:
