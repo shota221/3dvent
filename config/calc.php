@@ -55,15 +55,15 @@ return [
      * 小数部桁数
      */
     'rounding_precision' => [
-        'ideal_weight' => 3,
-        'predicted_vt' => 1,
-        'estimated_vt' => 1,
+        'e_avg'          => 2,
+        'estimated_mv'   => 2,
         'estimated_peep' => 1,
-        'estimated_mv' => 2,
-        'rr' => 1,
-        'i_avg' => 2,
-        'e_avg' => 2,
-        'ie_ratio' => 1,
-        'fio2' => 1
+        'estimated_vt'   => 1,
+        'fio2'           => 1,
+        'i_avg'          => 2,
+        'ideal_weight'   => 3,
+        'ie_ratio'       => 1,
+        'predicted_vt'   => 1,
+        'rr'             => 1,
     ]
 ];
