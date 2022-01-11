@@ -42,7 +42,7 @@ class VentilatorConverter
       $res->is_recommended_period = $is_recommended_period;
     }
 
-    $res->units = config('units');
+    $res->units = __('units');
 
     return $res;
   }

@@ -12,6 +12,12 @@ use Illuminate\Support\Facades\Log;
 
 class Language
 {
+    const ACCEPT_LANGUAGE_HEADER = 'Accept-Language';
+
+    public function __construct(Application $app)
+    {
+        $this->app = $app;
+    }
     /**
      * Handle an incoming request.
      *
@@ -21,24 +27,33 @@ class Language
      */
     public function handle(Request $request, Closure $next)
     {
-
-        $language_key  = config('cookie.language_key');
-        $language_code = $request->cookie($language_key);
-        $key_exists    = array_key_exists($language_code, config('languages')); 
-
-        if ($key_exists) {
-            App::setLocale($language_code);
-        } else {
-            if (! is_null(Auth::user())) {
-                $organization_id = Auth::user()->organization_id;
-                $language_code   = Repos\OrganizationRepository::getLocaleById($organization_id);
-                
+        //APIルートの場合、ヘッダーを見て言語コード取得。それ以外の場合はクッキーから取得
+        if (app()->isHttpRouteTypeApi()) {
+            $language_code = $request->header(self::ACCEPT_LANGUAGE_HEADER);
+            $key_exists    = array_key_exists($language_code, config('languages'));
+            if ($key_exists) {
                 App::setLocale($language_code);
             } else {
                 App::setLocale(config('app.fallback_locale'));
             }
-        }
+        } else {
+            $language_key  = config('cookie.language_key');
+            $language_code = $request->cookie($language_key);
+            $key_exists    = array_key_exists($language_code, config('languages'));
 
+            if ($key_exists) {
+                App::setLocale($language_code);
+            } else {
+                if (!is_null(Auth::user())) {
+                    $organization_id = Auth::user()->organization_id;
+                    $language_code   = Repos\OrganizationRepository::getLocaleById($organization_id);
+
+                    App::setLocale($language_code);
+                } else {
+                    App::setLocale(config('app.fallback_locale'));
+                }
+            }
+        }
         return $next($request);
     }
 }

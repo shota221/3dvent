@@ -33,6 +33,7 @@ class Kernel extends HttpKernel
             //'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\RequestLog::class,
+            \App\Http\Middleware\Language::class,
         ],
         
         // TODO 必要ないmiddleware削除
