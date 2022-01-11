@@ -14,7 +14,7 @@ class CalcLogicTest extends TestCase
 
     public function testCalcIdealWeight()
     {
-        $res = $this->calcIdealWeight(169,1);
+        $res = $this->calcIdealWeight(169, 3);
         var_dump($res);
         $this->assertTrue(true);
     }
@@ -35,21 +35,21 @@ class CalcLogicTest extends TestCase
 
     public function testCalcFio2()
     {
-        $res = $this->calcFio2(9.0, 3.0);
+        $res = $this->calcFio2(0.0, 0.0);
         var_dump($res);
         $this->assertTrue(true);
     }
 
     public function testCalcIAvg()
     {
-        $res = $this->calcIAvg(1.18, 20.6);
+        $res = $this->calcIAvg(1.18, 0.0);
         var_dump($res);
         $this->assertTrue(true);
     }
 
     public function testCalcRr()
     {
-        $res = $this->calcRr(1.74, 1.18);
+        $res = $this->calcRr(0.0, 0.0);
         var_dump($res);
         $this->assertTrue(true);
     }
@@ -63,21 +63,21 @@ class CalcLogicTest extends TestCase
 
     public function testCalcIeRatio()
     {
-        $res = $this->calcIeRatio(1.74, 1.18);
+        $res = $this->calcIeRatio(0.0, 1.18);
         var_dump($res);
         $this->assertTrue(true);
     }
 
     public function testCalcEstimatedMv()
     {
-        $res = $this->calcEstimatedMv(1.74, 20.6, 10, 10);
+        $res = $this->calcEstimatedMv(1.736, 20.61, 10.0, 10.0);
         var_dump($res);
         $this->assertTrue(true);
     }
 
     public function testCalcEstimatedVt()
     {
-        $res = $this->calcEstimatedVt(4.53, 20.6);
+        $res = $this->calcEstimatedVt(1.736, 0.0, 10.0, 10.0);
         var_dump($res);
         $this->assertTrue(true);
     }

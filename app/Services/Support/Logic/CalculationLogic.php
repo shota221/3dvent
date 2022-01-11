@@ -164,13 +164,14 @@ trait CalculationLogic
      * @param float $rr
      * @return float
      */
-    public function calcEstimatedVt(float $mv, float $rr)
+    public function calcEstimatedVt(float $i_avg, float $rr, float $total_flow, float $airway_pressure)
     {
         //ゼロ除算を除外
         if ($rr == 0.0) {
             throw new Exceptions\CalculationLogicException('入力値が不正です。');
         }
-        return $this->roundOff($mv * 1000 / $rr, 'estimated_vt');
+        $parameter = config('calc.parameter.estimated_mv');
+        return $this->roundOff((($i_avg * $rr / 60) * ($total_flow - $airway_pressure * $parameter['a']) + $parameter['b']) * 1000 / $rr, 'estimated_vt');
     }
 
     /**
