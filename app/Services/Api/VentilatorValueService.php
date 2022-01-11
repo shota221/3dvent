@@ -81,9 +81,9 @@ class VentilatorValueService
 
         $total_flow = $this->calcTotalFlow($form->air_flow, $form->o2_flow);
 
-        $estimated_vt = $this->calcEstimatedVt($form->i_avg, $total_flow);
+        $estimated_mv = $this->calcEstimatedMv($form->i_avg, $form->rr, $total_flow, $form->airway_pressure);
 
-        $estimated_mv = $this->calcEstimatedMv($estimated_vt, $form->rr);
+        $estimated_vt = $this->calcEstimatedVt($estimated_mv, $form->rr);
 
         $estimated_peep = $this->calcEstimatedPeep($form->airway_pressure);
 
@@ -176,9 +176,9 @@ class VentilatorValueService
 
         $predicted_vt = $this->calcPredictedVt($ideal_weight, $vt_per_kg);
 
-        $estimated_vt = $this->calcEstimatedVt($ventilator_value_copy->inspiratory_time, $total_flow);
+        $estimated_mv = $this->calcEstimatedMv($ventilator_value->inspiratory_time, $ventilator_value->rr, $total_flow, $ventilator_value->airway_pressure);
 
-        $estimated_mv = $this->calcEstimatedMv($estimated_vt, $ventilator_value_copy->rr);
+        $estimated_vt = $this->calcEstimatedVt($estimated_mv, $ventilator_value->rr);
 
         $estimated_peep = $this->calcEstimatedPeep($form->airway_pressure);
 

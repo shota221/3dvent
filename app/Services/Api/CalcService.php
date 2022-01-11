@@ -3,6 +3,7 @@
 namespace App\Services\Api;
 
 use App\Exceptions;
+use App\Http\Forms\Api as Form;
 use App\Repositories as Repos;
 use App\Services\Support as Support;
 use App\Services\Support\Converter;
@@ -14,12 +15,12 @@ class CalcService
 {
     use Support\Logic\CalculationLogic;
 
-    public function getDefaultFlow($form)
+    public function getDefaultFlow()
     {
         return Converter\VentilatorValueConverter::convertToDefaultFlowResult();
     }
 
-    public function getEstimatedData($form)
+    public function getEstimatedData(Form\CalcEstimatedDataForm $form)
     {
         $estimated_peep = !is_null($form->airway_pressure) ? $this->calcEstimatedPeep(floatval($form->airway_pressure)) : null;
 
@@ -32,23 +33,30 @@ class CalcService
         } else {
             $fio2 = null;
         }
-        
-        $estimated_peep = $this->roundOff($estimated_peep);
-        $fio2 = $this->roundOff($fio2);
+
+        $estimated_peep = $this->roundOff($estimated_peep, 'estimated_peep');
+        $fio2 = $this->roundOff($fio2, 'fio2');
 
         return Converter\VentilatorValueConverter::convertToEstimatedDataResult($estimated_peep, $fio2);
     }
 
-    public function getIeManual($form)
+    /**
+     * 手動測定の際は呼気時間と呼吸回数/10秒をそれぞれ測定。
+     * これらの平均値からrr及び吸気時間の平均を算出
+     */
+    public function getIeManual(Form\CalcIeManualForm $form)
     {
-        $i_e_avg = $this->calcIeAvg($form->data);
+        $data = collect($form->data);
+        $e_avg = $data->avg('e');
+        $respirations_per_10sec_avg = $data->avg('respirations_per_10sec');
+        $rr = $this->calcRrFromRespirationsPer10sec($respirations_per_10sec_avg);
+        $i_avg = $this->calcIAvg($e_avg, $rr);
+        $ie_ratio = $this->calcIeRatio($i_avg, $e_avg);
 
-        $rr = $this->calcRr($i_e_avg['i'], $i_e_avg['e']);
-
-        return Converter\IeConverter::convertToIeResult($i_e_avg['i'], $i_e_avg['e'], $rr);
+        return Converter\IeConverter::convertToIeResult($i_avg, $e_avg, $rr, $ie_ratio);
     }
 
-    public function getIeSound($form)
+    public function getIeSound(Form\CalcIeSoundForm $form)
     {
         // \Log::debug('--getIeSoundStart--' . DateUtil::now());
         $min_sec = 2.0; //取得測定時間下限
@@ -222,22 +230,23 @@ class CalcService
         $exh_times_statistic_good = new Statistic($exh_times);
         $inh_times_statistic_good = new Statistic($inh_times);
 
-        $i_e_avg = ['i' => round($inh_times_statistic_good->mean, 2), 'e' => round($exh_times_statistic_good->mean, 2)];
+        // $i_e_avg = ['i' => round($inh_times_statistic_good->mean, 2), 'e' => round($exh_times_statistic_good->mean, 2)];
+        $i_avg = $this->roundOff($inh_times_statistic_good->mean, 'i_avg');
+        $e_avg = $this->roundOff($exh_times_statistic_good->mean, 'e_avg');
 
-        if ($i_e_avg['i'] * $i_e_avg['e'] === 0.0) {
+        if ($i_avg * $e_avg === 0.0) {
             $form->addError('sound', 'validation.not_enough_pulses');
             throw new Exceptions\InvalidFormException($form);
         }
 
-        $rr = $this->calcRr($i_e_avg['i'], $i_e_avg['e']);
+        $rr = $this->calcRr($i_avg, $e_avg);
+        $ie_ratio = $this->calcIeRatio($i_avg, $e_avg);
 
-        // \Log::debug('--analyzeDone--' . DateUtil::now());
-
-        return Converter\IeConverter::convertToIeResult($i_e_avg['i'], $i_e_avg['e'], $rr);
+        return Converter\IeConverter::convertToIeResult($i_avg, $e_avg, $rr, $ie_ratio);
     }
 
     //音声サンプリングテスト用
-    public function putIeSound($form)
+    public function putIeSound(Form\CalcIeSoundForm $form)
     {
         $result =  Support\FileUtil::putSoundSamplingFile($form->sound->filename, base64_decode($form->sound->file_data), $form->os);
 

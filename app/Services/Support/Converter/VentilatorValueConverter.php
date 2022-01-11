@@ -29,7 +29,7 @@ class VentilatorValueConverter
     {
         $res = new Response\Api\VentilatorValueResult;
 
-        $round_at = config('calc.default.number_of_decimal_places');
+        $round_at = config('calc.default.rounding_precision');
 
         $res->estimated_peep = !is_null($estimated_peep) ? strval($estimated_peep) : null;
 
@@ -42,7 +42,7 @@ class VentilatorValueConverter
     {
         $res = new Response\Api\VentilatorValueResult;
 
-        $round_at = config('calc.default.number_of_decimal_places');
+        $round_at = config('calc.default.rounding_precision');
 
         $res->ventilator_id = $entity->ventilator_id;
 
@@ -66,7 +66,7 @@ class VentilatorValueConverter
             return $res;
         }
 
-        $round_at = config('calc.default.number_of_decimal_places');
+        $round_at = config('calc.default.rounding_precision');
 
         $res->has_observed = true;
 
@@ -161,7 +161,7 @@ class VentilatorValueConverter
     ) {
         $entity = new VentilatorValue;
 
-        $round_at = config('calc.default.number_of_decimal_places');
+        $round_at = config('calc.default.rounding_precision');
 
         $entity->ventilator_id = $ventilator_id;
 
@@ -254,7 +254,7 @@ class VentilatorValueConverter
         $pao2 = '',
         $paco2 = ''
     ) {
-        $round_at = config('calc.default.number_of_decimal_places');
+        $round_at = config('calc.default.rounding_precision');
 
         $entity->height = !empty($height) ? strval(round($height, $round_at)) : $height;
 

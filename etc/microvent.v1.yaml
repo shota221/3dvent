@@ -378,7 +378,7 @@ paths:
                         e: s
                         i_avg: s
                         e_avg: s
-                        rr: times/min
+                        rr: 回/分
                         fio2: '%'
                         spo2: '%'
                         etco2: mmHg
@@ -438,6 +438,12 @@ paths:
           in: header
           name: X-User-Token
           description: ユーザー識別用トークン
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: Accept-Language
+          description: 言語コード
           required: true
     post:
       summary: 設定データを登録する
@@ -1111,25 +1117,25 @@ paths:
                   items:
                     type: object
                     properties:
-                      i:
-                        type: string
-                        minLength: 1
                       e:
                         type: string
                         minLength: 1
+                      respirations_per_10sec:
+                        type: string
+                        minLength: 1
                     required:
-                      - i
                       - e
+                      - respirations_per_10sec
               required:
                 - data
             examples:
               example-1:
                 value:
                   data:
-                    - i: '***'
-                      e: '***'
-                    - i: '****'
-                      e: '****'
+                    - e: '***'
+                      respirations_per_10sec: '***'
+                    - e: '****'
+                      respirations_per_10sec: '****'
           application/xml:
             schema:
               type: object
@@ -2524,7 +2530,7 @@ paths:
                         e: s
                         i_avg: s
                         e_avg: s
-                        rr: times/min
+                        rr: 回/分
                         fio2: '%'
                         spo2: '%'
                         etco2: mmHg
