@@ -5,11 +5,11 @@
  */
 return [
     'air_flow'        => 'L/min',
-    'airway_pressure' => 'cmH2O',
+    'airway_pressure' => 'cmH₂O',
     'e_avg'           => 's',
     'e'               => 's',
     'estimated_mv'    => 'L/min',
-    'estimated_peep'  => 'cmH2O',
+    'estimated_peep'  => 'cmH₂O',
     'estimated_vt'    => 'mL',
     'etco2'           => 'mmHg',
     'fio2'            => '%',
