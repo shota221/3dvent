@@ -62,7 +62,7 @@ class VentilatorValueUpdateForm extends BaseForm
 
         $this->height = $input['height'];
 
-        $this->weight = $input['weight'] ?? '';
+        $this->weight = $input['weight'];
 
         $this->airway_pressure = $input['airway_pressure'];
 
