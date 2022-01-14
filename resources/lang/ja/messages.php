@@ -20,7 +20,7 @@ return [
     'clinical_engineer'                  => '臨床工学士',
     'common_setting'                     => '組織内共通設定',
     'company'                            => '企業管理ユーザー',
-    'confirm'                            => '上記、機器観察研究データを確認しました。',
+    'confirm'                            => '上記、機器設定・測定データを確認しました。',
     'confirmed_at'                       => '確認日時',
     'confirmed'                          => '確認済',
     'contact_organization_admin_user'    => 'メールアドレスを登録していない場合は組織管理者に問い合わせてください。',
@@ -57,7 +57,7 @@ return [
     'expiratory_time'                    => '呼気時間',
     // f
     'female'                             => '女性',
-    'fio2'                               => 'FIO₂',
+    'fio2'                               => 'FiO₂',
     'fixed_value'                        => '最終設定値',
     'forgot_password'                    => 'パスワードを忘れた方',
     // g
@@ -144,7 +144,6 @@ return [
     'project_administrator_page'         => 'プロジェクト運営者ページ',
     'project_administrator'              => 'プロジェクト運営者',
     'project_manager'                    => 'プロジェクト運営者',
-    'put'                                => '登録',
     // q
     // r
     'refined_search'                     => '絞込検索',
@@ -159,7 +158,7 @@ return [
     'resetting_password'                 => 'パスワード再設定',
     'resetting'                          => '再設定',
     'respiratory_failure'                => '呼吸不全',
-    'rr'                                 => '呼吸回数',
+    'rr'                                 => '呼吸数',
     // s
     'search'                             => '検索',
     'send_password_reset_email'          => 'パスワード再設定メール送信',
@@ -202,15 +201,15 @@ return [
     'ventilator_bug_list'                => '不具合一覧',
     'ventilator_bug_name'                => '不具合名',
     'ventilator_bug'                     => '不具合',
-    'ventilator_code'                    => 'MicroVent®コード',
-    'ventilator_disease_name'            => 'MicroVent®を使用した原因病名',
-    'ventilator_edit'                    => 'MicroVent®編集',
+    'ventilator_code'                    => 'MicroVent®V3コード',
+    'ventilator_disease_name'            => 'MicroVent®V3を使用した原因病名',
+    'ventilator_edit'                    => 'MicroVent®V3編集',
     'ventilator_import'                  => 'CSVインポート',
-    'ventilator_list'                    => 'MicroVent®一覧',
-    'ventilator_management'              => 'MicroVent®管理',
-    'ventilator_value_edit'              => '機器観察研究データ編集',
-    'ventilator_value_list'              => '機器観察研究データ一覧',
-    'ventilator_value_management'        => '機器観察研究データ管理',
+    'ventilator_list'                    => 'MicroVent®V3一覧',
+    'ventilator_management'              => 'MicroVent®V3管理',
+    'ventilator_value_edit'              => '機器設定・測定データ編集',
+    'ventilator_value_list'              => '機器設定・測定データ一覧',
+    'ventilator_value_management'        => '機器設定・測定データ管理',
     'ventilator_value_scan_interval'     => '最終値決定時間（分）',
     'vt_per_kg'                          => '理想体重1kgあたりの予測一回換気量（ml/kg）',
     // w
