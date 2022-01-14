@@ -2,15 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-
-use App\Services\Api as Service;
-
-use Illuminate\Http\Request;
-
-use App\Http\Forms\Api as Form;
-
 use App\Exceptions;
+use App\Http\Controllers\Controller;
+use App\Http\Forms\Api as Form;
+use App\Services\Api as Service;
+use Illuminate\Http\Request;
 
 class CalcController extends Controller
 {
@@ -21,58 +17,52 @@ class CalcController extends Controller
         $this->service = new Service\CalcService;
     }
 
-    public function defaultFlow(Request $request)
+    public function defaultFlow()
     {
-        $form = new Form\CalcDefaultFlowForm($request->all());
-
-        if ($form->hasError() || !$response = $this->service->getDefaultFlow($form)) {
-            throw new Exceptions\InvalidFormException($form);
-        }
-
-        return $response;
+        return $this->service->getDefaultFlow();
     }
 
     public function estimatedData(Request $request)
     {
         $form = new Form\CalcEstimatedDataForm($request->all());
 
-        if ($form->hasError() || !$response = $this->service->getEstimatedData($form)) {
+        if ($form->hasError()) {
             throw new Exceptions\InvalidFormException($form);
         }
 
-        return $response;
+        return $this->service->getEstimatedData($form);
     }
 
     public function ieManual(Request $request)
     {
         $form = new Form\CalcIeManualForm($request->all());
 
-        if ($form->hasError() || !$response = $this->service->getIeManual($form)) {
+        if ($form->hasError()) {
             throw new Exceptions\InvalidFormException($form);
         }
 
-        return $response;
+        return $this->service->getIeManual($form);
     }
 
     public function ieSound(Request $request)
     {
         $form = new Form\CalcIeSoundForm($request->all());
 
-        if ($form->hasError() || !$response = $this->service->getIeSound($form)) {
+        if ($form->hasError()) {
             throw new Exceptions\InvalidFormException($form);
         }
 
-        return $response;
+        return $this->service->getIeSound($form);
     }
 
     public function ieSoundSampling(Request $request)
     {
         $form = new Form\CalcIeSoundForm($request->all());
 
-        if ($form->hasError() || !$response = $this->service->putIeSound($form)) {
+        if ($form->hasError()) {
             throw new Exceptions\InvalidFormException($form);
         }
 
-        return $response;
+        return $this->service->putIeSound($form);
     }
 }

@@ -13,7 +13,7 @@ class PatientConverter
   {
     $res = new Response\Api\PatientResult;
 
-    $round_at = config('calc.default.number_of_decimal_places');
+    $round_at = config('calc.default.rounding_precision');
 
     $res->patient_id = $entity->id;
 
@@ -26,7 +26,7 @@ class PatientConverter
   {
     $res = new Response\Api\PatientResult;
 
-    $round_at = config('calc.default.number_of_decimal_places');
+    $round_at = config('calc.default.rounding_precision');
 
     $res->patient_code = strval($entity->patient_code);
 

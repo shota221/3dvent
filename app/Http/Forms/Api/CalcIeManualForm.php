@@ -21,8 +21,8 @@ class CalcIeManualForm extends BaseForm
 
     protected function bind($input)
     {
-        foreach ($input['data'] as $i_e) {
-            $this->data[] = new Form\IeForm($i_e);         
+        foreach ($input['data'] as $elm) {
+            $this->data[] = new Form\CalcIeManualElmForm($elm);
         }
     }
 }

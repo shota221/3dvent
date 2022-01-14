@@ -378,7 +378,7 @@ paths:
                         e: s
                         i_avg: s
                         e_avg: s
-                        rr: times/min
+                        rr: 回/分
                         fio2: '%'
                         spo2: '%'
                         etco2: mmHg
@@ -438,6 +438,12 @@ paths:
           in: header
           name: X-User-Token
           description: ユーザー識別用トークン
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: Accept-Language
+          description: 言語コード
           required: true
     post:
       summary: 設定データを登録する
@@ -671,6 +677,7 @@ paths:
                   type: number
               required:
                 - height
+                - weight
                 - gender
                 - ventilator_id
             examples:
@@ -1037,6 +1044,7 @@ paths:
                   type: number
               required:
                 - height
+                - weight
                 - gender
             examples:
               example-1:
@@ -1111,25 +1119,25 @@ paths:
                   items:
                     type: object
                     properties:
-                      i:
-                        type: string
-                        minLength: 1
                       e:
                         type: string
                         minLength: 1
+                      respirations_per_10sec:
+                        type: string
+                        minLength: 1
                     required:
-                      - i
                       - e
+                      - respirations_per_10sec
               required:
                 - data
             examples:
               example-1:
                 value:
                   data:
-                    - i: '***'
-                      e: '***'
-                    - i: '****'
-                      e: '****'
+                    - e: '***'
+                      respirations_per_10sec: '***'
+                    - e: '****'
+                      respirations_per_10sec: '****'
           application/xml:
             schema:
               type: object
@@ -2524,7 +2532,7 @@ paths:
                         e: s
                         i_avg: s
                         e_avg: s
-                        rr: times/min
+                        rr: 回/分
                         fio2: '%'
                         spo2: '%'
                         etco2: mmHg
@@ -2715,20 +2723,24 @@ paths:
                 height:
                   type: string
                   minLength: 1
+                weight:
+                  type: string
                 gender:
                   type: number
                 ventilator_id:
                   type: number
               required:
                 - height
+                - weight
                 - gender
                 - ventilator_id
             examples:
               example-1:
                 value:
                   patient_code: '999'
-                  height: string
+                  height: xxx
                   gender: 1
+                  weight: xxx
                   ventilator_id: 1
   '/patient/{patient_id}/no_auth':
     parameters:
@@ -2767,6 +2779,8 @@ paths:
                       height:
                         type: string
                         minLength: 1
+                      weight:
+                        type: string
                 required:
                   - result
               examples:
@@ -2810,16 +2824,20 @@ paths:
                 height:
                   type: string
                   minLength: 1
+                weight:
+                  type: string
                 gender:
                   type: number
               required:
                 - height
+                - weight
                 - gender
             examples:
               example-1:
                 value:
                   patient_code: '999'
                   height: '169.5'
+                  weight: '55.5'
                   gender: 1
       description: 患者データを更新する
   /ventilator_value/no_auth:

@@ -21,11 +21,11 @@ class PatientCreateForm extends BaseForm
         return [
             'patient_code' => 'nullable|'.Rule::VALUE_STRING,
         
-            'height' => 'required|'.Rule::VALUE_POSITIVE.'|max:999',
+            'height'       => 'required|'.Rule::VALUE_POSITIVE.'|max:999',
 
-            'weight' => 'nullable|'.Rule::VALUE_POSITIVE.'|max:999',
+            'weight'       => 'required|'.Rule::VALUE_POSITIVE.'|max:999',
         
-            'gender' => 'required|integer|min:1|max:2',
+            'gender'       => 'required|'.Rule::GENDER_INTEGER,
 
             'ventilator_id'=> 'required|'.Rule::VALUE_INTEGER
         ];  
@@ -33,13 +33,13 @@ class PatientCreateForm extends BaseForm
 
     protected function bind($input)
     {
-        $this->patient_code = isset($input['patient_code']) ? strval($input['patient_code']) : null;
+        $this->patient_code  = isset($input['patient_code']) ? strval($input['patient_code']) : null;
 
-        $this->height = strval(round($input['height'],1));
+        $this->height        = strval(round($input['height'],1));
 
-        $this->weight = isset($input['weight']) ? strval(round($input['weight'],1)) : '';
+        $this->weight        = strval(round($input['weight'],1));
 
-        $this->gender = intval($input['gender']);
+        $this->gender        = intval($input['gender']);
 
         $this->ventilator_id = intval($input['ventilator_id']);
     }
