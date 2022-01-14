@@ -41,7 +41,7 @@ class VentilatorValueUpdateForm extends BaseForm
             'id' => 'required|'.Rule::VALUE_POSITIVE_INTEGER,
             'gender' => 'required|in:1,2',
             'height' => 'required|'.Rule::VALUE_POSITIVE,
-            'weight' => 'nullable|'.Rule::VALUE_POSITIVE,
+            'weight' => 'required|'.Rule::VALUE_POSITIVE,
             'airway_pressure' => 'required|'.Rule::VALUE_POSITIVE.'|between:8,45',
             'air_flow' => 'required|'.Rule::VALUE_POSITIVE.'|between:0,30',
             'o2_flow' => 'required|'.Rule::VALUE_POSITIVE.'|between:0,30',
