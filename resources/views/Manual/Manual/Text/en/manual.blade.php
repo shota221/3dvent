@@ -17,7 +17,7 @@
 @section('js')
 @stop
 
-@section('title', 'Electronic manual')
+@section('title', 'Instruction Manual')
 
 @section('parent_content')
     

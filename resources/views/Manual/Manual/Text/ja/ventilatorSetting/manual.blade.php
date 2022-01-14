@@ -17,7 +17,7 @@
 @section('js')
 @stop
 
-@section('title', '機器設定値入力')
+@section('title', '機器設定データ入力')
 
 @section('parent_content')
 

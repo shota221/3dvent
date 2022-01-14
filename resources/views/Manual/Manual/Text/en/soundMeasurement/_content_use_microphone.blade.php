@@ -1,13 +1,13 @@
-@include('Manual.Manual.Text._content_top', ['title' => 'マイクの利用を拒否した場合の再設定方法'])
+@include('Manual.Manual.Text._content_top', ['title' => 'Set up your smartphone, if your smartphone does not allow this app to use the Microphone.'])
 <div class="card-body">
     <div>
         <p>
-            <b>・ios</b><br>
-            [設定]-[プライバシー]-[マイク]にてMicroVentのマイク利用許可をＯＮにしてください。
+            <b>iOS</b><br>
+            Turn on the "MicroVent®︎V3" in iOS [Settings]-[Privacy]-[Microphone].
         </p>
         <p>
-            <b>・android</b><br>
-            [設定]-[アプリ（またはアプリケーションを管理）]-[MicorVent] -[権限]にてマイク利用許可をONにしてください。
+            <b>Android</b><br>
+            Turn on the Microphone in Android [Settings]-[Apps (Application Management)]-[MicroVent®︎V3]-[Permissions]-[MIC ACCESS FOR THIS APP]-[Allow]. 
         </p>
     </div>
 </div>

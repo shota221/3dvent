@@ -17,7 +17,7 @@
 @section('js')
 @stop
 
-@section('title', '二次元コード読込')
+@section('title', 'GS1コード読込')
 
 @section('parent_content')
 

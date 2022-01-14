@@ -17,7 +17,7 @@
 @section('js')
 @stop
 
-@section('title', 'Completion of registration')
+@section('title', 'Registration details')
 
 @section('parent_content')
 

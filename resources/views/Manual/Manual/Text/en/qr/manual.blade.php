@@ -17,7 +17,7 @@
 @section('js')
 @stop
 
-@section('title', '2D code reading')
+@section('title', 'GS1 code reading')
 
 @section('parent_content')
 

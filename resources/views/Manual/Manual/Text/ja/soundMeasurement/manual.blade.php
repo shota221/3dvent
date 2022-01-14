@@ -17,7 +17,7 @@
 @section('js')
 @stop
 
-@section('title', '音声測定')
+@section('title', '動作音測定＆解析')
 
 @section('parent_content')
 

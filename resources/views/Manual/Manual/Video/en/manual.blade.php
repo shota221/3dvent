@@ -17,7 +17,7 @@
 @section('js')
 @stop
 
-@section('title', 'Video manual')
+@section('title', 'Instruction Video')
 
 {{-- TODO サンプル動画を変更する  --}}
 @section('parent_content')

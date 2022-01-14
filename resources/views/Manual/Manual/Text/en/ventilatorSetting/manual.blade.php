@@ -17,7 +17,7 @@
 @section('js')
 @stop
 
-@section('title', 'Device setting value input')
+@section('title', 'Device setting data Input')
 
 @section('parent_content')
 
