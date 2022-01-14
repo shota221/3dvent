@@ -6,7 +6,7 @@
         "admin_user_login_unlock": "ログイン禁止を解除しました。",
         "applied": "申請しました。",
         "check_if_it_can_be_confirmed": "確認済みにしてよろしいですか？一度確認済みにすると未確認の状態には戻せません。",
-        "confirm": "上記、機器観察研究データを確認しました。",
+        "confirm": "上記、機器設定・測定データを確認しました。",
         "confirmed": "確認済",
         "csv_download_failed": "CSVファイル作成に失敗しました。再度生じる場合は管理者まで報告をお願いします。",
         "csv_import_failed": "CSVファイル読み込みに失敗しました。再度生じる場合は管理者まで報告をお願いします。",
@@ -26,21 +26,5 @@
         "timeout":"レスポンスタイムアウト。処理は完了している可能性があります。画面をリロードし、確認後再度実行してみてください。",
         "updated": "更新しました。",
         "unauthorized_operation":"この操作を行う権限がありません。"
-    },
-    "validate": {
-        "length" : "{{max}}以下で入力してください。",
-        "numeric" : "半角数字で入力してください",
-        "over_max_safe_interger" : "数値が大きすぎます",
-        "required": "必須項目です",
-        "positive_num" : "正の数で入力してください",
-        "date" : "正しい日付で入力してください",
-        "digits_greater_than_equal_to": "{{min}}以上の数で入力してください",
-        "digits_less_than_equal_to": "{{max}}以下の数で入力してください",
-        "digits_greater_than": "{{min}}より大きい数で入力してください",
-        "digits_less_than": "{{max}}より小さい数で入力してください",
-        "decimal_digits_in_range" : "小数点以下{{digits}}桁までで入力してください",
-        "duplicated" : "重複した登録です",
-        "unmatched": "入力値が一致していません",
-        "over_upload_file_count_limit_at_once": "一度に処理できるファイル数は{{limit}}までです"
     }
 }

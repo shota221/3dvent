@@ -145,6 +145,7 @@ return [
     // 'project_administrator_page'         => 'プロジェクト運営者ページ',
     // 'project_administrator'              => 'プロジェクト運営者',
     // 'project_manager'                    => 'プロジェクト運営者',
+    'put'                                => 'Update',
     // q
     // r
     'refined_search'                     => 'Refine your search',
