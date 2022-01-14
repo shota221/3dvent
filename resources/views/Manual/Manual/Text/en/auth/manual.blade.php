@@ -17,7 +17,7 @@
 @section('js')
 @stop
 
-@section('title', 'Terms of service')
+@section('title', 'Terms and Conditions')
 
 @section('parent_content')
 

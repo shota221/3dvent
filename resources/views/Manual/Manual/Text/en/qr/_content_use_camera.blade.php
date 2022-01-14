@@ -1,13 +1,13 @@
-@include('Manual.Manual.Text._content_top', ['title' => 'カメラの利用を拒否した場合の再設定方法'])
+@include('Manual.Manual.Text._content_top', ['title' => 'Set up your smartphone if your smartphone does not allow this app to use the camera'])
 <div class="card-body">
     <div>
         <p>
-            <b>・ios</b><br>
-            [設定]-[プライバシー]-[カメラ]にてMicroVentのカメラ利用許可をＯＮにしてください。
+            <b>iOS</b><br>
+            Turn on the "MicroVent®V3" in iOS [Settings]-[Privacy]-[Camera].
         </p>
         <p>
-            <b>・android</b><br>
-            [設定]-[アプリ（またはアプリケーションを管理）]-[MicorVent] -[権限]にてカメラ利用許可をONにしてください。
+            <b>Android</b><br>
+            Turn on the camera in Android [Settings]-[Apps (Application Management)]-[MicroVent®V3]-[Permissions]-[CAMERA ACCESS FOR THIS APP]-[Allow]. 
         </p>
     </div>
 </div>
