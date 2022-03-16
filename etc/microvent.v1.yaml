@@ -1823,31 +1823,27 @@ paths:
                         - id: 10
                           registered_at: '2021-02-04 12:34:06'
                           registered_user_name: test_user
-                          is_started: true
+                          is_initial: true
                           is_latest: false
                           is_fixed: true
-                          is_confirmed: true
                         - id: 22
                           registered_at: '2021-02-06 12:34:06'
                           registered_user_name: test_user
-                          is_started: true
+                          is_initial: true
                           is_latest: false
                           is_fixed: true
-                          is_confirmed: false
                         - id: 33
                           registered_at: '2021-02-07 12:34:06'
                           registered_user_name: test_user
-                          is_started: true
+                          is_initial: true
                           is_latest: false
                           is_fixed: false
-                          is_confirmed: false
                         - id: 34
                           registered_at: '2021-02-07 12:35:06'
                           registered_user_name: test_user
-                          is_started: false
+                          is_initial: false
                           is_latest: true
                           is_fixed: false
-                          is_confirmed: false
                 properties:
                   result:
                     type: object
