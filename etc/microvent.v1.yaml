@@ -760,7 +760,9 @@ paths:
     put:
       summary: 呼吸器情報を更新する
       operationId: put-ventilator-ventilator_id
-      description: 呼吸器情報を更新
+      description: |-
+        呼吸器情報を更新
+        Phase4：機能削除
       parameters:
         - schema:
             type: string
@@ -1035,25 +1037,24 @@ paths:
                 patient_code:
                   type: string
                   minLength: 1
-                height:
-                  type: string
-                  minLength: 1
                 weight:
                   type: string
-                gender:
-                  type: number
+                  minLength: 1
               required:
-                - height
+                - patient_code
                 - weight
-                - gender
+              x-examples:
+                example-1:
+                  patient_code: '999'
+                  weight: '50.5'
             examples:
               example-1:
                 value:
                   patient_code: '999'
-                  height: '169.5'
                   weight: '50.5'
-                  gender: 1
-      description: 患者データを更新する
+      description: |-
+        患者データを更新する
+        Phase4：heightとgenderの更新を受け付けない。weightの更新は受け付けるがマスタデータのみの変更となる
   /calculate/ie/manual:
     parameters: []
     post:
@@ -1815,6 +1816,38 @@ paths:
               schema:
                 description: ''
                 type: object
+                x-examples:
+                  example-1:
+                    result:
+                      list:
+                        - id: 10
+                          registered_at: '2021-02-04 12:34:06'
+                          registered_user_name: test_user
+                          is_started: true
+                          is_latest: false
+                          is_fixed: true
+                          is_confirmed: true
+                        - id: 22
+                          registered_at: '2021-02-06 12:34:06'
+                          registered_user_name: test_user
+                          is_started: true
+                          is_latest: false
+                          is_fixed: true
+                          is_confirmed: false
+                        - id: 33
+                          registered_at: '2021-02-07 12:34:06'
+                          registered_user_name: test_user
+                          is_started: true
+                          is_latest: false
+                          is_fixed: false
+                          is_confirmed: false
+                        - id: 34
+                          registered_at: '2021-02-07 12:35:06'
+                          registered_user_name: test_user
+                          is_started: false
+                          is_latest: true
+                          is_fixed: false
+                          is_confirmed: false
                 properties:
                   result:
                     type: object
@@ -1836,9 +1869,22 @@ paths:
                             registered_user_name:
                               type: string
                               minLength: 1
+                            is_started:
+                              type: boolean
+                              description: スタート時（そのセクションにおける最初の設定値）
+                            is_latest:
+                              type: boolean
+                              description: 最後値（最新の設定値）
+                            is_fixed:
+                              type: boolean
+                              description: 15分継続値
                           required:
                             - id
                             - registered_at
+                            - registered_user_name
+                            - is_started
+                            - is_latest
+                            - is_fixed
                 required:
                   - result
               examples:
@@ -1849,12 +1895,27 @@ paths:
                         - id: 10
                           registered_at: '2021-02-04 12:34:06'
                           registered_user_name: test_user
+                          is_started: true
+                          is_latest: false
+                          is_fixed: true
                         - id: 22
                           registered_at: '2021-02-06 12:34:06'
                           registered_user_name: test_user
+                          is_started: true
+                          is_latest: false
+                          is_fixed: true
                         - id: 33
                           registered_at: '2021-02-07 12:34:06'
                           registered_user_name: test_user
+                          is_started: true
+                          is_latest: false
+                          is_fixed: false
+                        - id: 34
+                          registered_at: '2021-02-07 12:35:06'
+                          registered_user_name: test_user
+                          is_started: false
+                          is_latest: true
+                          is_fixed: false
       operationId: get-ventilator_value-list
       description: |-
         該当呼吸器に対する条件を満たすventilator_value_idおよびそれぞれのregistered_at,registered_user_nameの値をregistered_at降順で返す。
@@ -2192,7 +2253,9 @@ paths:
                     result:
                       id: 1
                       revised_at: ''
-      description: 該当ventilator_value_idに対する機器観察研究データの更新
+      description: |-
+        該当ventilator_value_idに対する機器観察研究データの更新
+        Phase4：機能削除
       parameters:
         - schema:
             type: string
@@ -2266,6 +2329,209 @@ paths:
                   paco2: '***'
       tags:
         - ventilator_value
+  '/ventilator/{ventilator_id}/measurement_value':
+    parameters:
+      - schema:
+          type: string
+        name: ventilator_id
+        in: path
+        required: true
+    put:
+      summary: ''
+      operationId: put-ventilator-ventilator_id-measurement_value
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      status_use:
+                        type: number
+                      status_use_other:
+                        type: string
+                        minLength: 1
+                      spo2:
+                        type: string
+                        minLength: 1
+                      etco2:
+                        type: string
+                        minLength: 1
+                      pao2:
+                        type: string
+                        minLength: 1
+                      paco2:
+                        type: string
+                        minLength: 1
+                    required:
+                      - status_use
+                      - status_use_other
+                      - spo2
+                      - etco2
+                      - pao2
+                      - paco2
+                required:
+                  - result
+                x-examples:
+                  example-1:
+                    result:
+                      status_use: 2
+                      status_use_other: '***'
+                      spo2: '***'
+                      etco2: '***'
+                      pao2: '***'
+                      paco2: '***'
+              examples:
+                example-1:
+                  value:
+                    result:
+                      status_use: 2
+                      status_use_other: '***'
+                      spo2: '***'
+                      etco2: '***'
+                      pao2: '***'
+                      paco2: '***'
+      description: |-
+        id={ventilator_id}の機器の最後値の患者測定データ/使用場所データを登録・更新する
+        →患者測定データ登録も内部的にはventilator_valueに対するupdate処理なので登録・更新ともにPUTで統一
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: X-App-Key
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: X-User-Token
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: Accept
+          description: application/json
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              x-examples:
+                example-1:
+                  status_use: 2
+                  status_use_other: '***'
+                  spo2: '***'
+                  etco2: '***'
+                  pao2: '***'
+                  paco2: '***'
+              properties:
+                status_use:
+                  type: number
+                status_use_other:
+                  type: string
+                  minLength: 1
+                spo2:
+                  type: string
+                  minLength: 1
+                etco2:
+                  type: string
+                  minLength: 1
+                pao2:
+                  type: string
+                  minLength: 1
+                paco2:
+                  type: string
+                  minLength: 1
+            examples:
+              example-1:
+                value:
+                  status_use: 2
+                  status_use_other: '***'
+                  spo2: '***'
+                  etco2: '***'
+                  pao2: '***'
+                  paco2: '***'
+      tags:
+        - measurement_value
+    get:
+      summary: ''
+      operationId: get-ventilator-ventilator_id-measurement_value
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      status_use:
+                        type: number
+                      status_use_other:
+                        type: string
+                        minLength: 1
+                      spo2:
+                        type: string
+                        minLength: 1
+                      etco2:
+                        type: string
+                        minLength: 1
+                      pao2:
+                        type: string
+                        minLength: 1
+                      paco2:
+                        type: string
+                        minLength: 1
+                    required:
+                      - status_use
+                      - status_use_other
+                      - spo2
+                      - etco2
+                      - pao2
+                      - paco2
+                required:
+                  - result
+                x-examples:
+                  example-1:
+                    result:
+                      status_use: 2
+                      status_use_other: '***'
+                      spo2: '***'
+                      etco2: '***'
+                      pao2: '***'
+                      paco2: '***'
+              examples:
+                example-1:
+                  value:
+                    result:
+                      status_use: 2
+                      status_use_other: '***'
+                      spo2: '***'
+                      etco2: '***'
+                      pao2: '***'
+                      paco2: '***'
+      description: 'id={ventilator_id}の機器の最後値から患者測定データ/使用場所データを取得する'
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: X-App-Key
+        - schema:
+            type: string
+          in: header
+          name: Accept
+          description: application/json
+      tags:
+        - measurement_value
   /ventilator/no_auth:
     post:
       summary: 設定データを登録する
@@ -2821,25 +3087,24 @@ paths:
                 patient_code:
                   type: string
                   minLength: 1
-                height:
-                  type: string
-                  minLength: 1
                 weight:
                   type: string
-                gender:
-                  type: number
+                  minLength: 1
               required:
-                - height
+                - patient_code
                 - weight
-                - gender
+              x-examples:
+                example-1:
+                  patient_code: '999'
+                  weight: '55.5'
             examples:
               example-1:
                 value:
                   patient_code: '999'
-                  height: '169.5'
                   weight: '55.5'
-                  gender: 1
-      description: 患者データを更新する
+      description: |-
+        患者データを更新する。
+        Phase4：heightとgenderの更新を受け付けない。weightの更新は受け付けるがマスタデータのみの変更となる
   /ventilator_value/no_auth:
     post:
       summary: ''
@@ -3155,6 +3420,7 @@ tags:
   - name: auth
   - name: bug
   - name: calculate
+  - name: measurement_value
   - name: patient
   - name: room
   - name: user
