@@ -1869,7 +1869,7 @@ paths:
                             registered_user_name:
                               type: string
                               minLength: 1
-                            is_started:
+                            is_initial:
                               type: boolean
                               description: スタート時（そのセクションにおける最初の設定値）
                             is_latest:
@@ -1882,7 +1882,7 @@ paths:
                             - id
                             - registered_at
                             - registered_user_name
-                            - is_started
+                            - is_initial
                             - is_latest
                             - is_fixed
                 required:
@@ -1895,25 +1895,25 @@ paths:
                         - id: 10
                           registered_at: '2021-02-04 12:34:06'
                           registered_user_name: test_user
-                          is_started: true
+                          is_initial: true
                           is_latest: false
                           is_fixed: true
                         - id: 22
                           registered_at: '2021-02-06 12:34:06'
                           registered_user_name: test_user
-                          is_started: true
+                          is_initial: true
                           is_latest: false
                           is_fixed: true
                         - id: 33
                           registered_at: '2021-02-07 12:34:06'
                           registered_user_name: test_user
-                          is_started: true
+                          is_initial: true
                           is_latest: false
                           is_fixed: false
                         - id: 34
                           registered_at: '2021-02-07 12:35:06'
                           registered_user_name: test_user
-                          is_started: false
+                          is_initial: false
                           is_latest: true
                           is_fixed: false
       operationId: get-ventilator_value-list
