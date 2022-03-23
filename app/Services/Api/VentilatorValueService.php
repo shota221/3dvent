@@ -107,6 +107,10 @@ class VentilatorValueService
         //2.指定のventilator_idに対して設定値が存在しない。
 
         $initial_flg = Models\VentilatorValue::NOT_INITIAL;
+
+        $status_use = null;
+
+        $status_use_other = '';
         
         $ventilator_value_exists = Repos\VentilatorValueRepository::existsByVentilatorId($ventilator_id);
 
@@ -119,6 +123,8 @@ class VentilatorValueService
             $diff_from_latest_ventilator_value = DateUtil::parseToDatetime($latest_ventilator_value->registered_at)->diffInMinutes($registered_at);
             if( $diff_from_latest_ventilator_value >= $interval ){
                 $initial_flg = Models\VentilatorValue::INITIAL;
+                $status_use = $latest_ventilator_value->status_use;
+                $status_use_other = $latest_ventilator_value->status_use_other;
             };
         } else {
             $initial_flg = Models\VentilatorValue::INITIAL;
@@ -147,7 +153,9 @@ class VentilatorValueService
             $appkey_id,
             $registered_user_id,
             $initial_flg,
-            $latest_flg
+            $latest_flg,
+            $status_use,
+            $status_use_other,
         );
 
         DBUtil::Transaction(
@@ -179,7 +187,7 @@ class VentilatorValueService
             throw new Exceptions\InvalidFormException($form);
         }
 
-        $search_values = $this->buildVentilatorValueSearchValues($ventilator_id, $form->fixed_flg);
+        $search_values = $this->buildVentilatorValueSearchValues($ventilator_id);
 
         $ventilator_values = Repos\VentilatorValueRepository::findBySeachValuesAndLimitOffsetOrderByRegisteredAtDesc($search_values, $form->limit, $form->offset);
 
