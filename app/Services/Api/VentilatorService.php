@@ -219,8 +219,6 @@ class VentilatorService
     }
 
     /**
-     * TODO:latest_flg反映後テスト
-     *
      * @param Form\MeasurementValueShowForm $form
      * @return Response\Api\MeasurementValueResult
      */
@@ -237,8 +235,6 @@ class VentilatorService
     }
 
     /**
-     * TODO:latest_flg反映後テスト
-     *
      * @param Form\MeasurementValueUpdateForm $form
      * @param Models\User $user
      * @return void

@@ -57,9 +57,11 @@ class VentilatorValueController extends ApiController
     {
         $form = new Form\VentilatorValueListForm($request->all());
 
-        if ($form->hasError() || !$response = $this->service->getVentilatorValueListResult($form)) {
+        if ($form->hasError()) {
             throw new Exceptions\InvalidFormException($form);
         }
+
+        $response = $this->service->getVentilatorValueListResult($form);
 
         return $response;
     }
