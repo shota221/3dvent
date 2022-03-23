@@ -82,7 +82,12 @@ class VentilatorService
         $expiration_date = $gs1_data->expiration_date;
 
         if (!is_null($form->latitude) && !is_null($form->longitude)) {
-            $city = (new Support\Client\ReverseGeocodingApiClient)->getReverseGeocodingData($form->latitude, $form->longitude, 13)->display_name;
+            try {
+                $city = (new Support\Client\ReverseGeocodingApiClient)->getReverseGeocodingData($form->latitude, $form->longitude, 13)->display_name;
+            } catch (Exceptions\HttpClientResponseException $e) {
+                //リバースジオコーディングに失敗しても呼吸器の登録はできるようにエラーログだけ吐いて処理を続行。
+                \Log::error('reversegeocoding has failed. latitude = ' . $form->latitude . 'longitude = ' . $form->longitude);
+            }
         }
 
         $entity = Converter\VentilatorConverter::convertToVentilatorEntity($form->gs1_code, $serial_number, $expiration_date, DateUtil::toDatetimeStr(DateUtil::now()), $form->latitude, $form->longitude, $city, $organization_id, $registered_user_id);
@@ -211,5 +216,111 @@ class VentilatorService
         );
 
         return Converter\VentilatorConverter::convertToVentilatorDeactivateResult($ventilator);
+    }
+
+    /**
+     * TODO:latest_flg反映後テスト
+     *
+     * @param Form\MeasurementValueShowForm $form
+     * @return Response\Api\MeasurementValueResult
+     */
+    public function fetchMeasurementValue(Form\MeasurementValueShowForm $form)
+    {
+        $ventilator_value = Repos\VentilatorValueRepository::findOneLatestByVentilatorId($form->id);
+
+        if (is_null($ventilator_value)) {
+            $form->addError('id', 'validation.ventilator_value_not_found');
+            throw new Exceptions\InvalidFormException($form);
+        }
+
+        return Converter\VentilatorValueConverter::convertToMeasurementValueResult($ventilator_value);
+    }
+
+    /**
+     * TODO:latest_flg反映後テスト
+     *
+     * @param Form\MeasurementValueUpdateForm $form
+     * @param Models\User $user
+     * @return void
+     */
+    public function updateMeasurementValue($form, $user)
+    {
+        $id = $form->id;
+        $ventilator_value = null;
+
+        if (Auth\OrgUserGate::canEditAllVentilatorValue($user)) {
+            //全体権限を有している場合は組織内ventilator_valueに対して編集可能
+            $ventilator_value = Repos\VentilatorValueRepository::findOneLatestByOrganizationIdAndVentilatorId($user->organization_id, $id);
+            \Log::debug($ventilator_value);
+        } else {
+            //そうでない場合は自身の登録したventilator_valueに対して編集可能
+            $ventilator_value = Repos\VentilatorValueRepository::findOneLatestByRegisteredUserIdAndVentilatorId($user->id, $id);
+            \Log::debug($ventilator_value);
+        }
+
+        if (is_null($ventilator_value)) {
+            throw new Exceptions\AccessDeniedException();
+        }
+
+        //編集後データの挿入
+        $entity = Converter\VentilatorValueConverter::convertToVentilatorValueEntity(
+            $ventilator_value->ventilator_id,
+            $ventilator_value->height,
+            $ventilator_value->weight,
+            $ventilator_value->gender,
+            $ventilator_value->ideal_weight,
+            $ventilator_value->airway_pressure,
+            $ventilator_value->air_flow,
+            $ventilator_value->o2_flow,
+            $ventilator_value->rr,
+            $ventilator_value->expiratory_time,
+            $ventilator_value->inspiratory_time,
+            $ventilator_value->vt_per_kg,
+            $ventilator_value->predicted_vt,
+            $ventilator_value->estimated_vt,
+            $ventilator_value->estimated_mv,
+            $ventilator_value->estimated_peep,
+            $ventilator_value->fio2,
+            $ventilator_value->total_flow,
+            $ventilator_value->registered_at,
+            $ventilator_value->appkey_id,
+            $ventilator_value->registered_user_id,
+            $ventilator_value->initial_flg,
+            $ventilator_value->latest_flg,
+            $form->status_use,
+            $form->status_use_other,
+            $form->spo2,
+            $form->etco2,
+            $form->pao2,
+            $form->paco2,
+            $ventilator_value->fixed_flg,
+            $ventilator_value->ventilator_value_scanned_at,
+            $ventilator_value->fixed_at,
+            $ventilator_value->confirmed_flg,
+            $ventilator_value->confirmed_at,
+            $ventilator_value->confirmed_user_id,
+        );
+
+        //編集元にdeleted_atを記録
+        $ventilator_value->deleted_at = DateUtil::toDatetimeStr(DateUtil::now());
+
+        DBUtil::Transaction(
+            '編集後データの挿入',
+            function () use ($entity, $ventilator_value, $user) {
+                //編集前データ削除
+                $ventilator_value->save();
+                //削除履歴追加
+                $delete_history = Converter\HistoryConverter::convertToHistoryEntity($ventilator_value, Models\HistoryBaseModel::DELETE, $user->id);
+                $delete_history->save();
+
+                //編集後データ登録
+                $entity->save();
+                //登録履歴追加
+                $create_history = Converter\HistoryConverter::convertToHistoryEntity($entity, Models\HistoryBaseModel::CREATE, $user->id);
+                $create_history->save();
+            }
+        );
+
+        return Converter\VentilatorValueConverter::convertToMeasurementValueResult($entity);
     }
 }

@@ -147,6 +147,8 @@ class VentilatorValueConverter
         $registered_at,
         $appkey_id,
         $user_id = null,
+        $initial_flg = null,
+        $latest_flg = null,
         $status_use = null,
         $status_use_other = '',
         $spo2 = '',
@@ -154,6 +156,7 @@ class VentilatorValueConverter
         $pao2 = '',
         $paco2 = '',
         $fixed_flg = null,
+        $ventilator_value_scanned_at = null,
         $fixed_at = null,
         $confirmed_flg = null,
         $confirmed_at = null,
@@ -219,6 +222,7 @@ class VentilatorValueConverter
 
         if (!is_null($fixed_flg)) {
             $entity->fixed_flg = $fixed_flg;
+            $entity->ventilator_value_scanned_at = $ventilator_value_scanned_at;
             $entity->fixed_at = $fixed_at;
         }
 
@@ -226,6 +230,14 @@ class VentilatorValueConverter
             $entity->confirmed_flg = $confirmed_flg;
             $entity->confirmed_at = $confirmed_at;
             $entity->confirmed_user_id = $confirmed_user_id;
+        }
+
+        if (!is_null($initial_flg)) {
+            $entity->initial_flg = $initial_flg;
+        }
+
+        if (!is_null($latest_flg)) {
+            $entity->latest_flg = $latest_flg;
         }
 
         return $entity;
@@ -299,7 +311,7 @@ class VentilatorValueConverter
         return $entity;
     }
 
-    public static function convertToVentilatorValueListElm($id, $registered_at, $registered_user_name = null)
+    public static function convertToVentilatorValueListElm(int $id, string $registered_at, string $registered_user_name = null, bool $is_initial, bool $is_latest, bool $is_fixed)
     {
         $res = new Response\Api\VentilatorValueElm;
 
@@ -308,6 +320,12 @@ class VentilatorValueConverter
         $res->registered_at = $registered_at;
 
         $res->registered_user_name = $registered_user_name;
+
+        $res->is_initial = $is_initial;
+
+        $res->is_latest = $is_latest;
+
+        $res->is_fixed = $is_fixed;
 
         return $res;
     }
@@ -488,4 +506,27 @@ class VentilatorValueConverter
 
         return $ventilator_value_result;
     }
+
+    public static function convertToMeasurementValueResult(Models\VentilatorValue $entity)
+    {
+        $res = new Response\Api\MeasurementValueResult;
+
+        $round_at = config('calc.default.rounding_precision');
+
+        $res->status_use = $entity->status_use;
+
+        $res->status_use_other = strval($entity->status_use_other);
+
+        $res->spo2 = !empty($entity->spo2) ? strval(round($entity->spo2, $round_at)) : $entity->spo2;
+
+        $res->etco2 = !empty($entity->etco2) ? strval(round($entity->etco2, $round_at)) : $entity->etco2;
+
+        $res->pao2 = !empty($entity->pao2) ? strval(round($entity->pao2, $round_at)) : $entity->pao2;
+
+        $res->paco2 = !empty($entity->paco2) ? strval(round($entity->paco2, $round_at)) : $entity->paco2;
+
+        return $res;
+    }
+
+
 }

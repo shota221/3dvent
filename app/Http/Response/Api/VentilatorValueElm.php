@@ -11,4 +11,10 @@ class VentilatorValueElm extends JsonResult
     public $registered_at;
 
     public $registered_user_name;
+
+    public $is_initial;
+
+    public $is_latest;
+
+    public $is_fixed;
 }
