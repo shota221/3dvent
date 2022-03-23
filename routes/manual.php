@@ -71,7 +71,6 @@ Route::group(['middleware' => ['routetype:manual']], function() {
         'ManualController@showTextManualAll'
     )->name('manual.text_manual_all');
 
-
     /**
      * 動画マニュアル
      */

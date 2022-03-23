@@ -17,7 +17,7 @@
 @section('js')
 @stop
 
-@section('title', 'Device setting data Input')
+@section('title', 'Ventilator Management')
 
 @section('parent_content')
 

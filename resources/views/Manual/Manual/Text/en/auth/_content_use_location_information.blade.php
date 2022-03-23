@@ -1,14 +1,14 @@
 
-@include('Manual.Manual.Text._content_top', ['title' => '位置情報の利用を拒否した場合の再設定方法'])
+@include('Manual.Manual.Text._content_top', ['title' => 'Set up your smartphone if your smartphone does not allow this app to use location information'])
 <div class="card-body">
     <div>
         <p>
             <b>iOS</b><br>
-            [設定]-[プライバシー]-[位置情報サービス]-[Microvent]にて「このAppの使用中のみ許可」にチェックをいれてください。
+            Check "While Using the App" in [Settings]-[Privacy]-[Location services]-[MicroventV3].
         </p>
         <p>
             <b>Android</b><br>
-            [設定]-[位置情報]-[アプリの権限]-[Microvent]にて「アプリの使用中のみ許可」にチェックをいれてください。
+            Check "Allow only while using the app" in [Settings]-[Location information]-[App permissions]-[MicroventV3].
         </p>
     </div>
 </div>

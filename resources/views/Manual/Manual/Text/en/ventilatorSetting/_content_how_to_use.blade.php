@@ -1,78 +1,92 @@
-@include('Manual.Manual.Text._content_top', ['title' => '機器設定値初回入力'])
+@include('Manual.Manual.Text._content_top', ['title' => 'Connect MicroVent®V3 to the Patient'])
 <div class="card-body">
     <p>
-        1，MicroVent®V3をテストラングから切り離し、患者の気管チューブに以下の設定のまま接続してください。<br>（設定圧20cm/H₂0、空気流量9L/分、酸素流量3L/分)
-    </p>
-    <div>2，MicroVent®V3が動作していることを確認し、以下の初回調整を行ってください。
-        <ul>
-            <li><i>呼吸数が速すぎるように見える場合</i><br>→ 設定圧を2.5cmH₂O刻みで増加させ、呼吸数を減らしてください。</li>
-            <li><i>呼吸数が遅すぎるように見える場合</i><br>→ 設定圧を2.5cmH₂O刻みで低下させ、呼吸数を増やしてください。</li>
-            <li><i>SpO₂が92％未満の場合</i><br>→ 供給気量を12L/分まま変えずに、酸素流量の割合を増やしてください。</li>
-        </ul>
-    </div>
-    <p>
-        3，空気流量、酸素流量、設定圧をスマートフォンアプリに入力してください。
+        1. Using this application, read the GS-1 code of the MicroVent®V3 and enter the basic patient information: body length,body weight,gender and patient ID.
+
     </p>
     <p>
-        4，3により、FiO₂、PEEPが表示されます。
-    <p>
-        5，「呼吸回数が臨床的に妥当である」、「SpO₂が臨床的に妥当である。（健康成人96%以上。一般的な肺炎の治療での初期値をとりあえず92％以上とする）」それぞれにチェックをいれてください。
+        2. The application will then display the standard recommended tidal volume required for the patient. 
     </p>
     <p>
-        6，「動作音の収集と分析」もしくは「手動測定はこちら」を押下してください。
+        3. Next, remove the MicroVent®V3 from the test lung and connect it to the patient's tracheal tube. At this point,if you have no experience of using this device, enter the default settings of 20 cmH₂O set pressure dial, 9 L/min air flow and 3 L/min oxygen flow. (If you have used this device before, you can select the default values by guessing the patient's condition)
     </p>
     <p>
-        7，「呼吸時間測定」の画面に遷移されます。
+        4.If the respiratory rate is too fast,increase the pressure setting in increments of +2.5 cmH₂O (＜40cmH₂O). If too slow, reduce the pressure setting in -2.5cmH₂O increments (＞8cmH₂O). <br>
+        If the SpO₂ is less than 92%, increase the oxygen flow and decrease the air flow so that the total flow is 12 L/min.
+
+    <p>
+        5. Re-enter that setting, the air flow rate and the oxygen flow rate.
+    </p>
+    <p>
+        6. FiO₂ and estimated PEEP will be displayed.
+    </p>
+    <p>
+        7. Check the boxes for both normal respiratory rate and SpO₂ ＞ 92%
+    </p>
+    <p>
+        8. Now proceed to the device sound acquisition to estimate actual Vt,VM.
+    </p>
+    <p>
+        9. Register the estimated values of Vt and VM.
     </p>
 </div>
 @include('Manual.Manual.Text._content_bottom')
 
-@include('Manual.Manual.Text._content_top',['title' => '機器設定値入力2回目以降（1回換気量の決定）'])
+@include('Manual.Manual.Text._content_top',['title' => 'How to get closer to the desired tidal Volume(Vt)'])
 <div class="card-body">
-    <div>1，以下を参考に設定圧を調整してください。
-        <ul>
-            <li><i>登録内容の推測値VTiが予測値VTi以上だった場合</i><br>→ 設定圧を2.5cmH₂O下げてください。（通常10cmH₂O以上）</li>
-            <li><i>登録内容の推測値VTiが予測値VTi以下だった場合</i><br>→ 設定圧を2.5cmH₂O上げてください。（通常35cmH₂O以下）</li>
-        </ul>
-    </div>
     <p>
-        2，設定圧をスマートフォンアプリに入力してください。
+        1. Try the following if the estimated Vt value is significantly different from the patient's recommended Vt value.
     </p>
     <p>
-        3，2により、FiO₂、PEEPが表示されます。
-    <p>
-        4，「呼吸回数が臨床的に妥当である」、「SpO₂が臨床的に妥当である。（健康成人96%以上。一般的な肺炎の治療での初期値をとりあえず92％以上とする）」それぞれにチェックをいれてください。
+        2. If the estimated Vt value is lower than the patient's recommended Vt value, increase the set Pressure Dial by +2.5cmH₂0.(＜40cmH₂0)
     </p>
     <p>
-        5，「動作音の収集と分析」もしくは「手動測定はこちら」を押下してください。
+        3. If the estimated Vt value is higher than the patient's recommended Vt value, reduce the set Pressure Dial by 2.5cmH₂0 (>8cmH₂O).<br> 
+        If the SpO₂ is less than 92%, increase the oxygen flow and reduce the air flow so that the total flow is 12L/min.
     </p>
     <p>
-        6，「呼吸時間測定」の画面に遷移されます。
+        4. Re-enter that setting, the air flow rate and the oxygen flow rate.
+    </p>
+    <p>
+        5. FiO₂ and estimated PEEP will be displayed.
+    </p>
+    <p>
+        6. Check the boxes for both normal respiratory rate and SpO₂＞92%.
+    </p>
+    <p>
+        7. Now proceed to the device sound acquisition to estimate actual Vt, MV.
+    </p>
+    <p>
+        8. Register the estimated values of Vt and VM. 
     </p>
 </div>
 @include('Manual.Manual.Text._content_bottom')
 
-@include('Manual.Manual.Text._content_top',['title' => '機器設定値入力2回目以降（1回換気量決定後の呼吸数の決定）'])
+@include('Manual.Manual.Text._content_top',['title' => 'How to get closer to the desired MV(minute volume) and respiratory rate'])
 <div class="card-body">
-    <div>1，以下を参考に供給気量（酸素流量、空気流量）を調整してください。
-        <ul>
-            <li><i>呼吸数を下げる必要がある場合</i><br>→ 供給気量（酸素流量、空気流量）を低下させる</li>
-            <li><i>呼吸数を上げる必要がある場合</i><br>→ 供給気量（酸素流量、空気流量）を上昇させる。</li>
-        </ul>
-    </div>
     <p>
-        2，酸素流量、空気流量をスマートフォンアプリに入力してください。
+        1. If the estimated MV is too high and the respiratory rate is too high, reduce the total flow by 3 L/min. Then, adjust the proportion of oxygen and air flow not to change the FiO₂ at this time.
     </p>
     <p>
-        3，2により、FiO₂、PEEPが表示されます。
-    <p>
-        4，「呼吸回数が臨床的に妥当である」、「SpO₂が臨床的に妥当である。（健康成人96%以上。一般的な肺炎の治療での初期値をとりあえず92％以上とする）」それぞれにチェックをいれてください。
+        2. If the estimated MV is low or the respiratory rate is too low, increase the total flow by 3 L/min. Then, adjust the proportion of oxygen and air flow not to change the FiO₂ at this time.
     </p>
     <p>
-        5，「動作音の収集と分析」もしくは「手動測定はこちら」を押下してください。
+        3. If the FiO₂ is above 50%, to maintain SpO₂＞92%, increase the air flow only and increase the total flow to increase the estimated MV and at the same time decrease the FiO₂. If the respiratory rate is too high, increase the Pressure Dial setting.
+    </p>    
+    <p>
+        4. Re-enter that setting, the air flow rate and the oxygen flow rate.
     </p>
     <p>
-        6，「呼吸時間測定」の画面に遷移されます。
+        5. FiO₂ and estimated PEEP will be displayed.
+    </p>
+    <p>
+        6. Check the boxes for both normal respiratory rate and SpO₂＞92%.
+    </p>
+    <p>
+        7. Now proceed to the device sound acquisition to estimate actual Vt, MV.
+    </p>
+    <p>
+        8. Register the estimated values of Vt and VM. 
     </p>
 </div>
 @include('Manual.Manual.Text._content_bottom')

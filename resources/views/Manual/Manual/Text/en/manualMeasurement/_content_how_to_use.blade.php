@@ -1,22 +1,17 @@
-@include('Manual.Manual.Text._content_top', ['title' => '手動測定利用方法'])
+@include('Manual.Manual.Text._content_top', ['title' => 'How to Use Device Sound Manual Measurement'])
 <div class="card-body">
     <p>
-        1，呼気時間1回目(s)、呼吸回数/10秒 1回目、呼気時間2回目(s)、呼吸回数/10秒 2回目に手動にて測定した結果を入力してください。
+        1. Measure and input the exhalation time with a stopwatch and the number of breaths (valve-closing sound's count) in 10 seconds twice.
     </p>
     <p>
-        2，「呼気/吸気時間計測」を押下してください。
+        2. Tap the "Calculation" button.
     </p>
     <p>
-        3，2により平均呼気時間、平均吸気時間が表示されます
+        3. The average inhalation and exhalation time and respiratory rate will be displayed.
     </p>
     <p>
-        4，「登録して計算」を押下してください。
+        4. Tap the "Vt/ MV Estimation and Registration" button; move to the "Estimated Vt / MV & Setting Summary" screen.
     </p>
-    <p>
-        5，「1回換気量推定&登録」を押下してください。
-    </p>
-    <p>
-        6，「登録内容」の画面に遷移されます。
 </div>
 @include('Manual.Manual.Text._content_bottom')
 

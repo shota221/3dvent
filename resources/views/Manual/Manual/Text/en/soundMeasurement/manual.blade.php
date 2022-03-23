@@ -17,7 +17,7 @@
 @section('js')
 @stop
 
-@section('title', 'Sound acquisition & analysis')
+@section('title', 'Device Sound Acquisition')
 
 @section('parent_content')
 

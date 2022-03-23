@@ -3,11 +3,11 @@
     <div>
         <p>
             <b>iOS</b><br>
-            Turn on the "MicroVent®︎V3" in iOS [Settings]-[Privacy]-[Microphone].
+            Turn on the "MicroVentV3" in iOS [Settings]-[Privacy]-[Microphone].
         </p>
         <p>
             <b>Android</b><br>
-            Turn on the Microphone in Android [Settings]-[Apps (Application Management)]-[MicroVent®︎V3]-[Permissions]-[MIC ACCESS FOR THIS APP]-[Allow]. 
+            Turn on the Microphone in Android [Settings]-[Apps (Application Management)]-[MicroVentV3]-[Permissions]-[MIC ACCESS FOR THIS APP]-[Allow]. 
         </p>
     </div>
 </div>

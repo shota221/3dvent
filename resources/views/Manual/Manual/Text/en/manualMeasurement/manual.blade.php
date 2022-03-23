@@ -17,7 +17,7 @@
 @section('js')
 @stop
 
-@section('title', 'Manual measurement')
+@section('title', 'Manual Measurement')
 
 @section('parent_content')
 

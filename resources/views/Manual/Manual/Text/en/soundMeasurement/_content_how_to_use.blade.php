@@ -1,22 +1,19 @@
-@include('Manual.Manual.Text._content_top', ['title' => '動作音測定＆解析利用方法'])
+@include('Manual.Manual.Text._content_top', ['title' => 'How to Use Device Sound Acquisition'])
 <div class="card-body">
     <p>
-        1，スマートフォンをMicroVent®V3に近づけて、「録音」を押下してください。
+        1. To record the device sound on your smartphone, hold it close to a working MicroVent®V3 and tap "Sound Recording Start".
     </p>
     <p>
-        2，呼気、吸気ともにが4回以上録音できたら「停止」を押下してください。
+        2. When you have recorded exhalation and closing valve sounds at least four times, tap "Stop".
     </p>
     <p>
-        3，「呼気/吸気時間計測」を押下してください。
+        3. Tap on "Measurement".
     </p>
     <p>
-        4，3により平均吸気時間、平均呼気時間が表示されます。
+        4. The average inhalation and exhalation time and respiratory rate will be displayed.
     </p>
     <p>
-        5，「1回換気量推定&登録」を押下してください。
-    </p>
-    <p>
-        6，「登録内容」の画面に遷移されます。
+        5. Tap the " Vt/ MV Estimation and Registration" button; move to the "Estimated Vt / MV & Setting Summary" screen.
     </p>
 </div>
 @include('Manual.Manual.Text._content_bottom')

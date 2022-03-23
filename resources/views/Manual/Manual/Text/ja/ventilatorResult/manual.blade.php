@@ -17,7 +17,7 @@
 @section('js')
 @stop
 
-@section('title', '登録内容')
+@section('title', 'Vt/MVの推定値と設定サマリー')
 
 @section('parent_content')
 
