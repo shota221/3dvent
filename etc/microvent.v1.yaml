@@ -1913,12 +1913,7 @@ paths:
                           is_latest: true
                           is_fixed: false
       operationId: get-ventilator_value-list
-      description: |-
-        該当呼吸器に対する条件を満たすventilator_value_idおよびそれぞれのregistered_at,registered_user_nameの値をregistered_at降順で返す。
-        例1）ventilator_id = 1 のfixed_flgが立っているventilat_valueのidを取得したい場合
-        　?ventilator_id=1&fixed_flg=1
-        例2）ventilator_id = 1 の最新のventilator_valueのidを取得したい場合
-        ?ventilator_id=1&limit=1
+      description: '該当呼吸器に対する条件を満たすventilator_value_idおよびそれぞれのregistered_at,registered_user_nameの値をregistered_at降順で返す。'
       parameters:
         - schema:
             type: string
@@ -1942,10 +1937,6 @@ paths:
             type: integer
           in: query
           name: offset
-        - schema:
-            type: boolean
-          in: query
-          name: fixed_flg
     post:
       summary: ''
       operationId: post-ventilator-ventilator_id
@@ -2526,6 +2517,10 @@ paths:
           in: header
           name: Accept
           description: application/json
+        - schema:
+            type: string
+          in: header
+          name: X-User-Token
       tags:
         - measurement_value
   /ventilator/no_auth:
