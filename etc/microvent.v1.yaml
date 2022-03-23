@@ -703,9 +703,6 @@ paths:
                 properties:
                   result:
                     type: object
-                    required:
-                      - estimated_peep
-                      - fio2
                     properties:
                       estimated_peep:
                         type: string
@@ -713,14 +710,28 @@ paths:
                       fio2:
                         type: string
                         minLength: 1
+                      total_flow:
+                        type: string
+                        minLength: 1
+                    required:
+                      - estimated_peep
+                      - fio2
+                      - total_flow
                 required:
                   - result
+                x-examples:
+                  example-1:
+                    result:
+                      estimated_peep: '7.3'
+                      fio2: '47.3'
+                      total_flow: '12.0'
               examples:
                 example-1:
                   value:
                     result:
                       estimated_peep: '7.3'
                       fio2: '47.3'
+                      total_flow: '12.0'
       operationId: get-calculate-estimated_data
       description: 諸変数を投げて算出可能な予測値を取得する
       parameters:

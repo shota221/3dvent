@@ -65,5 +65,6 @@ return [
         'ie_ratio'       => 1,
         'predicted_vt'   => 1,
         'rr'             => 1,
+        'total_flow'     => 1
     ]
 ];
