@@ -12,10 +12,6 @@ class PatientUpdateForm extends BaseForm
 
     public $patient_code;
 
-    public $height;
-
-    public $gender;
-
     public $weight;
     
     protected function validationRule()
@@ -24,10 +20,6 @@ class PatientUpdateForm extends BaseForm
             'id'           => 'required|'.Rule::VALUE_INTEGER,
 
             'patient_code' => 'nullable|'.Rule::VALUE_STRING,
-        
-            'height'       => 'required|'.Rule::VALUE_POSITIVE.'|max:999',
-        
-            'gender'       => 'required|'.Rule::GENDER_INTEGER,
 
             'weight'       => 'required|'.Rule::VALUE_POSITIVE.'|max:999'
         ];  
@@ -35,13 +27,9 @@ class PatientUpdateForm extends BaseForm
 
     protected function bind($input)
     {
-        $this->id           = intval($input['id']);
+        $this->id           = $input['id'];
 
         $this->patient_code = isset($input['patient_code']) ? strval($input['patient_code']) : null;
-
-        $this->height       = strval(round($input['height'],1));
-
-        $this->gender       = intval($input['gender']);
 
         $this->weight       = strval(round($input['weight'],1));
     }

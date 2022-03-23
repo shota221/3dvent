@@ -106,6 +106,10 @@ class PatientService
         return Converter\PatientConverter::convertToPatientResult($patient, $predicted_vt);
     }
 
+    /**
+     * @param Form\PatientUpdateForm $form
+     * @return Response\Api\PatientResult
+     */
     public function update(Form\PatientUpdateForm $form)
     {
         $patient = Repos\PatientRepository::findOneById($form->id);
@@ -127,8 +131,6 @@ class PatientService
         }
 
         $patient->patient_code = $form->patient_code;
-        $patient->height = $form->height;
-        $patient->gender = $form->gender;
         $patient->weight = $form->weight;
 
         Support\DBUtil::Transaction(
@@ -148,7 +150,7 @@ class PatientService
         $vt_per_kg = !is_null($organization_setting) ? $organization_setting->vt_per_kg : config('calc.default.vt_per_kg');
 
         //理想体重の算出
-        $ideal_weight = strval($this->calcIdealWeight(floatval($form->height), $form->gender));
+        $ideal_weight = strval($this->calcIdealWeight(floatval($patient->height), $patient->gender));
 
         $predicted_vt = $this->calcPredictedVt(floatval($ideal_weight), $vt_per_kg);
 

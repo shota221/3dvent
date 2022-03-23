@@ -37,9 +37,25 @@ class VentilatorValueRepository
             ->select('ventilator_values.*')->first();
     }
 
+    public static function findOneLatestByOrganizationIdAndVentilatorId(int $organization_id, int $ventilator_id)
+    {
+        return self::queryWithVentilatorsByOrganizationId($organization_id)
+            ->where('ventilator_values.ventilator_id', $ventilator_id)
+            ->where('ventilator_values.latest_flg', VentilatorValue::LATEST)
+            ->select('ventilator_values.*')->first();
+    }
+
     public static function findOneByRegisteredUserIdAndId(int $registered_user_id, int $id)
     {
         return static::queryByRegisteredUserId($registered_user_id)->where('id', $id)->first();
+    }
+
+    public static function findOneLatestByRegisteredUserIdAndVentilatorId(int $registered_user_id, int $ventilator_id)
+    {
+        return static::queryByRegisteredUserId($registered_user_id)
+             ->where('ventilator_id', $ventilator_id)
+             ->where('latest_flg', VentilatorValue::LATEST)
+             ->first();
     }
 
     public static function findOneWithPatientAndOrganizationAndRegisteredUserById($id)
@@ -88,6 +104,10 @@ class VentilatorValueRepository
         return static::query()->whereIn('ventilator_id', $ventilator_ids)->exists();
     }
 
+    public static function findOneLatestByVentilatorId(int $ventilator_id)
+    {
+        return static::query()->where('ventilator_id', $ventilator_id)->where('latest_flg', VentilatorValue::LATEST)->first();
+    }
 
     public static function findOneByVentilatorId(int $ventilator_id)
     {

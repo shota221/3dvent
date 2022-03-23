@@ -89,7 +89,7 @@ class VentilatorValueService
 
         $fio2 = $this->calcFio2($form->air_flow, $form->o2_flow);
 
-        $registered_at = DateUtil::toDatetimeStr(DateUtil::now());
+        $registered_at = DateUtil::now();
 
         $height = $patient->height;
 
@@ -98,6 +98,37 @@ class VentilatorValueService
         $gender = $patient->gender;
 
         $ideal_weight = $this->calcIdealWeight($height, $gender);
+
+        //最後値（指定のventilator_idについて最新の設定値）。deletedでない設定値に対してただ一つ存在。
+        $latest_flg = Models\VentilatorValue::LATEST;
+
+        //セクションスタート時の設定値であるかどうか。以下の場合にINITIAL判定。
+        //1.指定のventilator_idのLATESTな設定値のregistered_atからventilator_value_scan_interval以上時間が経過している。
+        //2.指定のventilator_idに対して設定値が存在しない。
+
+        $initial_flg = Models\VentilatorValue::NOT_INITIAL;
+
+        $status_use = null;
+
+        $status_use_other = '';
+        
+        $ventilator_value_exists = Repos\VentilatorValueRepository::existsByVentilatorId($ventilator_id);
+
+        $latest_ventilator_value = null;
+
+        if ($ventilator_value_exists) {
+            $interval = config('system.fixed_flg_interval');
+            $latest_ventilator_value = Repos\VentilatorValueRepository::findOneLatestByVentilatorId($ventilator_id);
+            $latest_ventilator_value->latest_flg = Models\VentilatorValue::NOT_LATEST;
+            $diff_from_latest_ventilator_value = DateUtil::parseToDatetime($latest_ventilator_value->registered_at)->diffInMinutes($registered_at);
+            if( $diff_from_latest_ventilator_value >= $interval ){
+                $initial_flg = Models\VentilatorValue::INITIAL;
+                $status_use = $latest_ventilator_value->status_use;
+                $status_use_other = $latest_ventilator_value->status_use_other;
+            };
+        } else {
+            $initial_flg = Models\VentilatorValue::INITIAL;
+        }
 
         $entity = Converter\VentilatorValueConverter::convertToVentilatorValueEntity(
             $ventilator_id,
@@ -121,115 +152,28 @@ class VentilatorValueService
             $registered_at,
             $appkey_id,
             $registered_user_id,
+            $initial_flg,
+            $latest_flg,
+            $status_use,
+            $status_use_other,
         );
 
         DBUtil::Transaction(
             '機器観察研究データ登録',
-            function () use ($entity, $registered_user_id) {
+            function () use ($entity, $latest_ventilator_value, $registered_user_id) {
                 $entity->save();
                 //登録履歴追加
                 $history = Converter\HistoryConverter::convertToHistoryEntity($entity, HistoryBaseModel::CREATE, $registered_user_id);
                 $history->save();
+
+                //latest_flg更新
+                if (!is_null($latest_ventilator_value)) {
+                    $latest_ventilator_value->save();
+                }
             }
         );
 
         return Converter\VentilatorValueConverter::convertToVentilatorValueRegistrationResult($entity);
-    }
-
-    /**
-     * 機器観察研究データを更新する
-     * ここでは編集後のデータをインサートし、編集元のデータにdeleted_atを記録することをもって「更新」とする。
-     * @param [type] $form
-     * @return void
-     */
-    public function update(Form\VentilatorValueUpdateForm $form, Models\User $user)
-    {
-        $id = $form->id;
-        $ventilator_value = null;
-
-        if (Auth\OrgUserGate::canEditAllVentilatorValue($user)) {
-            //全体権限を有している場合は組織内ventilator_valueに対して編集可能
-            $organization_id = $user->organization_id;
-            $ventilator_value = Repos\VentilatorValueRepository::findOneByOrganizationIdAndId($organization_id, $id);
-        } else {
-            //そうでない場合は自身の登録したventilator_valueに対して編集可能
-            $user_id = $user->id;
-            $ventilator_value = Repos\VentilatorValueRepository::findOneByRegisteredUserIdAndId($user_id, $form->id);
-        }
-
-        if (is_null($ventilator_value)) {
-            throw new Exceptions\AccessDeniedException();
-        }
-
-        //編集前データの複製
-        $ventilator_value_copy = $ventilator_value->replicate();
-
-
-        //編集後データの再計算
-        $organization_setting = Repos\OrganizationSettingRepository::findOneByOrganizationId($user->organization_id);
-
-        $vt_per_kg = !is_null($organization_setting) ? $organization_setting->vt_per_kg : config('calc.default.vt_per_kg');
-
-        $total_flow = $this->calcTotalFlow($form->air_flow, $form->o2_flow);
-
-        $ideal_weight = $this->calcIdealWeight($form->height, $form->gender);
-
-        $predicted_vt = $this->calcPredictedVt($ideal_weight, $vt_per_kg);
-
-        $estimated_mv = $this->calcEstimatedMv($ventilator_value->inspiratory_time, $ventilator_value->rr, $total_flow, $ventilator_value->airway_pressure);
-
-        $estimated_vt = $this->calcEstimatedVt($ventilator_value->inspiratory_time, $ventilator_value->rr, $total_flow, $ventilator_value->airway_pressure);
-
-        $estimated_peep = $this->calcEstimatedPeep($form->airway_pressure);
-
-        $fio2 = $this->calcFio2($form->air_flow, $form->o2_flow);
-
-        //編集後データの挿入
-        $entity = Converter\VentilatorValueConverter::convertToVentilatorValueUpdateEntity(
-            $ventilator_value_copy,
-            $form->height,
-            $form->gender,
-            $ideal_weight,
-            $form->airway_pressure,
-            $form->air_flow,
-            $form->o2_flow,
-            $vt_per_kg,
-            $predicted_vt,
-            $estimated_vt,
-            $estimated_mv,
-            $estimated_peep,
-            $fio2,
-            $total_flow,
-            $form->weight,
-            $form->status_use,
-            $form->status_use_other,
-            $form->spo2,
-            $form->etco2,
-            $form->pao2,
-            $form->paco2
-        );
-
-        //編集元にdeleted_atを記録
-        $ventilator_value->deleted_at = DateUtil::toDatetimeStr(DateUtil::now());
-
-        DBUtil::Transaction(
-            '編集後データの挿入',
-            function () use ($entity, $ventilator_value, $user) {
-                //編集前データ削除
-                $ventilator_value->save();
-                //削除履歴追加
-                $delete_history = Converter\HistoryConverter::convertToHistoryEntity($ventilator_value, HistoryBaseModel::DELETE, $user->id);
-                $delete_history->save();
-
-                //編集後データ登録
-                $entity->save();
-                //登録履歴追加
-                $create_history = Converter\HistoryConverter::convertToHistoryEntity($entity, HistoryBaseModel::CREATE, $user->id);
-                $create_history->save();
-            }
-        );
-
-        return Converter\VentilatorValueConverter::convertToVentilatorValueUpdateResult($entity->id, DateUtil::toDatetimeStr($entity->created_at));
     }
 
     public function getVentilatorValueListResult(Form\VentilatorValueListForm $form)
@@ -243,13 +187,16 @@ class VentilatorValueService
             throw new Exceptions\InvalidFormException($form);
         }
 
-        $search_values = $this->buildVentilatorValueSearchValues($ventilator_id, $form->fixed_flg);
+        $search_values = $this->buildVentilatorValueSearchValues($ventilator_id);
 
         $ventilator_values = Repos\VentilatorValueRepository::findBySeachValuesAndLimitOffsetOrderByRegisteredAtDesc($search_values, $form->limit, $form->offset);
 
         $data = array_map(
             function ($ventilator_value) {
-                return Converter\VentilatorValueConverter::convertToVentilatorValueListElm($ventilator_value->id, $ventilator_value->registered_at, $ventilator_value->registered_user_name);
+                $is_initial = boolval($ventilator_value->initial_flg);
+                $is_latest = boolval($ventilator_value->latest_flg);
+                $is_fixed = boolval($ventilator_value->fixed_flg);
+                return Converter\VentilatorValueConverter::convertToVentilatorValueListElm($ventilator_value->id, $ventilator_value->registered_at, $ventilator_value->registered_user_name, $is_initial, $is_latest, $is_fixed);
             },
             $ventilator_values->all()
         );

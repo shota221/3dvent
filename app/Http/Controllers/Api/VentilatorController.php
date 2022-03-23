@@ -55,7 +55,7 @@ class VentilatorController extends ApiController
     public function update(Request $request, int $id)
     {
         $request->merge(['id' => $id]);
-        
+
         $form = new Form\VentilatorUpdateForm($request->all());
 
         $user = $this->getUser();
@@ -79,7 +79,37 @@ class VentilatorController extends ApiController
             throw new Exceptions\InvalidFormException($form);
         }
 
-        $response = $this->service->deactivate($form ,$user);
+        $response = $this->service->deactivate($form, $user);
+
+        return $response;
+    }
+
+    public function showMeasurementValue(Request $request, int $id)
+    {
+        $form = new Form\MeasurementValueShowForm(compact('id'));
+
+        if ($form->hasError()) {
+            throw new Exceptions\InvalidFormException($form);
+        }
+
+        $response = $this->service->fetchMeasurementValue($form);
+
+        return $response;
+    }
+
+    public function updateMeasurementValue(Request $request, int $id)
+    {
+        $request->merge(['id' => $id]);
+
+        $form = new Form\MeasurementValueUpdateForm($request->all());
+
+        if ($form->hasError()) {
+            throw new Exceptions\InvalidFormException($form);
+        }
+
+        $user = $this->getUser();
+
+        $response = $this->service->updateMeasurementValue($form, $user);
 
         return $response;
     }

@@ -11,6 +11,10 @@ class VentilatorValue extends TraceableBaseModel
         UPDATED_AT = null,
         FIX = 1,
         CONFIRM = 1,
+        NOT_LATEST = 0,
+        LATEST = 1,
+        NOT_INITIAL = 0,
+        INITIAL = 1,
 
         //gender
         MALE = 1,

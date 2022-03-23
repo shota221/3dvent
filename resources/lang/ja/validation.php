@@ -158,6 +158,7 @@ return [
     'unauthenticated'                     => '認証エラー',
     'user_token_required'                 => 'ユーザートークンは必須です。',
     'ventilator_value_exists_yet'         => 'MicroVent®︎V3機器の削除は、対象の機器が紐づく機器設定・測定データをすべて削除してから実行してください。',
+    'ventilator_value_not_found'          => 'MicroVent®︎V3設定が未登録です。',
 
     /*
     |--------------------------------------------------------------------------

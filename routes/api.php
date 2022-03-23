@@ -159,24 +159,22 @@ Route::group(['middleware' => ['routetype:api']], function () {
             Route::get('/ventilator', 'VentilatorController@show')->name('api.ventilator.show');
             //呼吸器情報登録
             Route::post('/ventilator', 'VentilatorController@create')->name('api.ventilator.create');
-            //呼吸器情報更新
-            Route::put('/ventilator/{id}', 'VentilatorController@update')->name('api.ventilator.update');
             //呼吸器非活性化
             Route::group(['middleware' => ['can:ventilator_initializable']], function(){
                 Route::put('/ventilator/{id}/deactivation', 'VentilatorController@deactivate')->name('api.ventilator.deactivate');
             });
-
+            //最後値に紐づく患者測定データの取得
+            Route::get('/ventilator/{id}/measurement_value', 'VentilatorController@showMeasurementValue')->name('api.vantilator.measurement_value.show');
+            Route::group(['middleware' => ['can:ventilator_value_editable']], function(){
+                //最後値に紐づく患者測定データの更新
+                Route::put('/ventilator/{id}/measurement_value', 'VentilatorController@updateMeasurementValue')->name('api.ventilator.measurement_value.update');
+            });
 
             /********************
              * ventilator_value *
              ********************/
             //測定時機器関連値登録
             Route::post('/ventilator_value', 'VentilatorValueController@create')->name('api.ventilator_value.create');
-            Route::group(['middleware' => ['can:ventilator_value_editable']], function(){
-                //機器観察研究データの更新
-                Route::put('/ventilator_value/{id}', 'VentilatorValueController@update')->name('api.ventilator_value.update');
-            });
-
 
             /*******
              * bug *

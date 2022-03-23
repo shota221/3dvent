@@ -32,7 +32,7 @@ class ValidationRule
 
         FLG_INTEGER              = 'integer|min:0|max:1',
 
-        USED_PLACE_INTEGER       = 'integer|min:1|max:8', // 使用場所 
+        USED_PLACE_INTEGER       = 'integer|min:1|max:9', // 使用場所 
 
         OUTCOME_INTEGER          = 'integer|min:1|max:4', //　使用中止時の転帰
 

@@ -44,24 +44,11 @@ class VentilatorValueController extends ApiController
 
         $appkey = $this->getAppkey();
 
-        if ($form->hasError() || !$response = $this->service->create($form, $user, $appkey)) {
+        if ($form->hasError()) {
             throw new Exceptions\InvalidFormException($form);
         }
 
-        return $response;
-    }
-
-    public function update(Request $request, $id)
-    {
-        $request->merge(['id' => $id]);
-
-        $form = new Form\VentilatorValueUpdateForm($request->all());
-
-        $user = $this->getUser();
-
-        if ($form->hasError() || !$response = $this->service->update($form, $user)) {
-            throw new Exceptions\InvalidFormException($form);
-        }
+        $response = $this->service->create($form, $user, $appkey);
 
         return $response;
     }
@@ -70,9 +57,11 @@ class VentilatorValueController extends ApiController
     {
         $form = new Form\VentilatorValueListForm($request->all());
 
-        if($form->hasError() || !$response = $this->service->getVentilatorValueListResult($form)){
+        if ($form->hasError()) {
             throw new Exceptions\InvalidFormException($form);
         }
+
+        $response = $this->service->getVentilatorValueListResult($form);
 
         return $response;
     }
