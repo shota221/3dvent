@@ -175,11 +175,6 @@ Route::group(['middleware' => ['routetype:api']], function () {
              ********************/
             //測定時機器関連値登録
             Route::post('/ventilator_value', 'VentilatorValueController@create')->name('api.ventilator_value.create');
-            Route::group(['middleware' => ['can:ventilator_value_editable']], function(){
-                //機器観察研究データの更新
-                Route::put('/ventilator_value/{id}', 'VentilatorValueController@update')->name('api.ventilator_value.update');
-            });
-
 
             /*******
              * bug *
