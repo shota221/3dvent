@@ -23,21 +23,24 @@ class CalcService
     public function getEstimatedData(Form\CalcEstimatedDataForm $form)
     {
         $estimated_peep = !is_null($form->airway_pressure) ? $this->calcEstimatedPeep(floatval($form->airway_pressure)) : null;
+        $fio2 = null;
+        $total_flow = null;
 
         if (!is_null($form->air_flow) && !is_null($form->o2_flow)) {
             if (floatval($form->air_flow) + floatval($form->o2_flow) === 0.0) {
                 $fio2 = 0.0;
+                $total_flow = 0.0;
             } else {
                 $fio2 = $this->calcFio2(floatval($form->air_flow), floatval($form->o2_flow));
+                $total_flow = $this->calcTotalFlow(floatval($form->air_flow), floatval($form->o2_flow));
             }
-        } else {
-            $fio2 = null;
+            $fio2 = $this->roundOff($fio2, 'fio2');
+            $total_flow = $this->roundOff($total_flow, 'total_flow');
         }
 
         $estimated_peep = $this->roundOff($estimated_peep, 'estimated_peep');
-        $fio2 = $this->roundOff($fio2, 'fio2');
 
-        return Converter\VentilatorValueConverter::convertToEstimatedDataResult($estimated_peep, $fio2);
+        return Converter\VentilatorValueConverter::convertToEstimatedDataResult($estimated_peep, $fio2, $total_flow);
     }
 
     /**

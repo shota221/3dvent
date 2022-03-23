@@ -25,7 +25,7 @@ class VentilatorValueConverter
         return $res;
     }
 
-    public static function convertToEstimatedDataResult($estimated_peep = null, $fio2 = null)
+    public static function convertToEstimatedDataResult($estimated_peep = null, $fio2 = null, $total_flow = null)
     {
         $res = new Response\Api\VentilatorValueResult;
 
@@ -34,6 +34,8 @@ class VentilatorValueConverter
         $res->estimated_peep = !is_null($estimated_peep) ? strval($estimated_peep) : null;
 
         $res->fio2 = !is_null($fio2) ? strval($fio2) : null;
+
+        $res->total_flow = !is_null($total_flow) ? strval($total_flow) : null;
 
         return $res;
     }
