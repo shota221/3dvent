@@ -64,6 +64,13 @@ Route::group(['middleware' => ['routetype:manual']], function() {
         'text/ventilator_result/{language_code}', 
         'ManualController@showVentilatorResultTextManual'
     )->name('manual.ventilator_result');
+
+    // fio2計算
+    Route::get(
+        '/async/calculate/fio2',
+        'ManualController@asyncCalcFio2'
+    )->name('manual.async.calc.fio2');
+
  
     // 電子ページマニュアル（全マニュアル表示）
     Route::get(

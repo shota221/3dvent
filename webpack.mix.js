@@ -143,6 +143,7 @@ if (mix.inProduction()) {
 compileToPublishResources('admin', 'js');
 compileToPublishResources('form', 'js');
 compileToPublishResources('org', 'js');
+compileToPublishResources('manual', 'js');
 compileToPublishResources('common/adminlte', 'js');
 
 /*******
@@ -152,6 +153,7 @@ compileToPublishResources('common/adminlte', 'js');
 compileToPublishResources('admin', 'scss');
 compileToPublishResources('form', 'scss');
 compileToPublishResources('org', 'scss');
+compileToPublishResources('manual', 'scss');
 compileToPublishResources('common/adminlte', 'scss');
 
 /*******
@@ -161,6 +163,7 @@ compileToPublishResources('common/adminlte', 'scss');
 copyToPublishResources('admin', 'css');
 copyToPublishResources('form', 'css');
 copyToPublishResources('org', 'css');
+copyToPublishResources('manual', 'css');
 
 
 /*******
@@ -170,6 +173,7 @@ copyToPublishResources('org', 'css');
 copyToPublishResources('admin', 'images');
 copyToPublishResources('form', 'images');
 copyToPublishResources('org', 'images');
+copyToPublishResources('manual', 'images');
 
 // for debug
 //throw new Error();

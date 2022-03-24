@@ -2,9 +2,11 @@
     "/js/admin/app.js": "/js/admin/app.js",
     "/js/form/app.js": "/js/form/app.js",
     "/js/org/app.js": "/js/org/app.js",
+    "/js/manual/app.js": "/js/manual/app.js",
     "/js/common/adminlte/app.js": "/js/common/adminlte/app.js",
     "/css/common/adminlte/app.css": "/css/common/adminlte/app.css",
     "/css/admin/app.css": "/css/admin/app.css",
+    "/css/manual/app.css": "/css/manual/app.css",
     "/css/org/app.css": "/css/org/app.css",
     "/css/form/app.css": "/css/form/app.css"
 }

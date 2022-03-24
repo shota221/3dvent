@@ -145,18 +145,19 @@
             3. FiO₂%=100x(ax0.21+b)/(a+b)
         </p>
 
-        <form id="" name="">
+        <form id="calculate_fio2" name="calculate_fio2" data-method="GET" data-url="{{ guess_route_path('async.calc.fio2') }}">
             <div>
                 <div class="form-group">
                     <label for="air_flow">Air flow rate(L/min)</label>
                     <input 
                         class="form-control" 
                         type="text" 
-                        name="air_flow" id="air_flow"
+                        name="air_flow" 
+                        id="air_flow"
                     >
                 </div>
                 <div class="form-group">
-                    <label for="o2_flow">Oxygen flow rate(L/min)</label>
+                    <label for="o2_flow">Oxygen flow rate(L/min))</label>
                     <input 
                         class="form-control" 
                         type="text" 
@@ -164,10 +165,9 @@
                         id="o2_flow"
                     >
                 </div>
-                <p><b>FiO₂: 50 %</b></p>
+                <p><b>FiO₂: <span id="fio2">**.*</span> %</b></p>
             </div>
         </form>
-
     </div>
 </div>
 @include('Manual.Manual.Text._content_bottom')

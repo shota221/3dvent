@@ -149,14 +149,15 @@
             3. 以下を使い、希望するFiO₂を設定します。FiO₂%=100x(ax0.21+b)/(a+b)
         </p>
 
-        <form id="" name="">
+        <form id="calculate_fio2" name="calculate_fio2" data-method="GET" data-url="{{ guess_route_path('async.calc.fio2') }}">
             <div>
                 <div class="form-group">
                     <label for="air_flow">空気流量(L/min)</label>
                     <input 
                         class="form-control" 
                         type="text" 
-                        name="air_flow" id="air_flow"
+                        name="air_flow" 
+                        id="air_flow"
                     >
                 </div>
                 <div class="form-group">
@@ -168,7 +169,7 @@
                         id="o2_flow"
                     >
                 </div>
-                <p><b>FiO₂: 50 %</b></p>
+                <p><b>FiO₂: <span id="fio2">**.*</span> %</b></p>
             </div>
         </form>
 
