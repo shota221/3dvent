@@ -231,7 +231,7 @@ return [
         'representative_email'           => 'Representative email address',
         'representative_name'            => 'Representative name',
         'request_improvement'            => 'Device Failure Detail ',
-        'respirations_per_10sec'         => 'Respiration times/10sec',
+        'respirations_per_10sec'         => 'Respiration Time',
         'spo2'                           => 'SpO₂',
         // 'start_using_at'                 => '使用開始日時',
         'status_use_other'               => 'Other Usage Status',

@@ -159,6 +159,8 @@ Route::group(['middleware' => ['routetype:api']], function () {
             Route::get('/ventilator', 'VentilatorController@show')->name('api.ventilator.show');
             //呼吸器情報登録
             Route::post('/ventilator', 'VentilatorController@create')->name('api.ventilator.create');
+            //呼吸器情報更新
+            Route::put('/ventilator/{id}', 'VentilatorController@update')->name('api.ventilator.update');
             //呼吸器非活性化
             Route::group(['middleware' => ['can:ventilator_initializable']], function(){
                 Route::put('/ventilator/{id}/deactivation', 'VentilatorController@deactivate')->name('api.ventilator.deactivate');

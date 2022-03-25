@@ -239,7 +239,7 @@ return [
         'representative_email'           => 'メールアドレス',
         'representative_name'            => '代表者名',
         'request_improvement'            => '改善要望',
-        'respirations_per_10sec'         => '呼吸回数/10秒',
+        'respirations_per_10sec'         => '呼吸数',
         'spo2'                           => '経皮酸素飽和度',
         'start_using_at'                 => '使用開始日時',
         'status_use_other'               => '使用状況（その他の場合）',
