@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Manual;
 
+use App\Exceptions;
 use App\Http\Controllers\Controller;
 use App\Http\Forms\Manual as Form;
+use App\Services\Manual as Service;
 use Illuminate\Http\Request;
 
 /**
@@ -11,7 +13,14 @@ use Illuminate\Http\Request;
  * アプリのデフォルト言語をフォームオブジェクトにセット
  */
 class ManualController extends Controller
-{
+{   
+    private $service;
+    
+    function __construct() 
+    {
+        $this->service = new Service\CalcService;
+    }
+    
     public function showQrTextManual(string $language_code) 
     {
         $form = new Form\LanguageCodeForm(compact('language_code'));
@@ -75,4 +84,16 @@ class ManualController extends Controller
         return view('Video/' .$form->language_code . '/manual');
     }
 
+    public function asyncCalcFio2(Request $request) {
+        
+        $form = new Form\CalcFio2Form($request->all());
+
+        if ($form->hasError()) {
+            throw new Exceptions\InvalidFormException($form);
+        }
+
+        return $this->service->fetchFio2($form);
+    }
+
 }
+

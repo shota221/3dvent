@@ -39,6 +39,9 @@
 <script src="{{ mix('js/common/adminlte/app.js') }}"></script>
 
 @yield('js')
+<script src="/js/manual/index.js"></script>
+<script src="/js/common/util/form.js"></script>
+<script src="/js/common/util/async.js"></script>
 
 </body>
 </html>

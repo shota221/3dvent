@@ -20384,6 +20384,19 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/sass/manual/app.scss":
+/*!****************************************!*\
+  !*** ./resources/sass/manual/app.scss ***!
+  \****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ }),
+
 /***/ "./resources/sass/common/adminlte/app.scss":
 /*!*************************************************!*\
   !*** ./resources/sass/common/adminlte/app.scss ***!
@@ -23854,6 +23867,7 @@ module.exports = JSON.parse('{"message":{"accept_password_reset":"パスワー�
 /******/ 			"/js/admin/app": 0,
 /******/ 			"css/common/adminlte/app": 0,
 /******/ 			"css/admin/app": 0,
+/******/ 			"css/manual/app": 0,
 /******/ 			"css/org/app": 0,
 /******/ 			"css/form/app": 0
 /******/ 		};
@@ -23903,11 +23917,12 @@ module.exports = JSON.parse('{"message":{"accept_password_reset":"パスワー�
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module depends on other loaded chunks and execution need to be delayed
-/******/ 	__webpack_require__.O(undefined, ["css/common/adminlte/app","css/admin/app","css/org/app","css/form/app"], () => (__webpack_require__("./resources/js/admin/app.js")))
-/******/ 	__webpack_require__.O(undefined, ["css/common/adminlte/app","css/admin/app","css/org/app","css/form/app"], () => (__webpack_require__("./resources/sass/admin/app.scss")))
-/******/ 	__webpack_require__.O(undefined, ["css/common/adminlte/app","css/admin/app","css/org/app","css/form/app"], () => (__webpack_require__("./resources/sass/form/app.scss")))
-/******/ 	__webpack_require__.O(undefined, ["css/common/adminlte/app","css/admin/app","css/org/app","css/form/app"], () => (__webpack_require__("./resources/sass/org/app.scss")))
-/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["css/common/adminlte/app","css/admin/app","css/org/app","css/form/app"], () => (__webpack_require__("./resources/sass/common/adminlte/app.scss")))
+/******/ 	__webpack_require__.O(undefined, ["css/common/adminlte/app","css/admin/app","css/manual/app","css/org/app","css/form/app"], () => (__webpack_require__("./resources/js/admin/app.js")))
+/******/ 	__webpack_require__.O(undefined, ["css/common/adminlte/app","css/admin/app","css/manual/app","css/org/app","css/form/app"], () => (__webpack_require__("./resources/sass/admin/app.scss")))
+/******/ 	__webpack_require__.O(undefined, ["css/common/adminlte/app","css/admin/app","css/manual/app","css/org/app","css/form/app"], () => (__webpack_require__("./resources/sass/form/app.scss")))
+/******/ 	__webpack_require__.O(undefined, ["css/common/adminlte/app","css/admin/app","css/manual/app","css/org/app","css/form/app"], () => (__webpack_require__("./resources/sass/org/app.scss")))
+/******/ 	__webpack_require__.O(undefined, ["css/common/adminlte/app","css/admin/app","css/manual/app","css/org/app","css/form/app"], () => (__webpack_require__("./resources/sass/manual/app.scss")))
+/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["css/common/adminlte/app","css/admin/app","css/manual/app","css/org/app","css/form/app"], () => (__webpack_require__("./resources/sass/common/adminlte/app.scss")))
 /******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
 /******/ 	
 /******/ })()

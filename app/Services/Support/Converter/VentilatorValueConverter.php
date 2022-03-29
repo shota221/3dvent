@@ -40,6 +40,15 @@ class VentilatorValueConverter
         return $res;
     }
 
+    public static function convertToFio2Result(float $fio2)
+    {
+        $res = new Response\Api\VentilatorValueResult;
+
+        $res->fio2 = strval($fio2);
+
+        return $res;
+    }
+
     public static function convertToVentilatorValueRegistrationResult($entity)
     {
         $res = new Response\Api\VentilatorValueResult;

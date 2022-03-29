@@ -3,11 +3,11 @@
     <div>
         <p>
             <b>iOS</b><br>
-            Turn on the "MicroVent®V3" in iOS [Settings]-[Privacy]-[Camera].
+            Turn on the "MicroVentV3" in iOS [Settings]-[Privacy]-[Camera].
         </p>
         <p>
             <b>Android</b><br>
-            Turn on the camera in Android [Settings]-[Apps (Application Management)]-[MicroVent®V3]-[Permissions]-[CAMERA ACCESS FOR THIS APP]-[Allow]. 
+            Turn on the camera in Android [Settings]-[Apps (Application Management)]-[MicroVentV3]-[Permissions]-[CAMERA ACCESS FOR THIS APP]-[Allow]. 
         </p>
     </div>
 </div>

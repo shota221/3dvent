@@ -1,13 +1,13 @@
-@include('Manual.Manual.Text._content_top', ['title' => '利用方法'])
+@include('Manual.Manual.Text._content_top', ['title' => 'How to Use'])
 <div class="card-body">
     <p>
-        1，身長、体重、性別、患者番号（患者番号は未入力可。）を入力してください。
+        1. Input Body Length (cm) (required), Body Weight (kg) (required), Gender (required), and Patient ID
     </p>
     <p>
-        2，「次へ」を押下してください。
+        2. Tap [Ventilator Management].
     </p>
     <p>
-        3，「機器設定値入力」の画面に遷移されます。
+        3. You move to the "Ventilator Management" screen.
     </p>
 </div>
 @include('Manual.Manual.Text._content_bottom')

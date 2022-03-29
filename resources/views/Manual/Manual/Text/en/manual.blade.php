@@ -17,19 +17,19 @@
 @section('js')
 @stop
 
-@section('title', 'Instruction Manual')
+@section('title', 'How to Use MicroVent®V3')
 
 @section('parent_content')
     
-    @include('Manual.Manual.Text.ja.qr._content_before_use')
+    @include('Manual.Manual.Text.en.qr._content_before_use')
 
-    @include('Manual.Manual.Text.ja.ventilatorSetting._content_how_to_use')
+    @include('Manual.Manual.Text.en.ventilatorSetting._content_how_to_use')
 
-    @include('Manual.Manual.Text.ja.soundMeasurement._content_how_to_use')
+    @include('Manual.Manual.Text.en.soundMeasurement._content_how_to_use')
 
-    @include('Manual.Manual.Text.ja.manualMeasurement._content_how_to_use')
+    @include('Manual.Manual.Text.en.manualMeasurement._content_how_to_use')
 
-    @include('Manual.Manual.Text.ja.ventilatorResult._content_how_to_use')
+    @include('Manual.Manual.Text.en.ventilatorResult._content_how_to_use')
 
 @stop
 

@@ -17,7 +17,7 @@
 @section('js')
 @stop
 
-@section('title', 'テキストマニュアル')
+@section('title', 'MicroVent®V3の使い方')
 
 @section('parent_content')
     

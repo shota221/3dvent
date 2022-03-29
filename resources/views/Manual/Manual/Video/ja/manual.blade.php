@@ -17,7 +17,7 @@
 @section('js')
 @stop
 
-@section('title', '動画マニュアル')
+@section('title', 'MicroVent®V3の使い方')
 
 {{-- TODO サンプル動画を変更する  --}}
 @section('parent_content')

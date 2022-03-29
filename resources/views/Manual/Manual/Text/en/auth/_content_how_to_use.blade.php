@@ -1,13 +1,13 @@
-@include('Manual.Manual.Text._content_top', ['title' => '利用方法'])
+@include('Manual.Manual.Text._content_top', ['title' => 'How to Use'])
 <div class="card-body">
     <p>
-        1，画面にある利用規約を読んで「利用規約に同意する」にチェックを入れてください。
+        1. Tap the check box, when you agee to the terms and conditions.
     </p>
     <p>
-        2，「ログインせずに利用」もしくはアカウントとパスワードを入力し「ログイン」を押下してください。
+        2. Tap "Use without login" or enter your account name and passcode, then tap "Login". 
     </p>
     <p>
-        3，画面遷移されます。
+        3. You move to the "Basic Patient Information" or "Ventilator Management" screen.
     </p>
 </div>
 @include('Manual.Manual.Text._content_bottom')

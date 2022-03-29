@@ -17,7 +17,7 @@
 @section('js')
 @stop
 
-@section('title', 'Patient\'s Basic Information Input')
+@section('title', 'Basic Patient Information')
 
 @section('parent_content')
 

@@ -121,10 +121,10 @@ class VentilatorValueService
             $latest_ventilator_value = Repos\VentilatorValueRepository::findOneLatestByVentilatorId($ventilator_id);
             $latest_ventilator_value->latest_flg = Models\VentilatorValue::NOT_LATEST;
             $diff_from_latest_ventilator_value = DateUtil::parseToDatetime($latest_ventilator_value->registered_at)->diffInMinutes($registered_at);
+            $status_use = $latest_ventilator_value->status_use;
+            $status_use_other = $latest_ventilator_value->status_use_other;
             if( $diff_from_latest_ventilator_value >= $interval ){
                 $initial_flg = Models\VentilatorValue::INITIAL;
-                $status_use = $latest_ventilator_value->status_use;
-                $status_use_other = $latest_ventilator_value->status_use_other;
             };
         } else {
             $initial_flg = Models\VentilatorValue::INITIAL;
