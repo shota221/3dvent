@@ -133,6 +133,7 @@ return [
     'password_placeholder'               => 'At least 8 characters',
     'password'                           => 'Password',
     'patient_age'                        => 'Patient age',
+    'patient_house'                      => 'Patient\'s House',
     'patient_code'                       => 'Patient number',
     'patient_observation_status'         => 'Status of Patient Observational Research',
     'patient_observation'                => 'Patient Observational Research',
