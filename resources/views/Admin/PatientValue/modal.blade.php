@@ -82,7 +82,8 @@
                 <option value="5">@lang('messages.mri')</option>
                 <option value="6">@lang('messages.other_laboratories')</option>
                 <option value="7">@lang('messages.non_icu')</option>
-                <option value="8">@lang('messages.other_places')</option>
+                <option value="8">@lang('messages.patient_house')</option>
+                <option value="9">@lang('messages.other_places')</option>
             </select>
         </div>
 

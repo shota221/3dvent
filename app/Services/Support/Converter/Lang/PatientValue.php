@@ -31,6 +31,9 @@ class PatientValue
             case Models\PatientValue::NON_ICU:
                 return __('messages.non_icu');
                 break;
+            case Models\PatientValue::PATIENT_HOUSE:
+                return __('messages.patient_house');
+                break;
             case Models\PatientValue::OTHER_PLACES:
                 return __('messages.other_places');
                 break;
