@@ -133,6 +133,7 @@ return [
     'password'                           => 'パスワード',
     'patient_age'                        => '患者年齢',
     'patient_code'                       => '患者番号',
+    'patient_house'                      => '患者の家',
     'patient_observation_status'         => '患者観察研究ステータス',
     'patient_observation'                => '患者観察研究',
     'patient_value_edit'                 => '患者観察研究データ編集',

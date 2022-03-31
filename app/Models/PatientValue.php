@@ -26,8 +26,10 @@ class PatientValue extends TraceableBaseModel
     OTHER_LABORATORIES = 6,
     // ICU以外の病室
     NON_ICU = 7,
+    // 患者の家
+    PATIENT_HOUSE = 8,
     // その他の場所
-    OTHER_PLACES = 8;
+    OTHER_PLACES = 9;
 
     // 使用中止時の転帰
     const
