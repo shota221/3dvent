@@ -47,7 +47,7 @@ return [
         'expiratory_time' => '呼気時間',
         'inspiratory_time' => '吸気時間',
         'vt_per_kg' => '1kgあたりの一回換気量',
-        'predicted_vt' => '予測一回換気量',
+        'predicted_vt' => '推奨Vt(1回換気量)',
         'estimated_vt' => 'Estimated Vt',
         'estimated_mv' => 'Estimated MV',
         'estimated_peep' => 'Estirmted PEEP',

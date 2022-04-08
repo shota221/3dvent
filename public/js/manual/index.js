@@ -36,6 +36,7 @@ function asyncCaluculateFio2() {
     }
 
     var $element = $calculateFio2Form;
+    console.log($element.data('url'));
 
     utilAsyncExecuteAjax($element, parameters, true, successCallback);
 }

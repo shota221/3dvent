@@ -148,7 +148,7 @@ return [
     'id_not_found_contained'              => '削除されているIDか存在しないIDが含まれています。',
     'id_not_found'                        => '削除されているか、存在しないIDです。',
     'invalid_sound'                       => '雑音が大きいため測定できませんでした。手動測定に切り替えてください。',
-    'not_enough_pulses'                   => '十分なパルスが検出できませんでした。MicroVent®︎V3機器に近づけて再度録音してください。',
+    'not_enough_pulses'                   => '十分なパルスが検出できませんでした。MicroVent®V3機器に近づけて再度録音してください。',
     'not_enough_recording_time'           => '録音時間が短すぎます。再度録音してください。',
     'organization_mismatch'               => '組織情報が一致しません。',
     'password_confirmed'                  => 'パスワードを確認用と一致させてください。',
@@ -157,8 +157,8 @@ return [
     'required_password'                   => 'パスワードは必須です。',
     'unauthenticated'                     => '認証エラー',
     'user_token_required'                 => 'ユーザートークンは必須です。',
-    'ventilator_value_exists_yet'         => 'MicroVent®︎V3機器の削除は、対象の機器が紐づく機器設定・測定データをすべて削除してから実行してください。',
-    'ventilator_value_not_found'          => 'MicroVent®︎V3設定が未登録です。',
+    'ventilator_value_exists_yet'         => 'MicroVent®V3機器の削除は、対象の機器が紐づく機器設定・測定データをすべて削除してから実行してください。',
+    'ventilator_value_not_found'          => 'MicroVent®V3設定が未登録です。',
 
     /*
     |--------------------------------------------------------------------------
@@ -234,7 +234,7 @@ return [
         'paco2'                          => 'PaCO₂',
         'password_confirmation'          => 'パスワード(確認用)',
         'password'                       => 'パスワード',
-        'patient_code'                   => '患者番号',
+        'patient_code'                   => '患者番号(ID)',
         'patient_observation_status'     => '患者観察研究ステータス',
         'representative_email'           => 'メールアドレス',
         'representative_name'            => '代表者名',
@@ -249,8 +249,8 @@ return [
         'used_place'                     => '使用場所',
         'user_name'                      => 'ユーザー名',
         'vent_disease_name'              => 'MicroVent®V3使用の原因病名',
-        'ventilator_value_scan_interval' => '最終値決定時間',
-        'vt_per_kg'                      => '理想体重1kgあたりの推奨一回換気量',
+        'ventilator_value_scan_interval' => '15分以上継続設定値(分)',
+        'vt_per_kg'                      => '理想体重1kgあたりの推奨Vt(1回換気量）(mL/kg)',
         'weight'                         => '体重',
     ],
 

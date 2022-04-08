@@ -7,13 +7,13 @@
         {{-- 登録者名 --}}
         <th>@lang('messages.registered_user_name')</th>
         {{-- 有効期限 --}}
-        <th>@lang('messages.expiration_date')</th>
+        <th>@lang('messages.expiration_at')</th>
         {{-- 使用開始日時 --}}
         <th>@lang('messages.start_using_at')</th>
         {{-- 不具合 --}}
         <th>@lang('messages.ventilator_bug')</th>
         {{-- 詳細 --}}
-        <th>@lang('messages.ventilator_value_list')</th>
+        <th>@lang('messages.ventilator_value_management')</th>
     </tr>
     @foreach ($ventilator_paginator as $ventilator)
         <tr data-id="{{ $ventilator->id }}" 

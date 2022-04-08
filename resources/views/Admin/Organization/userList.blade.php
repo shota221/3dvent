@@ -1,6 +1,6 @@
 <table class="table table-striped">
     <tr>
-        {{-- ユーザー目 --}}
+        {{-- ユーザー名 --}}
         <th>@lang('messages.user_name')</th>
         {{-- 権限 --}}
         <th>@lang('messages.user_authority')</th>

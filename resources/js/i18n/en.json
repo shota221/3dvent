@@ -1,7 +1,7 @@
 {
     "message": {
-        "accept_password_reset": "Password changed. Return to the login screen.",
-        "accept_password_reset_application": "An email to reset your password has been sent. Please confirm and complete the procedure.",
+        "accept_password_reset": "Passcord changed. Return to the login screen.",
+        "accept_password_reset_application": "An email to reset your passcord has been sent. Please confirm and complete the procedure.",
         "admin_user_login_lock": "Login prohibited.",
         "admin_user_login_unlock": "The login ban has been lifted.",
         "applied": "Your application has been submitted.",

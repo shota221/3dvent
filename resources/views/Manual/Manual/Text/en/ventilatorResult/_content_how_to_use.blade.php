@@ -145,7 +145,12 @@
             3. FiO₂%=100x(ax0.21+b)/(a+b)
         </p>
 
-        <form id="calculate_fio2" name="calculate_fio2" data-method="GET" data-url="{{ guess_route_path('async.calc.fio2') }}">
+        <form 
+            id="calculate_fio2" 
+            name="calculate_fio2" 
+            data-method="GET" 
+            data-url="{{ route('manual.async.calc.fio2', ['language_code' => str_replace('_', '-', app()->getLocale())]) }}"
+        >
             <div>
                 <div class="form-group">
                     <label for="air_flow">Air flow rate(L/min)</label>

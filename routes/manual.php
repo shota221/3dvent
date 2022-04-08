@@ -67,7 +67,7 @@ Route::group(['middleware' => ['routetype:manual']], function() {
 
     // fio2計算
     Route::get(
-        '/async/calculate/fio2',
+        '/async/calculate/fio2/{language_code}',
         'ManualController@asyncCalcFio2'
     )->name('manual.async.calc.fio2');
 

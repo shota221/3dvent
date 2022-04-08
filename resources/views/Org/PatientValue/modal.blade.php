@@ -21,14 +21,14 @@
             </div>
         </div>
 
-        {{--オプトアウト 無/有--}}
+        {{--オプトアウト 除外しない/除外する(オプトアウト)--}}
         <div class="form-group">
             <label class="d-block">@lang('messages.opt_out')</label>
             <div class="form-check form-check-inline">
-                <label class="form-check-label"><input class="form-check-input" type="radio" name="opt_out_flg" value="0" required>@lang('messages.none')</label>
+                <label class="form-check-label"><input class="form-check-input" type="radio" name="opt_out_flg" value="0" required>@lang('messages.unremove')</label>
             </div>
             <div class="form-check form-check-inline">
-                <label class="form-check-label"><input class="form-check-input" type="radio" name="opt_out_flg" value="1">@lang('messages.exists')</label>
+                <label class="form-check-label"><input class="form-check-input" type="radio" name="opt_out_flg" value="1">@lang('messages.remove')</label>
             </div>
         </div>
 
@@ -64,7 +64,7 @@
             </div>
         </div>
 
-        {{--使用場所 1.救急車＋周囲/2.救命救急室/3.ICU/4.手術室/5.MRI室/6.その他検査室/7.ICU以外の病室/8.その他の場所--}}
+        {{--使用場所 1.救急車＋周囲/2.救命救急室/3.ICU/4.手術室/5.MRI室/6.その他検査室/7.ICU以外の病室/8.患者の家/9.その他の場所--}}
         <div class="form-group">
             <label for="used_place">@lang('messages.used_place')</label>
             <select class="form-control select" name="used_place">
@@ -138,7 +138,7 @@
                 <label class="form-check-label"><input class="form-check-input" type="radio" name="adverse_event_flg" value="0" required>@lang('messages.none')</label>
             </div>
             <div class="form-check form-check-inline">
-                <label class="form-check-label"><input class="form-check-input" type="radio" name="adverse_event_flg" value="1">@lang('messages.exists')</label>
+                <label class="form-check-label"><input class="form-check-input" type="radio" name="adverse_event_flg" value="1">@lang('messages.exists_adverse')</label>
             </div>
         </div>
         

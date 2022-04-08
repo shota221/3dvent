@@ -57,7 +57,7 @@
                     <div class="badge badge-secondary">@lang('messages.invalid')</div>
                 </td>
             @endif
-            <td class="align-middle"><a href="#" class="show-user-list-modal" data-url="{{route('admin.organization.users')}}" data-method="GET">@lang('messages.list')</a></td>
+            <td class="align-middle"><a href="#" class="show-user-list-modal" data-url="{{route('admin.organization.users')}}" data-method="GET">@lang('messages.user_list')</a></td>
         </tr>
     @endforeach
 </table>
