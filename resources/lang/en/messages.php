@@ -1,6 +1,5 @@
 <?php
 
-//　TODO　新潟病院から言語定義共有後設定
 return [
     // a
     'account'                            => 'Account name',
@@ -10,6 +9,7 @@ return [
     'ambulance'                          => 'Ambulance car and Aroud',
     'applied'                            => 'Your application has been submitted.',
     'approved'                           => 'Approved',
+    'authority_discription'              => 'Authority（Physician(Group Chief):1, Physician(Others):2,CRC:3,Nurse:4,Clinical Engineer:5）',
     // b
     'back'                               => 'Back',
     'bulk_delete'                        => 'Delete',
@@ -48,6 +48,7 @@ return [
     'edit_profile'                       => 'Edit Profile',
     'edit'                               => 'Edit',
     'email'                              => 'Email Address',
+    'email_discription'                  => 'Email Address(Required for Physician(Group Chief))',
     'emergency_room'                     => 'Emergency Room',
     'estimated_mv'                       => 'Estimated MV(Minute Volume)',
     'estimated_peep'                     => 'Estimated PEEP',
@@ -144,7 +145,7 @@ return [
     'patient_value_management'           => 'Data Management of Patient Observational Study',
     'post'                               => 'Registration',
     'predicted_vt'                       => 'Predicted Tidal Volume',
-    'principal_investigator'             => 'Physician(Gropu Chief)',
+    'principal_investigator'             => 'Physician(Group Chief)',
     'project_administrator_page'         => 'Project User Page',
     'project_administrator'              => 'Project User',
     'project_manager'                    => 'Project Manager',

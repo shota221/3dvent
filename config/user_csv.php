@@ -5,11 +5,12 @@ use App\Http\Auth;
 return [
     'filename' => 'user_format.csv',
 
+    // valueには多言語化用のkeyをセット
     'header' => [
-        'name'               => 'ユーザー名',
-        'email'              => 'メールアドレス(医師（研究代表者)の場合は必須',
-        'org_authority_type' => '権限（医師（研究代表者）:1, 医師（その他）:2,CRC:3,看護師:4,臨床工学士:5）',
-        'password'           => 'パスワード',
+        'name'               => 'user_name',
+        'email'              => 'email_discription',
+        'org_authority_type' => 'authority_discription',
+        'password'           => 'password',
     ],
 
     'validation_rule' => [
@@ -28,6 +29,6 @@ return [
         'suzuki',
         'suzuki@sample.com',
         '1',
-        'password',
+        'asdfasdf',
     ],
 ];

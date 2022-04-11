@@ -9,6 +9,7 @@ return [
     'ambulance'                          => '救急車+周囲',
     'applied'                            => '申請しました',
     'approved'                           => '承認済',
+    'authority_discription'              => '権限（医師（研究代表者）:1, 医師（その他）:2,CRC:3,看護師:4,臨床工学士:5）',
     // b
     'back'                               => '戻る',
     'bulk_delete'                        => '選択項目を削除',
@@ -47,6 +48,7 @@ return [
     'edit_profile'                       => 'プロフィール編集',
     'edit'                               => '編集',
     'email'                              => 'メールアドレス',
+    'email_discription'                  => 'メールアドレス(医師（研究代表者)の場合は必須',
     'emergency_room'                     => '救命救急室',
     'estimated_mv'                       => '推定MV(分時換気量)',
     'estimated_peep'                     => '推定PEEP',
