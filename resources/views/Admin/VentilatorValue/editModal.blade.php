@@ -89,7 +89,7 @@
 
             {{-- 使用状況 --}}
             <div class="form-group">
-                <label for="status_use">@lang('messages.status_use')@lang('messages.status_use')</label>
+                <label for="status_use">@lang('messages.status_use')</label>
                 <select class="form-control select" name="status_use">
                     <option></option>
                     <option value="1">@lang('messages.respiratory_failure')</option>
@@ -101,7 +101,7 @@
 
             {{-- 使用状況（その他の場合） --}}
             <div class="form-group">
-                <label for="status_use_other">@lang('messages.status_use_other')@lang('messages.status_use_other')</label>
+                <label for="status_use_other">@lang('messages.status_use_other')</label>
                 <div>
                     <textarea class="form-control" name="status_use_other" rows="3" disabled></textarea>
                 </div>
