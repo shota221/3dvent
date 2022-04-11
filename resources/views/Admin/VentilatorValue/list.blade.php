@@ -45,11 +45,11 @@
         {{-- 使用状況（その他の場合） --}}
         <th>@lang('messages.status_use_other')</th>
         {{-- 経皮酸素飽和度 --}}
-        <th>@lang('messages.spo2')(@lang('units.spo2'))<</th>
+        <th>@lang('messages.spo2')(@lang('units.spo2'))</th>
         {{-- 終末呼気炭酸ガス濃度 --}}
         <th>@lang('messages.etco2')(@lang('units.etco2'))</th>
         {{-- PaO2 --}}
-        <th>@lang('messages.pao2')@lang('units.pao2'))</th>
+        <th>@lang('messages.pao2')(@lang('units.pao2'))</th>
         {{-- PaCO2 --}}
         <th>@lang('messages.paco2')(@lang('units.paco2'))</th>
         {{-- 編集 --}}
