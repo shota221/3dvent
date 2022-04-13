@@ -93,7 +93,7 @@ return [
     // n
     'national_name'                      => 'Country Name',
     'nearest_city'                       => 'Nearest City',
-    'new_password'                       => 'New Password',
+    'new_password'                       => 'New Passcord',
     'non_icu'                            => 'Patient Room except for ICU',
     'none'                               => 'None',
     'nppv'                               => 'Change to NPPV',
@@ -105,7 +105,7 @@ return [
     'organization_admin_user_create'     => 'Registration of Group Head Account',
     'organization_admin_user_edit'       => 'Editing of Group Head Account',
     'organization_admin_user_list'       => 'List of Group Head',
-    'organization_admin_user_management' => 'ManaManagement of Group Head Account',
+    'organization_admin_user_management' => 'Management of Group Head Account',
     'organization_code_annotation'       => '(Used to login to the Group)',
     'organization_code_form'             => 'Preferred Group Code',
     'organization_code'                  => 'Group Code',
