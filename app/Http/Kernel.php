@@ -47,6 +47,7 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\HandleViewPath::class,
             \App\Http\Middleware\RequestLog::class,
+            \App\Http\Middleware\Language::class,
         ],
                 
         'admin' => [

@@ -149,7 +149,12 @@
             3. 以下を使い、希望するFiO₂を設定します。FiO₂%=100x(ax0.21+b)/(a+b)
         </p>
 
-        <form id="calculate_fio2" name="calculate_fio2" data-method="GET" data-url="{{ guess_route_path('async.calc.fio2') }}">
+        <form 
+            id="calculate_fio2" 
+            name="calculate_fio2" 
+            data-url="{{ route('manual.async.calc.fio2', ['language_code' => str_replace('_', '-', app()->getLocale())]) }}"
+            data-method="GET" 
+        >
             <div>
                 <div class="form-group">
                     <label for="air_flow">空気流量(L/min)</label>

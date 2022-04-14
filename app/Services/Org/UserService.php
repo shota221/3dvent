@@ -230,7 +230,17 @@ class UserService
      */
     public function createUserCsvFormat()
     {
-        $header  = array_values(config('user_csv.header'));
+        $header_items  = array_values(config('user_csv.header'));
+
+        $header = [];
+
+        // header_itemから多言語化用ヘッダー作成
+        foreach ($header_items as $header_item)
+        {
+           array_push($header, __('messages.' . $header_item));
+        }
+
+    
         $example = config('user_csv.example');
 
         $this->createCsvFormat($header, $example);
@@ -251,13 +261,21 @@ class UserService
         $path                             = FileUtil::getUploadedFilePath($file);
         $row_count                        = count(file($path)) - 1; //ヘッダー行含めない 
         $creatale_row_limit               = 100;  // 一括登録最大件数 
-        $map_attribute_to_header          = config('user_csv.header');
+        $map_attribute_to_header_items    = config('user_csv.header');
         $map_attribute_to_validation_rule = config('user_csv.validation_rule');
         $dupulicate_confirmation_targets  = config('user_csv.dupulicate_confirmation_targets'); 
 
         if ($row_count > $creatale_row_limit) {
             $form->addError('csv_file', 'validation.excessive_number_of_registrations');
             throw new Exceptions\InvalidFormException($form);
+        }
+
+        $map_attribute_to_header = [];
+
+        // 多言語化用ヘッダー作成
+        foreach ($map_attribute_to_header_items as $key => $value)
+        {
+            $map_attribute_to_header[$key] = __('messages.'. $value);
         }
 
         try {

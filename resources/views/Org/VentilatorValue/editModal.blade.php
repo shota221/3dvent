@@ -34,7 +34,7 @@
 
             {{-- 身長 --}}
             <div class="form-group">
-                <label for="height">@lang('messages.height')<span class="required"></span></label>
+                <label for="height">@lang('messages.height')(@lang('units.height'))<span class="required"></span></label>
                 <div>
                     <input type="text" class="form-control" name="height">
                 </div>
@@ -42,7 +42,7 @@
 
             {{-- 体重 --}}
             <div class="form-group">
-                <label for="weight">@lang('messages.weight')</label>
+                <label for="weight">@lang('messages.weight')(@lang('units.weight'))</label>
                 <div>
                     <input type="text" class="form-control" name="weight">
                 </div>
@@ -63,7 +63,7 @@
 
             {{-- 設定圧 --}}
             <div class="form-group">
-                <label for="airway_pressure">@lang('messages.airway_pressure')<span class="required"></span></label>
+                <label for="airway_pressure">@lang('messages.airway_pressure')(@lang('units.airway_pressure'))<span class="required"></span></label>
                 <div>
                     <input type="text" class="form-control" name="airway_pressure">
                 </div>
@@ -71,7 +71,7 @@
 
             {{-- 空気流量 --}}
             <div class="form-group">
-                <label for="air_flow">@lang('messages.air_flow')<span class="required"></span></label>
+                <label for="air_flow">@lang('messages.air_flow')(@lang('units.air_flow'))<span class="required"></span></label>
                 <div>
                     <input type="text" class="form-control" name="air_flow">
                 </div>
@@ -79,7 +79,7 @@
 
             {{-- 酸素流量 --}}
             <div class="form-group">
-                <label for="o2_flow">@lang('messages.o2_flow')<span class="required"></span></label>
+                <label for="o2_flow">@lang('messages.o2_flow')(@lang('units.o2_flow'))<span class="required"></span></label>
                 <div>
                     <input type="text" class="form-control" name="o2_flow">
                 </div>
@@ -108,7 +108,7 @@
 
             {{-- 経皮的酸素飽和度 --}}
             <div class="form-group">
-                <label for="spo2">@lang('messages.spo2')</label>
+                <label for="spo2">@lang('messages.spo2')(@lang('units.spo2'))</label>
                 <div>
                     <input type="text" class="form-control" name="spo2">
                 </div>
@@ -116,7 +116,7 @@
 
             {{-- 終末呼気炭酸ガス濃度 --}}
             <div class="form-group">
-                <label for="etco2">@lang('messages.etco2')</label>
+                <label for="etco2">@lang('messages.etco2')(@lang('units.etco2'))</label>
                 <div>
                     <input type="text" class="form-control" name="etco2">
                 </div>
@@ -124,7 +124,7 @@
 
             {{-- pao2 --}}
             <div class="form-group">
-                <label for="pao2">@lang('messages.pao2')</label>
+                <label for="pao2">@lang('messages.pao2')(@lang('units.pao2'))</label>
                 <div>
                     <input type="text" class="form-control" name="pao2">
                 </div>
@@ -132,7 +132,7 @@
 
             {{-- paco2 --}}
             <div class="form-group">
-                <label for="paco2">@lang('messages.paco2')</label>
+                <label for="paco2">@lang('messages.paco2')(@lang('units.paco2'))</label>
                 <div>
                     <input type="text" class="form-control" name="paco2">
                 </div>

@@ -6,7 +6,7 @@
 @section('css')
     <style>
         table {
-            "table-layout:fixed;"
+            table-layout:fixed;
         }
 
         th,

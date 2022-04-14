@@ -76,11 +76,11 @@
         <td>{{ $patient_value->updated_at }}</td>
         
         @if ($patient_value->opt_out_flg)
-        {{--有--}}
-        <td>@lang('messages.exists')</td>
+        {{--除外する--}}
+        <td>@lang('messages.remove')</td>
         @else
-        {{--無--}}
-        <td>@lang('messages.none')</td>
+        {{--除外しない--}}
+        <td>@lang('messages.unremove')</td>
         @endif
         
         <td>{{ $patient_value->age }}</td>

@@ -17,39 +17,39 @@
         {{-- ステータス --}}
         <th>@lang('messages.status')</th>
         {{-- 身長 --}}
-        <th>@lang('messages.height')</th>
+        <th>@lang('messages.height')(@lang('units.height'))</th>
         {{-- 体重 --}}
-        <th>@lang('messages.weight')</th>
+        <th>@lang('messages.weight')(@lang('units.weight'))</th>
         {{-- 性別 --}}
         <th>@lang('messages.gender')</th>
         {{-- 設定圧 --}}
-        <th>@lang('messages.airway_pressure')</th>
+        <th>@lang('messages.airway_pressure')(@lang('units.airway_pressure'))</th>
         {{-- 空気流量 --}}
-        <th>@lang('messages.air_flow')</th>
+        <th>@lang('messages.air_flow')(@lang('units.air_flow'))</th>
         {{-- 酸素流量 --}}
-        <th>@lang('messages.o2_flow')</th>
+        <th>@lang('messages.o2_flow')(@lang('units.o2_flow'))</th>
         {{-- FiO2 --}}
-        <th>@lang('messages.fio2')</th>
+        <th>@lang('messages.fio2')(@lang('units.fio2'))</th>
         {{-- RR --}}
-        <th>@lang('messages.rr')</th>
+        <th>@lang('messages.rr')(@lang('units.rr'))</th>
         {{-- Estimated Vt --}}
-        <th>@lang('messages.estimated_vt')</th>
+        <th>@lang('messages.estimated_vt')(@lang('units.estimated_vt'))</th>
         {{-- Estimated MV --}}
-        <th>@lang('messages.estimated_mv')</th>
+        <th>@lang('messages.estimated_mv')(@lang('units.estimated_mv'))</th>
         {{-- Estimated PEEP --}}
-        <th>@lang('messages.estimated_peep')</th>
+        <th>@lang('messages.estimated_peep')(@lang('units.estimated_peep'))</th>
         {{-- 使用状況 --}}
         <th>@lang('messages.status_use')</th>
         {{-- 使用状況（その他の場合） --}}
         <th>@lang('messages.status_use_other')</th>
         {{-- 経皮酸素飽和度 --}}
-        <th>@lang('messages.spo2')</th>
+        <th>@lang('messages.spo2')(@lang('units.spo2'))</th>
         {{-- 終末呼気炭酸ガス濃度 --}}
-        <th>@lang('messages.etco2')</th>
+        <th>@lang('messages.etco2')(@lang('units.etco2'))</th>
         {{-- PaO2 --}}
-        <th>@lang('messages.pao2')</th>
+        <th>@lang('messages.pao2')(@lang('units.pao2'))</th>
         {{-- PaCO2 --}}
-        <th>@lang('messages.paco2')</th>
+        <th>@lang('messages.paco2')(@lang('units.paco2'))</th>
         {{-- 編集 --}}
         <th>@lang('messages.edit')</th>
     </tr>

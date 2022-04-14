@@ -8,7 +8,6 @@ use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 
 class Language
 {
@@ -36,6 +35,19 @@ class Language
             } else {
                 App::setLocale(config('app.fallback_locale'));
             }
+        } else if(app()->isHttpRouteTypeManual()) {
+            $uri           = rtrim($_SERVER["REQUEST_URI"], '/');
+            $language_code = substr($uri, strrpos($uri, '/') + 1);
+            // クエリパラメータがあれば削除
+            $language_code = preg_replace('/\?.+$/', '', $language_code);
+            $key_exists    = array_key_exists($language_code, config('languages'));
+
+            if ($key_exists) {
+                App::setLocale($language_code);
+            } else {
+                App::setLocale(config('app.fallback_locale'));
+            }
+
         } else {
             $language_key  = config('cookie.language_key');
             $language_code = $request->cookie($language_key);
